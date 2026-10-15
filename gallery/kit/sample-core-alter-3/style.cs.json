@@ -13,17 +13,6 @@
           ]
         }
       }
-    },
-    {
-      "symbolizer": {
-        "stroke": {
-          "alter": true,
-          "dashPattern": {
-            "index": 1,
-            "value": 2
-          }
-        }
-      }
     }
   ]
 }

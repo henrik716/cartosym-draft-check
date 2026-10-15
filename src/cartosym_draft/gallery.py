@@ -84,9 +84,9 @@ def _vector_decisions() -> list[Decision]:
             layers=[background, Layer("Parcels", [_feature("Polygon", _square(80, 50, 130))])],
             variants=[
                 Variant("Whole symbol (group opacity)", DRAFT, is_draft=True),
-                Variant("Fill and stroke separately", DRAFT.with_(opacity="per-element")),
+                Variant("Fill and stroke separately", DRAFT.with_(opacity="per-element"), note="Where the stroke overlaps the fill, a darker band shows inside the stroke."),
             ],
-            evidence="Not settled by the spec. libCartoSym has no renderer to compare with. SVG and CSS group opacity behave like the first option.",
+            evidence="The draft says the opacity applies to the portrayal as a whole, as SVG and CSS group opacity do. Applied to fill and stroke separately, the overlap shows through.",
         ),
         Decision(
             key="casing-order",
@@ -105,7 +105,7 @@ def _vector_decisions() -> list[Decision]:
                 Variant("Casing above", DRAFT.with_(casing="above"),
                         note="The casing lies over the stroke: the yellow shows through only as orange."),
             ],
-            evidence="libCartoSym models `casing` and `center` as StrokeStyling, like the draft. Drawing order is not in the spec text.",
+            evidence="The draft says the casing is drawn beneath the main stroke. libCartoSym models `casing` and `center` as StrokeStyling, like the draft.",
         ),
         Decision(
             key="casing-crossing",
@@ -181,7 +181,7 @@ def _vector_decisions() -> list[Decision]:
                 Variant("Higher zOrder on top", DRAFT, is_draft=True),
                 Variant("Lower zOrder on top", DRAFT.with_(z_order="lower-on-top")),
             ],
-            evidence="Clause 7 says zOrder modifies the default order in a single pass, but not in which direction.",
+            evidence="The draft says portrayals with a higher zOrder are drawn on top. The earlier clause 7 text only said that zOrder modifies the default order, not in which direction.",
         ),
         Decision(
             key="hatch-angle",
@@ -217,7 +217,7 @@ def _vector_decisions() -> list[Decision]:
             key="image-hotspot",
             title="Default hot spot of an Image",
             requirements=["/req/vector/image"],
-            question="A pin icon on a point (red cross = the point's location). Without an explicit `hotSpot`, which part of the image sits on the point?",
+            question="A pin icon on a point (black cross = the point's location). Without an explicit `hotSpot`, which part of the image sits on the point?",
             style={"stylingRules": [{"symbolizer": {"marker": {"elements": [
                 {"type": "Image", "image": {"uri": PIN}, "width": {"px": 36}, "height": {"px": 36}}]}}}]},
             layers=[Layer("POI", [_feature("Point", [90, 100]), _feature("Point", [210, 100])])],
@@ -325,8 +325,8 @@ def _more_vector_decisions() -> list[Decision]:
             }),
             layers=[places],
             variants=[
-                Variant("Higher value wins", DRAFT, is_draft=True),
-                Variant("Lower value wins (1 = most important)", DRAFT.with_(label_priority="lower-wins")),
+                Variant("Higher value wins", DRAFT, is_draft=True, note="Strømmen (priority 8) is kept."),
+                Variant("Lower value wins (1 = most important)", DRAFT.with_(label_priority="lower-wins"), note="Lillestrøm (priority 2) is kept."),
             ],
             evidence="The draft proposes that a higher value wins; the spec text does not say (TODO(review) in rc-labels). "
                      "In QGIS the label with the higher priority wins; MapLibre's symbol-sort-key places lower values first. "
@@ -349,8 +349,8 @@ def _more_vector_decisions() -> list[Decision]:
             layers=[Layer("Roads", [_feature("LineString", road)])],
             view=View(bbox=(0, 0, 1500, 1000), width=300, height=200),
             variants=[
-                Variant("Pixels (draft renderer's choice)", DRAFT),
-                Variant("Metres (map units)", DRAFT.with_(label_spacing_units="m")),
+                Variant("Pixels (draft renderer's choice)", DRAFT, note="At least 60 px between repeated labels."),
+                Variant("Metres (map units)", DRAFT.with_(label_spacing_units="m"), note="60 m is 12 px here, so labels repeat as closely as they fit."),
             ],
             evidence="The schema types minSpacing and maxSpacing as plain numbers, with no unit. "
                      "The TODO(review) in rc-labels refers to #80, but #80 is about text spacing "
@@ -393,8 +393,9 @@ def _coverage_decisions() -> list[Decision]:
     def factor_variants(example: dict, empty_note: str, reference_note: str) -> list[Variant]:
         return [
             Variant("Darkening × factor", DRAFT, is_draft=True, note="Almost every cell is at the darkest shade."),
-            Variant("factor as a percentage", DRAFT.with_(hillshade_factor="percent"), note=empty_note),
-            Variant("factor as vertical exaggeration", DRAFT.with_(hillshade_factor="exaggeration")),
+            Variant("factor as a percentage", DRAFT.with_(hillshade_factor="percent"), note=empty_note or "Shading at 56 % intensity: subtle."),
+            Variant("factor as vertical exaggeration", DRAFT.with_(hillshade_factor="exaggeration"),
+                    note="Slopes are 56 times steeper: everything facing away from the sun is fully dark."),
             Variant("For reference: factor 1", DRAFT, style=_tweak(example, hillShading={"factor": 1}),
                     note=reference_note),
         ]
@@ -554,8 +555,8 @@ def _gradient_decisions() -> list[Decision]:
                                       _feature("Polygon", [[[110, 20], [280, 20], [280, 90], [110, 90], [110, 20]]]),
                                       _feature("Polygon", _square(150, 115, 60))])],
             variants=[
-                Variant("Each feature's bounding box (draft renderer's choice)", DRAFT),
-                Variant("The whole map", DRAFT.with_(gradient_frame="map")),
+                Variant("Each feature's bounding box (draft renderer's choice)", DRAFT, note="Each parcel has its own centred gradient."),
+                Variant("The whole map", DRAFT.with_(gradient_frame="map"), note="One gradient centred on the map; each parcel shows its part of it."),
             ],
             evidence="position and size have no reference frame in Part 2. Per feature, every polygon gets its own centred "
                      "gradient; per map, one gradient runs across all features. The `repeating` type also needs a "

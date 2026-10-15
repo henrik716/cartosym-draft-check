@@ -6,7 +6,10 @@
           "color": "lightSteelBlue"
         },
         "stroke": {
-          "color": "steelBlue"
+          "color": "steelBlue",
+          "width": {
+            "px": 2
+          }
         },
         "marker": {
           "elements": [

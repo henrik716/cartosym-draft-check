@@ -10,7 +10,7 @@ from pathlib import Path
 from .gallery import CSS, PR_FILES, REQUIREMENTS, _check_styles, _inline_code, decisions
 from .kit import export
 from .render import render
-from .samples import samples
+from .samples import annotate, samples
 
 RESULTS = Path(__file__).resolve().parents[2] / "reports" / "results.json"
 
@@ -69,6 +69,7 @@ def build(out_dir: Path) -> str:
         groups[r["file"]].append(rid)
 
     invalid: list[str] = []
+    shown: set[str] = set()  # each sample once, under the first class that uses it
     counts: dict[str, int] = defaultdict(int)
     sections = []
     # Core (clause 7) first, then the other classes in file order.
@@ -111,10 +112,13 @@ def build(out_dir: Path) -> str:
                 f'<td>{"<br>".join(evidence)}</td></tr>')
         figs = []
         for s in class_samples:
+            if s.key in shown:
+                continue  # its requirement rows link to it above
+            shown.add(s.key)
             panels = []
             for i, p in enumerate(s.panels):
                 invalid += _check_styles({f"panel-{i + 1}": p.style}, f"sample-{s.key}")
-                svg = render(p.style, p.layers, p.view, p.options, anchors=p.anchors)
+                svg = annotate(render(p.style, p.layers, p.view, p.options, anchors=p.anchors), p)
                 links = export(f"sample-{s.key}-{i + 1}", s.title, {"style.cs.json": p.style}, p.layers, p.view, out_dir)
                 kit = " · ".join(f'<a href="{html.escape(u)}">{html.escape(n)}</a>' for n, u in links)
                 cap = f"<figcaption>{html.escape(p.caption)}<span class='vnote'>{kit}</span></figcaption>"
