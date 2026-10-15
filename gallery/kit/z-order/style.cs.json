@@ -1,0 +1,66 @@
+{
+  "stylingRules": [
+    {
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "sysId": "dataLayer.id"
+          },
+          "Lakes"
+        ]
+      },
+      "symbolizer": {
+        "zOrder": 2,
+        "fill": {
+          "color": [
+            93,
+            173,
+            226
+          ]
+        },
+        "stroke": {
+          "color": [
+            31,
+            97,
+            141
+          ],
+          "width": {
+            "px": 2
+          }
+        }
+      }
+    },
+    {
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "sysId": "dataLayer.id"
+          },
+          "Forest"
+        ]
+      },
+      "symbolizer": {
+        "zOrder": 1,
+        "fill": {
+          "color": [
+            88,
+            214,
+            141
+          ]
+        },
+        "stroke": {
+          "color": [
+            29,
+            131,
+            72
+          ],
+          "width": {
+            "px": 2
+          }
+        }
+      }
+    }
+  ]
+}

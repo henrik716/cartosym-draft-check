@@ -1,0 +1,60 @@
+{
+  "stylingRules": [
+    {
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "sysId": "dataLayer.id"
+          },
+          "Background"
+        ]
+      },
+      "symbolizer": {
+        "fill": {
+          "color": [
+            46,
+            134,
+            222
+          ]
+        },
+        "stroke": {
+          "width": {
+            "px": 0
+          }
+        }
+      }
+    },
+    {
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "sysId": "dataLayer.id"
+          },
+          "Parcels"
+        ]
+      },
+      "symbolizer": {
+        "opacity": 0.5,
+        "fill": {
+          "color": [
+            243,
+            156,
+            18
+          ]
+        },
+        "stroke": {
+          "color": [
+            110,
+            44,
+            0
+          ],
+          "width": {
+            "px": 14
+          }
+        }
+      }
+    }
+  ]
+}

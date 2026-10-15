@@ -1,0 +1,21 @@
+{
+  "card": "Example 6: scaling colorChannels",
+  "crs": "EPSG:25833",
+  "bbox": [
+    597000.0,
+    6643000.0,
+    612000.0,
+    6653000.0
+  ],
+  "width": 300,
+  "height": 200,
+  "scaleDenominator": 178571.4,
+  "pixelSize_mm": 0.28,
+  "layers": [
+    {
+      "id": "sentinel2-l2a",
+      "type": "coverage"
+    }
+  ],
+  "note": "Render each layer with the style, at this extent and size. Coverage bands share one grid; a cell's properties are the band names (e.g. elevation, B04)."
+}

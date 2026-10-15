@@ -1,0 +1,61 @@
+{
+  "stylingRules": [
+    {
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "property": "unit"
+          },
+          "px"
+        ]
+      },
+      "symbolizer": {
+        "stroke": {
+          "color": "black",
+          "width": {
+            "px": 4
+          }
+        }
+      }
+    },
+    {
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "property": "unit"
+          },
+          "mm"
+        ]
+      },
+      "symbolizer": {
+        "stroke": {
+          "color": "black",
+          "width": {
+            "mm": 2
+          }
+        }
+      }
+    },
+    {
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "property": "unit"
+          },
+          "m"
+        ]
+      },
+      "symbolizer": {
+        "stroke": {
+          "color": "black",
+          "width": {
+            "m": 10
+          }
+        }
+      }
+    }
+  ]
+}

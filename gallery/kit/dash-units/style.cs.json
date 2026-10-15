@@ -1,0 +1,22 @@
+{
+  "stylingRules": [
+    {
+      "symbolizer": {
+        "stroke": {
+          "color": [
+            192,
+            57,
+            43
+          ],
+          "width": {
+            "px": 6
+          },
+          "dashPattern": [
+            4,
+            2
+          ]
+        }
+      }
+    }
+  ]
+}

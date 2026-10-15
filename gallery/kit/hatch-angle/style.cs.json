@@ -1,0 +1,34 @@
+{
+  "stylingRules": [
+    {
+      "symbolizer": {
+        "fill": {
+          "color": [
+            125,
+            60,
+            152
+          ],
+          "hatch": {
+            "angle": 30,
+            "width": {
+              "px": 1.5
+            },
+            "distance": {
+              "px": 9
+            }
+          }
+        },
+        "stroke": {
+          "color": [
+            74,
+            35,
+            90
+          ],
+          "width": {
+            "px": 2
+          }
+        }
+      }
+    }
+  ]
+}

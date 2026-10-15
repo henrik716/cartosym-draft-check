@@ -1,0 +1,46 @@
+{
+  "stylingRules": [
+    {
+      "symbolizer": {
+        "marker": {
+          "elements": [
+            {
+              "type": "Dot",
+              "stroke": {
+                "width": {
+                  "px": 12
+                },
+                "color": "red"
+              },
+              "position": [
+                {
+                  "px": 30
+                },
+                {
+                  "px": 0
+                }
+              ]
+            },
+            {
+              "type": "Dot",
+              "stroke": {
+                "width": {
+                  "px": 12
+                },
+                "color": "blue"
+              },
+              "position": [
+                {
+                  "px": 0
+                },
+                {
+                  "px": 20
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

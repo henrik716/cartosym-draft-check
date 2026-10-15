@@ -1,0 +1,1 @@
+{"type": "FeatureCollection", "name": "Parcels", "crs": {"type": "name", "properties": {"name": "urn:ogc:def:crs:EPSG::25833"}}, "features": [{"type": "Feature", "properties": {}, "geometry": {"type": "Polygon", "coordinates": [[[597080.0, 6643050.0], [597210.0, 6643050.0], [597210.0, 6643180.0], [597080.0, 6643180.0], [597080.0, 6643050.0]]]}}]}

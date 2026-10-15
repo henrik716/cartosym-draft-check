@@ -1,0 +1,29 @@
+{
+  "card": "Hatch width and distance",
+  "crs": "EPSG:25833",
+  "bbox": [
+    597000.0,
+    6643000.0,
+    597300.0,
+    6643200.0
+  ],
+  "width": 300,
+  "height": 200,
+  "scaleDenominator": 3571.4,
+  "pixelSize_mm": 0.28,
+  "layers": [
+    {
+      "id": "A",
+      "type": "vector"
+    },
+    {
+      "id": "B",
+      "type": "vector"
+    },
+    {
+      "id": "C",
+      "type": "vector"
+    }
+  ],
+  "note": "Render each layer with the style, at this extent and size. Coverage bands share one grid; a cell's properties are the band names (e.g. elevation, B04)."
+}

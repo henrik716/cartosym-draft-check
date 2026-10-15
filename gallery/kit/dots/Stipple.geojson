@@ -1,0 +1,1 @@
+{"type": "FeatureCollection", "name": "Stipple", "crs": {"type": "name", "properties": {"name": "urn:ogc:def:crs:EPSG::25833"}}, "features": [{"type": "Feature", "properties": {}, "geometry": {"type": "Polygon", "coordinates": [[[597020.0, 6643040.0], [597140.0, 6643040.0], [597140.0, 6643160.0], [597020.0, 6643160.0], [597020.0, 6643040.0]]]}}]}

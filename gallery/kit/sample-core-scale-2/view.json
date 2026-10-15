@@ -1,0 +1,21 @@
+{
+  "card": "Rules depending on the scale",
+  "crs": "EPSG:25833",
+  "bbox": [
+    596295.0,
+    6642535.0,
+    597975.0,
+    6643655.0
+  ],
+  "width": 300,
+  "height": 200,
+  "scaleDenominator": 20000.0,
+  "pixelSize_mm": 0.28,
+  "layers": [
+    {
+      "id": "Places",
+      "type": "vector"
+    }
+  ],
+  "note": "Render each layer with the style, at this extent and size. Coverage bands share one grid; a cell's properties are the band names (e.g. elevation, B04)."
+}

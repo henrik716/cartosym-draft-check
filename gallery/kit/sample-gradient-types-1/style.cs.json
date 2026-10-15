@@ -1,0 +1,32 @@
+{
+  "stylingRules": [
+    {
+      "symbolizer": {
+        "stroke": {
+          "color": "black"
+        },
+        "fill": {
+          "gradient": {
+            "type": {
+              "property": "type"
+            },
+            "angle": 90,
+            "keys": [
+              {
+                "color": "white"
+              },
+              {
+                "color": "orange",
+                "percent": 0.3
+              },
+              {
+                "color": "darkRed",
+                "percent": 1
+              }
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

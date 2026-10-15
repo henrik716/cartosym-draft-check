@@ -1,0 +1,28 @@
+{
+  "stylingRules": [
+    {
+      "symbolizer": {
+        "stroke": {
+          "color": "darkOrange",
+          "width": {
+            "px": {
+              "op": "+",
+              "args": [
+                {
+                  "op": "*",
+                  "args": [
+                    {
+                      "property": "lanes"
+                    },
+                    3
+                  ]
+                },
+                1
+              ]
+            }
+          }
+        }
+      }
+    }
+  ]
+}

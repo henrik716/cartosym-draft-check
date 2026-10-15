@@ -1,0 +1,741 @@
+"""Build an HTML page rendering each draft judgement call side by side.
+
+Usage: python -m cartosym_draft.gallery [gallery/index.html]
+"""
+
+from __future__ import annotations
+
+import copy
+import html
+import json
+import sys
+from dataclasses import dataclass, field
+from pathlib import Path
+from urllib.parse import quote
+
+from . import sample_data
+from .kit import export, zip_all
+from .review import EXTRA_ROWS, MATRIX, SOURCES
+from .options import Options
+from .render import Layer, View, render
+
+DRAFT = Options()
+
+# ------------------------------------------------------------------ scenes
+
+
+def _feature(geom_type: str, coords, **props) -> dict:
+    return {"type": "Feature", "properties": props, "geometry": {"type": geom_type, "coordinates": coords}}
+
+
+def _square(x0, y0, size):
+    return [[[x0, y0], [x0 + size, y0], [x0 + size, y0 + size], [x0, y0 + size], [x0, y0]]]
+
+
+VIEW = View(bbox=(0, 0, 300, 200), width=300, height=200)
+
+PIN = "data:image/svg+xml," + quote(
+    '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">'
+    '<path d="M12 23 C12 23 3 13 3 8 A9 9 0 0 1 21 8 C21 13 12 23 12 23 Z" fill="#c0392b" stroke="#fff" stroke-width="1.5"/>'
+    '<circle cx="12" cy="8" r="3.2" fill="#fff"/></svg>'
+)
+
+
+@dataclass
+class Variant:
+    label: str
+    options: Options
+    is_draft: bool = False
+    note: str = ""
+    style: dict | None = None  # overrides the decision's style
+
+
+@dataclass
+class Decision:
+    key: str
+    title: str
+    requirements: list[str]
+    question: str
+    style: dict
+    layers: list[Layer]
+    variants: list[Variant]
+    evidence: str = ""
+    view: View = field(default_factory=lambda: VIEW)
+    anchors: bool = False
+    group: str = "Part 1: vector styling"
+
+
+def _vector_decisions() -> list[Decision]:
+    background = Layer("Background", [_feature("Polygon", [[[0, 0], [150, 0], [150, 200], [0, 200], [0, 0]]])])
+    return [
+        Decision(
+            key="opacity",
+            title="Symbolizer opacity: whole symbol or each part",
+            requirements=["/req/core/opacity"],
+            question="With `opacity: 0.5`, is the symbol made translucent as a whole, or are fill and stroke made translucent separately? "
+                     "Separately, the stroke and fill overlap shows through.",
+            style={"stylingRules": [
+                {"selector": {"op": "=", "args": [{"sysId": "dataLayer.id"}, "Background"]},
+                 "symbolizer": {"fill": {"color": [46, 134, 222]}, "stroke": {"width": {"px": 0}}}},
+                {"selector": {"op": "=", "args": [{"sysId": "dataLayer.id"}, "Parcels"]},
+                 "symbolizer": {"opacity": 0.5, "fill": {"color": [243, 156, 18]},
+                                "stroke": {"color": [110, 44, 0], "width": {"px": 14}}}},
+            ]},
+            layers=[background, Layer("Parcels", [_feature("Polygon", _square(80, 50, 130))])],
+            variants=[
+                Variant("Whole symbol (group opacity)", DRAFT, is_draft=True),
+                Variant("Fill and stroke separately", DRAFT.with_(opacity="per-element")),
+            ],
+            evidence="Not settled by the spec. libCartoSym has no renderer to compare with. SVG and CSS group opacity behave like the first option.",
+        ),
+        Decision(
+            key="casing-order",
+            title="Casing beneath or above the stroke",
+            requirements=["/req/casing/casing", "/req/casing/center"],
+            question="A road with a 14 px yellow stroke, a 22 px red casing at 60 % opacity (so what lies under it shows through) "
+                     "and a thin white centre line. Is the casing drawn beneath the stroke (an outline) or on top of it?",
+            style={"stylingRules": [{"symbolizer": {"stroke": {
+                "color": [247, 220, 111], "width": {"px": 14},
+                "casing": {"color": [192, 57, 43], "opacity": 0.6, "width": {"px": 22}},
+                "centerLine": {"color": "white", "width": {"px": 2}}}}}]},
+            layers=[Layer("Roads", [_feature("LineString", [[20, 40], [150, 160], [280, 60]])])],
+            variants=[
+                Variant("Casing beneath", DRAFT, is_draft=True,
+                        note="The yellow stroke lies on top; the casing shows as red edges."),
+                Variant("Casing above", DRAFT.with_(casing="above"),
+                        note="The casing lies over the stroke: the yellow shows through only as orange."),
+            ],
+            evidence="libCartoSym models `casing` and `center` as StrokeStyling, like the draft. Drawing order is not in the spec text.",
+        ),
+        Decision(
+            key="casing-crossing",
+            title="Casing at crossings",
+            requirements=["/req/casing/casing"],
+            question="Two cased roads crossing. Does each road draw its casing together with its own stroke, "
+                     "or are all casings drawn before any stroke, so the crossing merges?",
+            style={"stylingRules": [{"symbolizer": {"stroke": {
+                "color": [247, 220, 111], "width": {"px": 12},
+                "casing": {"color": [77, 77, 77], "width": {"px": 16}}}}}]},
+            layers=[Layer("Roads", [
+                _feature("LineString", [[20, 40], [150, 160], [280, 60]]),
+                _feature("LineString", [[20, 150], [280, 120]]),
+            ])],
+            variants=[
+                Variant("All casings first (draft renderer's choice)", DRAFT,
+                        note="The crossing merges, as in most road maps."),
+                Variant("Each road with its own casing", DRAFT.with_(casing_pass="with-feature"),
+                        note="The second road's casing cuts across the first road."),
+            ],
+            evidence="The draft does not say. Drawing every casing before any stroke is the usual way to draw road networks "
+                     "(QGIS calls this symbol levels); drawing each feature on its own is simpler but breaks crossings.",
+        ),
+        Decision(
+            key="casing-width",
+            title="What casing width means",
+            requirements=["/req/casing/casing"],
+            question="The stroke is 12 px wide and `casing.width` is 3 px. Is 3 px the casing's total width, or how far it extends beyond each side of the stroke?",
+            style={"stylingRules": [{"symbolizer": {"stroke": {
+                "color": [247, 220, 111], "width": {"px": 12},
+                "casing": {"color": [77, 77, 77], "width": {"px": 3}}}}}]},
+            layers=[Layer("Roads", [_feature("LineString", [[20, 40], [150, 160], [280, 60]])])],
+            variants=[
+                Variant("Total width (draft renderer's choice): 3 px, hidden under the stroke", DRAFT),
+                Variant("Extra on each side (12 + 2 × 3 px)", DRAFT.with_(casing_width="extra")),
+            ],
+            evidence="The draft does not say. This rendering is why it matters: with the total-width reading, a casing thinner than the stroke is invisible.",
+        ),
+        Decision(
+            key="font-outline",
+            title="Font outline beneath or above the glyphs",
+            requirements=["/req/font-outlines/outline", "/req/font-outlines/size"],
+            question="Text with a 2 px white outline over a dark background. Is the outline drawn beneath the glyphs (a halo) or on top of them?",
+            style={"stylingRules": [
+                {"selector": {"op": "=", "args": [{"sysId": "dataLayer.id"}, "Background"]},
+                 "symbolizer": {"fill": {"color": [52, 73, 94]}, "stroke": {"width": {"px": 0}}}},
+                {"selector": {"op": "=", "args": [{"sysId": "dataLayer.id"}, "Places"]},
+                 "symbolizer": {"marker": {"elements": [{"type": "Text", "text": "Trondheim", "font": {
+                     "face": "Georgia", "size": 22, "bold": True, "color": [27, 38, 49],
+                     "outline": {"size": 2, "color": "white"}}}]}}},
+            ]},
+            layers=[background, Layer("Places", [_feature("Point", [150, 100])])],
+            variants=[
+                Variant("Outline beneath (halo)", DRAFT, is_draft=True),
+                Variant("Outline above", DRAFT.with_(font_outline="above"), note="The outline is drawn over the glyphs and hides their shapes."),
+            ],
+            evidence="Outlines beneath the glyphs are the convention: SE draws a Halo on the backgrounds of the glyphs, QGIS a text buffer, MapLibre a text-halo.",
+        ),
+        Decision(
+            key="z-order",
+            title="Which zOrder is drawn on top",
+            requirements=["/req/core/z-order"],
+            question="Two overlapping features. Lakes come first in the data but have `zOrder: 2`; Forest has `zOrder: 1`. Is the higher zOrder drawn on top?",
+            style={"stylingRules": [
+                {"selector": {"op": "=", "args": [{"sysId": "dataLayer.id"}, "Lakes"]},
+                 "symbolizer": {"zOrder": 2, "fill": {"color": [93, 173, 226]}, "stroke": {"color": [31, 97, 141], "width": {"px": 2}}}},
+                {"selector": {"op": "=", "args": [{"sysId": "dataLayer.id"}, "Forest"]},
+                 "symbolizer": {"zOrder": 1, "fill": {"color": [88, 214, 141]}, "stroke": {"color": [29, 131, 72], "width": {"px": 2}}}},
+            ]},
+            layers=[Layer("Lakes", [_feature("Polygon", _square(60, 40, 110))]),
+                    Layer("Forest", [_feature("Polygon", _square(130, 60, 110))])],
+            variants=[
+                Variant("Higher zOrder on top", DRAFT, is_draft=True),
+                Variant("Lower zOrder on top", DRAFT.with_(z_order="lower-on-top")),
+            ],
+            evidence="Clause 7 says zOrder modifies the default order in a single pass, but not in which direction.",
+        ),
+        Decision(
+            key="hatch-angle",
+            title="Hatch angle direction",
+            requirements=["/req/hatches/angle"],
+            question="A hatch fill with `angle: 30`. Clockwise or counter-clockwise from horizontal?",
+            style={"stylingRules": [{"symbolizer": {"fill": {"color": [125, 60, 152], "hatch": {
+                "angle": 30, "width": {"px": 1.5}, "distance": {"px": 9}}},
+                "stroke": {"color": [74, 35, 90], "width": {"px": 2}}}}]},
+            layers=[Layer("Zones", [_feature("Polygon", _square(70, 25, 150))])],
+            variants=[
+                Variant("Clockwise (draft table: \"clockwise degree\")", DRAFT, is_draft=True),
+                Variant("Counter-clockwise (mathematical convention)", DRAFT.with_(hatch_angle="counter-clockwise")),
+            ],
+            evidence="The Part 1 Hatch table says \"Hatches orientation clockwise degree\". libCartoSym still uses the older forward/backward/cross hatch model.",
+        ),
+        Decision(
+            key="dash-units",
+            title="Units of dashPattern",
+            requirements=["/req/dashes/dash-pattern"],
+            question="A 6 px wide line with `dashPattern: [4, 2]`. Are the values pixels, or multiples of the stroke width?",
+            style={"stylingRules": [{"symbolizer": {"stroke": {
+                "color": [192, 57, 43], "width": {"px": 6}, "dashPattern": [4, 2]}}}]},
+            layers=[Layer("Boundaries", [_feature("LineString", [[20, 60], [280, 60]]),
+                                         _feature("LineString", [[20, 140], [280, 140]])])],
+            variants=[
+                Variant("Pixels (draft renderer's choice)", DRAFT),
+                Variant("Multiples of stroke width", DRAFT.with_(dash_units="stroke-width")),
+            ],
+            evidence="The draft does not say; the UML types dashPattern as integers. SE gives `stroke-dasharray` lengths in the symbolizer's unit of measure (pixels by default); MapLibre's `line-dasharray` is in multiples of the line width.",
+        ),
+        Decision(
+            key="image-hotspot",
+            title="Default hot spot of an Image",
+            requirements=["/req/vector/image"],
+            question="A pin icon on a point (red cross = the point's location). Without an explicit `hotSpot`, which part of the image sits on the point?",
+            style={"stylingRules": [{"symbolizer": {"marker": {"elements": [
+                {"type": "Image", "image": {"uri": PIN}, "width": {"px": 36}, "height": {"px": 36}}]}}}]},
+            layers=[Layer("POI", [_feature("Point", [90, 100]), _feature("Point", [210, 100])])],
+            variants=[
+                Variant("Centre (0.5, 0.5)", DRAFT, is_draft=True),
+                Variant("Bottom centre (0.5, 1)", DRAFT.with_(image_hotspot=(0.5, 1.0))),
+                Variant("Top left (0, 0)", DRAFT.with_(image_hotspot=(0.0, 0.0))),
+            ],
+            evidence="libCartoSym defaults `hotSpot` to (0.5, 0.5), matching the draft. Pin-shaped icons usually need the bottom centre, so styles would set it explicitly.",
+            anchors=True,
+        ),
+    ]
+
+
+EXAMPLES = Path(__file__).parent / "examples"
+COVERAGE_VIEW = View(bbox=sample_data.BBOX, width=300, height=200)
+
+
+def _example(name: str) -> dict:
+    return json.loads((EXAMPLES / f"{name}.cs.json").read_text(encoding="utf-8"))
+
+
+def _tweak(style: dict, **changes) -> dict:
+    """Copy of a spec example with properties of its innermost symbolizer changed."""
+    out = copy.deepcopy(style)
+    sym = out["stylingRules"][0]["nestedRules"][0]["symbolizer"]
+    for key, value in changes.items():
+        if isinstance(value, dict) and isinstance(sym.get(key), dict):
+            sym[key] = {**sym[key], **value}
+        else:
+            sym[key] = value
+    return out
+
+
+def _by_layer(rules: dict[str, dict]) -> dict:
+    return {"stylingRules": [
+        {"selector": {"op": "=", "args": [{"sysId": "dataLayer.id"}, lid]}, "symbolizer": sym}
+        for lid, sym in rules.items()]}
+
+
+def _more_vector_decisions() -> list[Decision]:
+    ground = Layer("Ground", [_feature("Polygon", [[[0, 0], [300, 0], [300, 200], [0, 200], [0, 0]]])])
+    places = Layer("Places", [
+        _feature("Point", [110, 95], name="Lillestrøm", rank=2),
+        _feature("Point", [190, 95], name="Strømmen", rank=8),
+    ])
+    place_text = {"type": "Text", "text": {"property": "name"}, "position": [{"px": 0}, {"px": 12}],
+                  "font": {"face": "sans-serif", "size": 13, "bold": True, "color": [27, 38, 49]}}
+    road = [[-20, 250], [300, 800], [600, 330], [900, 870], [1200, 200], [1520, 650]]
+    return [
+        Decision(
+            key="default-marker",
+            title="The default marker",
+            requirements=["/req/core/default-values", "/req/vector/marker", "/req/vector/dot"],
+            question="A style that sets only a fill and a stroke, and no marker. Clause 7's defaults say the default Marker is "
+                     "a single default Dot (white, 10 px), and markers are drawn at points, line vertices and polygon centroids. "
+                     "Does every feature get a white dot?",
+            style={"stylingRules": [{"symbolizer": {"fill": {"color": "lightSteelBlue"},
+                                                    "stroke": {"color": "steelBlue", "width": {"px": 3}}}}]},
+            layers=[Layer("Things", [_feature("Point", [40, 150]),
+                                     _feature("LineString", [[20, 40], [90, 110], [140, 60]]),
+                                     _feature("Polygon", [[[170, 30], [280, 50], [260, 170], [190, 140], [170, 30]]])])],
+            variants=[
+                Variant("No marker unless one is set (draft renderer's choice)", DRAFT),
+                Variant("The default Dot, as the table says", DRAFT.with_(default_marker="dot"), is_draft=True,
+                        note="A white 10 px dot at the point, at every line vertex and at the polygon centroid."),
+            ],
+            evidence="The defaults table is already on main, but the PR's /req/core/default-values makes it normative. "
+                     "The Dot defaults also give a size and a color, while the draft and the schema draw a Dot with its "
+                     "Stroke's width and color. The other cards leave the default marker off, so they stay readable.",
+        ),
+        Decision(
+            key="dots",
+            title="What a stipple or dot-pattern dot looks like",
+            requirements=["/req/stipples/ratio", "/req/dot-patterns/dotpattern", "/req/dot-patterns/distance"],
+            question="A stipple fill (`ratio: 0.15`, left) and a dot pattern (`distance: 14 px`, right), both with a dark green fill color. "
+                     "Neither the requirements nor the model say how big a dot is or which color it has (#84).",
+            style=_by_layer({
+                "Ground": {"fill": {"color": [223, 230, 211]}, "stroke": {"width": {"px": 0}}},
+                "Stipple": {"fill": {"color": [30, 86, 49], "stipple": {"ratio": 0.15}},
+                            "stroke": {"color": [30, 86, 49], "width": {"px": 1.5}}},
+                "Dots": {"fill": {"color": [30, 86, 49],
+                                  "dotpattern": {"distance": {"horizontal": {"px": 14}, "vertical": {"px": 14}}}},
+                         "stroke": {"color": [30, 86, 49], "width": {"px": 1.5}}},
+            }),
+            layers=[ground, Layer("Stipple", [_feature("Polygon", _square(20, 40, 120))]),
+                    Layer("Dots", [_feature("Polygon", _square(160, 40, 120))])],
+            variants=[
+                Variant("Small dots in the fill color (draft renderer's choice)", DRAFT),
+                Variant("Dot class defaults (white, 10 px)", DRAFT.with_(dots="dot-defaults")),
+            ],
+            evidence="The draft leaves this open (TODO(review) in rc-stipples and rc-dotpatterns). "
+                     "#84 asks whether the Dot class defaults apply. Rendered, white 10 px dots read as a different symbol, "
+                     "and the fill color no longer shows.",
+        ),
+        Decision(
+            key="label-priority",
+            title="Which label priority wins",
+            requirements=["/req/labels/label", "/req/labels/placement"],
+            question="Two nearby places whose labels overlap. Lillestrøm has `priority: 2`, Strømmen `priority: 8`. "
+                     "Only one label fits. Which one is kept?",
+            style=_by_layer({
+                "Places": {"marker": {"elements": [{"type": "Dot", "stroke": {"width": {"px": 6}, "color": [27, 38, 49]}}]},
+                           "label": {"elements": [place_text], "placement": {"priority": {"property": "rank"}}}},
+            }),
+            layers=[places],
+            variants=[
+                Variant("Higher value wins", DRAFT, is_draft=True),
+                Variant("Lower value wins (1 = most important)", DRAFT.with_(label_priority="lower-wins")),
+            ],
+            evidence="The draft proposes that a higher value wins; the spec text does not say (TODO(review) in rc-labels). "
+                     "In QGIS the label with the higher priority wins; MapLibre's symbol-sort-key places lower values first. "
+                     "Both conventions are common, so the spec should state it.",
+        ),
+        Decision(
+            key="label-spacing",
+            title="Units of label minSpacing",
+            requirements=["/req/labels/placement"],
+            question="A road labelled with `minSpacing: 60` at 5 m per pixel. Is 60 in pixels or in metres?",
+            style=_by_layer({
+                "Roads": {"stroke": {"color": [230, 126, 34], "width": {"px": 5},
+                                     "casing": {"color": [126, 60, 10], "width": {"px": 7}}},
+                          "label": {"elements": [{"type": "Text", "text": "E6",
+                                                  "font": {"face": "sans-serif", "size": 10, "bold": True,
+                                                           "color": [27, 38, 49],
+                                                           "outline": {"size": 2, "color": "white"}}}],
+                                    "placement": {"minSpacing": 60}}},
+            }),
+            layers=[Layer("Roads", [_feature("LineString", road)])],
+            view=View(bbox=(0, 0, 1500, 1000), width=300, height=200),
+            variants=[
+                Variant("Pixels (draft renderer's choice)", DRAFT),
+                Variant("Metres (map units)", DRAFT.with_(label_spacing_units="m")),
+            ],
+            evidence="The schema types minSpacing and maxSpacing as plain numbers, with no unit. "
+                     "The TODO(review) in rc-labels refers to #80, but #80 is about text spacing "
+                     "(letter-spacing, line-height), not label placement.",
+        ),
+        Decision(
+            key="label-pass",
+            title="Labels on top of everything",
+            requirements=["/req/labels/label"],
+            question="A labelled harbour point, and a pier polygon drawn after it (higher zOrder). "
+                     "Is the label drawn in a separate pass on top, or with its own feature?",
+            style=_by_layer({
+                "Harbours": {"zOrder": 1,
+                             "marker": {"elements": [{"type": "Dot", "stroke": {"width": {"px": 8}, "color": [21, 67, 96]}}]},
+                             "label": {"elements": [{"type": "Text", "text": "Harbour",
+                                                     "font": {"face": "sans-serif", "size": 16, "bold": True,
+                                                              "color": [21, 67, 96]},
+                                                     "position": [{"px": 0}, {"px": 16}]}]}},
+                "Piers": {"zOrder": 2, "fill": {"color": [166, 172, 175]},
+                          "stroke": {"color": [86, 101, 115], "width": {"px": 1.5}}},
+            }),
+            layers=[Layer("Harbours", [_feature("Point", [110, 120])]),
+                    Layer("Piers", [_feature("Polygon", [[[130, 60], [250, 60], [250, 160], [130, 160], [130, 60]]])])],
+            variants=[
+                Variant("Separate pass on top", DRAFT, is_draft=True),
+                Variant("With its own feature", DRAFT.with_(label_pass="with-feature"), note="The pier, drawn later, covers part of the label."),
+            ],
+            evidence="The draft requires the separate pass. Drawn with the feature, a later feature can cover the label, as on the right.",
+        ),
+    ]
+
+
+def _coverage_decisions() -> list[Decision]:
+    dem, s2 = sample_data.dem(), sample_data.sentinel2()
+    elevation = [Layer("Elevation", type="coverage", grid=dem)]
+    pyramid_layer = [Layer("Elevation", type="coverage", grid=sample_data.pyramids())]
+    sentinel = [Layer("sentinel2-l2a", type="coverage", grid=s2)]
+    ex5, ex8, ex9 = (_example("5-coverage-dem"), _example("8-coverage-hillshading"),
+                     _example("9-coverage-hillshading-opacity"))
+    def factor_variants(example: dict, empty_note: str, reference_note: str) -> list[Variant]:
+        return [
+            Variant("Darkening × factor", DRAFT, is_draft=True, note="Almost every cell is at the darkest shade."),
+            Variant("factor as a percentage", DRAFT.with_(hillshade_factor="percent"), note=empty_note),
+            Variant("factor as vertical exaggeration", DRAFT.with_(hillshade_factor="exaggeration")),
+            Variant("For reference: factor 1", DRAFT, style=_tweak(example, hillShading={"factor": 1}),
+                    note=reference_note),
+        ]
+    common = dict(view=COVERAGE_VIEW, group="Part 1: coverage styling (the spec's examples 5–9)")
+    return [
+        Decision(
+            key="ndvi-division",
+            title="Example 7: NDVI with integer bands",
+            requirements=["/req/arithmetic/div", "/req/coverage/single-channel", "/req/coverage/color-map"],
+            question="Example 7 computes `singleChannel: (B08 - B04)/(B08 + B04)`. Sentinel-2 L2A bands are integers. "
+                     "Is `/` a real division?",
+            style=_example("7-coverage-ndvi"), layers=sentinel,
+            variants=[
+                Variant("Real quotient", DRAFT, is_draft=True),
+                Variant("Integer quotient for two integers (libCartoSym)",
+                        DRAFT.with_(division="integer-if-both-integers"),
+                        note="Every cell evaluates to 0, the color for NDVI 0.0."),
+            ],
+            evidence="Running libCartoSym's cs-canif: (3000 - 1000) / (3000 + 1000) evaluates to 0, and to 0.5 only when an "
+                     "operand is real. With integer division every NDVI value truncates to 0, so the example's color map "
+                     "collapses to one color. This supports the draft's real division. Cloud cells are hidden by the "
+                     "example's SCL rules (alphaChannel 0 and 0.5).",
+            **common,
+        ),
+        Decision(
+            key="color-channels",
+            title="Example 6: scaling colorChannels",
+            requirements=["/req/coverage/color-channels", "/req/coverage/alpha-channel"],
+            question="Example 6 sets `colorChannels: B04 B03 B02`, Sentinel-2 digital numbers (reflectance × 10 000). "
+                     "The schema types colorChannels as 0..1. How do band values become colors?",
+            style=_example("6-coverage-sentinel2"), layers=sentinel,
+            variants=[
+                Variant("As given, clamped to 0..1 (draft renderer's choice: no scaling is defined)", DRAFT, note="Band values in the hundreds and thousands clamp to 1, so every cell is white."),
+                Variant("÷ 10 000 (reflectance)", DRAFT.with_(color_channels_scale="reflectance")),
+                Variant("÷ 3 000 (a common display stretch)", DRAFT.with_(color_channels_scale="display")),
+            ],
+            evidence="Neither the requirement nor the example gives a scale. Used as given, every cell is white. "
+                     "Reflectance alone is very dark; a usable image needs a stretch, which is what Part 4 contrast "
+                     "enhancement is for. The example (or the requirement) should state the scaling.",
+            **common,
+        ),
+        Decision(
+            key="color-map",
+            title="Example 5: colorMap between and beyond entries",
+            requirements=["/req/coverage/color-map", "/req/coverage/opacity-map"],
+            question="Example 5 maps elevation 0–2500 m to colors. Between entries, are colors interpolated or stepped? "
+                     "Below 0 m (the sea, south-west), is the first color used, or nothing?",
+            style=ex5, layers=elevation,
+            variants=[
+                Variant("Interpolate, clamp outside", DRAFT, is_draft=True),
+                Variant("Step between entries", DRAFT.with_(map_mode="step")),
+                Variant("Transparent outside the map", DRAFT.with_(map_outside="transparent"), note="The sea, below 0 m, is left out (bottom left)."),
+            ],
+            evidence="The draft proposes interpolation and clamping (TODO(review) in rc-coverage). SE 1.1 makes the choice "
+                     "explicit with Interpolate and Categorize functions (its own DEM example uses Categorize); GeoServer's ColorMap defaults to an "
+                     "interpolated ramp.",
+            **common,
+        ),
+        Decision(
+            key="gamma",
+            title="Direction of coverage gamma",
+            requirements=["/req/coverage/gamma"],
+            question="Example 5 with `gamma: 2`. Does a gamma above 1 darken or brighten?",
+            style=_tweak(ex5, gamma=2), layers=elevation,
+            variants=[
+                Variant("c ^ gamma: darkens", DRAFT, is_draft=True),
+                Variant("c ^ (1 / gamma): brightens, as SE", DRAFT.with_(gamma="inverse")),
+            ],
+            evidence="SE 1.1 GammaValue brightens for values above 1. The draft's exponent does the opposite. gamma is also "
+                     "absent from the coverage UML, tables and schema (TODO(review), #86), so removing it is an option.",
+            **common,
+        ),
+        Decision(
+            key="hillshade-factor",
+            title="Example 8: what hillShading factor means",
+            requirements=["/req/hill-shading/hill-shading", "/req/hill-shading/factor"],
+            question="Example 8 shades the DEM color map with `factor: 56`, sun at azimuth 45°, elevation 60° (100 m cells). "
+                     "What does 56 scale?",
+            style=ex8, layers=elevation, variants=factor_variants(ex8, "", "The same example with factor: 1, where the draft's reading and exaggeration agree."),
+            evidence="Under the draft's reading nearly every cell is black. As a percentage, example 8 looks plausible but "
+                     "example 9 (next) becomes fully transparent. As vertical exaggeration, 56 saturates the relief at this "
+                     "cell size. No reading fits both examples, so the meaning should come from the implementation the "
+                     "examples were written for.",
+            **common,
+        ),
+        Decision(
+            key="hillshade-overlay",
+            title="Example 9: shading intensity mapped to color and opacity",
+            requirements=["/req/hill-shading/factor", "/req/hill-shading/color-map", "/req/hill-shading/opacity-map"],
+            question="Example 9 maps the shade (0..1) to black–white and to opacity 0.75–0, for use as an overlay. "
+                     "Same three readings of `factor: 56`.",
+            style=ex9, layers=elevation,
+            variants=factor_variants(ex9, "Nothing is drawn: every shade is above 0.55, where the opacity map reaches 0.",
+                                     "Even at factor: 1 nothing is drawn: on this terrain no shade falls below 0.55."),
+            evidence="The example's maps stop at 0.55, so a cell must have a shade below 0.55 for anything to show. "
+                     "With the shade as the cosine of the angle to the sun, flat ground under a 60° sun is 0.87 and only "
+                     "slopes steeper than about 26° facing directly away from the sun fall below 0.55, so even factor: 1 draws nothing here. "
+                     "The range and meaning of the shade value should be stated.",
+            **common,
+        ),
+        Decision(
+            key="sun-azimuth",
+            title="Direction of the sun azimuth",
+            requirements=["/req/hill-shading/sun"],
+            question="Three pyramids, shaded with example 8's style, the sun at azimuth 315°, elevation 45°, `factor: 1`, in plain grey. "
+                     "Is 315° north-west (compass bearing) or south-east (counter-clockwise from east)?",
+            style=_tweak(ex8, hillShading={"factor": 1, "sun": {"azimuth": 315, "elevation": 45},
+                                           "colorMap": [[0, "black"], [1, "white"]]}), layers=pyramid_layer,
+            variants=[
+                Variant("Clockwise from north (draft renderer's choice)", DRAFT,
+                        note="Light from the north-west: slopes facing the top left are bright."),
+                Variant("Counter-clockwise from east", DRAFT.with_(hillshade_azimuth="counter-clockwise-from-east"),
+                        note="Light from the south-east: slopes facing the bottom right are bright."),
+            ],
+            evidence="The draft says the azimuth is relative to north, but not in which direction. Both examples use 45°, "
+                     "which is north-east under either convention, so they do not settle it. GDAL and most GIS software "
+                     "use compass bearings.",
+            **common,
+        ),
+    ]
+
+
+def _gradient_decisions() -> list[Decision]:
+    keys = [{"color": [26, 42, 108]}, {"color": [178, 31, 31], "percent": 0.5}, {"color": [253, 187, 45], "percent": 1}]
+    common = dict(group="Part 2: gradient fills")
+    return [
+        Decision(
+            key="gradient-angle",
+            title="Gradient angle convention",
+            requirements=["/req/gradients/angle", "/req/gradients/keys"],
+            question="A linear gradient with `angle: 120`, from navy through red to gold. Where does 0° point, and which way "
+                     "does the angle turn?",
+            style={"stylingRules": [{"symbolizer": {
+                "fill": {"gradient": {"type": "linear", "angle": 120, "keys": keys}},
+                "stroke": {"color": [51, 51, 51], "width": {"px": 1}}}}]},
+            layers=[Layer("Zones", [_feature("Polygon", [[[40, 30], [260, 30], [260, 170], [40, 170], [40, 30]]])])],
+            variants=[
+                Variant("CSS: 0° up, clockwise (draft renderer's choice)", DRAFT),
+                Variant("Mathematical: 0° right, counter-clockwise", DRAFT.with_(gradient_angle="math")),
+            ],
+            evidence="The Part 2 Gradient model has an angle but no unit, zero direction or rotation sense "
+                     "(TODO(review) in rc-gradients). The Part 1 hatch angle is clockwise; a gradient angle following "
+                     "CSS would at least turn the same way.",
+            **common,
+        ),
+        Decision(
+            key="gradient-frame",
+            title="Gradient position and size: per feature or per map",
+            requirements=["/req/gradients/position", "/req/gradients/size", "/req/gradients/type"],
+            question="Three parcels with a radial gradient, `position: [0.5, 0.5]`, `size: 1`. Relative to each feature, "
+                     "or to the map?",
+            style={"stylingRules": [{"symbolizer": {
+                "fill": {"gradient": {"type": "radial", "position": [0.5, 0.5], "size": 1,
+                                      "keys": [{"color": [253, 187, 45]}, {"color": [26, 42, 108], "percent": 1}]}},
+                "stroke": {"color": [51, 51, 51], "width": {"px": 1}}}}]},
+            layers=[Layer("Parcels", [_feature("Polygon", _square(20, 110, 70)),
+                                      _feature("Polygon", [[[110, 20], [280, 20], [280, 90], [110, 90], [110, 20]]]),
+                                      _feature("Polygon", _square(150, 115, 60))])],
+            variants=[
+                Variant("Each feature's bounding box (draft renderer's choice)", DRAFT),
+                Variant("The whole map", DRAFT.with_(gradient_frame="map")),
+            ],
+            evidence="position and size have no reference frame in Part 2. Per feature, every polygon gets its own centred "
+                     "gradient; per map, one gradient runs across all features. The `repeating` type also needs a "
+                     "definition (repeating what, and how often).",
+            **common,
+        ),
+    ]
+
+
+def decisions() -> list[Decision]:
+    return _vector_decisions() + _more_vector_decisions() + _coverage_decisions() + _gradient_decisions()
+
+
+# ------------------------------------------------------- expression table
+
+# --------------------------------------------------------------------- page
+
+CSS = """
+:root { --bg:#fbfaf7; --fg:#1f2328; --muted:#5b6370; --card:#fff; --line:#e3e0d8; --accent:#1a7f5a; --accent-bg:#e6f4ee; }
+@media (prefers-color-scheme: dark) { :root { --bg:#16181d; --fg:#e8e6e1; --muted:#a3a9b3; --card:#1f2229; --line:#30343c; --accent:#5fd3a2; --accent-bg:#1c3229; } }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
+main { max-width: 1060px; margin: 0 auto; padding: 32px 16px 64px; }
+h1 { font-size: 26px; margin: 0 0 6px; } h2 { font-size: 19px; margin: 0 0 4px; }
+.lead { color: var(--muted); max-width: 760px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 20px; margin: 22px 0; }
+.reqs code { font-size: 12.5px; color: var(--muted); margin-right: 8px; }
+.question { margin: 10px 0 14px; }
+.variants { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+figure { margin: 0; } figure svg { width: 100%; height: auto; border-radius: 6px; border: 1px solid var(--line); display:block; }
+figcaption { font-size: 13.5px; margin-top: 6px; }
+.badge { display:inline-block; font-size: 11.5px; font-weight: 600; padding: 1px 7px; border-radius: 99px; background: var(--accent-bg); color: var(--accent); margin-left: 6px; }
+.evidence { font-size: 13.5px; color: var(--muted); border-top: 1px solid var(--line); margin-top: 14px; padding-top: 10px; }
+details { margin-top: 8px; font-size: 13px; } pre { overflow-x: auto; background: var(--bg); padding: 10px; border-radius: 6px; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; } th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); }
+.table-wrap { overflow-x: auto; }
+.req { font-size: 13.5px; margin: 6px 0; } .req ul { margin: 4px 0 8px; padding-left: 20px; }
+.draft-text { margin: 6px 0 0; } .draft-text summary { font-size: 13.5px; }
+.sources, .kit, .note, .legend { font-size: 13px; color: var(--muted); margin: 6px 0; }
+.badge.open { background: var(--bg); color: var(--muted); border: 1px solid var(--line); font-weight: 500; vertical-align: middle; }
+.vnote { display: block; font-size: 12.5px; color: var(--muted); }
+.matrix td, .matrix th { font-size: 13.5px; vertical-align: top; }
+a { color: var(--accent); }
+h2.group { font-size: 21px; margin: 40px 0 0; }
+"""
+
+
+REQUIREMENTS = json.loads((Path(__file__).parent / "requirements.json").read_text(encoding="utf-8"))
+SCHEMA = json.loads((Path(__file__).parent / "CartoSym-JSON.schema.json").read_text(encoding="utf-8"))
+
+
+def _check_styles(styles: dict[str, dict], key: str) -> list[str]:
+    """Validate a card's styles against the PR's CartoSym-JSON schema."""
+    import jsonschema
+
+    validator = jsonschema.validators.validator_for(SCHEMA)(SCHEMA)
+    problems = []
+    for name, style in styles.items():
+        for err in validator.iter_errors(style):
+            leaf = err
+            while leaf.context:
+                leaf = max(leaf.context, key=lambda c: len(list(c.absolute_path)))
+            path = "/".join(map(str, leaf.absolute_path))
+            problems.append(f"{key}/{name} at {path}: {leaf.message[:160]}")
+    return problems
+PR_FILES = "https://github.com/henrik716/cartographic-symbology/blob/requirements-placeholders/"
+
+
+def _requirement_text(ids: list[str]) -> str:
+    out = []
+    for rid in ids:
+        r = REQUIREMENTS["requirements"].get(rid)
+        if not r:
+            out.append(f"<div class='req'><code>{html.escape(rid)}</code> (not found)</div>")
+            continue
+        url = f"{PR_FILES}{r['file']}#L{r['line']}"
+        parts = "".join(f"<li>{_inline_code(p)}</li>" for p in r["parts"])
+        out.append(f"<div class='req'><a href='{url}'><code>{html.escape(rid)}</code></a><ul>{parts}</ul></div>")
+    return "".join(out)
+
+
+def _inline_code(text: str) -> str:
+    """Escape text and render `code` spans."""
+    pieces = html.escape(text).split("`")
+    return "".join(f"<code>{p}</code>" if i % 2 else p for i, p in enumerate(pieces))
+
+
+def _sources(key: str) -> str:
+    items = SOURCES.get(key)
+    if not items:
+        return ""
+    links = " · ".join(f'<a href="{html.escape(u)}">{html.escape(label)}</a>' for label, u in items)
+    return f'<p class="sources">Sources: {links}</p>'
+
+
+def _matrix_rows(decisions_: list[Decision]) -> str:
+    rows = []
+    for d in decisions_:
+        m = MATRIX.get(d.key)
+        if not m:
+            continue
+        rows.append(f'<tr><td><a href="#{d.key}">{html.escape(d.title)}</a></td><td>{_inline_code(m.draft_says)}</td>'
+                    f'<td>{_inline_code(m.view)}</td><td>{html.escape(m.status)}</td><td>{_inline_code(m.ask)}</td></tr>')
+    for title, m in EXTRA_ROWS:
+        rows.append(f'<tr><td>{_inline_code(title)}</td><td>{_inline_code(m.draft_says)}</td>'
+                    f'<td>{_inline_code(m.view)}</td><td>{html.escape(m.status)}</td><td>{_inline_code(m.ask)}</td></tr>')
+    return "".join(rows)
+
+
+def build(out_dir: Path) -> str:
+    cards = []
+    group = ""
+    invalid: list[str] = []
+    all_decisions = decisions()
+    for d in all_decisions:
+        figs = []
+        if d.group != group:
+            group = d.group
+            cards.append(f'<h2 class="group">{html.escape(group)}</h2>')
+            if group.startswith("Part 1: coverage"):
+                cards.append('<p class="note">On synthetic data (see the README): a 15 × 10 km area with 100 m cells. '
+                             "The styles are the spec's examples, unchanged unless the question says otherwise.</p>")
+        styles = {"style.cs.json": d.style}
+        for i, v in enumerate(d.variants):
+            svg = render(v.style or d.style, d.layers, d.view, v.options, anchors=d.anchors)
+            badge = '<span class="badge">draft</span>' if v.is_draft else ""
+            note = f'<span class="vnote">{html.escape(v.note)}</span>' if v.note else ""
+            figs.append(f"<figure>{svg}<figcaption>{html.escape(v.label)}{badge}{note}</figcaption></figure>")
+            if v.style:
+                styles[f"style-variant-{i + 1}.cs.json"] = v.style
+        invalid += _check_styles(styles, d.key)
+        links = export(d.key, d.title, styles, d.layers, d.view, out_dir)
+        kit = " · ".join(f'<a href="{html.escape(p)}">{html.escape(name)}</a>' for name, p in links)
+        style_json = html.escape(json.dumps(d.style, indent=2, ensure_ascii=False))
+        open_tag = "" if any(v.is_draft for v in d.variants) else ' <span class="badge open">open in draft</span>'
+        cards.append(
+            f'<section class="card" id="{d.key}"><h2>{html.escape(d.title)}{open_tag}</h2>'
+            f'<details class="draft-text"><summary>What the draft says</summary>{_requirement_text(d.requirements)}</details>'
+            f'<p class="question">{_inline_code(d.question)}</p><div class="variants">{"".join(figs)}</div>'
+            f'<p class="evidence">{_inline_code(d.evidence)}</p>{_sources(d.key)}'
+            f'<p class="kit">Render it yourself: {kit}</p>'
+            f"<details><summary>Style (CartoSym-JSON)</summary><pre>{style_json}</pre></details></section>"
+        )
+    if invalid:
+        raise SystemExit("Styles that do not validate against the CartoSym-JSON schema:\n  " + "\n  ".join(invalid))
+    zip_all(out_dir)
+    snap = REQUIREMENTS
+    snapshot = (f"Requirement text from branch <code>{html.escape(snap['branch'])}</code> at "
+                f"<code>{html.escape(snap['commit'])}</code>"
+                + (" with uncommitted TODO(review) notes" if snap["uncommitted_changes"] else "") + ".")
+    return f"""<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1"><title>CartoSym Draft Decisions</title>
+<style>{CSS}</style></head><body><main>
+<h1>CartoSym 2.0 draft: judgement calls, rendered</h1>
+<p class="lead">Where the spec text does not settle how a renderer should behave, the draft requirements in
+<a href="https://github.com/opengeospatial/cartographic-symbology/pull/133">PR #133</a> make a choice. Each card renders the same
+small map with the draft's choice and the alternatives. The draft renderer implements the draft, so the maps show what each choice
+looks like, not that it is the intended one; the real test is another renderer, so each card links its style, data and view
+settings (all in <a href="kit.zip">kit.zip</a>).</p>
+<p class="legend"><strong><a href="requirements.html">All 134 requirements and how each is checked →</a></strong></p>
+<p class="legend"><span class="badge">draft</span> the draft's choice. <span class="badge open">open in draft</span> the draft
+does not settle the question; the variant labelled "draft renderer's choice" is the proposed resolution. {snapshot}</p>
+<section class="card" id="matrix"><h2>Decision matrix</h2>
+<p class="question">Proposed resolutions from the PR author, for discussion at the review.</p>
+<div class="table-wrap"><table class="matrix"><thead><tr><th>Question</th><th>Draft says</th><th>Proposed resolution</th>
+<th>Status in PR #133</th><th>Question for the SWG</th></tr></thead><tbody>{_matrix_rows(all_decisions)}</tbody></table></div></section>
+{''.join(cards)}
+</main></body></html>"""
+
+
+def main(argv: list[str]) -> int:
+    out = Path(argv[0] if argv else "gallery/index.html")
+    from .requirements_page import build as build_requirements
+
+    req_page = build_requirements(out.parent)
+    out.write_text(build(out.parent), encoding="utf-8")  # last: it zips all kits, the samples' included
+    (out.parent / "requirements.html").write_text(req_page, encoding="utf-8")
+    print(f"Wrote {out.resolve()}, requirements.html and the render kits in {(out.parent / 'kit').resolve()}")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))

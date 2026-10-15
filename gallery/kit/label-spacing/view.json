@@ -1,0 +1,21 @@
+{
+  "card": "Units of label minSpacing",
+  "crs": "EPSG:25833",
+  "bbox": [
+    597000.0,
+    6643000.0,
+    598500.0,
+    6644000.0
+  ],
+  "width": 300,
+  "height": 200,
+  "scaleDenominator": 17857.1,
+  "pixelSize_mm": 0.28,
+  "layers": [
+    {
+      "id": "Roads",
+      "type": "vector"
+    }
+  ],
+  "note": "Render each layer with the style, at this extent and size. Coverage bands share one grid; a cell's properties are the band names (e.g. elevation, B04)."
+}

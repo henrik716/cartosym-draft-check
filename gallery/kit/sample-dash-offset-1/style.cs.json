@@ -1,0 +1,37 @@
+{
+  "stylingRules": [
+    {
+      "symbolizer": {
+        "stroke": {
+          "color": "black",
+          "width": {
+            "px": 5
+          },
+          "dashPattern": [
+            16,
+            8
+          ]
+        }
+      }
+    },
+    {
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "property": "offset"
+          },
+          true
+        ]
+      },
+      "symbolizer": {
+        "stroke": {
+          "alter": true,
+          "dashOffset": {
+            "px": 8
+          }
+        }
+      }
+    }
+  ]
+}

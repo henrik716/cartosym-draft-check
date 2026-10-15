@@ -1,0 +1,1 @@
+{"type": "FeatureCollection", "name": "Zones", "crs": {"type": "name", "properties": {"name": "urn:ogc:def:crs:EPSG::25833"}}, "features": [{"type": "Feature", "properties": {}, "geometry": {"type": "Polygon", "coordinates": [[[597070.0, 6643025.0], [597220.0, 6643025.0], [597220.0, 6643175.0], [597070.0, 6643175.0], [597070.0, 6643025.0]]]}}]}

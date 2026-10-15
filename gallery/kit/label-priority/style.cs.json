@@ -1,0 +1,67 @@
+{
+  "stylingRules": [
+    {
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "sysId": "dataLayer.id"
+          },
+          "Places"
+        ]
+      },
+      "symbolizer": {
+        "marker": {
+          "elements": [
+            {
+              "type": "Dot",
+              "stroke": {
+                "width": {
+                  "px": 6
+                },
+                "color": [
+                  27,
+                  38,
+                  49
+                ]
+              }
+            }
+          ]
+        },
+        "label": {
+          "elements": [
+            {
+              "type": "Text",
+              "text": {
+                "property": "name"
+              },
+              "position": [
+                {
+                  "px": 0
+                },
+                {
+                  "px": 12
+                }
+              ],
+              "font": {
+                "face": "sans-serif",
+                "size": 13,
+                "bold": true,
+                "color": [
+                  27,
+                  38,
+                  49
+                ]
+              }
+            }
+          ],
+          "placement": {
+            "priority": {
+              "property": "rank"
+            }
+          }
+        }
+      }
+    }
+  ]
+}

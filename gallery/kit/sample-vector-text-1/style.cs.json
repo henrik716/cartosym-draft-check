@@ -1,0 +1,63 @@
+{
+  "stylingRules": [
+    {
+      "symbolizer": {
+        "marker": {
+          "elements": [
+            {
+              "type": "Text",
+              "text": "Serif bold",
+              "alignment": [
+                "left",
+                "middle"
+              ],
+              "position": [
+                {
+                  "px": 0
+                },
+                {
+                  "px": 30
+                }
+              ],
+              "font": {
+                "face": "serif",
+                "size": 16,
+                "bold": true
+              }
+            },
+            {
+              "type": "Text",
+              "text": "Sans italic",
+              "font": {
+                "face": "sans-serif",
+                "size": 12,
+                "italic": true,
+                "color": "darkRed"
+              }
+            },
+            {
+              "type": "Text",
+              "text": "Monospace",
+              "alignment": [
+                "right",
+                "middle"
+              ],
+              "position": [
+                {
+                  "px": 0
+                },
+                {
+                  "px": -30
+                }
+              ],
+              "font": {
+                "face": "monospace",
+                "size": 10
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

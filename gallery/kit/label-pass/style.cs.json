@@ -1,0 +1,92 @@
+{
+  "stylingRules": [
+    {
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "sysId": "dataLayer.id"
+          },
+          "Harbours"
+        ]
+      },
+      "symbolizer": {
+        "zOrder": 1,
+        "marker": {
+          "elements": [
+            {
+              "type": "Dot",
+              "stroke": {
+                "width": {
+                  "px": 8
+                },
+                "color": [
+                  21,
+                  67,
+                  96
+                ]
+              }
+            }
+          ]
+        },
+        "label": {
+          "elements": [
+            {
+              "type": "Text",
+              "text": "Harbour",
+              "font": {
+                "face": "sans-serif",
+                "size": 16,
+                "bold": true,
+                "color": [
+                  21,
+                  67,
+                  96
+                ]
+              },
+              "position": [
+                {
+                  "px": 0
+                },
+                {
+                  "px": 16
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "sysId": "dataLayer.id"
+          },
+          "Piers"
+        ]
+      },
+      "symbolizer": {
+        "zOrder": 2,
+        "fill": {
+          "color": [
+            166,
+            172,
+            175
+          ]
+        },
+        "stroke": {
+          "color": [
+            86,
+            101,
+            115
+          ],
+          "width": {
+            "px": 1.5
+          }
+        }
+      }
+    }
+  ]
+}

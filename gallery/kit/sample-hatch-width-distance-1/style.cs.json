@@ -1,0 +1,72 @@
+{
+  "stylingRules": [
+    {
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "sysId": "dataLayer.id"
+          },
+          "A"
+        ]
+      },
+      "symbolizer": {
+        "fill": {
+          "color": "darkSlateBlue",
+          "hatch": {}
+        },
+        "stroke": {
+          "color": "darkSlateBlue"
+        }
+      }
+    },
+    {
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "sysId": "dataLayer.id"
+          },
+          "B"
+        ]
+      },
+      "symbolizer": {
+        "fill": {
+          "color": "darkSlateBlue",
+          "hatch": {
+            "width": {
+              "px": 3
+            }
+          }
+        },
+        "stroke": {
+          "color": "darkSlateBlue"
+        }
+      }
+    },
+    {
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "sysId": "dataLayer.id"
+          },
+          "C"
+        ]
+      },
+      "symbolizer": {
+        "fill": {
+          "color": "darkSlateBlue",
+          "hatch": {
+            "distance": {
+              "px": 20
+            }
+          }
+        },
+        "stroke": {
+          "color": "darkSlateBlue"
+        }
+      }
+    }
+  ]
+}

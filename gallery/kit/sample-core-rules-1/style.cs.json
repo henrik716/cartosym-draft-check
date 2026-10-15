@@ -1,0 +1,92 @@
+{
+  "stylingRules": [
+    {
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "sysId": "dataLayer.id"
+          },
+          "Parcels"
+        ]
+      },
+      "symbolizer": {
+        "fill": {
+          "color": "silver"
+        }
+      },
+      "nestedRules": [
+        {
+          "selector": {
+            "op": "=",
+            "args": [
+              {
+                "property": "landuse"
+              },
+              "forest"
+            ]
+          },
+          "symbolizer": {
+            "fill": {
+              "color": "forestGreen"
+            }
+          },
+          "nestedRules": [
+            {
+              "selector": {
+                "op": "<",
+                "args": [
+                  {
+                    "property": "area"
+                  },
+                  2000
+                ]
+              },
+              "symbolizer": {
+                "fill": {
+                  "color": "lightGreen"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "selector": {
+            "op": "=",
+            "args": [
+              {
+                "property": "landuse"
+              },
+              "lake"
+            ]
+          },
+          "symbolizer": {
+            "fill": {
+              "color": "steelBlue"
+            },
+            "stroke": {
+              "color": "navy",
+              "width": {
+                "px": 3
+              }
+            }
+          }
+        },
+        {
+          "selector": {
+            "op": "=",
+            "args": [
+              {
+                "property": "hidden"
+              },
+              true
+            ]
+          },
+          "symbolizer": {
+            "visibility": false
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "stylingRules": [
+    {
+      "symbolizer": {
+        "fill": {
+          "color": "lightSteelBlue"
+        },
+        "stroke": {
+          "color": "steelBlue",
+          "width": {
+            "px": 3
+          }
+        }
+      }
+    }
+  ]
+}

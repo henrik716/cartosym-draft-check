@@ -1,0 +1,35 @@
+{
+  "stylingRules": [
+    {
+      "symbolizer": {
+        "stroke": {
+          "color": [
+            247,
+            220,
+            111
+          ],
+          "width": {
+            "px": 14
+          },
+          "casing": {
+            "color": [
+              192,
+              57,
+              43
+            ],
+            "opacity": 0.6,
+            "width": {
+              "px": 22
+            }
+          },
+          "centerLine": {
+            "color": "white",
+            "width": {
+              "px": 2
+            }
+          }
+        }
+      }
+    }
+  ]
+}

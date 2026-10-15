@@ -1,0 +1,62 @@
+{
+  "stylingRules": [
+    {
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "sysId": "dataLayer.id"
+          },
+          "Roads"
+        ]
+      },
+      "symbolizer": {
+        "stroke": {
+          "color": [
+            230,
+            126,
+            34
+          ],
+          "width": {
+            "px": 5
+          },
+          "casing": {
+            "color": [
+              126,
+              60,
+              10
+            ],
+            "width": {
+              "px": 7
+            }
+          }
+        },
+        "label": {
+          "elements": [
+            {
+              "type": "Text",
+              "text": "E6",
+              "font": {
+                "face": "sans-serif",
+                "size": 10,
+                "bold": true,
+                "color": [
+                  27,
+                  38,
+                  49
+                ],
+                "outline": {
+                  "size": 2,
+                  "color": "white"
+                }
+              }
+            }
+          ],
+          "placement": {
+            "minSpacing": 60
+          }
+        }
+      }
+    }
+  ]
+}

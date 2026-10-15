@@ -1,0 +1,28 @@
+{
+  "stylingRules": [
+    {
+      "symbolizer": {
+        "stroke": {
+          "color": [
+            247,
+            220,
+            111
+          ],
+          "width": {
+            "px": 12
+          },
+          "casing": {
+            "color": [
+              77,
+              77,
+              77
+            ],
+            "width": {
+              "px": 16
+            }
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "stylingRules": [
+    {
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "sysId": "dataLayer.id"
+          },
+          "Background"
+        ]
+      },
+      "symbolizer": {
+        "fill": {
+          "color": [
+            52,
+            73,
+            94
+          ]
+        },
+        "stroke": {
+          "width": {
+            "px": 0
+          }
+        }
+      }
+    },
+    {
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "sysId": "dataLayer.id"
+          },
+          "Places"
+        ]
+      },
+      "symbolizer": {
+        "marker": {
+          "elements": [
+            {
+              "type": "Text",
+              "text": "Trondheim",
+              "font": {
+                "face": "Georgia",
+                "size": 22,
+                "bold": true,
+                "color": [
+                  27,
+                  38,
+                  49
+                ],
+                "outline": {
+                  "size": 2,
+                  "color": "white"
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "stylingRules": [
+    {
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "sysId": "dataLayer.id"
+          },
+          "Places"
+        ]
+      },
+      "symbolizer": {
+        "marker": {
+          "elements": [
+            {
+              "type": "Dot",
+              "stroke": {
+                "width": {
+                  "px": 8
+                },
+                "color": "darkRed"
+              }
+            }
+          ]
+        }
+      },
+      "nestedRules": [
+        {
+          "selector": {
+            "op": "<",
+            "args": [
+              {
+                "sysId": "viz.sd"
+              },
+              10000
+            ]
+          },
+          "symbolizer": {
+            "label": {
+              "elements": [
+                {
+                  "type": "Text",
+                  "text": {
+                    "property": "name"
+                  },
+                  "position": [
+                    {
+                      "px": 0
+                    },
+                    {
+                      "px": 12
+                    }
+                  ],
+                  "font": {
+                    "size": 11,
+                    "color": "black"
+                  }
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

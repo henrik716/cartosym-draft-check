@@ -1,0 +1,24 @@
+{
+  "stylingRules": [
+    {
+      "symbolizer": {
+        "stroke": {
+          "color": "red",
+          "width": {
+            "px": 3
+          }
+        }
+      }
+    },
+    {
+      "symbolizer": {
+        "stroke": {
+          "alter": true,
+          "width": {
+            "px": 10
+          }
+        }
+      }
+    }
+  ]
+}

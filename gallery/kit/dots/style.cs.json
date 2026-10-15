@@ -1,0 +1,102 @@
+{
+  "stylingRules": [
+    {
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "sysId": "dataLayer.id"
+          },
+          "Ground"
+        ]
+      },
+      "symbolizer": {
+        "fill": {
+          "color": [
+            223,
+            230,
+            211
+          ]
+        },
+        "stroke": {
+          "width": {
+            "px": 0
+          }
+        }
+      }
+    },
+    {
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "sysId": "dataLayer.id"
+          },
+          "Stipple"
+        ]
+      },
+      "symbolizer": {
+        "fill": {
+          "color": [
+            30,
+            86,
+            49
+          ],
+          "stipple": {
+            "ratio": 0.15
+          }
+        },
+        "stroke": {
+          "color": [
+            30,
+            86,
+            49
+          ],
+          "width": {
+            "px": 1.5
+          }
+        }
+      }
+    },
+    {
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "sysId": "dataLayer.id"
+          },
+          "Dots"
+        ]
+      },
+      "symbolizer": {
+        "fill": {
+          "color": [
+            30,
+            86,
+            49
+          ],
+          "dotpattern": {
+            "distance": {
+              "horizontal": {
+                "px": 14
+              },
+              "vertical": {
+                "px": 14
+              }
+            }
+          }
+        },
+        "stroke": {
+          "color": [
+            30,
+            86,
+            49
+          ],
+          "width": {
+            "px": 1.5
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "stylingRules": [
+    {
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "sysId": "dataLayer.id"
+          },
+          "A"
+        ]
+      },
+      "symbolizer": {
+        "fill": {
+          "color": "saddleBrown",
+          "dotpattern": {
+            "distance": {
+              "horizontal": {
+                "px": 8
+              },
+              "vertical": {
+                "px": 8
+              }
+            }
+          }
+        },
+        "stroke": {
+          "color": "saddleBrown"
+        }
+      }
+    },
+    {
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "sysId": "dataLayer.id"
+          },
+          "B"
+        ]
+      },
+      "symbolizer": {
+        "fill": {
+          "color": "saddleBrown",
+          "dotpattern": {
+            "distance": {
+              "horizontal": {
+                "px": 20
+              },
+              "vertical": {
+                "px": 8
+              }
+            }
+          }
+        },
+        "stroke": {
+          "color": "saddleBrown"
+        }
+      }
+    }
+  ]
+}

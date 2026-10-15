@@ -1,0 +1,116 @@
+{
+  "stylingRules": [
+    {
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "sysId": "dataLayer.id"
+          },
+          "Band"
+        ]
+      },
+      "symbolizer": {
+        "fill": {
+          "color": "darkSlateGray"
+        },
+        "stroke": {
+          "width": {
+            "px": 0
+          }
+        }
+      }
+    },
+    {
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "sysId": "dataLayer.id"
+          },
+          "L1"
+        ]
+      },
+      "symbolizer": {
+        "marker": {
+          "elements": [
+            {
+              "type": "Text",
+              "text": "Outline 1 px",
+              "font": {
+                "size": 18,
+                "bold": true,
+                "color": "black",
+                "outline": {
+                  "size": 1,
+                  "color": "white"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "sysId": "dataLayer.id"
+          },
+          "L2"
+        ]
+      },
+      "symbolizer": {
+        "marker": {
+          "elements": [
+            {
+              "type": "Text",
+              "text": "Outline 4 px",
+              "font": {
+                "size": 18,
+                "bold": true,
+                "color": "black",
+                "outline": {
+                  "size": 4,
+                  "color": "yellow"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "sysId": "dataLayer.id"
+          },
+          "L3"
+        ]
+      },
+      "symbolizer": {
+        "marker": {
+          "elements": [
+            {
+              "type": "Text",
+              "text": "Opacity 0.3",
+              "font": {
+                "size": 18,
+                "bold": true,
+                "color": "black",
+                "outline": {
+                  "size": 4,
+                  "color": "white",
+                  "opacity": 0.3
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

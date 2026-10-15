@@ -1,0 +1,27 @@
+{
+  "stylingRules": [
+    {
+      "symbolizer": {
+        "fill": {
+          "color": "lightSteelBlue"
+        },
+        "stroke": {
+          "color": "steelBlue"
+        },
+        "marker": {
+          "elements": [
+            {
+              "type": "Dot",
+              "stroke": {
+                "width": {
+                  "px": 6
+                },
+                "color": "black"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

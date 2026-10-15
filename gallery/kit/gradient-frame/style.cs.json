@@ -1,0 +1,45 @@
+{
+  "stylingRules": [
+    {
+      "symbolizer": {
+        "fill": {
+          "gradient": {
+            "type": "radial",
+            "position": [
+              0.5,
+              0.5
+            ],
+            "size": 1,
+            "keys": [
+              {
+                "color": [
+                  253,
+                  187,
+                  45
+                ]
+              },
+              {
+                "color": [
+                  26,
+                  42,
+                  108
+                ],
+                "percent": 1
+              }
+            ]
+          }
+        },
+        "stroke": {
+          "color": [
+            51,
+            51,
+            51
+          ],
+          "width": {
+            "px": 1
+          }
+        }
+      }
+    }
+  ]
+}
