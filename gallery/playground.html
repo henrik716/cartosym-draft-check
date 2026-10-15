@@ -49,8 +49,37 @@ main { max-width: 1320px; }
 #status.error { color: #b03a2e; white-space: pre-wrap; font-family: ui-monospace, Consolas, monospace; font-size: 12px; }
 .row { display: flex; gap: 8px; align-items: center; margin: 8px 0; flex-wrap: wrap; }
 button { font: inherit; font-size: 13px; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--line); background: var(--card); color: var(--fg); cursor: pointer; }
-</style></head><body><main>
-<p><a href="index.html">← Gallery</a> · <a href="requirements.html">Requirements</a></p>
+
+[id] { scroll-margin-top: 64px; }
+.topbar { position: sticky; top: 0; z-index: 10; background: var(--card); border-bottom: 1px solid var(--line); }
+.topbar-in { max-width: 1600px; margin: 0 auto; padding: 8px 16px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.topbar .brand { font-weight: 600; margin-right: 6px; }
+.topbar nav { display: flex; gap: 4px; }
+.topbar nav a { padding: 4px 10px; border-radius: 6px; text-decoration: none; color: var(--fg); font-size: 14px; }
+.topbar nav a:hover { background: var(--bg); }
+.topbar nav a.active { background: var(--accent-bg); color: var(--accent); font-weight: 600; }
+.topbar .jump { margin-left: auto; max-width: 320px; font: inherit; font-size: 13px; padding: 4px 6px; border-radius: 6px;
+  border: 1px solid var(--line); background: var(--card); color: var(--fg); }
+.layout { max-width: 1600px; margin: 0 auto; }
+.toc { display: none; }
+@media (min-width: 1500px) {
+  .layout.has-toc { display: grid; grid-template-columns: 250px minmax(0, 1fr); }
+  .layout.has-toc .toc { display: block; position: sticky; top: 50px; align-self: start; max-height: calc(100vh - 60px);
+    overflow: auto; padding: 28px 8px 24px 16px; font-size: 13px; }
+  body.has-toc .jump { display: none; }
+  .layout.has-toc main { margin: 0; width: 100%; }
+}
+.toc a { display: block; padding: 2px 8px; border-radius: 5px; color: var(--muted); text-decoration: none; line-height: 1.35; margin: 1px 0; }
+.toc a:hover { color: var(--fg); background: var(--bg); }
+.toc a.current { color: var(--accent); background: var(--accent-bg); }
+.toc .toc-group { font-weight: 600; color: var(--fg); margin-top: 12px; }
+.toc .open-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; border: 1px solid var(--muted); margin-left: 5px; vertical-align: middle; }
+.permalink { margin-left: 8px; font-size: 15px; color: var(--muted); text-decoration: none; opacity: .5; }
+.permalink:hover, .permalink.copied { opacity: 1; color: var(--accent); }
+.up { margin-left: 10px; font-size: 13px; white-space: nowrap; }
+</style></head><body>
+<header class="topbar"><div class="topbar-in"><span class="brand">CartoSym draft check</span><nav aria-label="Pages"><a href="index.html">Gallery</a><a href="requirements.html">Requirements</a><a href="playground.html" class="active">Playground</a></nav></div></header>
+<main>
 <h1>Playground</h1>
 <p class="lead">Edit a card's style, or switch between its variants, and the draft renderer draws it again. The renderer runs in your
 browser (Python, through Pyodide); the first load takes a few seconds. Coverage cards take a second or two to draw.</p>

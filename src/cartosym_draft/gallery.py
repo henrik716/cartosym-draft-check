@@ -8,6 +8,7 @@ from __future__ import annotations
 import copy
 import html
 import json
+import re
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -15,6 +16,7 @@ from urllib.parse import quote
 
 from . import sample_data
 from .kit import export, zip_all
+from .nav import NAV_CSS, NAV_SCRIPT, permalink, toc, topbar
 from .review import EXTRA_ROWS, MATRIX, SOURCES
 from .options import Options
 from .render import Layer, View, render
@@ -724,11 +726,14 @@ def build(out_dir: Path) -> str:
     group = ""
     invalid: list[str] = []
     all_decisions = decisions()
+    contents: list[tuple[str | None, str, bool]] = [("matrix", "Decision matrix", False)]
     for d in all_decisions:
         figs = []
         if d.group != group:
             group = d.group
-            cards.append(f'<h2 class="group">{html.escape(group)}</h2>')
+            group_id = "g-" + re.sub(r"[^a-z0-9]+", "-", group.lower()).strip("-")
+            cards.append(f'<h2 class="group" id="{group_id}">{html.escape(group)}</h2>')
+            contents.append((None, group, False))
             if group.startswith("Part 1: coverage"):
                 cards.append('<p class="note">On synthetic data (see the README): a 15 × 10 km area with 100 m cells. '
                              "The styles are the spec's examples, unchanged unless the question says otherwise.</p>")
@@ -743,14 +748,16 @@ def build(out_dir: Path) -> str:
         invalid += _check_styles(styles, d.key)
         links = export(d.key, d.title, styles, d.layers, d.view, out_dir)
         kit = " · ".join(f'<a href="{html.escape(p)}">{html.escape(name)}</a>' for name, p in links)
-        open_tag = "" if any(v.is_draft for v in d.variants) else ' <span class="badge open">open in draft</span>'
+        is_open = not any(v.is_draft for v in d.variants)
+        open_tag = ' <span class="badge open">open in draft</span>' if is_open else ""
+        contents.append((d.key, d.title, is_open))
         cards.append(
-            f'<section class="card" id="{d.key}"><h2>{html.escape(d.title)}{open_tag}</h2>'
+            f'<section class="card" id="{d.key}"><h2>{html.escape(d.title)}{open_tag}{permalink(d.key)}</h2>'
             f'<details class="draft-text"><summary>What the draft says</summary>{_requirement_text(d.requirements)}</details>'
             f'<p class="question">{_inline_code(d.question)}</p>'
             f'<div class="card-body"><div class="variants">{"".join(figs)}</div>{style_pane("json-" + d.key, d.style, d.key)}</div>'
             f'<p class="evidence">{_inline_code(d.evidence)}</p>{_sources(d.key)}'
-            f'<p class="kit">Render it yourself: {kit}</p></section>'
+            f'<p class="kit">Render it yourself: {kit}<a class="up" href="#matrix">↑ Matrix</a></p></section>'
         )
     if invalid:
         raise SystemExit("Styles that do not validate against the CartoSym-JSON schema:\n  " + "\n  ".join(invalid))
@@ -761,7 +768,9 @@ def build(out_dir: Path) -> str:
                 + (" with uncommitted TODO(review) notes" if snap["uncommitted_changes"] else "") + ".")
     return f"""<!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1"><title>CartoSym Draft Decisions</title>
-<style>{CSS}</style></head><body><main>
+<style>{CSS}{NAV_CSS}</style></head><body class="has-toc">
+{topbar("index.html", [(a, label) for a, label, _ in contents])}
+<div class="layout has-toc">{toc(contents)}<main>
 <h1>CartoSym 2.0 draft: judgement calls, rendered</h1>
 <p class="lead">Where the spec text does not settle how a renderer should behave, the draft requirements in
 <a href="https://github.com/opengeospatial/cartographic-symbology/pull/133">PR #133</a> make a choice. Each card renders the same
@@ -772,12 +781,12 @@ settings (all in <a href="kit.zip">kit.zip</a>).</p>
 <strong><a href="playground.html">Playground: edit a style and see it rendered →</a></strong></p>
 <p class="legend"><span class="badge">draft</span> the draft's choice. <span class="badge open">open in draft</span> the draft
 does not settle the question; the variant labelled "draft renderer's choice" is the proposed resolution. {snapshot}</p>
-<section class="card" id="matrix"><h2>Decision matrix</h2>
+<section class="card" id="matrix"><h2>Decision matrix{permalink("matrix")}</h2>
 <p class="question">Proposed resolutions from the PR author, for discussion at the review.</p>
 <div class="table-wrap"><table class="matrix"><thead><tr><th>Question</th><th>Draft says</th><th>Proposed resolution</th>
 <th>Status in PR #133</th><th>Question for the SWG</th></tr></thead><tbody>{_matrix_rows(all_decisions)}</tbody></table></div></section>
 {''.join(cards)}
-</main>{COPY_SCRIPT}</body></html>"""
+</main></div>{COPY_SCRIPT}{NAV_SCRIPT}</body></html>"""
 
 
 def main(argv: list[str]) -> int:

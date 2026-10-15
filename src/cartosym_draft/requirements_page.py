@@ -4,11 +4,13 @@ from __future__ import annotations
 
 import html
 import json
+import re
 from collections import defaultdict
 from pathlib import Path
 
 from .gallery import COPY_SCRIPT, CSS, PR_FILES, REQUIREMENTS, _check_styles, _inline_code, decisions, style_pane
 from .kit import export
+from .nav import NAV_CSS, NAV_SCRIPT, permalink, toc, topbar
 from .render import render
 from .samples import annotate, samples
 
@@ -72,6 +74,7 @@ def build(out_dir: Path) -> str:
     shown: set[str] = set()  # each sample once, under the first class that uses it
     counts: dict[str, int] = defaultdict(int)
     sections = []
+    contents: list[tuple[str | None, str, bool]] = [(None, "Requirements classes", False)]
     # Core (clause 7) first, then the other classes in file order.
     for file, rids in sorted(groups.items(), key=lambda kv: (0 if "clause_7" in kv[0] else 1, kv[0])):
         rows = []
@@ -106,7 +109,7 @@ def build(out_dir: Path) -> str:
             counts["requirements"] += 1
             parts = "".join(f"<li>{_inline_code(p)}</li>" for p in r["parts"])
             rows.append(
-                f'<tr id="r{rid.replace("/", "-")}"><td><a href="{PR_FILES}{r["file"]}#L{r["line"]}"><code>{html.escape(rid)}</code></a>'
+                f'<tr id="r{rid.replace("/", "-")}" data-status="{" ".join(status)}"><td><a href="{PR_FILES}{r["file"]}#L{r["line"]}"><code>{html.escape(rid)}</code></a>'
                 f'<details><summary>text</summary><ul>{parts}</ul></details></td>'
                 f'<td>{" ".join(f"<span class=chip>{html.escape(s)}</span>" for s in status)}</td>'
                 f'<td>{"<br>".join(evidence)}</td></tr>')
@@ -133,30 +136,70 @@ def build(out_dir: Path) -> str:
                         f'<div class="reqs">{reqs}</div><p class="question"><strong>Check:</strong> {_inline_code(s.check)}</p>'
                         f'<div class="card-body"><div class="variants">{"".join(panels)}</div><div>{panes}</div></div></section>')
         title = file.split("/")[-1].replace(".adoc", "")
+        if title == "clause_7_core":
+            title = "core (clause 7)"
+        class_id = "c-" + re.sub(r"[^a-z0-9]+", "-", title.lower()).strip("-")
+        contents.append((class_id, f"{title} ({len(rids)})", False))
         sections.append(
-            f'<section class="card"><h2>{html.escape(title)}</h2><p class="note">{html.escape(file)}</p>'
+            f'<div class="req-class" id="{class_id}"><section class="card"><h2>{html.escape(title)}{permalink(class_id)}</h2>'
+            f'<p class="note">{html.escape(file)}</p>'
             f'<div class="table-wrap"><table class="reqtable"><thead><tr><th>Requirement</th><th>Checked by</th>'
-            f'<th>Evidence</th></tr></thead><tbody>{"".join(rows)}</tbody></table></div></section>{"".join(figs)}')
+            f'<th>Evidence</th></tr></thead><tbody>{"".join(rows)}</tbody></table></div></section>{"".join(figs)}</div>')
     if invalid:
         raise SystemExit("Sample styles that do not validate against the CartoSym-JSON schema:\n  " + "\n  ".join(invalid))
     summary = (f"{counts['requirements']} requirements: {counts['card']} with a gallery card, {counts['sample']} with a sample "
                f"render, {counts['tested']} with test cases, {counts['encoding']} checked as encodings, "
                f"{counts['partly']} partly and {counts['not implemented']} not implemented"
                + (f", {counts['none']} with no check" if counts.get("none") else "") + ". A requirement can be checked in more than one way.")
+    labels = [("", "All"), ("card", "Gallery card"), ("sample", "Sample"), ("tested", "Tested"), ("encoding", "Encoding"),
+              ("partly", "Partly"), ("not implemented", "Not implemented")]
+    filters = "".join(
+        f'<button type="button" data-status="{st}" aria-pressed="{"true" if not st else "false"}">{lab}'
+        + (f" ({counts[st]})" if st else "") + "</button>" for st, lab in labels)
     return f"""<!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1"><title>CartoSym Draft Requirements</title>
 <style>{CSS}
 .chip {{ display:inline-block; font-size: 11.5px; padding: 1px 7px; border-radius: 99px; background: var(--bg); border: 1px solid var(--line); margin: 1px 2px; white-space: nowrap; }}
 .gap {{ color: #b03a2e; }} .reqtable td {{ font-size: 13.5px; vertical-align: top; }} .reqtable details {{ font-size: 13px; }}
 .sample h3 {{ margin: 0 0 4px; font-size: 16px; }}
-</style></head><body><main>
-<p><a href="index.html">← Judgement calls (gallery)</a></p>
+.filters {{ display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin: 14px 0 4px; }}
+.filters button {{ font: inherit; font-size: 13px; padding: 3px 10px; border-radius: 99px; border: 1px solid var(--line);
+  background: var(--card); color: var(--fg); cursor: pointer; }}
+.filters button[aria-pressed="true"] {{ background: var(--accent-bg); color: var(--accent); border-color: var(--accent); font-weight: 600; }}
+#shown {{ font-size: 13px; color: var(--muted); }}
+{NAV_CSS}</style></head><body class="has-toc">
+{topbar("requirements.html", [(a, label) for a, label, _ in contents if a])}
+<div class="layout has-toc">{toc(contents)}<main>
 <h1>CartoSym 2.0 draft: every requirement in PR #133</h1>
 <p class="lead">Each requirement with its text, how it is checked, and links to the evidence: a gallery card for judgement calls,
 a sample render (below each class) for straightforward visual requirements, test cases for expressions, or a note for
 encodings. Samples show what the draft renderer draws; "Check" says what to look for. {summary}</p>
+<div class="filters" role="group" aria-label="Show requirements checked by">{filters}<span id="shown"></span></div>
 {"".join(sections)}
-</main>{COPY_SCRIPT}</body></html>"""
+</main></div>{COPY_SCRIPT}{NAV_SCRIPT}
+<script>
+(() => {{
+  const buttons = [...document.querySelectorAll(".filters button")];
+  const shown = document.getElementById("shown");
+  function apply(status) {{
+    buttons.forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.status === status)));
+    let n = 0;
+    for (const cls of document.querySelectorAll(".req-class")) {{
+      let visible = 0;
+      for (const row of cls.querySelectorAll("tr[data-status]")) {{
+        const on = !status || row.dataset.status.split(" ").includes(status) || row.dataset.status.includes(status);
+        row.hidden = !on; if (on) visible++;
+      }}
+      cls.hidden = visible === 0;
+      cls.querySelectorAll(".sample").forEach((s) => (s.hidden = !!status && status !== "sample"));
+      n += visible;
+    }}
+    shown.textContent = status ? `${{n}} requirement${{n === 1 ? "" : "s"}} shown` : "";
+  }}
+  buttons.forEach((b) => b.addEventListener("click", () => apply(b.getAttribute("aria-pressed") === "true" ? "" : b.dataset.status)));
+}})();
+</script>
+</body></html>"""
 
 
 __all__ = ["build"]

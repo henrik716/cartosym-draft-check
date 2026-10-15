@@ -80,8 +80,9 @@ main { max-width: 1320px; }
 #status.error { color: #b03a2e; white-space: pre-wrap; font-family: ui-monospace, Consolas, monospace; font-size: 12px; }
 .row { display: flex; gap: 8px; align-items: center; margin: 8px 0; flex-wrap: wrap; }
 button { font: inherit; font-size: 13px; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--line); background: var(--card); color: var(--fg); cursor: pointer; }
-</style></head><body><main>
-<p><a href="index.html">← Gallery</a> · <a href="requirements.html">Requirements</a></p>
+__NAVCSS__</style></head><body>
+__TOPBAR__
+<main>
 <h1>Playground</h1>
 <p class="lead">Edit a card's style, or switch between its variants, and the draft renderer draws it again. The renderer runs in your
 browser (Python, through Pyodide); the first load takes a few seconds. Coverage cards take a second or two to draw.</p>
@@ -223,7 +224,11 @@ def draw(entry, style, options):
 
 def write(out_dir: Path, decisions, samples, css: str) -> None:
     (out_dir / "playground-data.json").write_text(json.dumps(data(decisions, samples), ensure_ascii=False), encoding="utf-8")
-    (out_dir / "playground.html").write_text(PAGE.replace("__CSS__", css).replace("__PYODIDE__", PYODIDE), encoding="utf-8")
+    from .nav import NAV_CSS, topbar
+
+    page = (PAGE.replace("__CSS__", css).replace("__NAVCSS__", NAV_CSS).replace("__TOPBAR__", topbar("playground.html"))
+            .replace("__PYODIDE__", PYODIDE))
+    (out_dir / "playground.html").write_text(page, encoding="utf-8")
 
 
 __all__ = ["data", "write"]

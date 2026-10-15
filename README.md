@@ -8,7 +8,7 @@ Requirements written without an implementation are hard to get right. This repos
 
 | | Where | What it is |
 |---|---|---|
-| **Render gallery** | [`gallery/index.html`](gallery/index.html) | For decisions. A decision matrix with a proposed resolution for each question, then 25 cards, one per judgement call: the requirement text, the same map rendered with the draft's choice and the alternatives, and sources. Start here. |
+| **Render gallery** | [`gallery/index.html`](gallery/index.html) | For decisions. A decision matrix with a proposed resolution for each question, then 23 cards, one per judgement call: the requirement text, the same map rendered with the draft's choice and the alternatives, and sources. Start here. |
 | **Requirements** | [`gallery/requirements.html`](gallery/requirements.html) | For verification. All 134 requirements in the PR, each with its text, how it is checked and a link to the evidence. Straightforward visual requirements get one of 15 sample renders, with a "Check" line saying what to look for. |
 | **Playground** | [`gallery/playground.html`](gallery/playground.html) | Pick any card or sample, edit its style or switch between its variants, and see it rendered again. The draft renderer runs in the browser through [Pyodide](https://pyodide.org). |
 | **Render kits** | [`gallery/kit/`](gallery/kit/), [`gallery/kit.zip`](gallery/kit.zip) | The style, data and view settings of every card and sample, to render the same maps with another renderer. |
