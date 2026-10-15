@@ -38,6 +38,7 @@ class Grid:
     cols: int
     rows: int
     bands: dict[str, list[list[Any]]] = field(default_factory=dict)
+    name: str = ""  # which sample_data function made it, for the playground
 
     @property
     def cell_size(self) -> float:

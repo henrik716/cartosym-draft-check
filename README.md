@@ -10,6 +10,7 @@ Requirements written without an implementation are hard to get right. This repos
 |---|---|---|
 | **Render gallery** | [`gallery/index.html`](gallery/index.html) | For decisions. A decision matrix with a proposed resolution for each question, then 25 cards, one per judgement call: the requirement text, the same map rendered with the draft's choice and the alternatives, and sources. Start here. |
 | **Requirements** | [`gallery/requirements.html`](gallery/requirements.html) | For verification. All 134 requirements in the PR, each with its text, how it is checked and a link to the evidence. Straightforward visual requirements get one of 15 sample renders, with a "Check" line saying what to look for. |
+| **Playground** | [`gallery/playground.html`](gallery/playground.html) | Pick any card or sample, edit its style or switch between its variants, and see it rendered again. The draft renderer runs in the browser through [Pyodide](https://pyodide.org). |
 | **Render kits** | [`gallery/kit/`](gallery/kit/), [`gallery/kit.zip`](gallery/kit.zip) | The style, data and view settings of every card and sample, to render the same maps with another renderer. |
 | **Draft renderer** | [`src/cartosym_draft/`](src/cartosym_draft/) | A CQL2 expression evaluator and SVG renderer that does what the draft requirements say. Each open behavior is a switchable option ([`options.py`](src/cartosym_draft/options.py)). |
 | **Test harness** | [`harness/`](harness/), [`cases/`](cases/) | 92 test cases whose expected values are taken from the requirement text. Each case is run through libCartoSym, pycartosym and the draft renderer. |
@@ -65,6 +66,8 @@ uv run python tools/extract_requirements.py         # requirement text and JSON 
 uv run python harness/run.py                        # test report; the requirements page reads its results
 uv run python -m cartosym_draft.gallery gallery/index.html   # gallery, requirements page and render kits
 ```
+
+The playground loads the renderer's Python files over HTTP, so open it from GitHub Pages or a local web server (`python -m http.server` in the repository root, then http://localhost:8000/gallery/playground.html), not as a file.
 
 `extract_requirements.py` reads the checked-out branch of `../cartographic-symbology` (the PR branch, `requirements-placeholders`). Run it again after the requirements change.
 

@@ -579,7 +579,7 @@ CSS = """
 @media (prefers-color-scheme: dark) { :root { --bg:#16181d; --fg:#e8e6e1; --muted:#a3a9b3; --card:#1f2229; --line:#30343c; --accent:#5fd3a2; --accent-bg:#1c3229; } }
 * { box-sizing: border-box; }
 body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
-main { max-width: 1060px; margin: 0 auto; padding: 32px 16px 64px; }
+main { max-width: 1320px; margin: 0 auto; padding: 32px 16px 64px; }
 h1 { font-size: 26px; margin: 0 0 6px; } h2 { font-size: 19px; margin: 0 0 4px; }
 .lead { color: var(--muted); max-width: 760px; }
 .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 20px; margin: 22px 0; }
@@ -601,7 +601,60 @@ table { border-collapse: collapse; width: 100%; font-size: 14px; } th, td { text
 .matrix td, .matrix th { font-size: 13.5px; vertical-align: top; }
 a { color: var(--accent); }
 h2.group { font-size: 21px; margin: 40px 0 0; }
+.card-body { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; align-items: start; }
+@media (min-width: 1100px) { .card-body { grid-template-columns: minmax(0, 1fr) 380px; } }
+.style-pane { min-width: 0; }
+.pane-head { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); margin-bottom: 4px; flex-wrap: wrap; }
+.pane-head strong { color: var(--fg); margin-right: auto; }
+.pane-head button { font: inherit; font-size: 12px; padding: 2px 8px; border-radius: 6px; border: 1px solid var(--line); background: var(--card); color: var(--fg); cursor: pointer; }
+.json { max-height: 460px; overflow: auto; font: 12px/1.45 ui-monospace, Consolas, monospace; margin: 0; }
+.json .k { color: #7a3e9d; } .json .s { color: #1a7f5a; } .json .n { color: #b35900; } .json .b { color: #2357b0; }
+@media (prefers-color-scheme: dark) { .json .k { color: #d7a6f2; } .json .s { color: #7fd8a9; } .json .n { color: #f0a868; } .json .b { color: #8fb4ff; } }
 """
+
+COPY_SCRIPT = """<script>
+document.addEventListener("click", (e) => {
+  const b = e.target.closest("button[data-copy]");
+  if (!b || !navigator.clipboard) return;
+  navigator.clipboard.writeText(document.getElementById(b.dataset.copy).textContent);
+  const t = b.textContent; b.textContent = "Copied"; setTimeout(() => (b.textContent = t), 1200);
+});
+</script>"""
+
+
+def compact_json(obj) -> str:
+    """json.dumps with indent 2, but arrays of plain values (colors, positions) on one line."""
+    import re
+    text = json.dumps(obj, indent=2, ensure_ascii=False)
+    plain = re.compile(r'\[\s*((?:-?[\d.eE+-]+|true|false|null|"[^"\,\[\]{}]*")(?:,\s*(?:-?[\d.eE+-]+|true|false|null|"[^"\,\[\]{}]*"))*)\s*\]')
+    return plain.sub(lambda m: "[" + ", ".join(x.strip() for x in m.group(1).split(",")) + "]", text)
+
+
+def json_html(obj) -> str:
+    """Pretty JSON with keys, strings, numbers and literals wrapped for coloring."""
+    import re
+    text = compact_json(obj)
+    token = re.compile(r'("(?:[^"\\]|\\.)*")(\s*:)?|(-?\d+(?:\.\d+)?(?:[eE][-+]?\d+)?)|\b(true|false|null)\b')
+    out, pos = [], 0
+    for m in token.finditer(text):
+        out.append(html.escape(text[pos:m.start()]))
+        if m.group(1):
+            cls = "k" if m.group(2) else "s"
+            out.append(f'<span class="{cls}">{html.escape(m.group(1))}</span>{html.escape(m.group(2) or "")}')
+        elif m.group(3):
+            out.append(f'<span class="n">{m.group(3)}</span>')
+        else:
+            out.append(f'<span class="b">{m.group(4)}</span>')
+        pos = m.end()
+    out.append(html.escape(text[pos:]))
+    return "".join(out)
+
+
+def style_pane(pane_id: str, style: dict, playground_key: str, title: str = "Style (CartoSym-JSON)") -> str:
+    return (f'<aside class="style-pane"><div class="pane-head"><strong>{html.escape(title)}</strong>'
+            f'<button type="button" data-copy="{pane_id}">Copy</button>'
+            f'<a href="playground.html#{playground_key}">Edit in playground</a></div>'
+            f'<pre class="json" id="{pane_id}">{json_html(style)}</pre></aside>')
 
 
 REQUIREMENTS = json.loads((Path(__file__).parent / "requirements.json").read_text(encoding="utf-8"))
@@ -690,15 +743,14 @@ def build(out_dir: Path) -> str:
         invalid += _check_styles(styles, d.key)
         links = export(d.key, d.title, styles, d.layers, d.view, out_dir)
         kit = " · ".join(f'<a href="{html.escape(p)}">{html.escape(name)}</a>' for name, p in links)
-        style_json = html.escape(json.dumps(d.style, indent=2, ensure_ascii=False))
         open_tag = "" if any(v.is_draft for v in d.variants) else ' <span class="badge open">open in draft</span>'
         cards.append(
             f'<section class="card" id="{d.key}"><h2>{html.escape(d.title)}{open_tag}</h2>'
             f'<details class="draft-text"><summary>What the draft says</summary>{_requirement_text(d.requirements)}</details>'
-            f'<p class="question">{_inline_code(d.question)}</p><div class="variants">{"".join(figs)}</div>'
+            f'<p class="question">{_inline_code(d.question)}</p>'
+            f'<div class="card-body"><div class="variants">{"".join(figs)}</div>{style_pane("json-" + d.key, d.style, d.key)}</div>'
             f'<p class="evidence">{_inline_code(d.evidence)}</p>{_sources(d.key)}'
-            f'<p class="kit">Render it yourself: {kit}</p>'
-            f"<details><summary>Style (CartoSym-JSON)</summary><pre>{style_json}</pre></details></section>"
+            f'<p class="kit">Render it yourself: {kit}</p></section>'
         )
     if invalid:
         raise SystemExit("Styles that do not validate against the CartoSym-JSON schema:\n  " + "\n  ".join(invalid))
@@ -716,7 +768,8 @@ def build(out_dir: Path) -> str:
 small map with the draft's choice and the alternatives. The draft renderer implements the draft, so the maps show what each choice
 looks like, not that it is the intended one; the real test is another renderer, so each card links its style, data and view
 settings (all in <a href="kit.zip">kit.zip</a>).</p>
-<p class="legend"><strong><a href="requirements.html">All 134 requirements and how each is checked →</a></strong></p>
+<p class="legend"><strong><a href="requirements.html">All 134 requirements and how each is checked →</a></strong> ·
+<strong><a href="playground.html">Playground: edit a style and see it rendered →</a></strong></p>
 <p class="legend"><span class="badge">draft</span> the draft's choice. <span class="badge open">open in draft</span> the draft
 does not settle the question; the variant labelled "draft renderer's choice" is the proposed resolution. {snapshot}</p>
 <section class="card" id="matrix"><h2>Decision matrix</h2>
@@ -724,14 +777,17 @@ does not settle the question; the variant labelled "draft renderer's choice" is 
 <div class="table-wrap"><table class="matrix"><thead><tr><th>Question</th><th>Draft says</th><th>Proposed resolution</th>
 <th>Status in PR #133</th><th>Question for the SWG</th></tr></thead><tbody>{_matrix_rows(all_decisions)}</tbody></table></div></section>
 {''.join(cards)}
-</main></body></html>"""
+</main>{COPY_SCRIPT}</body></html>"""
 
 
 def main(argv: list[str]) -> int:
     out = Path(argv[0] if argv else "gallery/index.html")
+    from . import playground
     from .requirements_page import build as build_requirements
+    from .samples import samples
 
     req_page = build_requirements(out.parent)
+    playground.write(out.parent, decisions(), samples(), CSS)
     out.write_text(build(out.parent), encoding="utf-8")  # last: it zips all kits, the samples' included
     (out.parent / "requirements.html").write_text(req_page, encoding="utf-8")
     print(f"Wrote {out.resolve()}, requirements.html and the render kits in {(out.parent / 'kit').resolve()}")

@@ -42,7 +42,7 @@ def dem() -> Grid:
                 z -= 1100 * coast * coast
             row.append(round(z, 1))
         rows.append(row)
-    return Grid(BBOX, COLS, ROWS, {"elevation": rows})
+    return Grid(BBOX, COLS, ROWS, {"elevation": rows}, name="dem")
 
 
 def pyramids() -> Grid:
@@ -52,7 +52,7 @@ def pyramids() -> Grid:
     for _, cells in _cells():
         rows.append([round(max([200.0] + [200 + h - 0.9 * (abs(x - px) + abs(y - py)) for px, py, h in peaks]), 1)
                      for x, y in cells])
-    return Grid(BBOX, COLS, ROWS, {"elevation": rows})
+    return Grid(BBOX, COLS, ROWS, {"elevation": rows}, name="pyramids")
 
 
 # NDVI of 2 km parcels, read row by row from the north-west corner.
@@ -90,7 +90,8 @@ def sentinel2() -> Grid:
         b04.append(r04)
         b08.append(r08)
         scl.append(rscl)
-    return Grid(BBOX, COLS, ROWS, {"B02": b02, "B03": b03, "B04": b04, "B08": b08, "SCL": scl})
+    return Grid(BBOX, COLS, ROWS, {"B02": b02, "B03": b03, "B04": b04, "B08": b08, "SCL": scl},
+                name="sentinel2")
 
 
 __all__ = ["BBOX", "dem", "pyramids", "sentinel2"]

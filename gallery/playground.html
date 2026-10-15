@@ -1,0 +1,188 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1"><title>CartoSym Draft Playground</title>
+<style>
+:root { --bg:#fbfaf7; --fg:#1f2328; --muted:#5b6370; --card:#fff; --line:#e3e0d8; --accent:#1a7f5a; --accent-bg:#e6f4ee; }
+@media (prefers-color-scheme: dark) { :root { --bg:#16181d; --fg:#e8e6e1; --muted:#a3a9b3; --card:#1f2229; --line:#30343c; --accent:#5fd3a2; --accent-bg:#1c3229; } }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
+main { max-width: 1320px; margin: 0 auto; padding: 32px 16px 64px; }
+h1 { font-size: 26px; margin: 0 0 6px; } h2 { font-size: 19px; margin: 0 0 4px; }
+.lead { color: var(--muted); max-width: 760px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 20px; margin: 22px 0; }
+.reqs code { font-size: 12.5px; color: var(--muted); margin-right: 8px; }
+.question { margin: 10px 0 14px; }
+.variants { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+figure { margin: 0; } figure svg { width: 100%; height: auto; border-radius: 6px; border: 1px solid var(--line); display:block; }
+figcaption { font-size: 13.5px; margin-top: 6px; }
+.badge { display:inline-block; font-size: 11.5px; font-weight: 600; padding: 1px 7px; border-radius: 99px; background: var(--accent-bg); color: var(--accent); margin-left: 6px; }
+.evidence { font-size: 13.5px; color: var(--muted); border-top: 1px solid var(--line); margin-top: 14px; padding-top: 10px; }
+details { margin-top: 8px; font-size: 13px; } pre { overflow-x: auto; background: var(--bg); padding: 10px; border-radius: 6px; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; } th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); }
+.table-wrap { overflow-x: auto; }
+.req { font-size: 13.5px; margin: 6px 0; } .req ul { margin: 4px 0 8px; padding-left: 20px; }
+.draft-text { margin: 6px 0 0; } .draft-text summary { font-size: 13.5px; }
+.sources, .kit, .note, .legend { font-size: 13px; color: var(--muted); margin: 6px 0; }
+.badge.open { background: var(--bg); color: var(--muted); border: 1px solid var(--line); font-weight: 500; vertical-align: middle; }
+.vnote { display: block; font-size: 12.5px; color: var(--muted); }
+.matrix td, .matrix th { font-size: 13.5px; vertical-align: top; }
+a { color: var(--accent); }
+h2.group { font-size: 21px; margin: 40px 0 0; }
+.card-body { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; align-items: start; }
+@media (min-width: 1100px) { .card-body { grid-template-columns: minmax(0, 1fr) 380px; } }
+.style-pane { min-width: 0; }
+.pane-head { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); margin-bottom: 4px; flex-wrap: wrap; }
+.pane-head strong { color: var(--fg); margin-right: auto; }
+.pane-head button { font: inherit; font-size: 12px; padding: 2px 8px; border-radius: 6px; border: 1px solid var(--line); background: var(--card); color: var(--fg); cursor: pointer; }
+.json { max-height: 460px; overflow: auto; font: 12px/1.45 ui-monospace, Consolas, monospace; margin: 0; }
+.json .k { color: #7a3e9d; } .json .s { color: #1a7f5a; } .json .n { color: #b35900; } .json .b { color: #2357b0; }
+@media (prefers-color-scheme: dark) { .json .k { color: #d7a6f2; } .json .s { color: #7fd8a9; } .json .n { color: #f0a868; } .json .b { color: #8fb4ff; } }
+
+main { max-width: 1320px; }
+.pg { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; }
+@media (min-width: 1000px) { .pg { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); } }
+.pg textarea { width: 100%; min-height: 460px; font: 12.5px/1.45 ui-monospace, Consolas, monospace; background: var(--bg);
+  color: var(--fg); border: 1px solid var(--line); border-radius: 6px; padding: 10px; resize: vertical; tab-size: 2; }
+.pg select { width: 100%; font: inherit; padding: 6px; border-radius: 6px; border: 1px solid var(--line); background: var(--card); color: var(--fg); }
+.variants-pick label { display: block; font-size: 14px; margin: 3px 0; cursor: pointer; }
+#out svg { width: 100%; height: auto; border: 1px solid var(--line); border-radius: 6px; display: block; }
+#status { font-size: 13px; color: var(--muted); min-height: 1.5em; margin: 6px 0; }
+#status.error { color: #b03a2e; white-space: pre-wrap; font-family: ui-monospace, Consolas, monospace; font-size: 12px; }
+.row { display: flex; gap: 8px; align-items: center; margin: 8px 0; flex-wrap: wrap; }
+button { font: inherit; font-size: 13px; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--line); background: var(--card); color: var(--fg); cursor: pointer; }
+</style></head><body><main>
+<p><a href="index.html">← Gallery</a> · <a href="requirements.html">Requirements</a></p>
+<h1>Playground</h1>
+<p class="lead">Edit a card's style, or switch between its variants, and the draft renderer draws it again. The renderer runs in your
+browser (Python, through Pyodide); the first load takes a few seconds. Coverage cards take a second or two to draw.</p>
+<section class="card">
+<div class="pg">
+<div>
+<label for="pick"><strong>Card or sample</strong></label>
+<select id="pick"></select>
+<p class="question" id="question"></p>
+<div class="variants-pick" id="variants"></div>
+<div class="row"><strong>Style (CartoSym-JSON)</strong><button id="reset" type="button">Reset</button><button id="copy" type="button">Copy</button></div>
+<textarea id="style" spellcheck="false" aria-label="Style (CartoSym-JSON)"></textarea>
+</div>
+<div>
+<div id="status">Loading the renderer…</div>
+<div id="out"></div>
+</div>
+</div>
+</section>
+</main>
+<script src="https://cdn.jsdelivr.net/pyodide/v0.26.2/full/pyodide.js"></script>
+<script>
+const $ = (id) => document.getElementById(id);
+let py = null, render = null, entries = [], current = null, variant = 0, timer = null, busy = false, pending = false;
+
+function fill() {
+  const groups = {};
+  for (const e of entries) (groups[e.group] = groups[e.group] || []).push(e);
+  for (const [g, list] of Object.entries(groups)) {
+    const og = document.createElement("optgroup"); og.label = g;
+    for (const e of list) { const o = document.createElement("option"); o.value = e.key; o.textContent = e.title; og.appendChild(o); }
+    $("pick").appendChild(og);
+  }
+}
+
+function select(key) {
+  current = entries.find((e) => e.key === key) || entries[0];
+  $("pick").value = current.key;
+  $("question").textContent = current.question;
+  variant = Math.max(0, current.variants.findIndex((v) => v.draft));
+  const box = $("variants"); box.innerHTML = "";
+  if (current.variants.length > 1) {
+    current.variants.forEach((v, i) => {
+      const l = document.createElement("label");
+      l.innerHTML = `<input type="radio" name="variant" value="${i}" ${i === variant ? "checked" : ""}> `;
+      l.appendChild(document.createTextNode(v.label + (v.draft ? " (draft)" : "")));
+      l.querySelector("input").addEventListener("change", () => { variant = i; loadStyle(); draw(); });
+      box.appendChild(l);
+    });
+  }
+  loadStyle();
+  if (location.hash.slice(1) !== current.key) history.replaceState(null, "", "#" + current.key);
+  draw();
+}
+
+function pretty(obj) {
+  // Indent 2, but arrays of plain values (colors, positions) on one line.
+  return JSON.stringify(obj, null, 2).replace(
+    /\[\s*((?:-?[\d.eE+-]+|true|false|null|"[^"\,\[\]{}]*")(?:,\s*(?:-?[\d.eE+-]+|true|false|null|"[^"\,\[\]{}]*"))*)\s*\]/g,
+    (_, inner) => "[" + inner.split(",").map((x) => x.trim()).join(", ") + "]");
+}
+
+function loadStyle() {
+  const v = current.variants[variant];
+  $("style").value = pretty(v.style || current.style);
+}
+
+async function draw() {
+  if (!render) return;
+  if (busy) { pending = true; return; }
+  let style;
+  try { style = JSON.parse($("style").value); }
+  catch (err) { $("status").className = "error"; $("status").textContent = "JSON: " + err.message; return; }
+  busy = true; $("status").className = ""; $("status").textContent = "Rendering…";
+  await new Promise((r) => setTimeout(r, 20));
+  const t = performance.now();
+  try {
+    const svg = render(JSON.stringify(current), JSON.stringify(style), JSON.stringify(current.variants[variant].options));
+    $("out").innerHTML = svg;
+    $("status").textContent = `Rendered in ${Math.round(performance.now() - t)} ms.`;
+  } catch (err) {
+    $("status").className = "error";
+    $("status").textContent = String(err.message || err).split("\n").slice(-4).join("\n");
+  }
+  busy = false;
+  if (pending) { pending = false; draw(); }
+}
+
+$("pick").addEventListener("change", (e) => select(e.target.value));
+$("style").addEventListener("input", () => { clearTimeout(timer); timer = setTimeout(draw, 400); });
+$("reset").addEventListener("click", () => { loadStyle(); draw(); });
+$("copy").addEventListener("click", () => navigator.clipboard && navigator.clipboard.writeText($("style").value));
+window.addEventListener("hashchange", () => { if (location.hash.slice(1) !== current.key) select(location.hash.slice(1)); });
+
+(async () => {
+  try {
+    const data = await (await fetch("playground-data.json")).json();
+    entries = data.entries; fill(); select(location.hash.slice(1));
+    py = await loadPyodide({ indexURL: "https://cdn.jsdelivr.net/pyodide/v0.26.2/full/" });
+    py.FS.mkdirTree("/lib/cartosym_draft");
+    for (const m of data.modules) {
+      const src = await (await fetch(`../src/cartosym_draft/${m}.py`)).text();
+      py.FS.writeFile(`/lib/cartosym_draft/${m}.py`, src);
+    }
+    py.runPython(`
+import sys, json
+sys.path.insert(0, "/lib")
+from cartosym_draft import sample_data
+from cartosym_draft.options import Options
+from cartosym_draft.render import Layer, View, render as _render
+_grids = {}
+def _grid(name):
+    if name not in _grids:
+        _grids[name] = getattr(sample_data, name)()
+    return _grids[name]
+def draw(entry, style, options):
+    e, o = json.loads(entry), json.loads(options)
+    if "image_hotspot" in o:
+        o["image_hotspot"] = tuple(o["image_hotspot"])
+    layers = [Layer(l["id"], type="coverage", grid=_grid(l["grid"])) if l.get("grid")
+              else Layer(l["id"], l.get("features", []), l.get("type", "vector")) for l in e["layers"]]
+    v = e["view"]
+    return _render(json.loads(style), layers, View(bbox=tuple(v["bbox"]), width=v["width"], height=v["height"]),
+                   Options(**o), anchors=e.get("anchors", False))
+`);
+    render = py.globals.get("draw");
+    draw();
+  } catch (err) {
+    $("status").className = "error";
+    $("status").textContent = "Could not load the renderer: " + (err.message || err) +
+      (location.protocol === "file:" ? "\nOpen this page from GitHub Pages or a local web server, not as a file." : "");
+  }
+})();
+</script>
+</body></html>

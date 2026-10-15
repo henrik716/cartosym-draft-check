@@ -7,7 +7,7 @@ import json
 from collections import defaultdict
 from pathlib import Path
 
-from .gallery import CSS, PR_FILES, REQUIREMENTS, _check_styles, _inline_code, decisions
+from .gallery import COPY_SCRIPT, CSS, PR_FILES, REQUIREMENTS, _check_styles, _inline_code, decisions, style_pane
 from .kit import export
 from .render import render
 from .samples import annotate, samples
@@ -123,10 +123,15 @@ def build(out_dir: Path) -> str:
                 kit = " · ".join(f'<a href="{html.escape(u)}">{html.escape(n)}</a>' for n, u in links)
                 cap = f"<figcaption>{html.escape(p.caption)}<span class='vnote'>{kit}</span></figcaption>"
                 panels.append(f"<figure>{svg}{cap}</figure>")
+            panes = "".join(
+                style_pane(f"json-{s.key}-{i + 1}", p.style,
+                           f"sample-{s.key}" + (f"-{i + 1}" if len(s.panels) > 1 else ""),
+                           "Style (CartoSym-JSON)" + (f": {p.caption}" if p.caption and len(s.panels) > 1 else ""))
+                for i, p in enumerate(s.panels))
             reqs = " ".join(f"<code>{html.escape(r)}</code>" for r in s.requirements)
             figs.append(f'<section class="card sample" id="s-{s.key}"><h3>{html.escape(s.title)}</h3>'
                         f'<div class="reqs">{reqs}</div><p class="question"><strong>Check:</strong> {_inline_code(s.check)}</p>'
-                        f'<div class="variants">{"".join(panels)}</div></section>')
+                        f'<div class="card-body"><div class="variants">{"".join(panels)}</div><div>{panes}</div></div></section>')
         title = file.split("/")[-1].replace(".adoc", "")
         sections.append(
             f'<section class="card"><h2>{html.escape(title)}</h2><p class="note">{html.escape(file)}</p>'
@@ -151,7 +156,7 @@ def build(out_dir: Path) -> str:
 a sample render (below each class) for straightforward visual requirements, test cases for expressions, or a note for
 encodings. Samples show what the draft renderer draws; "Check" says what to look for. {summary}</p>
 {"".join(sections)}
-</main></body></html>"""
+</main>{COPY_SCRIPT}</body></html>"""
 
 
 __all__ = ["build"]
