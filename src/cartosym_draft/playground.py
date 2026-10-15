@@ -183,7 +183,9 @@ window.addEventListener("hashchange", () => { if (location.hash.slice(1) !== cur
     py = await loadPyodide({ indexURL: "__PYODIDE__" });
     py.FS.mkdirTree("/lib/cartosym_draft");
     for (const m of data.modules) {
-      const src = await (await fetch(`../src/cartosym_draft/${m}.py`)).text();
+      const res = await fetch(`../src/cartosym_draft/${m}.py`);
+      if (!res.ok) throw new Error(`could not download ${m}.py (HTTP ${res.status})`);
+      const src = await res.text();
       py.FS.writeFile(`/lib/cartosym_draft/${m}.py`, src);
     }
     py.runPython(`
