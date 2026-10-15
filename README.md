@@ -16,7 +16,7 @@ Requirements written without an implementation are hard to get right. This repos
 | **Test harness** | [`harness/`](harness/), [`cases/`](cases/) | 92 test cases whose expected values are taken from the requirement text. Each case is run through libCartoSym, pycartosym and the draft renderer. |
 | **Test report** | [`reports/report.md`](reports/report.md), [`reports/results.json`](reports/results.json) | Results per requirement and implementation. |
 
-The draft renderer is a discussion tool, not a reference implementation. It implements the draft, so a rendering shows what a choice looks like, not that the choice is the intended one. Comparing the gallery with another renderer is the real test, which is what the render kits are for.
+The draft renderer is a discussion tool, not a reference implementation. Because it implements the draft itself, it can show what each choice looks like, but not whether that choice is the intended one: that is for the SWG to decide. Comparing with an independent renderer shows whether others read the requirements the same way, which is what the render kits are for.
 
 ## Reading the gallery
 
