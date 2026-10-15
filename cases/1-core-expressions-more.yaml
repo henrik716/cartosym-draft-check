@@ -1,0 +1,127 @@
+# Part 1 expression requirements not covered by 1-core-expressions.yaml
+# (PR #133, branch requirements-placeholders). `expect` is what the draft
+# requirement says the result should be. `json` is the CQL2-JSON given to the
+# draft renderer directly, bypassing pycartosym's CQL2-Text parser.
+
+# --- Math (rc-math.adoc) ----------------------------------------------------
+- {id: math-acos, requirement: /req/math/acos, kind: expression, input: "acos(1)", json: {op: acos, args: [1]}, expect: 0}
+- {id: math-asin, requirement: /req/math/asin, kind: expression, input: "asin(1)", json: {op: asin, args: [1]}, expect: 1.5707963267948966}
+- {id: math-atan, requirement: /req/math/atan, kind: expression, input: "atan(1)", json: {op: atan, args: [1]}, expect: 0.7853981633974483}
+- {id: math-atan2, requirement: /req/math/atan2, kind: expression, input: "atan2(1, -1)", json: {op: atan2, args: [1, -1]}, expect: 2.356194490192345,
+   note: "atan2(y, x): the angle of (-1, 1) is 3/4 pi. Swapped arguments would give -pi/4."}
+- {id: math-ceil, requirement: /req/math/ceil, kind: expression, input: "ceil(-2.5)", json: {op: ceil, args: [-2.5]}, expect: -2}
+- {id: math-cos, requirement: /req/math/cos, kind: expression, input: "cos(0)", json: {op: cos, args: [0]}, expect: 1}
+- {id: math-cosh, requirement: /req/math/cosh, kind: expression, input: "cosh(0)", json: {op: cosh, args: [0]}, expect: 1}
+- {id: math-exp, requirement: /req/math/exp, kind: expression, input: "exp(1)", json: {op: exp, args: [1]}, expect: 2.718281828459045}
+- {id: math-log10, requirement: /req/math/log10, kind: expression, input: "log10(1000)", json: {op: log10, args: [1000]}, expect: 3}
+- {id: math-sin, requirement: /req/math/sin, kind: expression, input: "sin(0)", json: {op: sin, args: [0]}, expect: 0}
+- {id: math-sinh, requirement: /req/math/sinh, kind: expression, input: "sinh(0)", json: {op: sinh, args: [0]}, expect: 0}
+- {id: math-tan, requirement: /req/math/tan, kind: expression, input: "tan(0)", json: {op: tan, args: [0]}, expect: 0}
+- {id: math-tanh, requirement: /req/math/tanh, kind: expression, input: "tanh(0)", json: {op: tanh, args: [0]}, expect: 0}
+- id: math-random
+  requirement: /req/math/random
+  kind: expression
+  input: "random() >= 0 AND random() < 1"
+  json: {op: and, args: [{op: ">=", args: [{op: random, args: []}, 0]}, {op: "<", args: [{op: random, args: []}, 1]}]}
+  expect: true
+
+# --- Text relation (rc-text-relation.adoc) ----------------------------------
+- {id: text-contains, requirement: /req/text-relation/contains, kind: expression, input: "contains('Oslo', 'sl')", json: {op: contains, args: [Oslo, sl]}, expect: true}
+- {id: text-starts-with, requirement: /req/text-relation/starts-with, kind: expression, input: "startsWith('Oslo', 'Os')", json: {op: startsWith, args: [Oslo, Os]}, expect: true}
+- {id: text-ends-with, requirement: /req/text-relation/ends-with, kind: expression, input: "endsWith('Oslo', 'lo')", json: {op: endsWith, args: [Oslo, lo]}, expect: true}
+- {id: text-not-contains, requirement: /req/text-relation/not-contains, kind: expression, input: "notContains('Oslo', 'sl')", json: {op: notContains, args: [Oslo, sl]}, expect: false}
+- {id: text-not-starts-with, requirement: /req/text-relation/not-starts-with, kind: expression, input: "notStartsWith('Oslo', 'sl')", json: {op: notStartsWith, args: [Oslo, sl]}, expect: true}
+- {id: text-not-ends-with, requirement: /req/text-relation/not-ends-with, kind: expression, input: "notEndsWith('Oslo', 'lo')", json: {op: notEndsWith, args: [Oslo, lo]}, expect: false}
+
+# --- Conditional (rc-conditional.adoc) --------------------------------------
+- {id: cond-string-then, requirement: /req/conditional/condition, kind: expression, input: "2 > 1 ? 'yes' : 'no'", json: {op: "?:", args: [{op: ">", args: [2, 1]}, "yes", "no"]}, expect: "yes"}
+- {id: cond-string-else, requirement: /req/conditional/condition, kind: expression, input: "2 < 1 ? 'yes' : 'no'", json: {op: "?:", args: [{op: "<", args: [2, 1]}, "yes", "no"]}, expect: "no"}
+
+# --- Right-hand operands (rc-righthand.adoc) --------------------------------
+- {id: rhs-function, requirement: /req/right-hand/operands, kind: expression, input: "3 < abs(-5)", json: {op: "<", args: [3, {op: abs, args: [-5]}]}, expect: true}
+- id: rhs-identifier
+  requirement: /req/right-hand/operands
+  kind: expression
+  draft_only: true
+  input: "width < height"
+  json: {op: "<", args: [{property: width}, {property: height}]}
+  properties: {width: 2, height: 5}
+  expect: true
+  note: Needs feature properties, so only the draft renderer is run. pycartosym's parser turns `height` into the string "height".
+
+# --- Functions (rc-functions.adoc) ------------------------------------------
+- {id: fn-call, requirement: /req/functions/call-expressions, kind: expression, input: "abs(-2)", json: {op: abs, args: [-2]}, expect: 2}
+- id: fn-wrong-arity
+  requirement: /req/functions/call-expressions
+  kind: expression
+  input: "abs(1, 2)"
+  json: {op: abs, args: [1, 2]}
+  expect: "<invalid>"
+  note: The draft says a call whose arguments do not match the function's parameters is invalid.
+- {id: fn-standard, requirement: /req/functions/standard-functions, kind: expression, input: "max(1, 5, 3)", json: {op: max, args: [1, 5, 3]}, expect: 5}
+
+# --- Variables (rc-variables.adoc, rc-json.adoc /req/json/variables) --------
+- id: var-reference
+  requirement: /req/variables/expression
+  kind: expression
+  draft_only: true
+  input: "@roadWidth * 2"
+  json: {op: "*", args: [{$ref: "#/$variables/roadWidth"}, 2]}
+  definitions: {roadWidth: 3}
+  expect: 6
+- id: var-override
+  requirement: /req/variables/definition
+  kind: expression
+  draft_only: true
+  input: "@roadWidth * 2  (application sets roadWidth = 5)"
+  json: {op: "*", args: [{$ref: "#/$variables/roadWidth"}, 2]}
+  definitions: {roadWidth: 3}
+  variables: {roadWidth: 5}
+  expect: 10
+- id: var-defined-by-expression
+  requirement: /req/variables/definition
+  kind: expression
+  draft_only: true
+  input: "@double  (with @base = 4 and @double = @base * 2)"
+  json: {$ref: "#/$variables/double"}
+  definitions: {base: 4, double: {op: "*", args: [{$ref: "#/$variables/base"}, 2]}}
+  expect: 8
+
+# --- Core expressions (clause 7) and parameter values -----------------------
+- {id: core-literal-string, requirement: /req/core/literals, kind: expression, input: "'abc'", json: abc, expect: abc}
+- {id: core-literal-real, requirement: /req/core/literals, kind: expression, input: "3.25", json: 3.25, expect: 3.25}
+- {id: core-literal-boolean, requirement: /req/core/literals, kind: expression, input: "true", json: true, expect: true}
+- {id: core-array, requirement: /req/core/arrays, kind: expression, input: "a_equals((1, 2, 3), (1, 2, 3))",
+   json: {op: a_equals, args: [[1, 2, 3], [1, 2, 3]]}, expect: true}
+- id: core-field-identifier
+  requirement: /req/core/expressions-field-identifiers
+  kind: expression
+  draft_only: true
+  input: "population * 2  (population = 1500)"
+  json: {op: "*", args: [{property: population}, 2]}
+  properties: {population: 1500}
+  expect: 3000
+- id: core-system-identifier
+  requirement: /req/core/expressions-system-identifiers
+  kind: expression
+  draft_only: true
+  input: "viz.sd < 50000  (at 1:25 000)"
+  json: {op: "<", args: [{sysId: viz.sd}, 50000]}
+  system: {viz.sd: 25000}
+  expect: true
+- id: core-scale
+  requirement: /req/core/scale
+  kind: expression
+  draft_only: true
+  input: "visualization.scaleDenominator  (at 1:25 000)"
+  json: {sysId: visualization.scaleDenominator}
+  system: {visualization.scaleDenominator: 25000}
+  expect: 25000
+- id: param-expression
+  requirement: /req/parameter-values/expressions
+  kind: expression
+  draft_only: true
+  input: "lanes * 2 + 1  (lanes = 3), as a stroke width"
+  json: {op: "+", args: [{op: "*", args: [{property: lanes}, 2]}, 1]}
+  properties: {lanes: 3}
+  expect: 7

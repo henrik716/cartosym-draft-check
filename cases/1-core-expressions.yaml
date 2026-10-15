@@ -1,0 +1,316 @@
+# Part 1 expression requirements (PR #133, branch requirements-placeholders).
+# `expect` is what the draft requirement says the result should be. `json` is the
+# CQL2-JSON given to the draft renderer directly; pycartosym's CQL2-Text parser
+# mangles these inputs (string literals become properties, arrays and conditionals
+# are not converted, `^` becomes `**`).
+
+# --- Arithmetic (rc-arithmetic.adoc) ---------------------------------------
+- id: arith-add
+  requirement: /req/arithmetic/add
+  kind: expression
+  input: "1 + 2"
+  expect: 3
+- id: arith-sub
+  requirement: /req/arithmetic/sub
+  kind: expression
+  input: "5 - 7"
+  expect: -2
+- id: arith-mul
+  requirement: /req/arithmetic/mul
+  kind: expression
+  input: "3 * 4"
+  expect: 12
+- id: arith-div-reals
+  requirement: /req/arithmetic/div
+  kind: expression
+  input: "7.0 / 2"
+  expect: 3.5
+- id: arith-div-integers
+  requirement: /req/arithmetic/div
+  kind: expression
+  input: "7 / 2"
+  expect: 3.5
+  note: Draft says `div` is always real-valued, even for two integers.
+- id: arith-int-div
+  requirement: /req/arithmetic/int-div
+  kind: expression
+  input: "7 div 2"
+  expect: 3
+- id: arith-int-div-negative
+  requirement: /req/arithmetic/int-div
+  kind: expression
+  input: "-7 div 2"
+  expect: -3
+  note: Draft says truncation toward zero (floor division would give -4).
+- id: arith-mod
+  requirement: /req/arithmetic/mod
+  kind: expression
+  input: "7 % 3"
+  expect: 1
+- id: arith-mod-negative
+  requirement: /req/arithmetic/mod
+  kind: expression
+  input: "-7 % 3"
+  expect: -1
+  note: Draft says the result has the sign of the first operand.
+- id: arith-pow
+  requirement: /req/arithmetic/pow
+  kind: expression
+  input: "2 ^ 10"
+  json: {"op": "^", "args": [2, 10]}
+  expect: 1024
+
+# --- Core logical and relational operators (clause_7_core.adoc) --------------
+- id: core-and
+  requirement: /req/core/logical
+  kind: expression
+  input: "1 < 2 and 3 < 4"
+  expect: "true"
+- id: core-or
+  requirement: /req/core/logical
+  kind: expression
+  input: "1 > 2 or 3 < 4"
+  expect: "true"
+- id: core-not
+  requirement: /req/core/logical
+  kind: expression
+  input: "not (1 = 2)"
+  expect: "true"
+- id: core-not-in-and
+  requirement: /req/core/logical
+  kind: expression
+  input: "(1 < 2) and not (3 = 4)"
+  expect: "true"
+- id: core-equal
+  requirement: /req/core/relational
+  kind: expression
+  input: "2 = 2"
+  expect: "true"
+- id: core-not-equal
+  requirement: /req/core/relational
+  kind: expression
+  input: "2 <> 3"
+  expect: "true"
+- id: core-lesser-equal
+  requirement: /req/core/relational
+  kind: expression
+  input: "2 <= 2"
+  expect: "true"
+- id: core-between
+  requirement: /req/core/relational
+  kind: expression
+  input: "5 between 1 and 10"
+  expect: "true"
+- id: core-not-between
+  requirement: /req/core/relational
+  kind: expression
+  input: "5 not between 6 and 10"
+  expect: "true"
+- id: core-in
+  requirement: /req/core/relational
+  kind: expression
+  input: "2 in (1, 2, 3)"
+  expect: "true"
+- id: core-not-in
+  requirement: /req/core/relational
+  kind: expression
+  input: "4 not in (1, 2, 3)"
+  expect: "true"
+- id: core-is-null
+  requirement: /req/core/relational
+  kind: expression
+  input: "null is null"
+  expect: "true"
+- id: core-priority
+  requirement: /req/core/operations
+  kind: expression
+  input: "(1 + 2) * 3"
+  expect: 9
+
+# --- Text relations (rc-text-relation.adoc) ----------------------------------
+- id: text-like-percent
+  requirement: /req/text-relation/like
+  kind: expression
+  input: "'Oslo' like 'O%'"
+  json: {"op": "like", "args": ["Oslo", "O%"]}
+  expect: "true"
+- id: text-like-underscore
+  requirement: /req/text-relation/like
+  kind: expression
+  input: "'Oslo' like 'O_lo'"
+  json: {"op": "like", "args": ["Oslo", "O_lo"]}
+  expect: "true"
+- id: text-like-no-match
+  requirement: /req/text-relation/like
+  kind: expression
+  input: "'Oslo' like 'B%'"
+  json: {"op": "like", "args": ["Oslo", "B%"]}
+  expect: "false"
+- id: text-not-like
+  requirement: /req/text-relation/not-like
+  kind: expression
+  input: "'Oslo' not like 'B%'"
+  expect: "true"
+- id: text-like-escape
+  requirement: /req/text-relation/like
+  kind: expression
+  input: "'50%' like '50\\%'"
+  json: {"op": "like", "args": ["50%", "50\\%"]}
+  expect: "true"
+  note: The draft does not mention an escape character; libCartoSym's code supports backslash.
+
+# --- Conditional expressions (rc-conditional.adoc) ---------------------------
+- id: cond-true
+  requirement: /req/conditional/then-exp
+  kind: expression
+  input: "1 < 2 ? 10 : 20"
+  json: {"op": "?:", "args": [{"op": "<", "args": [1, 2]}, 10, 20]}
+  expect: 10
+- id: cond-false
+  requirement: /req/conditional/else-exp
+  kind: expression
+  input: "1 > 2 ? 10 : 20"
+  json: {"op": "?:", "args": [{"op": ">", "args": [1, 2]}, 10, 20]}
+  expect: 20
+
+# --- Array relations (rc-array-relations.adoc) -------------------------------
+- id: array-contains
+  requirement: /req/array-relations/a-contains
+  kind: expression
+  input: "a_contains((1, 2, 3), (1, 2))"
+  expect: "true"
+- id: array-contained-by
+  requirement: /req/array-relations/a-contained-by
+  kind: expression
+  input: "a_containedBy((1, 2), (1, 2, 3))"
+  expect: "true"
+- id: array-equals
+  requirement: /req/array-relations/a-equals
+  kind: expression
+  input: "a_equals((1, 2), (1, 2))"
+  expect: "true"
+- id: array-equals-order
+  requirement: /req/array-relations/a-equals
+  kind: expression
+  input: "a_equals((1, 2), (2, 1))"
+  expect: "false"
+  note: Draft says order matters.
+- id: array-overlaps
+  requirement: /req/array-relations/a-overlaps
+  kind: expression
+  input: "a_overlaps((1, 2), (2, 3))"
+  expect: "true"
+- id: array-overlaps-none
+  requirement: /req/array-relations/a-overlaps
+  kind: expression
+  input: "a_overlaps((1, 2), (3, 4))"
+  json: {"op": "a_overlaps", "args": [[1, 2], [3, 4]]}
+  expect: "false"
+
+# --- Text manipulation (rc-text-manipulation.adoc) ---------------------------
+- id: textfn-case-insensitize
+  requirement: /req/text-manipulation/case-insensitize
+  kind: expression
+  input: "caseInsensitize('ABC') = caseInsensitize('abc')"
+  json: {"op": "=", "args": [{"op": "caseInsensitize", "args": ["ABC"]}, {"op": "caseInsensitize", "args": ["abc"]}]}
+  expect: "true"
+  note: Draft function name.
+- id: textfn-casei
+  requirement: /req/text-manipulation/case-insensitize
+  kind: expression
+  input: "casei('ABC') = casei('abc')"
+  json: {"op": "=", "args": [{"op": "casei", "args": ["ABC"]}, {"op": "casei", "args": ["abc"]}]}
+  expect: "true"
+  note: CQL2 name used by both implementations.
+- id: textfn-accent-insensitize
+  requirement: /req/text-manipulation/accent-insensitize
+  kind: expression
+  input: "accentInsensitize('Øre') = accentInsensitize('Ore')"
+  json: {"op": "=", "args": [{"op": "accentInsensitize", "args": ["Øre"]}, {"op": "accentInsensitize", "args": ["Ore"]}]}
+  expect: "true"
+  note: Draft function name.
+- id: textfn-accenti
+  requirement: /req/text-manipulation/accent-insensitize
+  kind: expression
+  input: "accenti('café') = accenti('cafe')"
+  json: {"op": "=", "args": [{"op": "accenti", "args": ["café"]}, {"op": "accenti", "args": ["cafe"]}]}
+  expect: "true"
+  note: CQL2 name used by both implementations.
+- id: textfn-upper-case
+  requirement: /req/text-manipulation/upper-case
+  kind: expression
+  input: "upperCase('abc')"
+  json: {"op": "upperCase", "args": ["abc"]}
+  expect: "'ABC'"
+- id: textfn-lower-case
+  requirement: /req/text-manipulation/lower-case
+  kind: expression
+  input: "lowerCase('ABC')"
+  json: {"op": "lowerCase", "args": ["ABC"]}
+  expect: "'abc'"
+- id: textfn-concatenate
+  requirement: /req/text-manipulation/concatenate
+  kind: expression
+  input: "concatenate('ab', 'cd')"
+  json: {"op": "concatenate", "args": ["ab", "cd"]}
+  expect: "'abcd'"
+- id: textfn-substitute
+  requirement: /req/text-manipulation/substitute
+  kind: expression
+  input: "substitute('a-b-c', '-', '+')"
+  json: {"op": "substitute", "args": ["a-b-c", "-", "+"]}
+  expect: "'a+b+c'"
+- id: textfn-format
+  requirement: /req/text-manipulation/format
+  kind: expression
+  input: "format('%d items', 3)"
+  expect: "'3 items'"
+
+# --- Math functions (rc-math.adoc) -------------------------------------------
+- id: math-abs
+  requirement: /req/math/abs
+  kind: expression
+  input: "abs(-2)"
+  expect: 2
+- id: math-pow
+  requirement: /req/math/pow
+  kind: expression
+  input: "pow(2, 3)"
+  expect: 8
+- id: math-min
+  requirement: /req/math/min
+  kind: expression
+  input: "min(2, 3)"
+  expect: 2
+- id: math-max
+  requirement: /req/math/max
+  kind: expression
+  input: "max(2, 3)"
+  expect: 3
+- id: math-log
+  requirement: /req/math/log
+  kind: expression
+  input: "log(1)"
+  expect: 0
+- id: math-round-half
+  requirement: /req/math/round
+  kind: expression
+  input: "round(2.5)"
+  expect: 3
+  note: Draft says halves round toward positive infinity.
+- id: math-rint-half
+  requirement: /req/math/rint
+  kind: expression
+  input: "rint(2.5)"
+  expect: 2
+  note: Draft says halves round to even.
+- id: math-sqrt
+  requirement: /req/math/sqrt
+  kind: expression
+  input: "sqrt(16)"
+  expect: 4
+- id: math-floor
+  requirement: /req/math/floor
+  kind: expression
+  input: "floor(-1.5)"
+  expect: -2

@@ -1,0 +1,1686 @@
+{
+ "math-acos": {
+  "requirement": "/req/math/acos",
+  "input": "acos(1)",
+  "expect": 0,
+  "results": {
+   "libCartoSym": {
+    "verdict": "unsupported",
+    "detail": "returned `null` (function or operator not recognised)"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "0.0"
+   }
+  }
+ },
+ "math-asin": {
+  "requirement": "/req/math/asin",
+  "input": "asin(1)",
+  "expect": 1.5707963267948966,
+  "results": {
+   "libCartoSym": {
+    "verdict": "unsupported",
+    "detail": "returned `null` (function or operator not recognised)"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "1.5707963267948966"
+   }
+  }
+ },
+ "math-atan": {
+  "requirement": "/req/math/atan",
+  "input": "atan(1)",
+  "expect": 0.7853981633974483,
+  "results": {
+   "libCartoSym": {
+    "verdict": "unsupported",
+    "detail": "returned `null` (function or operator not recognised)"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "0.7853981633974483"
+   }
+  }
+ },
+ "math-atan2": {
+  "requirement": "/req/math/atan2",
+  "input": "atan2(1, -1)",
+  "expect": 2.356194490192345,
+  "results": {
+   "libCartoSym": {
+    "verdict": "unsupported",
+    "detail": "returned `null` (function or operator not recognised)"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "2.356194490192345"
+   }
+  }
+ },
+ "math-ceil": {
+  "requirement": "/req/math/ceil",
+  "input": "ceil(-2.5)",
+  "expect": -2,
+  "results": {
+   "libCartoSym": {
+    "verdict": "unsupported",
+    "detail": "returned `null` (function or operator not recognised)"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "-2"
+   }
+  }
+ },
+ "math-cos": {
+  "requirement": "/req/math/cos",
+  "input": "cos(0)",
+  "expect": 1,
+  "results": {
+   "libCartoSym": {
+    "verdict": "unsupported",
+    "detail": "returned `null` (function or operator not recognised)"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "1.0"
+   }
+  }
+ },
+ "math-cosh": {
+  "requirement": "/req/math/cosh",
+  "input": "cosh(0)",
+  "expect": 1,
+  "results": {
+   "libCartoSym": {
+    "verdict": "unsupported",
+    "detail": "returned `null` (function or operator not recognised)"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "1.0"
+   }
+  }
+ },
+ "math-exp": {
+  "requirement": "/req/math/exp",
+  "input": "exp(1)",
+  "expect": 2.718281828459045,
+  "results": {
+   "libCartoSym": {
+    "verdict": "unsupported",
+    "detail": "returned `null` (function or operator not recognised)"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "2.718281828459045"
+   }
+  }
+ },
+ "math-log10": {
+  "requirement": "/req/math/log10",
+  "input": "log10(1000)",
+  "expect": 3,
+  "results": {
+   "libCartoSym": {
+    "verdict": "unsupported",
+    "detail": "returned `null` (function or operator not recognised)"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "3.0"
+   }
+  }
+ },
+ "math-sin": {
+  "requirement": "/req/math/sin",
+  "input": "sin(0)",
+  "expect": 0,
+  "results": {
+   "libCartoSym": {
+    "verdict": "unsupported",
+    "detail": "returned `null` (function or operator not recognised)"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "0.0"
+   }
+  }
+ },
+ "math-sinh": {
+  "requirement": "/req/math/sinh",
+  "input": "sinh(0)",
+  "expect": 0,
+  "results": {
+   "libCartoSym": {
+    "verdict": "unsupported",
+    "detail": "returned `null` (function or operator not recognised)"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "0.0"
+   }
+  }
+ },
+ "math-tan": {
+  "requirement": "/req/math/tan",
+  "input": "tan(0)",
+  "expect": 0,
+  "results": {
+   "libCartoSym": {
+    "verdict": "unsupported",
+    "detail": "returned `null` (function or operator not recognised)"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "0.0"
+   }
+  }
+ },
+ "math-tanh": {
+  "requirement": "/req/math/tanh",
+  "input": "tanh(0)",
+  "expect": 0,
+  "results": {
+   "libCartoSym": {
+    "verdict": "unsupported",
+    "detail": "returned `null` (function or operator not recognised)"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "0.0"
+   }
+  }
+ },
+ "math-random": {
+  "requirement": "/req/math/random",
+  "input": "random() >= 0 AND random() < 1",
+  "expect": true,
+  "results": {
+   "libCartoSym": {
+    "verdict": "CRASH",
+    "detail": "exit code 3221225477"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "true"
+   }
+  }
+ },
+ "text-contains": {
+  "requirement": "/req/text-relation/contains",
+  "input": "contains('Oslo', 'sl')",
+  "expect": true,
+  "results": {
+   "libCartoSym": {
+    "verdict": "unsupported",
+    "detail": "returned `null` (function or operator not recognised)"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "true"
+   }
+  }
+ },
+ "text-starts-with": {
+  "requirement": "/req/text-relation/starts-with",
+  "input": "startsWith('Oslo', 'Os')",
+  "expect": true,
+  "results": {
+   "libCartoSym": {
+    "verdict": "unsupported",
+    "detail": "returned `null` (function or operator not recognised)"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "true"
+   }
+  }
+ },
+ "text-ends-with": {
+  "requirement": "/req/text-relation/ends-with",
+  "input": "endsWith('Oslo', 'lo')",
+  "expect": true,
+  "results": {
+   "libCartoSym": {
+    "verdict": "unsupported",
+    "detail": "returned `null` (function or operator not recognised)"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "true"
+   }
+  }
+ },
+ "text-not-contains": {
+  "requirement": "/req/text-relation/not-contains",
+  "input": "notContains('Oslo', 'sl')",
+  "expect": false,
+  "results": {
+   "libCartoSym": {
+    "verdict": "unsupported",
+    "detail": "returned `null` (function or operator not recognised)"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "false"
+   }
+  }
+ },
+ "text-not-starts-with": {
+  "requirement": "/req/text-relation/not-starts-with",
+  "input": "notStartsWith('Oslo', 'sl')",
+  "expect": true,
+  "results": {
+   "libCartoSym": {
+    "verdict": "unsupported",
+    "detail": "returned `null` (function or operator not recognised)"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "true"
+   }
+  }
+ },
+ "text-not-ends-with": {
+  "requirement": "/req/text-relation/not-ends-with",
+  "input": "notEndsWith('Oslo', 'lo')",
+  "expect": false,
+  "results": {
+   "libCartoSym": {
+    "verdict": "unsupported",
+    "detail": "returned `null` (function or operator not recognised)"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "false"
+   }
+  }
+ },
+ "cond-string-then": {
+  "requirement": "/req/conditional/condition",
+  "input": "2 > 1 ? 'yes' : 'no'",
+  "expect": "yes",
+  "results": {
+   "libCartoSym": {
+    "verdict": "error",
+    "detail": "Failed to parse C:\\Users\\schhen\\Documents\\GitHub\\cartosym-draft-check\\work\\expr.cql2 as a CQL2-Text expression"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "yes"
+   }
+  }
+ },
+ "cond-string-else": {
+  "requirement": "/req/conditional/condition",
+  "input": "2 < 1 ? 'yes' : 'no'",
+  "expect": "no",
+  "results": {
+   "libCartoSym": {
+    "verdict": "error",
+    "detail": "Failed to parse C:\\Users\\schhen\\Documents\\GitHub\\cartosym-draft-check\\work\\expr.cql2 as a CQL2-Text expression"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "no"
+   }
+  }
+ },
+ "rhs-function": {
+  "requirement": "/req/right-hand/operands",
+  "input": "3 < abs(-5)",
+  "expect": true,
+  "results": {
+   "libCartoSym": {
+    "verdict": "error",
+    "detail": "Unresolved expression (flags: isNotLiteral = True, isNotLiteral = True)"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "true"
+   }
+  }
+ },
+ "rhs-identifier": {
+  "requirement": "/req/right-hand/operands",
+  "input": "width < height",
+  "expect": true,
+  "results": {
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "true"
+   }
+  }
+ },
+ "fn-call": {
+  "requirement": "/req/functions/call-expressions",
+  "input": "abs(-2)",
+  "expect": 2,
+  "results": {
+   "libCartoSym": {
+    "verdict": "unsupported",
+    "detail": "returned `null` (function or operator not recognised)"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "2"
+   }
+  }
+ },
+ "fn-wrong-arity": {
+  "requirement": "/req/functions/call-expressions",
+  "input": "abs(1, 2)",
+  "expect": "<invalid>",
+  "results": {
+   "libCartoSym": {
+    "verdict": "unsupported",
+    "detail": "returned `null` (function or operator not recognised)"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "<invalid>"
+   }
+  }
+ },
+ "fn-standard": {
+  "requirement": "/req/functions/standard-functions",
+  "input": "max(1, 5, 3)",
+  "expect": 5,
+  "results": {
+   "libCartoSym": {
+    "verdict": "unsupported",
+    "detail": "returned `null` (function or operator not recognised)"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "5"
+   }
+  }
+ },
+ "var-reference": {
+  "requirement": "/req/variables/expression",
+  "input": "@roadWidth * 2",
+  "expect": 6,
+  "results": {
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "6"
+   }
+  }
+ },
+ "var-override": {
+  "requirement": "/req/variables/definition",
+  "input": "@roadWidth * 2  (application sets roadWidth = 5)",
+  "expect": 10,
+  "results": {
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "10"
+   }
+  }
+ },
+ "var-defined-by-expression": {
+  "requirement": "/req/variables/definition",
+  "input": "@double  (with @base = 4 and @double = @base * 2)",
+  "expect": 8,
+  "results": {
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "8"
+   }
+  }
+ },
+ "core-literal-string": {
+  "requirement": "/req/core/literals",
+  "input": "'abc'",
+  "expect": "abc",
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "'abc'"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "abc"
+   }
+  }
+ },
+ "core-literal-real": {
+  "requirement": "/req/core/literals",
+  "input": "3.25",
+  "expect": 3.25,
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "3.25"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "3.25"
+   }
+  }
+ },
+ "core-literal-boolean": {
+  "requirement": "/req/core/literals",
+  "input": "true",
+  "expect": true,
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "true"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "true"
+   }
+  }
+ },
+ "core-array": {
+  "requirement": "/req/core/arrays",
+  "input": "a_equals((1, 2, 3), (1, 2, 3))",
+  "expect": true,
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "true"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "true"
+   }
+  }
+ },
+ "core-field-identifier": {
+  "requirement": "/req/core/expressions-field-identifiers",
+  "input": "population * 2  (population = 1500)",
+  "expect": 3000,
+  "results": {
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "3000"
+   }
+  }
+ },
+ "core-system-identifier": {
+  "requirement": "/req/core/expressions-system-identifiers",
+  "input": "viz.sd < 50000  (at 1:25 000)",
+  "expect": true,
+  "results": {
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "true"
+   }
+  }
+ },
+ "core-scale": {
+  "requirement": "/req/core/scale",
+  "input": "visualization.scaleDenominator  (at 1:25 000)",
+  "expect": 25000,
+  "results": {
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "25000"
+   }
+  }
+ },
+ "param-expression": {
+  "requirement": "/req/parameter-values/expressions",
+  "input": "lanes * 2 + 1  (lanes = 3), as a stroke width",
+  "expect": 7,
+  "results": {
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "7"
+   }
+  }
+ },
+ "arith-add": {
+  "requirement": "/req/arithmetic/add",
+  "input": "1 + 2",
+  "expect": 3,
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "3"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "3"
+   }
+  }
+ },
+ "arith-sub": {
+  "requirement": "/req/arithmetic/sub",
+  "input": "5 - 7",
+  "expect": -2,
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "-2"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "-2"
+   }
+  }
+ },
+ "arith-mul": {
+  "requirement": "/req/arithmetic/mul",
+  "input": "3 * 4",
+  "expect": 12,
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "12"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "12"
+   }
+  }
+ },
+ "arith-div-reals": {
+  "requirement": "/req/arithmetic/div",
+  "input": "7.0 / 2",
+  "expect": 3.5,
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "3.5"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "3.5"
+   }
+  }
+ },
+ "arith-div-integers": {
+  "requirement": "/req/arithmetic/div",
+  "input": "7 / 2",
+  "expect": 3.5,
+  "results": {
+   "libCartoSym": {
+    "verdict": "FAIL",
+    "detail": "got `3`, draft expects `3.5`"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "3.5"
+   }
+  }
+ },
+ "arith-int-div": {
+  "requirement": "/req/arithmetic/int-div",
+  "input": "7 div 2",
+  "expect": 3,
+  "results": {
+   "libCartoSym": {
+    "verdict": "CRASH",
+    "detail": "exit code 3221225477"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "3"
+   }
+  }
+ },
+ "arith-int-div-negative": {
+  "requirement": "/req/arithmetic/int-div",
+  "input": "-7 div 2",
+  "expect": -3,
+  "results": {
+   "libCartoSym": {
+    "verdict": "CRASH",
+    "detail": "exit code 3221225477"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "-3"
+   }
+  }
+ },
+ "arith-mod": {
+  "requirement": "/req/arithmetic/mod",
+  "input": "7 % 3",
+  "expect": 1,
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "1"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "1"
+   }
+  }
+ },
+ "arith-mod-negative": {
+  "requirement": "/req/arithmetic/mod",
+  "input": "-7 % 3",
+  "expect": -1,
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "-1"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "-1"
+   }
+  }
+ },
+ "arith-pow": {
+  "requirement": "/req/arithmetic/pow",
+  "input": "2 ^ 10",
+  "expect": 1024,
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "1024.0"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "1024"
+   }
+  }
+ },
+ "core-and": {
+  "requirement": "/req/core/logical",
+  "input": "1 < 2 and 3 < 4",
+  "expect": "true",
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "true"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "true"
+   }
+  }
+ },
+ "core-or": {
+  "requirement": "/req/core/logical",
+  "input": "1 > 2 or 3 < 4",
+  "expect": "true",
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "true"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "true"
+   }
+  }
+ },
+ "core-not": {
+  "requirement": "/req/core/logical",
+  "input": "not (1 = 2)",
+  "expect": "true",
+  "results": {
+   "libCartoSym": {
+    "verdict": "unsupported",
+    "detail": "returned `null` (function or operator not recognised)"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "true"
+   }
+  }
+ },
+ "core-not-in-and": {
+  "requirement": "/req/core/logical",
+  "input": "(1 < 2) and not (3 = 4)",
+  "expect": "true",
+  "results": {
+   "libCartoSym": {
+    "verdict": "error",
+    "detail": "Unresolved expression (flags: )"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "true"
+   }
+  }
+ },
+ "core-equal": {
+  "requirement": "/req/core/relational",
+  "input": "2 = 2",
+  "expect": "true",
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "true"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "true"
+   }
+  }
+ },
+ "core-not-equal": {
+  "requirement": "/req/core/relational",
+  "input": "2 <> 3",
+  "expect": "true",
+  "results": {
+   "libCartoSym": {
+    "verdict": "FAIL",
+    "detail": "got `-1`, draft expects `true`"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "true"
+   }
+  }
+ },
+ "core-lesser-equal": {
+  "requirement": "/req/core/relational",
+  "input": "2 <= 2",
+  "expect": "true",
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "true"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "true"
+   }
+  }
+ },
+ "core-between": {
+  "requirement": "/req/core/relational",
+  "input": "5 between 1 and 10",
+  "expect": "true",
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "true"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "true"
+   }
+  }
+ },
+ "core-not-between": {
+  "requirement": "/req/core/relational",
+  "input": "5 not between 6 and 10",
+  "expect": "true",
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "true"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "true"
+   }
+  }
+ },
+ "core-in": {
+  "requirement": "/req/core/relational",
+  "input": "2 in (1, 2, 3)",
+  "expect": "true",
+  "results": {
+   "libCartoSym": {
+    "verdict": "FAIL",
+    "detail": "got `1`, draft expects `true`"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "true"
+   }
+  }
+ },
+ "core-not-in": {
+  "requirement": "/req/core/relational",
+  "input": "4 not in (1, 2, 3)",
+  "expect": "true",
+  "results": {
+   "libCartoSym": {
+    "verdict": "unsupported",
+    "detail": "returned `null` (function or operator not recognised)"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "true"
+   }
+  }
+ },
+ "core-is-null": {
+  "requirement": "/req/core/relational",
+  "input": "null is null",
+  "expect": "true",
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "true"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "true"
+   }
+  }
+ },
+ "core-priority": {
+  "requirement": "/req/core/operations",
+  "input": "(1 + 2) * 3",
+  "expect": 9,
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "9"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "9"
+   }
+  }
+ },
+ "text-like-percent": {
+  "requirement": "/req/text-relation/like",
+  "input": "'Oslo' like 'O%'",
+  "expect": "true",
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "true"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "true"
+   }
+  }
+ },
+ "text-like-underscore": {
+  "requirement": "/req/text-relation/like",
+  "input": "'Oslo' like 'O_lo'",
+  "expect": "true",
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "true"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "true"
+   }
+  }
+ },
+ "text-like-no-match": {
+  "requirement": "/req/text-relation/like",
+  "input": "'Oslo' like 'B%'",
+  "expect": "false",
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "false"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "false"
+   }
+  }
+ },
+ "text-like-escape": {
+  "requirement": "/req/text-relation/like",
+  "input": "'50%' like '50\\%'",
+  "expect": "true",
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "true"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "true"
+   }
+  }
+ },
+ "text-not-like": {
+  "requirement": "/req/text-relation/not-like",
+  "input": "'Oslo' not like 'B%'",
+  "expect": "true",
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "true"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "true"
+   }
+  }
+ },
+ "cond-true": {
+  "requirement": "/req/conditional/then-exp",
+  "input": "1 < 2 ? 10 : 20",
+  "expect": 10,
+  "results": {
+   "libCartoSym": {
+    "verdict": "error",
+    "detail": "Failed to parse C:\\Users\\schhen\\Documents\\GitHub\\cartosym-draft-check\\work\\expr.cql2 as a CQL2-Text expression"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "10"
+   }
+  }
+ },
+ "cond-false": {
+  "requirement": "/req/conditional/else-exp",
+  "input": "1 > 2 ? 10 : 20",
+  "expect": 20,
+  "results": {
+   "libCartoSym": {
+    "verdict": "error",
+    "detail": "Failed to parse C:\\Users\\schhen\\Documents\\GitHub\\cartosym-draft-check\\work\\expr.cql2 as a CQL2-Text expression"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "20"
+   }
+  }
+ },
+ "array-contains": {
+  "requirement": "/req/array-relations/a-contains",
+  "input": "a_contains((1, 2, 3), (1, 2))",
+  "expect": "true",
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "true"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "true"
+   }
+  }
+ },
+ "array-contained-by": {
+  "requirement": "/req/array-relations/a-contained-by",
+  "input": "a_containedBy((1, 2), (1, 2, 3))",
+  "expect": "true",
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "true"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "true"
+   }
+  }
+ },
+ "array-equals": {
+  "requirement": "/req/array-relations/a-equals",
+  "input": "a_equals((1, 2), (1, 2))",
+  "expect": "true",
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "true"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "true"
+   }
+  }
+ },
+ "array-equals-order": {
+  "requirement": "/req/array-relations/a-equals",
+  "input": "a_equals((1, 2), (2, 1))",
+  "expect": "false",
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "false"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "false"
+   }
+  }
+ },
+ "array-overlaps": {
+  "requirement": "/req/array-relations/a-overlaps",
+  "input": "a_overlaps((1, 2), (2, 3))",
+  "expect": "true",
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "true"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "true"
+   }
+  }
+ },
+ "array-overlaps-none": {
+  "requirement": "/req/array-relations/a-overlaps",
+  "input": "a_overlaps((1, 2), (3, 4))",
+  "expect": "false",
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "false"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "false"
+   }
+  }
+ },
+ "textfn-case-insensitize": {
+  "requirement": "/req/text-manipulation/case-insensitize",
+  "input": "caseInsensitize('ABC') = caseInsensitize('abc')",
+  "expect": "true",
+  "results": {
+   "libCartoSym": {
+    "verdict": "FAIL",
+    "detail": "got `false`, draft expects `true`"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "true"
+   }
+  }
+ },
+ "textfn-casei": {
+  "requirement": "/req/text-manipulation/case-insensitize",
+  "input": "casei('ABC') = casei('abc')",
+  "expect": "true",
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "true"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "true"
+   }
+  }
+ },
+ "textfn-accent-insensitize": {
+  "requirement": "/req/text-manipulation/accent-insensitize",
+  "input": "accentInsensitize('Øre') = accentInsensitize('Ore')",
+  "expect": "true",
+  "results": {
+   "libCartoSym": {
+    "verdict": "FAIL",
+    "detail": "got `false`, draft expects `true`"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "FAIL",
+    "detail": "got `false`, draft expects `true`"
+   }
+  }
+ },
+ "textfn-accenti": {
+  "requirement": "/req/text-manipulation/accent-insensitize",
+  "input": "accenti('café') = accenti('cafe')",
+  "expect": "true",
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "true"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "true"
+   }
+  }
+ },
+ "textfn-upper-case": {
+  "requirement": "/req/text-manipulation/upper-case",
+  "input": "upperCase('abc')",
+  "expect": "'ABC'",
+  "results": {
+   "libCartoSym": {
+    "verdict": "unsupported",
+    "detail": "returned `null` (function or operator not recognised)"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "ABC"
+   }
+  }
+ },
+ "textfn-lower-case": {
+  "requirement": "/req/text-manipulation/lower-case",
+  "input": "lowerCase('ABC')",
+  "expect": "'abc'",
+  "results": {
+   "libCartoSym": {
+    "verdict": "unsupported",
+    "detail": "returned `null` (function or operator not recognised)"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "abc"
+   }
+  }
+ },
+ "textfn-concatenate": {
+  "requirement": "/req/text-manipulation/concatenate",
+  "input": "concatenate('ab', 'cd')",
+  "expect": "'abcd'",
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "'abcd'"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "abcd"
+   }
+  }
+ },
+ "textfn-substitute": {
+  "requirement": "/req/text-manipulation/substitute",
+  "input": "substitute('a-b-c', '-', '+')",
+  "expect": "'a+b+c'",
+  "results": {
+   "libCartoSym": {
+    "verdict": "unsupported",
+    "detail": "returned `null` (function or operator not recognised)"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "a+b+c"
+   }
+  }
+ },
+ "textfn-format": {
+  "requirement": "/req/text-manipulation/format",
+  "input": "format('%d items', 3)",
+  "expect": "'3 items'",
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "'3 items'"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "3 items"
+   }
+  }
+ },
+ "math-abs": {
+  "requirement": "/req/math/abs",
+  "input": "abs(-2)",
+  "expect": 2,
+  "results": {
+   "libCartoSym": {
+    "verdict": "unsupported",
+    "detail": "returned `null` (function or operator not recognised)"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "2"
+   }
+  }
+ },
+ "math-pow": {
+  "requirement": "/req/math/pow",
+  "input": "pow(2, 3)",
+  "expect": 8,
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "8.0"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "8"
+   }
+  }
+ },
+ "math-min": {
+  "requirement": "/req/math/min",
+  "input": "min(2, 3)",
+  "expect": 2,
+  "results": {
+   "libCartoSym": {
+    "verdict": "unsupported",
+    "detail": "returned `null` (function or operator not recognised)"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "2"
+   }
+  }
+ },
+ "math-max": {
+  "requirement": "/req/math/max",
+  "input": "max(2, 3)",
+  "expect": 3,
+  "results": {
+   "libCartoSym": {
+    "verdict": "unsupported",
+    "detail": "returned `null` (function or operator not recognised)"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "3"
+   }
+  }
+ },
+ "math-log": {
+  "requirement": "/req/math/log",
+  "input": "log(1)",
+  "expect": 0,
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "0.0"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "0.0"
+   }
+  }
+ },
+ "math-round-half": {
+  "requirement": "/req/math/round",
+  "input": "round(2.5)",
+  "expect": 3,
+  "results": {
+   "libCartoSym": {
+    "verdict": "unsupported",
+    "detail": "returned `null` (function or operator not recognised)"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "3"
+   }
+  }
+ },
+ "math-rint-half": {
+  "requirement": "/req/math/rint",
+  "input": "rint(2.5)",
+  "expect": 2,
+  "results": {
+   "libCartoSym": {
+    "verdict": "unsupported",
+    "detail": "returned `null` (function or operator not recognised)"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "2.0"
+   }
+  }
+ },
+ "math-sqrt": {
+  "requirement": "/req/math/sqrt",
+  "input": "sqrt(16)",
+  "expect": 4,
+  "results": {
+   "libCartoSym": {
+    "verdict": "unsupported",
+    "detail": "returned `null` (function or operator not recognised)"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "4.0"
+   }
+  }
+ },
+ "math-floor": {
+  "requirement": "/req/math/floor",
+  "input": "floor(-1.5)",
+  "expect": -2,
+  "results": {
+   "libCartoSym": {
+    "verdict": "unsupported",
+    "detail": "returned `null` (function or operator not recognised)"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "-2"
+   }
+  }
+ }
+}
