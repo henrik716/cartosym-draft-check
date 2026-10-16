@@ -14,7 +14,7 @@ Requirements written without an implementation are hard to get right. This repos
 | **Render kits** | [`gallery/kit/`](gallery/kit/), [`gallery/kit.zip`](gallery/kit.zip) | The style, data and view settings of every card and sample, to render the same maps with another renderer. |
 | **Draft renderer** | [`src/cartosym_draft/`](src/cartosym_draft/) | A CQL2 expression evaluator and SVG renderer that does what the draft requirements say. Each open behavior is a switchable option ([`options.py`](src/cartosym_draft/options.py)). |
 | **Test harness** | [`harness/`](harness/), [`cases/`](cases/) | 92 test cases whose expected values are taken from the requirement text. Each case is run through libCartoSym, pycartosym and the draft renderer. |
-| **Test report** | [`reports/report.md`](reports/report.md), [`reports/results.json`](reports/results.json) | Results per requirement and implementation. |
+| **Test report** | [`reports/report.md`](reports/report.md), [`reports/results.json`](reports/results.json) | Results per requirement and implementation, with libCartoSym from the `cartosym` pip package. [`reports/libcartosym-main/`](reports/libcartosym-main/) has the same against the latest libCartoSym from GitHub. |
 
 The draft renderer is a discussion tool, not a reference implementation. Because it implements the draft itself, it can show what each choice looks like, but not whether that choice is the intended one: that is for the SWG to decide. Comparing with an independent renderer shows whether others read the requirements the same way, which is what the render kits are for.
 
@@ -72,7 +72,8 @@ The playground loads the renderer's Python files over HTTP, so open it from GitH
 `extract_requirements.py` reads the checked-out branch of `../cartographic-symbology` (the PR branch, `requirements-placeholders`). Run it again after the requirements change.
 
 - **pycartosym** 0.4.1 is installed from PyPI. It converts the CSCSS examples and parses CQL2-Text test inputs.
-- **libCartoSym** comes from the `cartosym` 0.0.1 and `ecrt` 0.0.6 packages, which run `cs-canif.exe`, so the harness currently needs Windows.
+- **libCartoSym** comes from the `cartosym` 0.0.1 and `ecrt` 0.0.6 packages (built in November 2025) by default. To test a build from source instead, set `CS_CANIF` to the `cs-canif` executable and `CS_CANIF_LIBDIRS` to the folders with its libraries; `REPORT_DIR` and `LIBCARTOSYM_LABEL` set where the report goes and how libCartoSym is described in it.
+- **Latest libCartoSym:** the [`libcartosym-main`](.github/workflows/libcartosym-main.yml) workflow builds the latest eC and libCartoSym from GitHub on Ubuntu (as their `fetchAndBuild.sh` does), runs the harness against that `cs-canif`, and commits the report to [`reports/libcartosym-main/`](reports/libcartosym-main/). It runs weekly, when the harness or cases change, and on demand.
 - **pycartosym's CQL2-Text parser** mishandles some inputs (string literals in function calls, arrays, conditionals, `^`). Affected cases therefore give the draft renderer their CQL2-JSON directly.
 
 ## Limitations

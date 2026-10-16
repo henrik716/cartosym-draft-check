@@ -1,0 +1,78 @@
+# Build the latest eC and libCartoSym from GitHub (as their fetchAndBuild.sh
+# does) and run the test harness against that cs-canif. The report is written
+# to reports/libcartosym-main/ and committed back, next to the report for the
+# `cartosym` pip package in reports/.
+name: Test against libCartoSym main
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 5 * * 1"  # Mondays 05:00 UTC
+  push:
+    branches: [main]
+    paths:
+      - "harness/**"
+      - "cases/**"
+      - ".github/workflows/libcartosym-main.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install build dependencies
+        run: sudo apt-get update && sudo apt-get install -y zlib1g-dev
+
+      - name: Fetch and build eC and libCartoSym
+        run: |
+          mkdir csbuild && cd csbuild
+          git clone -b main --single-branch https://github.com/ecere/eC.git
+          git clone -b main --single-branch https://github.com/ecere/libCartoSym.git
+          (cd eC && make -j4)
+          (cd libCartoSym && make -j4)
+          (cd libCartoSym && make test) || echo "::warning::libCartoSym's own tests failed (make test)"
+
+      - name: Locate cs-canif
+        run: |
+          CS=$(find "$PWD/csbuild/libCartoSym" -type f -name cs-canif -perm -u+x | head -1)
+          test -n "$CS" || { echo "::error::cs-canif not found"; find csbuild -name 'cs-canif*'; exit 1; }
+          LIBS=$(find "$PWD/csbuild" -name '*.so*' -type f -printf '%h\n' | sort -u | paste -sd: -)
+          LCS=$(git -C csbuild/libCartoSym rev-parse --short HEAD)
+          EC=$(git -C csbuild/eC rev-parse --short HEAD)
+          echo "CS_CANIF=$CS" >> "$GITHUB_ENV"
+          echo "CS_CANIF_LIBDIRS=$LIBS" >> "$GITHUB_ENV"
+          echo "LIBCARTOSYM_LABEL=cs-canif built from ecere/libCartoSym main @ $LCS and ecere/eC main @ $EC, on Ubuntu" >> "$GITHUB_ENV"
+          echo "cs-canif: $CS"; echo "libraries: $LIBS"
+          printf '1 + 2' > smoke.cql2
+          LD_LIBRARY_PATH="$LIBS" "$CS" eval smoke.cql2
+
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.12"
+
+      - name: Run the test harness
+        env:
+          REPORT_DIR: reports/libcartosym-main
+        run: |
+          uv sync
+          uv run python harness/run.py
+          sed -n '/## Summary/,/## Results/p' reports/libcartosym-main/report.md | sed '$d' >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: report-libcartosym-main
+          path: reports/libcartosym-main/
+
+      - name: Commit the report
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898299+github-actions[bot]@users.noreply.github.com"
+          git add reports/libcartosym-main
+          if git diff --cached --quiet; then echo "No change in the report."; exit 0; fi
+          git commit -m "Update the test report against libCartoSym main"
+          git pull --rebase origin main
+          git push origin HEAD:main

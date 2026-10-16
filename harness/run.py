@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import datetime
 import json
+import os
 import sys
 from collections import defaultdict
 from importlib.metadata import version
@@ -17,6 +18,11 @@ import yaml
 import adapters
 
 ROOT = Path(__file__).resolve().parent.parent
+# Where the report goes, and how libCartoSym is described in it: the pip
+# package by default, or a build from source (see CS_CANIF in adapters.py).
+REPORTS = ROOT / os.environ.get("REPORT_DIR", "reports")
+LIBCARTOSYM = os.environ.get("LIBCARTOSYM_LABEL") or (
+    f"cs-canif from `cartosym` {version('cartosym')}, `ecrt` {version('ecrt')}")
 
 PASS, FAIL, UNSUPPORTED, CRASH, ERROR = "pass", "FAIL", "unsupported", "CRASH", "error"
 
@@ -84,8 +90,7 @@ def main(paths: list[str]) -> int:
     lines = [
         "# CartoSym draft requirements vs implementations",
         "",
-        f"Generated {datetime.date.today()} with libCartoSym (cs-canif from `cartosym` {version('cartosym')}, "
-        f"`ecrt` {version('ecrt')}) and pycartosym {version('pycartosym')}.",
+        f"Generated {datetime.date.today()} with libCartoSym ({LIBCARTOSYM}) and pycartosym {version('pycartosym')}.",
         "",
         "Expected values are what the **draft requirement** says. `FAIL` means the implementation disagrees with the draft, "
         "which may mean the draft or the implementation is wrong. pycartosym does not evaluate expressions, so for expression "
@@ -120,10 +125,10 @@ def main(paths: list[str]) -> int:
     results_json = {case["id"]: {"requirement": req, "input": case["input"], "expect": case["expect"],
                                  "results": {impl: {"verdict": v, "detail": d} for impl, (v, d) in results.items()}}
                     for req, rows in by_req.items() for case, results in rows}
-    (ROOT / "reports").mkdir(exist_ok=True)
-    (ROOT / "reports" / "results.json").write_text(json.dumps(results_json, indent=1, ensure_ascii=False), encoding="utf-8")
+    REPORTS.mkdir(parents=True, exist_ok=True)
+    (REPORTS / "results.json").write_text(json.dumps(results_json, indent=1, ensure_ascii=False), encoding="utf-8")
 
-    out = ROOT / "reports" / "report.md"
+    out = REPORTS / "report.md"
     out.parent.mkdir(exist_ok=True)
     out.write_text("\n".join(lines), encoding="utf-8")
     print(f"\nReport written to {out}")

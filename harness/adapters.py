@@ -17,7 +17,14 @@ WORK = ROOT / "work"
 SITE = Path(sys.prefix) / "Lib" / "site-packages"
 
 # Windows access violation, reported by libCartoSym 0.0.1 on some inputs.
+# On Linux and macOS a crash is a negative return code (killed by a signal).
 CRASH_CODES = {-1073741819, 3221225477}
+
+# By default the harness runs cs-canif from the `cartosym` pip package. To test
+# a build from source instead, set CS_CANIF to the cs-canif executable and
+# CS_CANIF_LIBDIRS to the folders holding its libraries (os.pathsep-separated).
+CS_CANIF = os.environ.get("CS_CANIF")
+CS_CANIF_LIBDIRS = os.environ.get("CS_CANIF_LIBDIRS", "")
 
 
 @dataclass
@@ -38,13 +45,17 @@ def _write(name: str, content: str) -> Path:
 
 def _canif_env() -> dict[str, str]:
     env = dict(os.environ)
-    dlls = [SITE / "ecrt" / "lib", SITE / "cscql2" / "bin", SITE / "cartosym" / "bin"]
-    env["PATH"] = os.pathsep.join([str(p) for p in dlls] + [env.get("PATH", "")])
+    if CS_CANIF:
+        libs = [d for d in CS_CANIF_LIBDIRS.split(os.pathsep) if d]
+    else:
+        libs = [str(SITE / "ecrt" / "lib"), str(SITE / "cscql2" / "bin"), str(SITE / "cartosym" / "bin")]
+    var = "PATH" if os.name == "nt" else "LD_LIBRARY_PATH"
+    env[var] = os.pathsep.join(libs + [env.get(var, "")])
     return env
 
 
 def _canif(*args: str) -> Outcome:
-    exe = SITE / "cartosym" / "bin" / "cs-canif.exe"
+    exe = Path(CS_CANIF) if CS_CANIF else SITE / "cartosym" / "bin" / "cs-canif.exe"
     try:
         proc = subprocess.run(
             [str(exe), *args], capture_output=True, text=True,
@@ -53,7 +64,7 @@ def _canif(*args: str) -> Outcome:
     except subprocess.TimeoutExpired:
         return Outcome("error", detail="timeout")
     out = (proc.stdout + proc.stderr).strip()
-    if proc.returncode in CRASH_CODES:
+    if proc.returncode in CRASH_CODES or proc.returncode < 0:
         return Outcome("crash", detail=f"exit code {proc.returncode}")
     if proc.returncode != 0:
         return Outcome("error", detail=out or f"exit code {proc.returncode}")
