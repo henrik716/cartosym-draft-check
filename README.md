@@ -20,6 +20,49 @@ Three implementations are involved, and they do different things. The **draft re
 
 The draft renderer is a discussion tool, not a reference implementation. Because it implements the draft itself, it can show what each choice looks like, but not whether that choice is the intended one: that is for the SWG to decide. Comparing with an independent renderer shows whether others read the requirements the same way, which is what the render kits are for.
 
+## How it fits together
+
+```text
+[ 1. INPUTS ]
+PR #133 branch ──────────────> tools/extract_requirements.py ──┬──> requirements.json
+(../cartographic-symbology)                                    └──> CartoSym-JSON.schema.json
+Kartverket DTM, Sentinel-2 ──> tools/fetch_*.py ──────────────────> rondane_data.py, sentinel2_data.py
+
+[ 2. TEST HARNESS ]  harness/run.py
+cases/*.yaml ──┬──> libCartoSym     (cs-canif eval)          ──┐
+               ├──> pycartosym      (CQL2-Text → CQL2-JSON)  ──┼──> reports/report.md
+               └──> draft renderer  (evaluate)               ──┘    reports/results.json
+
+[ 3. GALLERY ]  python -m cartosym_draft.gallery
+draft renderer      ──┬──> gallery/index.html          decision matrix, 23 cards
++ examples 5–9        ├──> gallery/requirements.html   134 requirements, 15 samples
++ sample data         ├──> gallery/kit/, kit.zip       style, data and view per card and sample
++ requirements.json   └──> gallery/playground.html     the draft renderer in the browser (Pyodide)
++ results.json
+
+[ 4. CI ]  .github/workflows/libcartosym-main.yml (weekly, and when the harness or cases change)
+latest eC + libCartoSym (Ubuntu) ──> harness/run.py ──> reports/libcartosym-main/
+```
+
+The requirement text and schema are snapshots of the PR branch, so run `extract_requirements.py` again after the requirements change. The harness and the gallery run separately, except that the requirements page shows the harness results from `results.json`, so run the harness first. The gallery build validates every style against the schema snapshot.
+
+```text
+cartosym-draft-check/
+├── src/cartosym_draft/   # the draft renderer and the gallery build
+│   ├── evaluate.py       #   CQL2-JSON expressions
+│   ├── cascade.py        #   styling rules → the symbolizer for each feature
+│   ├── render.py         #   vector features → SVG
+│   ├── coverage.py       #   coverages and hill shading → PNG
+│   ├── options.py        #   the switchable judgement calls
+│   ├── gallery.py        #   cards; also samples.py, requirements_page.py, playground.py, kit.py
+│   └── examples/         #   the spec's coverage examples 5 to 9
+├── harness/              # run.py, and adapters.py for the three implementations
+├── cases/                # test cases, with expected values from the requirement text
+├── reports/              # test reports; libcartosym-main/ is written by CI
+├── gallery/              # the generated pages and render kits, served by GitHub Pages
+└── tools/                # requirement snapshot, Rondane and Sentinel-2 fetchers
+```
+
 ## Reading the gallery
 
 - <kbd>draft</kbd> marks the variant the draft requirement text chooses.
