@@ -20,7 +20,7 @@ NAV_CSS = """
 .topbar nav { display: flex; gap: 4px; }
 .topbar nav a { padding: 4px 10px; border-radius: 6px; text-decoration: none; color: var(--fg); font-size: 14px; }
 .topbar nav a:hover { background: var(--bg); }
-.topbar nav a.active { background: var(--accent-bg); color: var(--accent); font-weight: 600; }
+.topbar nav a.active { background: var(--accent-bg); color: var(--fg); font-weight: 600; box-shadow: inset 0 -2px 0 var(--accent); }
 .topbar .jump { margin-left: auto; max-width: 320px; font: inherit; font-size: 13px; padding: 4px 6px; border-radius: 6px;
   border: 1px solid var(--line); background: var(--card); color: var(--fg); }
 .layout { max-width: 1600px; margin: 0 auto; }
@@ -34,7 +34,7 @@ NAV_CSS = """
 }
 .toc a { display: block; padding: 2px 8px; border-radius: 5px; color: var(--muted); text-decoration: none; line-height: 1.35; margin: 1px 0; }
 .toc a:hover { color: var(--fg); background: var(--bg); }
-.toc a.current { color: var(--accent); background: var(--accent-bg); }
+.toc a.current { color: var(--fg); background: var(--accent-bg); box-shadow: inset 2px 0 0 var(--accent); }
 .toc .toc-group { font-weight: 600; color: var(--fg); margin-top: 12px; }
 .toc .open-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; border: 1px solid var(--muted); margin-left: 5px; vertical-align: middle; }
 .permalink { margin-left: 8px; font-size: 15px; color: var(--muted); text-decoration: none; opacity: .5; }

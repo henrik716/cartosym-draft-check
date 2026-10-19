@@ -1,8 +1,8 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1"><title>CartoSym Draft Requirements</title>
 <style>
-:root { --bg:#fbfaf7; --fg:#1f2328; --muted:#5b6370; --card:#fff; --line:#e3e0d8; --accent:#7c3aed; --accent-bg:#f5f3ff; }
-@media (prefers-color-scheme: dark) { :root { --bg:#16181d; --fg:#e8e6e1; --muted:#a3a9b3; --card:#1f2229; --line:#30343c; --accent:#c4b5fd; --accent-bg:#2e1065; } }
+:root { --bg:#fbfaf7; --fg:#1f2328; --muted:#5b6370; --card:#fff; --line:#e3e0d8; --accent:#b45309; --accent-bg:#fffbeb; }
+@media (prefers-color-scheme: dark) { :root { --bg:#16181d; --fg:#e8e6e1; --muted:#a3a9b3; --card:#1f2229; --line:#30343c; --accent:#fbbf24; --accent-bg:#422006; } }
 * { box-sizing: border-box; }
 body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
 main { max-width: 1320px; margin: 0 auto; padding: 32px 16px 64px; }
@@ -14,7 +14,7 @@ h1 { font-size: 26px; margin: 0 0 6px; } h2 { font-size: 19px; margin: 0 0 4px; 
 .variants { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
 figure { margin: 0; } figure svg { width: 100%; height: auto; border-radius: 6px; border: 1px solid var(--line); display:block; }
 figcaption { font-size: 13.5px; margin-top: 6px; }
-.badge { display:inline-block; font-size: 11.5px; font-weight: 600; padding: 1px 7px; border-radius: 99px; background: var(--accent-bg); color: var(--accent); margin-left: 6px; }
+.badge { display:inline-block; font-size: 11.5px; font-weight: 600; padding: 1px 7px; border-radius: 99px; background: var(--fg); color: var(--bg); margin-left: 6px; }
 .evidence { font-size: 13.5px; color: var(--muted); border-top: 1px solid var(--line); margin-top: 14px; padding-top: 10px; }
 details { margin-top: 8px; font-size: 13px; } pre { overflow-x: auto; background: var(--bg); padding: 10px; border-radius: 6px; }
 table { border-collapse: collapse; width: 100%; font-size: 14px; } th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); }
@@ -22,10 +22,11 @@ table { border-collapse: collapse; width: 100%; font-size: 14px; } th, td { text
 .req { font-size: 13.5px; margin: 6px 0; } .req ul { margin: 4px 0 8px; padding-left: 20px; }
 .draft-text { margin: 6px 0 0; } .draft-text summary { font-size: 13.5px; }
 .sources, .kit, .note, .legend { font-size: 13px; color: var(--muted); margin: 6px 0; }
-.badge.open { background: var(--bg); color: var(--muted); border: 1px solid var(--line); font-weight: 500; vertical-align: middle; }
+.badge.open { background: var(--accent-bg); color: var(--accent); border: 1px solid var(--accent); font-weight: 500; vertical-align: middle; }
 .vnote { display: block; font-size: 12.5px; color: var(--muted); }
 .matrix td, .matrix th { font-size: 13.5px; vertical-align: top; }
-a { color: var(--accent); }
+a { color: inherit; text-decoration: underline; text-decoration-color: var(--accent); text-decoration-thickness: 1.5px; text-underline-offset: 2px; }
+a:hover { color: var(--accent); }
 h2.group { font-size: 21px; margin: 40px 0 0; }
 .card-body { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; align-items: start; }
 @media (min-width: 1100px) { .card-body { grid-template-columns: minmax(0, 1fr) 380px; } }
@@ -53,7 +54,7 @@ h2.group { font-size: 21px; margin: 40px 0 0; }
 .topbar nav { display: flex; gap: 4px; }
 .topbar nav a { padding: 4px 10px; border-radius: 6px; text-decoration: none; color: var(--fg); font-size: 14px; }
 .topbar nav a:hover { background: var(--bg); }
-.topbar nav a.active { background: var(--accent-bg); color: var(--accent); font-weight: 600; }
+.topbar nav a.active { background: var(--accent-bg); color: var(--fg); font-weight: 600; box-shadow: inset 0 -2px 0 var(--accent); }
 .topbar .jump { margin-left: auto; max-width: 320px; font: inherit; font-size: 13px; padding: 4px 6px; border-radius: 6px;
   border: 1px solid var(--line); background: var(--card); color: var(--fg); }
 .layout { max-width: 1600px; margin: 0 auto; }
@@ -67,7 +68,7 @@ h2.group { font-size: 21px; margin: 40px 0 0; }
 }
 .toc a { display: block; padding: 2px 8px; border-radius: 5px; color: var(--muted); text-decoration: none; line-height: 1.35; margin: 1px 0; }
 .toc a:hover { color: var(--fg); background: var(--bg); }
-.toc a.current { color: var(--accent); background: var(--accent-bg); }
+.toc a.current { color: var(--fg); background: var(--accent-bg); box-shadow: inset 2px 0 0 var(--accent); }
 .toc .toc-group { font-weight: 600; color: var(--fg); margin-top: 12px; }
 .toc .open-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; border: 1px solid var(--muted); margin-left: 5px; vertical-align: middle; }
 .permalink { margin-left: 8px; font-size: 15px; color: var(--muted); text-decoration: none; opacity: .5; }
