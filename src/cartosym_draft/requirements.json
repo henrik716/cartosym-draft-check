@@ -1,6 +1,6 @@
 {
  "branch": "requirements-placeholders",
- "commit": "ac47eac",
+ "commit": "1d69ffd",
  "uncommitted_changes": false,
  "requirements": {
   "/req/arithmetic/add": {
@@ -136,7 +136,7 @@
    "line": 19,
    "parts": [
     "An Encoding SHALL support defining a `colorChannels` Symbolizer property as a Color object.",
-    "A Renderer SHALL support portraying each coverage cell with the red, green and blue components resolved from the `colorChannels` property for that cell."
+    "A Renderer SHALL support portraying each coverage cell with the red, green and blue components resolved from the `colorChannels` property for that cell, each in the range 0 to 1."
    ]
   },
   "/req/coverage/alpha-channel": {
@@ -353,7 +353,7 @@
    "line": 19,
    "parts": [
     "An Encoding SHALL support defining a `hillShading` Symbolizer property as an object including `factor`, `sun`, `colorMap` and `opacityMap` properties.",
-    "A Renderer SHALL support portraying an elevation coverage with a shade value computed for each cell from the slope and aspect of the terrain relative to the orientation of the sun."
+    "A Renderer SHALL support portraying an elevation coverage with a shade value computed for each cell as the dot product of the unit normal of the terrain surface and the unit vector pointing towards the sun, clamped to the range 0 to 1, where 0 is full shade (the sun at 90 degrees or more from the normal) and 1 is no shade (the sun in the direction of the normal)."
    ]
   },
   "/req/hill-shading/factor": {
@@ -361,7 +361,7 @@
    "line": 30,
    "parts": [
     "An Encoding SHALL support defining a `factor` HillShading property as a float.",
-    "A Renderer SHALL support scaling the intensity of the shading by the `factor` property."
+    "A Renderer SHALL support multiplying the horizontal components of the terrain surface normal by the `factor` property before normalizing it, so that a `factor` of 1 shades the terrain as it is and a larger `factor` exaggerates the relief."
    ]
   },
   "/req/hill-shading/sun": {

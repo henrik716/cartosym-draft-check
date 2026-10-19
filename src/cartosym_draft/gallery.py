@@ -21,7 +21,9 @@ from .review import EXTRA_ROWS, MATRIX, SOURCES
 from .options import Options
 from .render import Layer, View, render
 
-DRAFT = Options()
+# The draft, except that the default Marker is left out so the cards and samples
+# stay readable; the default-marker card shows it.
+DRAFT = Options(default_marker="none")
 
 # ------------------------------------------------------------------ scenes
 
@@ -283,13 +285,18 @@ def _more_vector_decisions() -> list[Decision]:
                                      _feature("LineString", [[20, 40], [90, 110], [140, 60]]),
                                      _feature("Polygon", [[[170, 30], [280, 50], [260, 170], [190, 140], [170, 30]]])])],
             variants=[
-                Variant("No marker unless one is set (draft renderer's choice)", DRAFT),
                 Variant("The default Dot, as the table says", DRAFT.with_(default_marker="dot"), is_draft=True,
                         note="A white 10 px dot at the point, at every line vertex and at the polygon centroid."),
+                Variant("No marker", DRAFT, note="What a style that clears the marker should give."),
             ],
-            evidence="The defaults table is already on main, but the PR's /req/core/default-values makes it normative. "
-                     "The Dot defaults also give a size and a color, while the draft and the schema draw a Dot with its "
-                     "Stroke's width and color. The other cards leave the default marker off, so they stay readable.",
+            evidence="Jérôme: intended, so that every feature type is visible by default, with the side effect on line vertices "
+                     "and polygon centroids; a single default Symbolizer is intended, so making the default depend on the "
+                     "geometry is not the fix, and a basic default style would normally clear the marker. The PR now says "
+                     "so in a NOTE. Open: how a style clears the marker. The draft renderer draws nothing for "
+                     "`marker: { elements: [] }`, but the JSON schema rejects an empty `elements` array (its oneOf "
+                     "branches overlap). Also open: the Dot defaults give a size and a color while a Dot is drawn with its "
+                     "Stroke's width and color. The other cards leave the default marker off, so "
+                     "they stay readable.",
         ),
         Decision(
             key="dots",
@@ -392,14 +399,15 @@ def _coverage_decisions() -> list[Decision]:
     sentinel = [Layer("sentinel2-l2a", type="coverage", grid=s2)]
     ex5, ex8, ex9 = (_example("5-coverage-dem"), _example("8-coverage-hillshading"),
                      _example("9-coverage-hillshading-opacity"))
-    def factor_variants(example: dict, empty_note: str, reference_note: str) -> list[Variant]:
+    ex6 = _example("6-coverage-sentinel2")
+    ex6_unscaled = _tweak(ex6, colorChannels=[{"property": "B04"}, {"property": "B03"}, {"property": "B02"}])
+    def factor_variants(example: dict, notes: tuple[str, str, str]) -> list[Variant]:
         return [
-            Variant("Darkening × factor", DRAFT, is_draft=True, note="Almost every cell is at the darkest shade."),
-            Variant("factor as a percentage", DRAFT.with_(hillshade_factor="percent"), note=empty_note or "Shading at 56 % intensity: subtle."),
-            Variant("factor as vertical exaggeration", DRAFT.with_(hillshade_factor="exaggeration"),
-                    note="Slopes are 56 times steeper: everything facing away from the sun is fully dark."),
-            Variant("For reference: factor 1", DRAFT, style=_tweak(example, hillShading={"factor": 1}),
-                    note=reference_note),
+            Variant("factor as vertical exaggeration (as in Jérôme's renderer)", DRAFT, is_draft=True, note=notes[0]),
+            Variant("The same with factor: 8", DRAFT, style=_tweak(example, hillShading={"factor": 8}), note=notes[1]),
+            Variant("The same with factor: 1", DRAFT, style=_tweak(example, hillShading={"factor": 1}), note=notes[2]),
+            Variant("Darkening × factor (the earlier draft text)", DRAFT.with_(hillshade_factor="intensity"),
+                    note="Almost every cell is at the darkest shade."),
         ]
     common = dict(view=COVERAGE_VIEW, group="Part 1: coverage styling (the spec's examples 5–9)")
     return [
@@ -416,27 +424,29 @@ def _coverage_decisions() -> list[Decision]:
                         DRAFT.with_(division="integer-if-both-integers"),
                         note="Every cell evaluates to 0, the color for NDVI 0.0."),
             ],
-            evidence="Running libCartoSym's cs-canif: (3000 - 1000) / (3000 + 1000) evaluates to 0, and to 0.5 only when an "
-                     "operand is real. With integer division every NDVI value truncates to 0, so the example's color map "
-                     "collapses to one color. This supports the draft's real division. Cloud cells are hidden by the "
-                     "example's SCL rules (alphaChannel 0 and 0.5).",
+            evidence="Jérôme confirmed: `/` is real-valued division and `div` is integer division, as in CQL2 arithmetic "
+                     "expressions. libCartoSym's cs-canif (0.0.1 and main) evaluates (3000 - 1000) / (3000 + 1000) to 0, "
+                     "and to 0.5 only when an operand is real; with integer division every NDVI value truncates to 0, so "
+                     "the example's color map collapses to one color. Cloud cells are hidden by the example's SCL rules "
+                     "(alphaChannel 0 and 0.5).",
             **common,
         ),
         Decision(
             key="color-channels",
             title="Example 6: scaling colorChannels",
             requirements=["/req/coverage/color-channels", "/req/coverage/alpha-channel"],
-            question="Example 6 sets `colorChannels: B04 B03 B02`, Sentinel-2 digital numbers (reflectance × 10 000). "
-                     "The schema types colorChannels as 0..1. How do band values become colors?",
-            style=_example("6-coverage-sentinel2"), layers=sentinel,
+            question="Example 6 set `colorChannels: B04 B03 B02`, Sentinel-2 digital numbers (reflectance × 10 000), "
+                     "while the schema types colorChannels as 0..1. The PR now scales the bands in the style: "
+                     "`colorChannels.r: B04 / 2500` and so on.",
+            style=ex6, layers=sentinel,
             variants=[
-                Variant("As given, clamped to 0..1 (draft renderer's choice: no scaling is defined)", DRAFT, note="Band values in the hundreds and thousands clamp to 1, so every cell is white."),
-                Variant("÷ 10 000 (reflectance)", DRAFT.with_(color_channels_scale="reflectance")),
-                Variant("÷ 3 000 (a common display stretch)", DRAFT.with_(color_channels_scale="display")),
+                Variant("Scaled in the style, ÷ 2500", DRAFT, is_draft=True),
+                Variant("The original example: unscaled bands", DRAFT, style=ex6_unscaled,
+                        note="Band values in the hundreds and thousands clamp to 1, so every cell is white."),
             ],
-            evidence="Neither the requirement nor the example gives a scale. Used as given, every cell is white. "
-                     "Reflectance alone is very dark; a usable image needs a stretch, which is what Part 4 contrast "
-                     "enhancement is for. The example (or the requirement) should state the scaling.",
+            evidence="Jérôme: colorChannels is 0..1 and the example assumed pre-scaled bands; one of his working examples "
+                     "divides each band by 2500. The PR now states the 0..1 range and scales example 6 that way. Still to "
+                     "raise: the defaults table gives colorChannels as fields[0], fields[1], fields[2], unscaled.",
             **common,
         ),
         Decision(
@@ -475,12 +485,18 @@ def _coverage_decisions() -> list[Decision]:
             title="Example 8: what hillShading factor means",
             requirements=["/req/hill-shading/hill-shading", "/req/hill-shading/factor"],
             question="Example 8 shades the DEM color map with `factor: 56`, sun at azimuth 45°, elevation 60° (100 m cells). "
-                     "What does 56 scale?",
-            style=ex8, layers=elevation, variants=factor_variants(ex8, "", "The same example with factor: 1, where the draft's reading and exaggeration agree."),
-            evidence="Under the draft's reading nearly every cell is black. As a percentage, example 8 looks plausible but "
-                     "example 9 (next) becomes fully transparent. As vertical exaggeration, 56 saturates the relief at this "
-                     "cell size. No reading fits both examples, so the meaning should come from the implementation the "
-                     "examples were written for.",
+                     "What does 56 scale, and over what distance is the slope measured?",
+            style=ex8, layers=elevation,
+            variants=factor_variants(ex8, (
+                "At 100 m cells, 56 saturates the relief: 58 % of the cells are in full or near-full shade (below 0.05).",
+                "36 % of the cells are in full or near-full shade.",
+                "The terrain as it is: gentle shading, no cell darker than 0.49.")),
+            evidence="Jérôme: factor multiplies the horizontal components of the terrain normal before normalization, so "
+                     "factor 1 is the plain dot product of the sun direction and the normal; his illustrations (global "
+                     "imagery) use factors from 1 to 64. The PR now says so. Open: the horizontal distance the normal is "
+                     "computed over. This renderer uses metres over 100 m cells, where 56 saturates the relief; on a global "
+                     "view, slopes per pixel are far smaller and need a large factor. The PR also does not say how the "
+                     "shade applies without a hillShading colorMap; this renderer multiplies the cell's color by it.",
             **common,
         ),
         Decision(
@@ -488,14 +504,17 @@ def _coverage_decisions() -> list[Decision]:
             title="Example 9: shading intensity mapped to color and opacity",
             requirements=["/req/hill-shading/factor", "/req/hill-shading/color-map", "/req/hill-shading/opacity-map"],
             question="Example 9 maps the shade (0..1) to black–white and to opacity 0.75–0, for use as an overlay. "
-                     "Same three readings of `factor: 56`.",
+                     "With `factor: 56`, how much of the terrain does it cover?",
             style=ex9, layers=elevation,
-            variants=factor_variants(ex9, "Nothing is drawn: every shade is above 0.55, where the opacity map reaches 0.",
-                                     "Even at factor: 1 nothing is drawn: on this terrain no shade falls below 0.55."),
-            evidence="The example's maps stop at 0.55, so a cell must have a shade below 0.55 for anything to show. "
-                     "With the shade as the cosine of the angle to the sun, flat ground under a 60° sun is 0.87 and only "
-                     "slopes steeper than about 26° facing directly away from the sun fall below 0.55, so even factor: 1 draws nothing here. "
-                     "The range and meaning of the shade value should be stated.",
+            variants=factor_variants(ex9, (
+                "The overlay covers 98 % of the cells: only a shade below 0.55 shows.",
+                "The overlay covers 69 % of the cells.",
+                "Almost nothing is drawn: 2 % of the cells have a shade below 0.55.")),
+            evidence="Jérôme: the shade is the dot product of the sun direction and the terrain normal, from 0 (the sun at "
+                     "90° from the normal, full shade) to 1 (no shade), and is the key for the hillShading colorMap and "
+                     "opacityMap. His example uses a grayscale colorMap with an opacityMap that is more opaque in the shade, "
+                     "so imagery shows through on flat ground, as example 9 does. The PR now states this. How much shows "
+                     "depends on the factor and the distance the normal is computed over (see example 8).",
             **common,
         ),
         Decision(

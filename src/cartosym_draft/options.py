@@ -30,8 +30,9 @@ class Options:
 
     # /req/core/default-values: the default Marker is "Single default Dot"
     # (white, 10 px). "dot" applies it to every feature that sets no marker,
-    # as the table says; "none" leaves it out, which keeps the other cards readable.
-    default_marker: str = "none"
+    # as the table says (and as intended, per Jérôme); "none" leaves it out,
+    # which the gallery cards use to stay readable.
+    default_marker: str = "dot"
 
     # /req/core/z-order: "higher-on-top" draws higher zOrder later.
     z_order: str = "higher-on-top"
@@ -73,19 +74,21 @@ class Options:
     map_outside: str = "clamp"
 
     # /req/coverage/color-channels: how band values become 0..1 color
-    # components. "as-given" uses them unscaled (the schema types colorChannels
-    # as 0..1); "reflectance" divides Sentinel-2 L2A digital numbers by 10000;
-    # "display" divides by 3000, a common true-color stretch.
+    # components. "as-given" uses them unscaled (draft: colorChannels is 0..1,
+    # and the style scales the bands, as example 6 does); "reflectance" divides
+    # Sentinel-2 L2A digital numbers by 10000; "display" divides by 3000, a
+    # common true-color stretch.
     color_channels_scale: str = "as-given"
 
     # /req/coverage/gamma: "exponent" applies c ** gamma (draft); "inverse"
     # applies c ** (1 / gamma), as SE GammaValue does (> 1 brightens).
     gamma: str = "exponent"
 
-    # /req/hill-shading/factor: "intensity" multiplies the darkening by factor
-    # (draft); "percent" uses factor / 100 as the intensity; "exaggeration"
-    # multiplies the terrain slope (vertical exaggeration).
-    hillshade_factor: str = "intensity"
+    # /req/hill-shading/factor: "exaggeration" multiplies the horizontal
+    # components of the surface normal by factor before normalizing it (draft,
+    # as in Jérôme's renderer); "intensity" multiplies the darkening by factor
+    # (the earlier draft text); "percent" uses factor / 100 as the intensity.
+    hillshade_factor: str = "exaggeration"
     # /req/hill-shading/sun: azimuth "clockwise-from-north" (compass bearing)
     # or "counter-clockwise-from-east" (mathematical angle).
     hillshade_azimuth: str = "clockwise-from-north"

@@ -30,7 +30,7 @@
   kind: expression
   input: "7 / 2"
   expect: 3.5
-  note: Draft says `div` is always real-valued, even for two integers.
+  note: Draft says `/` is always real-valued, even for two integers (`div` is integer division).
 - id: arith-int-div
   requirement: /req/arithmetic/int-div
   kind: expression

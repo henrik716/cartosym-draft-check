@@ -38,13 +38,13 @@ PR #133 has 134 requirements: 108 in Part 1's requirements files, 20 in the core
 
 The full list, with a proposed resolution for each, is the decision matrix at the top of the gallery. The most important:
 
-- **The spec's NDVI example (7) needs real division.** With integer Sentinel-2 bands, integer division makes every NDVI value 0; libCartoSym 0.0.1 does this today. The draft's real-valued `/` works.
-- **`hillShading.factor` and the shade value are undefined in practice.** Examples 8 and 9 (`factor: 56`) give no usable result under any reading tried, and example 9 draws nothing even at `factor: 1`.
-- **Example 6 (`colorChannels: B04 B03 B02`) renders all white**: nothing defines how band values become 0..1 color components.
-- **The default Marker** (clause 7) would put a white dot on every point, line vertex and polygon centroid of a style that sets no marker.
+- **The spec's NDVI example (7) needs real division.** With integer Sentinel-2 bands, integer division makes every NDVI value 0; libCartoSym does this today. Jérôme confirmed that `/` is real-valued and `div` is integer division, as in CQL2.
+- **`hillShading.factor` was undefined in practice.** Examples 8 and 9 (`factor: 56`) gave no usable result under the draft's reading. Jérôme explained it: `factor` multiplies the horizontal components of the terrain normal, and the shade is the dot product with the sun direction (0 to 1). The PR and the renderer now do this. Still open: the horizontal distance the normal is computed over, which decides what a given `factor` does.
+- **Example 6 (`colorChannels: B04 B03 B02`) rendered all white**: nothing defined how band values become 0..1 color components. Following Jérôme, the PR now scales the bands in the style (`B04 / 2500`).
+- **The default Marker** (clause 7) puts a white dot on every point, line vertex and polygon centroid of a style that sets no marker. Jérôme confirmed this is intended, so every feature is visible; the PR now says so. Still open: how a style clears it.
 - **The JSON schema (on main) rejects colors given as expressions, and empty arrays**, because its `oneOf` branches overlap.
 
-These are recorded as TODO(review) notes in PR #133 (the schema issue is outside the PR). In the test harness the draft renderer passes 91 of 92 cases and libCartoSym 36 of the 84 it can run.
+The open points are recorded as TODO(review) notes in PR #133 (the schema issue is outside the PR). In the test harness the draft renderer passes 91 of 92 cases and libCartoSym 36 of the 84 it can run.
 
 ## Data
 
