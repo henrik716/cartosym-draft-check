@@ -816,8 +816,8 @@
     "detail": "'abc'"
    },
    "pycartosym": {
-    "verdict": "FAIL",
-    "detail": "converts to `{\"property\": \"abc\"}`, case has `\"abc\"`"
+    "verdict": "pass",
+    "detail": "converts to the case's CQL2-JSON"
    },
    "draft renderer": {
     "verdict": "pass",
