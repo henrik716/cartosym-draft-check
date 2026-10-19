@@ -73,14 +73,26 @@ def _values(case: dict) -> list[str]:
     return out
 
 
+def _pycartosym_verdict(case: dict) -> tuple[str, str]:
+    """pycartosym does not evaluate expressions: compare its CQL2-JSON with the case's, or check that it parses."""
+    if "json" not in case:
+        parsed = adapters.pycartosym_parse_expression(case["input"])
+        return (PASS, "parses") if parsed.status == "ok" else (UNSUPPORTED, "does not parse as CQL2")
+    converted = adapters.pycartosym_to_json(case["input"])
+    if converted.status != "ok":
+        return UNSUPPORTED, "does not parse as CQL2"
+    if converted.value == case["json"]:
+        return PASS, "converts to the case's CQL2-JSON"
+    return FAIL, f"converts to `{json.dumps(converted.value)}`, case has `{json.dumps(case['json'])}`"
+
+
 def run_case(case: dict) -> dict[str, tuple[str, str]]:
     kind, expected = case["kind"], case["expect"]
     results = {}
     if kind == "expression":
         if not case.get("draft_only"):
             results["libCartoSym"] = _verdict(adapters.libcartosym_eval(case["input"]), expected)
-            parsed = adapters.pycartosym_parse_expression(case["input"])
-            results["pycartosym"] = (PASS, "parses") if parsed.status == "ok" else (UNSUPPORTED, "does not parse as CQL2")
+            results["pycartosym"] = _pycartosym_verdict(case)
         results["draft renderer"] = _verdict(adapters.draft_eval(
             case["input"], case.get("json"), case.get("properties"), case.get("variables"), case.get("definitions"),
             case.get("system")),
@@ -116,7 +128,7 @@ def main(paths: list[str]) -> int:
         "",
         "Expected values are what the **draft requirement** says. `FAIL` means the implementation disagrees with the draft, "
         "which may mean the draft or the implementation is wrong. pycartosym does not evaluate expressions, so for expression "
-        "cases it only reports whether the expression parses. The draft renderer is `cartosym_draft` in this "
+        "cases it is checked on converting them to CQL2-JSON (see below). The draft renderer is `cartosym_draft` in this "
         "repository, which implements the draft requirements; a FAIL there means it does not do what the draft says.",
         "",
         "## Summary",
@@ -137,12 +149,13 @@ def main(paths: list[str]) -> int:
         "",
         f"- **libCartoSym:** the Input text is written to `expr.cql2` and evaluated with `cs-canif eval expr.cql2` "
         f"({LIBCARTOSYM}).",
-        "- **pycartosym:** expressions are only parsed, with `pycartosym.cql2.parse_text(input)`; pycartosym does not "
-        "evaluate them.",
+        "- **pycartosym:** pycartosym does not evaluate expressions. Where a case gives its own CQL2-JSON "
+        f"({n_json} cases), the Input text is converted with `pycartosym.cql2.to_cql2_json(cql2.parse_text(input))` "
+        "and passes if the result is that CQL2-JSON; otherwise it passes if `pycartosym.cql2.parse_text(input)` "
+        "parses it.",
         "- **draft renderer:** `cartosym_draft.evaluate.evaluate(expression, Context(...))`. Where a case gives its own "
-        f"CQL2-JSON ({n_json} cases), that is what it evaluates, and the result is marked _(CQL2-JSON)_; otherwise the "
-        "Input text is converted with `pycartosym.cql2.to_cql2_json(cql2.parse_text(input))`, whose parser mishandles "
-        "some inputs (string literals in function calls, arrays, conditionals, `^`).",
+        "CQL2-JSON, that is what it evaluates, and the result is marked _(CQL2-JSON)_, so it does not depend on "
+        "pycartosym's parser; otherwise the Input text is converted with pycartosym as above.",
         "- **Values:** feature properties, system identifiers, style variables (`@name`) and variables set by the "
         "application that a case is evaluated with are listed under its input (_with …_).",
         f"- **Draft renderer only** ({n_draft_only} cases): cases that need such values. The harness does not pass "

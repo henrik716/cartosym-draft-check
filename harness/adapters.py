@@ -112,6 +112,15 @@ def pycartosym_parse_expression(expression: str) -> Outcome:
         return Outcome("unsupported", detail=f"{type(exc).__name__}: {exc}")
 
 
+def pycartosym_to_json(expression: str) -> Outcome:
+    """Convert a CQL2-Text expression to CQL2-JSON with pycartosym."""
+    try:
+        from pycartosym import cql2
+        return Outcome("ok", value=cql2.to_cql2_json(cql2.parse_text(expression)))
+    except Exception as exc:  # noqa: BLE001 - any parse failure counts
+        return Outcome("unsupported", detail=f"{type(exc).__name__}: {exc}")
+
+
 def pycartosym_validate_style(style: str, fmt: str) -> Outcome:
     """Validate a style against the CartoSym-CSS grammar or the CartoSym-JSON schema."""
     ext = {"cscss": "cscss", "csjson": "cs.json"}[fmt]
@@ -137,9 +146,8 @@ def draft_eval(expression: str, json_expr=None, properties: dict | None = None, 
                definitions: dict | None = None, system: dict | None = None) -> Outcome:
     """Evaluate with the draft renderer (cartosym_draft, in this repository).
 
-    Uses the case's CQL2-JSON when given; otherwise converts the CQL2-Text with
-    pycartosym, whose parser has known bugs (string literals in function calls,
-    arrays, conditionals, `^`).
+    Uses the case's CQL2-JSON when given, so the result does not depend on
+    pycartosym's parser; otherwise converts the CQL2-Text with pycartosym.
     """
     from cartosym_draft.evaluate import Context, EvaluationError, evaluate
     if json_expr is not None:

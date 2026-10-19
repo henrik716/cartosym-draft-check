@@ -26,8 +26,9 @@ ENCODING = {
     "/req/cscss/selectors": "as for the grammar",
     "/req/cscss/expressions": "as for the grammar",
     "/req/cscss/comments": "the spec's examples contain comments; they convert",
-    "/req/cscss/include": "pycartosym converts `.include`, but loses the file's own rules when combined with variables",
-    "/req/cscss/variables": "pycartosym converts `@variables`, but not to the `$variables` / `$ref` form",
+    "/req/cscss/include": "pycartosym converts `.include` to `$include`, keeping the file's own rules and variables",
+    "/req/cscss/variables": "pycartosym converts `@variables` to `$variables` and `$ref`, including variables defined by "
+                            "expressions; the draft renderer resolves them",
     "/req/json/variables": "tested (variables cases) and used by the draft renderer",
 }
 NOT_IMPLEMENTED = {

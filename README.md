@@ -16,6 +16,8 @@ Requirements written without an implementation are hard to get right. This repos
 | **Test harness** | [`harness/`](harness/), [`cases/`](cases/) | 92 test cases whose expected values are taken from the requirement text. Each case is run through libCartoSym, pycartosym and the draft renderer. |
 | **Test report** | [`reports/report.md`](reports/report.md), [`reports/results.json`](reports/results.json) | Results per requirement and implementation, with libCartoSym from the `cartosym` pip package. [`reports/libcartosym-main/`](reports/libcartosym-main/) has the same against the latest libCartoSym from GitHub. |
 
+Three implementations are involved, and they do different things. The **draft renderer** (this repository) evaluates expressions, resolves the style for each feature and draws the map. **libCartoSym** (Ecere) reads and writes CartoSym-CSS, CartoSym-JSON, SLD/SE and Mapbox styles, and evaluates expressions and styles for a feature (`cs-canif eval`); the test harness compares its results with what the draft says. **pycartosym** (Maxime Collombin) converts between CartoSym-CSS, CartoSym-JSON, SLD/SE and MapLibre styles; the draft renderer uses it to read CartoSym-CSS and CQL2-Text, and the test harness checks its conversion to CQL2-JSON.
+
 The draft renderer is a discussion tool, not a reference implementation. Because it implements the draft itself, it can show what each choice looks like, but not whether that choice is the intended one: that is for the SWG to decide. Comparing with an independent renderer shows whether others read the requirements the same way, which is what the render kits are for.
 
 ## Reading the gallery
@@ -28,7 +30,7 @@ Every style in the gallery and the samples is validated against the PR's CartoSy
 
 ## What is covered
 
-PR #133 has 134 requirements: 108 in Part 1's requirements files, 20 in the core class (clause 7) and 6 for Part 2 gradient fills. Every one is checked in at least one way; [`requirements.html`](gallery/requirements.html) lists how. Not implemented: the visualization time and `capabilities` system identifiers, and label `maxSpacing`. CSCSS `.include` and variables go through pycartosym's conversion and are affected by its bugs.
+PR #133 has 134 requirements: 108 in Part 1's requirements files, 20 in the core class (clause 7) and 6 for Part 2 gradient fills. Every one is checked in at least one way; [`requirements.html`](gallery/requirements.html) lists how. Not implemented: the visualization time and `capabilities` system identifiers, and label `maxSpacing`. CSCSS `.include` and variables are checked through pycartosym's conversion, which since 0.5.0 gives the draft's `$include`, `$variables` and `$ref` form.
 
 - **Rendered:** vector styling (fill, stroke, units, markers, Dot, Text, Image), casing, dashes, hatches, stipples, dot patterns, font outlines, labels, coverage styling, hill shading and Part 2 gradients: judgement calls as gallery cards, the rest as samples.
 - **Tested:** arithmetic, math, text relation and manipulation, array relations, conditionals, right-hand operands, function calls, variables, and core literals, arrays and identifiers, in the test harness.
@@ -44,7 +46,7 @@ The full list, with a proposed resolution for each, is the decision matrix at th
 - **The default Marker** (clause 7) puts a white dot on every point, line vertex and polygon centroid of a style that sets no marker. Jérôme confirmed this is intended, so every feature is visible, and a typical base style unsets it for lines and polygons (`marker: null`); the PR now says so. Still open: the JSON schema rejects `marker: null` and `marker: { elements: [] }`, and the Dot defaults give a size and color the Dot class does not have.
 - **The JSON schema (on main) rejects colors given as expressions, and empty arrays**, because its `oneOf` branches overlap.
 
-The open points are recorded as TODO(review) notes in PR #133 (the schema issue is outside the PR). In the test harness the draft renderer passes 91 of 92 cases and libCartoSym 36 of the 84 it can run.
+The open points are recorded as TODO(review) notes in PR #133 (the schema issue is outside the PR). In the test harness the draft renderer passes 91 of 92 cases and libCartoSym 36 of the 84 it can run. pycartosym converts 53 of the 54 expressions that have an expected CQL2-JSON to exactly that JSON.
 
 ## Data
 
@@ -73,10 +75,10 @@ To fetch the Rondane data again: `uv run --with tifffile --with numpy python too
 
 `extract_requirements.py` reads the checked-out branch of `../cartographic-symbology` (the PR branch, `requirements-placeholders`). Run it again after the requirements change.
 
-- **pycartosym** 0.4.1 is installed from PyPI. It converts the CSCSS examples and parses CQL2-Text test inputs.
+- **pycartosym** 0.5.0 is installed from PyPI. It converts the CSCSS examples and converts the CQL2-Text test inputs to CQL2-JSON.
 - **libCartoSym** comes from the `cartosym` 0.0.1 and `ecrt` 0.0.6 packages (built in November 2025) by default. To test a build from source instead, set `CS_CANIF` to the `cs-canif` executable and `CS_CANIF_LIBDIRS` to the folders with its libraries; `REPORT_DIR` and `LIBCARTOSYM_LABEL` set where the report goes and how libCartoSym is described in it.
 - **Latest libCartoSym:** the [`libcartosym-main`](.github/workflows/libcartosym-main.yml) workflow builds the latest eC and libCartoSym from GitHub on Ubuntu (as their `fetchAndBuild.sh` does), runs the harness against that `cs-canif`, and commits the report to [`reports/libcartosym-main/`](reports/libcartosym-main/). It runs weekly, when the harness or cases change, and on demand.
-- **pycartosym's CQL2-Text parser** mishandles some inputs (string literals in function calls, arrays, conditionals, `^`). Affected cases therefore give the draft renderer their CQL2-JSON directly.
+- **Cases with their own CQL2-JSON** give it to the draft renderer directly, so its results do not depend on pycartosym's parser. pycartosym 0.4.1 converted 30 of these 54 expressions wrongly (string literals, negative numbers, arrays, conditionals, `^`); 0.5.0 fixed all but a string literal on its own (`'abc'`, read as a property).
 
 ## Limitations
 
