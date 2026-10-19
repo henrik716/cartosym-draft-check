@@ -89,7 +89,7 @@ The full list, with a proposed resolution for each, is the decision matrix at th
 - **The default Marker** (clause 7) puts a white dot on every point, line vertex and polygon centroid of a style that sets no marker. Jérôme confirmed this is intended, so every feature is visible, and a typical base style unsets it for lines and polygons (`marker: null`); the PR now says so. Still open: the JSON schema rejects `marker: null` and `marker: { elements: [] }`, and the Dot defaults give a size and color the Dot class does not have.
 - **The JSON schema (on main) rejects colors given as expressions, and empty arrays**, because its `oneOf` branches overlap.
 
-The open points are recorded as TODO(review) notes in PR #133 (the schema issue is outside the PR). In the test harness the draft renderer passes 91 of 92 cases and libCartoSym 36 of the 84 it can run. pycartosym converts 53 of the 54 expressions that have an expected CQL2-JSON to exactly that JSON.
+The open points are recorded as TODO(review) notes in PR #133 (the schema issue is outside the PR). In the test harness the draft renderer passes 91 of 92 cases and libCartoSym 36 of the 84 it can run. pycartosym converts all 54 expressions that have an expected CQL2-JSON to exactly that JSON.
 
 ## Data
 
@@ -118,10 +118,11 @@ To fetch the Rondane data again: `uv run --with tifffile --with numpy python too
 
 `extract_requirements.py` reads the checked-out branch of `../cartographic-symbology` (the PR branch, `requirements-placeholders`). Run it again after the requirements change.
 
-- **pycartosym** 0.5.0 is installed from PyPI. It converts the CSCSS examples and converts the CQL2-Text test inputs to CQL2-JSON.
+- **pycartosym** 0.6.0 is installed from PyPI. It converts the CSCSS examples and converts the CQL2-Text test inputs to CQL2-JSON.
 - **libCartoSym** comes from the `cartosym` 0.0.1 and `ecrt` 0.0.6 packages (built in November 2025) by default. To test a build from source instead, set `CS_CANIF` to the `cs-canif` executable and `CS_CANIF_LIBDIRS` to the folders with its libraries; `REPORT_DIR` and `LIBCARTOSYM_LABEL` set where the report goes and how libCartoSym is described in it.
 - **Latest libCartoSym:** the [`libcartosym-main`](.github/workflows/libcartosym-main.yml) workflow builds the latest eC and libCartoSym from GitHub on Ubuntu (as their `fetchAndBuild.sh` does), runs the harness against that `cs-canif`, and commits the report to [`reports/libcartosym-main/`](reports/libcartosym-main/). It runs weekly, when the harness or cases change, and on demand.
-- **Cases with their own CQL2-JSON** give it to the draft renderer directly, so its results do not depend on pycartosym's parser. pycartosym 0.4.1 converted 30 of these 54 expressions wrongly (string literals, negative numbers, arrays, conditionals, `^`); 0.5.0 fixed all but a string literal on its own (`'abc'`, read as a property).
+- **pycartosym's test suite** runs the expression cases too: `tools/export_pycartosym_cases.py` writes them to `tests/data/cartosym_draft_cases.json` in a pycartosym checkout next to this one, with the CQL2-Text, the expected CQL2-JSON and the `disputed` note of each case, but not the `expect` values. Export them again after the cases change, and open a pull request to pycartosym.
+- **Cases with their own CQL2-JSON** give it to the draft renderer directly, so its results do not depend on pycartosym's parser. pycartosym 0.4.1 converted 30 of these 54 expressions wrongly (string literals, negative numbers, arrays, conditionals, `^`); 0.5.0 fixed all but a string literal on its own (`'abc'`, read as a property), and 0.6.0 fixed that one.
 
 ## Limitations
 

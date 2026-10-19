@@ -1,6 +1,6 @@
 # CartoSym draft requirements vs implementations
 
-Generated 2026-10-19 with libCartoSym (cs-canif from `cartosym` 0.0.1, `ecrt` 0.0.6) and pycartosym 0.5.0.
+Generated 2026-10-19 with libCartoSym (cs-canif from `cartosym` 0.0.1, `ecrt` 0.0.6) and pycartosym 0.6.0.
 
 Expected values are what the **draft requirement** says. `FAIL` means the implementation disagrees with the draft, which may mean the draft or the implementation is wrong. pycartosym does not evaluate expressions, so for expression cases it is checked on converting them to CQL2-JSON (see below). The draft renderer is `cartosym_draft` in this repository, which implements the draft requirements; a FAIL there means it does not do what the draft says.
 
@@ -10,7 +10,7 @@ Expected values are what the **draft requirement** says. `FAIL` means the implem
 |---|---|---|---|---|---|
 | draft renderer | 91 | 1 | 0 | 0 | 0 |
 | libCartoSym | 36 | 5 | 34 | 3 | 6 |
-| pycartosym | 83 | 1 | 0 | 0 | 0 |
+| pycartosym | 84 | 0 | 0 | 0 | 0 |
 
 ## How the cases are run
 
@@ -140,7 +140,7 @@ The cases are in [`cases/`](../cases/), the calls in [`harness/adapters.py`](../
 
 | Case | Input | Expected | libCartoSym | pycartosym | draft renderer |
 |---|---|---|---|---|---|
-| core-literal-string | `'abc'` | `abc` | pass: 'abc' | FAIL: converts to `{"property": "abc"}`, case has `"abc"` | pass: abc _(CQL2-JSON)_ |
+| core-literal-string | `'abc'` | `abc` | pass: 'abc' | pass: converts to the case's CQL2-JSON | pass: abc _(CQL2-JSON)_ |
 | core-literal-real | `3.25` | `3.25` | pass: 3.25 | pass: converts to the case's CQL2-JSON | pass: 3.25 _(CQL2-JSON)_ |
 | core-literal-boolean | `true` | `true` | pass: true | pass: converts to the case's CQL2-JSON | pass: true _(CQL2-JSON)_ |
 
@@ -346,7 +346,7 @@ The cases are in [`cases/`](../cases/), the calls in [`harness/adapters.py`](../
 |---|---|---|---|---|---|
 | rhs-function | `3 < abs(-5)` | `true` | error: Unresolved expression (flags: isNotLiteral = True, isNotLiteral = True) | pass: converts to the case's CQL2-JSON | pass: true _(CQL2-JSON)_ |
 | rhs-identifier | `width < height`<br>with `width = 2`, `height = 5` | `true` | - | - | pass: true _(CQL2-JSON)_ |
-| | _Needs feature properties, so only the draft renderer is run. pycartosym's parser turns `height` into the string "height"._ | | | | |
+| | _Needs feature properties, so only the draft renderer is run._ | | | | |
 
 ### `/req/text-manipulation/accent-insensitize`
 

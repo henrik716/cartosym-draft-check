@@ -1,8 +1,8 @@
 # Part 1 expression requirements (PR #133, branch requirements-placeholders).
 # `expect` is what the draft requirement says the result should be. `json` is the
-# CQL2-JSON given to the draft renderer directly; pycartosym's CQL2-Text parser
-# mangles these inputs (string literals become properties, arrays and conditionals
-# are not converted, `^` becomes `**`).
+# CQL2-JSON given to the draft renderer directly, so its results do not depend on
+# pycartosym's CQL2-Text parser. `disputed` says why a case may change: the draft
+# wording it follows is still open in the PR.
 
 # --- Arithmetic (rc-arithmetic.adoc) ---------------------------------------
 - id: arith-add
@@ -215,6 +215,7 @@
   json: {"op": "=", "args": [{"op": "caseInsensitize", "args": ["ABC"]}, {"op": "caseInsensitize", "args": ["abc"]}]}
   expect: "true"
   note: Draft function name.
+  disputed: "The draft names the function caseInsensitize; the JSON schema and libCartoSym use the CQL2 name casei (https://github.com/opengeospatial/cartographic-symbology/issues/140)."
 - id: textfn-casei
   requirement: /req/text-manipulation/case-insensitize
   kind: expression
@@ -229,6 +230,7 @@
   json: {"op": "=", "args": [{"op": "accentInsensitize", "args": ["Øre"]}, {"op": "accentInsensitize", "args": ["Ore"]}]}
   expect: "true"
   note: Draft function name.
+  disputed: "The draft names the function accentInsensitize; the JSON schema and libCartoSym use the CQL2 name accenti (https://github.com/opengeospatial/cartographic-symbology/issues/140)."
 - id: textfn-accenti
   requirement: /req/text-manipulation/accent-insensitize
   kind: expression

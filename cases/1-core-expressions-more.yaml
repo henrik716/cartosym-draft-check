@@ -29,9 +29,12 @@
 - {id: text-contains, requirement: /req/text-relation/contains, kind: expression, input: "contains('Oslo', 'sl')", json: {op: contains, args: [Oslo, sl]}, expect: true}
 - {id: text-starts-with, requirement: /req/text-relation/starts-with, kind: expression, input: "startsWith('Oslo', 'Os')", json: {op: startsWith, args: [Oslo, Os]}, expect: true}
 - {id: text-ends-with, requirement: /req/text-relation/ends-with, kind: expression, input: "endsWith('Oslo', 'lo')", json: {op: endsWith, args: [Oslo, lo]}, expect: true}
-- {id: text-not-contains, requirement: /req/text-relation/not-contains, kind: expression, input: "notContains('Oslo', 'sl')", json: {op: notContains, args: [Oslo, sl]}, expect: false}
-- {id: text-not-starts-with, requirement: /req/text-relation/not-starts-with, kind: expression, input: "notStartsWith('Oslo', 'sl')", json: {op: notStartsWith, args: [Oslo, sl]}, expect: true}
-- {id: text-not-ends-with, requirement: /req/text-relation/not-ends-with, kind: expression, input: "notEndsWith('Oslo', 'lo')", json: {op: notEndsWith, args: [Oslo, lo]}, expect: false}
+- {id: text-not-contains, requirement: /req/text-relation/not-contains, kind: expression, input: "notContains('Oslo', 'sl')", json: {op: notContains, args: [Oslo, sl]}, expect: false,
+   disputed: "The JSON schema has no notContains; the SWG may encode it as not applied to contains (https://github.com/opengeospatial/cartographic-symbology/issues/140)."}
+- {id: text-not-starts-with, requirement: /req/text-relation/not-starts-with, kind: expression, input: "notStartsWith('Oslo', 'sl')", json: {op: notStartsWith, args: [Oslo, sl]}, expect: true,
+   disputed: "The JSON schema has no notStartsWith; the SWG may encode it as not applied to startsWith (https://github.com/opengeospatial/cartographic-symbology/issues/140)."}
+- {id: text-not-ends-with, requirement: /req/text-relation/not-ends-with, kind: expression, input: "notEndsWith('Oslo', 'lo')", json: {op: notEndsWith, args: [Oslo, lo]}, expect: false,
+   disputed: "The JSON schema has no notEndsWith; the SWG may encode it as not applied to endsWith (https://github.com/opengeospatial/cartographic-symbology/issues/140)."}
 
 # --- Conditional (rc-conditional.adoc) --------------------------------------
 - {id: cond-string-then, requirement: /req/conditional/condition, kind: expression, input: "2 > 1 ? 'yes' : 'no'", json: {op: "?:", args: [{op: ">", args: [2, 1]}, "yes", "no"]}, expect: "yes"}
@@ -47,7 +50,8 @@
   json: {op: "<", args: [{property: width}, {property: height}]}
   properties: {width: 2, height: 5}
   expect: true
-  note: Needs feature properties, so only the draft renderer is run. pycartosym's parser turns `height` into the string "height".
+  note: Needs feature properties, so only the draft renderer is run.
+  disputed: "The draft does not say whether a bare word on the right-hand side (height) is a property or text (https://github.com/opengeospatial/cartographic-symbology/issues/151)."
 
 # --- Functions (rc-functions.adoc) ------------------------------------------
 - {id: fn-call, requirement: /req/functions/call-expressions, kind: expression, input: "abs(-2)", json: {op: abs, args: [-2]}, expect: 2}

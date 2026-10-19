@@ -72,7 +72,7 @@ requires-dist = [
     { name = "cartosym", specifier = "==0.0.1" },
     { name = "ecrt", specifier = "==0.0.6" },
     { name = "jsonschema", specifier = ">=4.18" },
-    { name = "pycartosym", extras = ["all"], specifier = "==0.5.0" },
+    { name = "pycartosym", extras = ["all"], specifier = "==0.6.0" },
     { name = "pyyaml", specifier = ">=6.0" },
 ]
 
@@ -361,16 +361,16 @@ wheels = [
 
 [[package]]
 name = "pycartosym"
-version = "0.5.0"
+version = "0.6.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "antlr4-python3-runtime" },
     { name = "jsonschema" },
     { name = "pydantic" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/ae/7c/38d51b384bbd225036e8b12f28fe30ed4c11ab6a33a865cec1192d152733/pycartosym-0.5.0.tar.gz", hash = "sha256:a2d9abc322fc5ba732e73489bb9d1679dca5579dc684729a7259f93403720c0f", size = 363022, upload-time = "2026-10-16T19:29:34.037Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/39/41/6e1e45e00b149b3d2272cb179aecf56996e82a2f63ac48b80a8e76e1308e/pycartosym-0.6.0.tar.gz", hash = "sha256:02ec18fc0b43afee21471b6e6a33b0883149cfb886dc8c7b752d07cf534c21b9", size = 370184, upload-time = "2026-10-19T19:41:03.781Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/5e/3f/d4eab2f6728b8236aca76698fc743ea0cb44fed7bb9d1aaea93a3a39120c/pycartosym-0.5.0-py3-none-any.whl", hash = "sha256:3bfddd8564e3311bbc244e331f4c181bd9db2aa98faf0454bc7a185a8030af45", size = 291070, upload-time = "2026-10-16T19:29:32.462Z" },
+    { url = "https://files.pythonhosted.org/packages/5e/ac/c8502b65d11c725525b8ad2e9fade45a5f3026ff5689d6b8d5d57e80753a/pycartosym-0.6.0-py3-none-any.whl", hash = "sha256:23e0a6d099b053a7e8fbb844507c42f74b2c0c7bfa728d6013fb568c7613625b", size = 295450, upload-time = "2026-10-19T19:41:01.903Z" },
 ]
 
 [package.optional-dependencies]
