@@ -212,10 +212,12 @@ def _vector_decisions() -> list[Decision]:
             layers=[Layer("Boundaries", [_feature("LineString", [[20, 60], [280, 60]]),
                                          _feature("LineString", [[20, 140], [280, 140]])])],
             variants=[
-                Variant("Pixels (draft renderer's choice)", DRAFT),
+                Variant("Pixels", DRAFT, is_draft=True),
                 Variant("Multiples of stroke width", DRAFT.with_(dash_units="stroke-width")),
             ],
-            evidence="The draft does not say; the UML types dashPattern as integers. SE gives `stroke-dasharray` lengths in the symbolizer's unit of measure (pixels by default); MapLibre's `line-dasharray` is in multiples of the line width.",
+            evidence="Jérôme: units are as in Graphical Units of Measure, pixels unless qualified with another unit. The PR "
+                     "now says so for dashPattern, as SE does for `stroke-dasharray`; MapLibre's `line-dasharray` is in "
+                     "multiples of the line width.",
         ),
         Decision(
             key="image-hotspot",
@@ -226,11 +228,14 @@ def _vector_decisions() -> list[Decision]:
                 {"type": "Image", "image": {"uri": PIN}, "width": {"px": 36}, "height": {"px": 36}}]}}}]},
             layers=[Layer("POI", [_feature("Point", [90, 100]), _feature("Point", [210, 100])])],
             variants=[
-                Variant("Centre (0.5, 0.5)", DRAFT, is_draft=True),
+                Variant("Top left (0, 0)", DRAFT, is_draft=True),
+                Variant("Centre (0.5, 0.5), as libCartoSym", DRAFT.with_(image_hotspot=(0.5, 0.5))),
                 Variant("Bottom centre (0.5, 1)", DRAFT.with_(image_hotspot=(0.5, 1.0))),
-                Variant("Top left (0, 0)", DRAFT.with_(image_hotspot=(0.0, 0.0))),
             ],
-            evidence="libCartoSym defaults `hotSpot` to (0.5, 0.5), matching the draft. Pin-shaped icons usually need the bottom centre, so styles would set it explicitly.",
+            evidence="Jérôme: the default hot spot is the top-left corner `{ 0, 0 }`; a style sets `hotSpot: { 0.5, 0.5 }` "
+                     "for the centre. The PR now says so. libCartoSym, however, defaults `hotSpot` to the centre "
+                     "(GraphicalElement.ec), which is what the draft said before. Pin-shaped icons need the bottom centre "
+                     "either way, so styles would set it explicitly.",
             anchors=True,
         ),
     ]
@@ -238,7 +243,10 @@ def _vector_decisions() -> list[Decision]:
 
 EXAMPLES = Path(__file__).parent / "examples"
 COVERAGE_VIEW = View(bbox=sample_data.BBOX, width=300, height=200)
-RAMP = (1200, 2000)  # the examples' 0–2500 m color map, stretched to Rondane's elevations
+# Rondane, 45 x 30 km: 900 px wide keeps the same 1:178 571 as COVERAGE_VIEW, within the examples' viz.sd < 200000.
+RELIEF_VIEW = View(bbox=(0.0, 0.0, sample_data.rondane_data.COLS * sample_data.rondane_data.CELL,
+                         sample_data.rondane_data.ROWS * sample_data.rondane_data.CELL), width=900, height=600)
+RAMP = (500, 2000)  # the examples' 0–2500 m color map, stretched to Rondane's elevations
 
 
 def _example(name: str) -> dict:
@@ -320,14 +328,14 @@ def _more_vector_decisions() -> list[Decision]:
                         note="A white 10 px dot at the point, at every line vertex and at the polygon centroid."),
                 Variant("No marker", DRAFT, note="What a style that clears the marker should give."),
             ],
-            evidence="Jérôme: intended, so that every feature type is visible by default, with the side effect on line vertices "
-                     "and polygon centroids; a single default Symbolizer is intended, so making the default depend on the "
-                     "geometry is not the fix, and a basic default style would normally clear the marker. The PR now says "
-                     "so in a NOTE. Open: how a style clears the marker. The draft renderer draws nothing for "
-                     "`marker: { elements: [] }`, but the JSON schema rejects an empty `elements` array (its oneOf "
-                     "branches overlap). Also open: the Dot defaults give a size and a color while a Dot is drawn with its "
-                     "Stroke's width and color. The other cards leave the default marker off, so "
-                     "they stay readable.",
+            evidence="Jérôme: intended, so that every feature type is visible by default, and a single default Symbolizer "
+                     "is intended; a typical base style unsets the marker for lines and polygons, e.g. "
+                     "`[dataLayer.featuresGeometryDimensions > 0] { marker: null; }`. `marker: { elements: [] }` is "
+                     "equivalent, while `marker: { }` still yields the default Dot; the draft renderer does the same, "
+                     "and the PR's NOTE now says so. Open: the JSON schema rejects all three forms, and the Dot defaults "
+                     "(size 10 px, color white) set properties the Dot class does not have: clause 8 and the schema draw "
+                     "a Dot with its stroke's width and color. The other cards leave the default marker off, so they "
+                     "stay readable."
         ),
         Decision(
             key="dots",
@@ -389,12 +397,11 @@ def _more_vector_decisions() -> list[Decision]:
             layers=[Layer("Roads", [_feature("LineString", road)])],
             view=View(bbox=(0, 0, 1500, 1000), width=300, height=200),
             variants=[
-                Variant("Pixels (draft renderer's choice)", DRAFT, note="At least 60 px between repeated labels."),
+                Variant("Pixels", DRAFT, is_draft=True, note="At least 60 px between repeated labels."),
                 Variant("Metres (map units)", DRAFT.with_(label_spacing_units="m"), note="60 m is 12 px here, so labels repeat as closely as they fit."),
             ],
-            evidence="The schema types minSpacing and maxSpacing as plain numbers, with no unit. "
-                     "The TODO(review) in rc-labels refers to #80, but #80 is about text spacing "
-                     "(letter-spacing, line-height), not label placement.",
+            evidence="Jérôme: units are as in Graphical Units of Measure, pixels unless qualified with another unit. The PR "
+                     "now says so for minSpacing and maxSpacing; a style that wants metres qualifies the value.",
         ),
         Decision(
             key="label-pass",
@@ -431,7 +438,7 @@ def _coverage_decisions() -> list[Decision]:
     ex5, ex8, ex9 = (_example("5-coverage-dem"), _example("8-coverage-hillshading"),
                      _example("9-coverage-hillshading-opacity"))
     ex6 = _example("6-coverage-sentinel2")
-    # Rondane spans about 1020 to 2170 m: the elevation cards stretch the examples' color map (0 to 2500 m)
+    # Rondane spans about 290 to 2160 m: the elevation cards stretch the examples' color map (0 to 2500 m)
     # to RAMP, keeping its colors, so the whole ramp shows and the valley floors and summits fall outside it.
     ex8_rondane = _stretch_color_map(ex8, *RAMP)
     ex5_rondane = _stretch_color_map(ex5, *RAMP)
@@ -454,9 +461,10 @@ def _coverage_decisions() -> list[Decision]:
             Variant("factor: 32", DRAFT, style=factor(32), note=notes[32]),
             Variant(plain[0], DRAFT, style=plain[1], note=plain[2]),
             Variant("factor: 56 as darkening × factor (the earlier draft text)", DRAFT.with_(hillshade_factor="intensity"),
-                    note="98 % of the cells are at or near the darkest shade."),
+                    note="99 % of the cells are at or near the darkest shade."),
         ]
     common = dict(view=COVERAGE_VIEW, group="Part 1: coverage styling (the spec's examples 5–9)")
+    on_relief = {**common, "view": RELIEF_VIEW}
     return [
         Decision(
             key="ndvi-division",
@@ -500,27 +508,27 @@ def _coverage_decisions() -> list[Decision]:
             key="color-map",
             title="Example 5: colorMap between and beyond entries",
             requirements=["/req/coverage/color-map", "/req/coverage/opacity-map"],
-            question="Example 5's color map, stretched from 0–2500 m to Rondane's 1200–2000 m (same colors). Between "
-                     "entries, are colors interpolated or stepped? Below 1200 m (the valley floors) and above 2000 m (the "
+            question="Example 5's color map, stretched from 0–2500 m to Rondane's 500–2000 m (same colors). Between "
+                     "entries, are colors interpolated or stepped? Below 500 m (the valley floors) and above 2000 m (the "
                      "summits), is the first or last color used, or nothing?",
             style=ex5_rondane, layers=relief,
             variants=[
                 Variant("Interpolate, clamp outside", DRAFT, is_draft=True),
                 Variant("Step between entries", DRAFT.with_(map_mode="step")),
                 Variant("Transparent outside the map", DRAFT.with_(map_outside="transparent"),
-                        note="The valley floors below 1200 m are left out. So are the summits above 2000 m, but next to the "
+                        note="The valley floors below 500 m are left out. So are the summits above 2000 m, but next to the "
                              "map's near-white last color they hardly show."),
             ],
             evidence="The draft proposes interpolation and clamping (TODO(review) in rc-coverage). SE 1.1 makes the choice "
                      "explicit with Interpolate and Categorize functions (its own DEM example uses Categorize); GeoServer's ColorMap defaults to an "
                      "interpolated ramp.",
-            **common,
+            **on_relief,
         ),
         Decision(
             key="gamma",
             title="Direction of coverage gamma",
             requirements=["/req/coverage/gamma"],
-            question="Example 5 with `gamma: 2` (its color map stretched to Rondane's 1200–2000 m). "
+            question="Example 5 with `gamma: 2` (its color map stretched to Rondane's 500–2000 m). "
                      "Does a gamma above 1 darken or brighten?",
             style=_tweak(ex5_rondane, gamma=2), layers=relief,
             variants=[
@@ -529,32 +537,34 @@ def _coverage_decisions() -> list[Decision]:
             ],
             evidence="SE 1.1 GammaValue brightens for values above 1. The draft's exponent does the opposite. gamma is also "
                      "absent from the coverage UML, tables and schema (TODO(review), #86), so removing it is an option.",
-            **common,
+            **on_relief,
         ),
         Decision(
             key="hillshade-factor",
             title="Example 8: what hillShading factor means",
             requirements=["/req/hill-shading/hill-shading", "/req/hill-shading/factor"],
             question="Example 8 shades the DEM color map with `factor: 56`, sun at azimuth 45°, elevation 60°. "
-                     "Here on Rondane at 100 m cells, with the color map stretched from 0–2500 m to Rondane's 1200–2000 m "
+                     "Here on Rondane at 150 m cells, with the color map stretched from 0–2500 m to Rondane's 500–2000 m "
                      "(same colors), and the factors of Jérôme's renders (1, 8, 32). "
                      "Over what distance is the slope measured?",
             style=ex8_rondane, layers=relief,
             variants=factor_variants(ex8_rondane, lambda s: s, {
-                56: "48 % of the cells are in full or near-full shade (below 0.05): the relief is saturated.",
-                1: "The terrain as it is: no cell darker than 0.15.",
-                8: "25 % of the cells are in full or near-full shade: about as dark as Jérôme's 32.",
-                32: "44 % of the cells are in full or near-full shade."},
+                56: "47 % of the cells are in full or near-full shade (below 0.05): the relief is saturated.",
+                1: "The terrain as it is: no cell darker than 0.24.",
+                8: "Strong relief: 12 % of the cells are in full or near-full shade.",
+                32: "41 % of the cells are in full or near-full shade."},
                 ("For reference: no hill shading", _without_hillshading(ex8_rondane), "The stretched color map alone.")),
             evidence="Jérôme: factor multiplies the horizontal components of the terrain normal before normalization, so "
                      "factor 1 is the plain dot product of the sun direction and the normal. The PR now says so, and the "
                      "draft renderer uses the same formula. His renders of the Tibetan Plateau, with pixels of several km, "
-                     "show faint relief at 1, clear relief at 8 and strong relief at 32 and 64. On Rondane at 100 m cells "
-                     "the slopes per cell are far steeper, so 1 already gives clear relief and 8 looks like his 32. Open: the "
-                     "horizontal distance the normal is computed over, which decides what a given factor does at a given "
-                     "resolution. Without a hillShading colorMap, the cell's color is multiplied by the shade, as his "
-                     "renders appear to do.",
-            **common,
+                     "show faint relief at 1, clear relief at 8 and strong relief at 32 and 64. On Rondane at 150 m cells "
+                     "the slopes per cell are steeper than at his pixel size, so the same factor gives stronger relief: "
+                     "1 already shows it clearly, 8 is strong, and the example's 56 saturates it. Jérôme: the "
+                     "normal is computed between the samples of the DEM at the resolution being rendered, over the "
+                     "horizontal distance between them, in the same units as the heights, so the factor that suits a "
+                     "style depends on that resolution; and without a hillShading colorMap the cell's color is multiplied "
+                     "by the shade, as in a typical shader. The draft renderer does both, and the PR now says so.",
+            **on_relief,
         ),
         Decision(
             key="hillshade-overlay",
@@ -562,21 +572,21 @@ def _coverage_decisions() -> list[Decision]:
             requirements=["/req/hill-shading/factor", "/req/hill-shading/color-map", "/req/hill-shading/opacity-map"],
             question="Example 9 maps the shade (0..1) to black–white and to opacity 0.75–0, for use as an overlay. "
                      "Here it is drawn over example 5's elevation colors (a second layer, `Terrain`), stretched from "
-                     "0–2500 m to Rondane's 1200–2000 m. "
+                     "0–2500 m to Rondane's 500–2000 m. "
                      "With `factor: 56`, how much of the terrain does it darken?",
             style=on_terrain(ex9), layers=[terrain] + relief,
             variants=factor_variants(ex9, on_terrain, {
-                56: "The overlay darkens 92 % of the cells: only a shade below 0.55 shows.",
-                1: "Only the steepest slopes facing away from the sun (7 % of the cells) are darkened.",
-                8: "The overlay darkens 63 % of the cells.",
-                32: "The overlay darkens 86 % of the cells."},
+                56: "The overlay darkens 84 % of the cells: only a shade below 0.55 shows.",
+                1: "Only the steepest slopes facing away from the sun (2 % of the cells) are darkened.",
+                8: "The overlay darkens 48 % of the cells.",
+                32: "The overlay darkens 76 % of the cells."},
                 ("For reference: no overlay", base, "The stretched color map alone.")),
             evidence="Jérôme: the shade is the dot product of the sun direction and the terrain normal, from 0 (the sun at "
                      "90° from the normal, full shade) to 1 (no shade), and is the key for the hillShading colorMap and "
                      "opacityMap. His example uses a grayscale colorMap with an opacityMap that is more opaque in the shade, "
                      "so imagery shows through on flat ground, as example 9 does. The PR now states this. How much is "
                      "darkened depends on the factor and the distance the normal is computed over (see example 8).",
-            **common,
+            **on_relief,
         ),
         Decision(
             key="sun-azimuth",
@@ -615,12 +625,12 @@ def _gradient_decisions() -> list[Decision]:
                 "stroke": {"color": [51, 51, 51], "width": {"px": 1}}}}]},
             layers=[Layer("Zones", [_feature("Polygon", [[[40, 30], [260, 30], [260, 170], [40, 170], [40, 30]]])])],
             variants=[
-                Variant("CSS: 0° up, clockwise (draft renderer's choice)", DRAFT),
-                Variant("Mathematical: 0° right, counter-clockwise", DRAFT.with_(gradient_angle="math")),
+                Variant("Mathematical: 0° right, counter-clockwise", DRAFT, is_draft=True),
+                Variant("CSS: 0° up, clockwise", DRAFT.with_(gradient_angle="css")),
             ],
-            evidence="The Part 2 Gradient model has an angle but no unit, zero direction or rotation sense "
-                     "(TODO(review) in rc-gradients). The Part 1 hatch angle is clockwise; a gradient angle following "
-                     "CSS would at least turn the same way.",
+            evidence="Jérôme: angles are in degrees and, in general, counter-clockwise from the right (0°). The PR now says "
+                     "so for the gradient angle. The Part 1 hatch table, however, says \"clockwise degree\", and the sun "
+                     "azimuth is relative to north, so whether this applies to every angle is still to confirm.",
             **common,
         ),
         Decision(
@@ -641,8 +651,10 @@ def _gradient_decisions() -> list[Decision]:
                 Variant("The whole map", DRAFT.with_(gradient_frame="map"), note="One gradient centred on the map; each parcel shows its part of it."),
             ],
             evidence="position and size have no reference frame in Part 2. Per feature, every polygon gets its own centred "
-                     "gradient; per map, one gradient runs across all features. The `repeating` type also needs a "
-                     "definition (repeating what, and how often).",
+                     "gradient; per map, one gradient runs across all features. Jérôme: units are pixels unless "
+                     "qualified, which the PR now says; this card's unqualified 0.5 and 1 are read as fractions of the "
+                     "frame, which under the draft needs a percent unit. The `repeating` type also needs a definition "
+                     "(repeating what, and how often).",
             **common,
         ),
     ]
@@ -815,10 +827,10 @@ def build(out_dir: Path) -> str:
             cards.append(f'<h2 class="group" id="{group_id}">{html.escape(group)}</h2>')
             contents.append((None, group, False))
             if group.startswith("Part 1: coverage"):
-                cards.append('<p class="note">A 15 × 10 km area with 100 m cells. The elevation cards use real '
-                             "elevation of Rondane, Norway (elevation data © Kartverket, CC BY 4.0), with the examples' "
-                             "color map stretched from 0–2500 m to 1200–2000 m; the Sentinel-2 scene and the pyramids are "
-                             "synthetic (see the README). The styles are the spec's examples, unchanged unless the "
+                cards.append('<p class="note">The elevation cards use real elevation of Rondane, Norway, 45 × 30 km '
+                             "with 150 m cells (elevation data © Kartverket, CC BY 4.0), with the examples' color map "
+                             "stretched from 0–2500 m to 500–2000 m. The Sentinel-2 scene and the pyramids are synthetic, "
+                             "15 × 10 km with 100 m cells (see the README). The styles are the spec's examples, unchanged unless the "
                              "question says otherwise.</p>")
         styles = {"style.cs.json": d.style}
         for i, v in enumerate(d.variants):

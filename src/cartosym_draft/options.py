@@ -46,8 +46,9 @@ class Options:
     dash_units: str = "px"
 
     # /req/vector/image: default hot spot of an Image graphic, as a fraction
-    # of its width and height.
-    image_hotspot: tuple[float, float] = (0.5, 0.5)
+    # of its width and height: the top-left corner (draft, per Jérôme);
+    # libCartoSym defaults to the centre (0.5, 0.5).
+    image_hotspot: tuple[float, float] = (0.0, 0.0)
 
     # /req/arithmetic/div: "real" always returns a real quotient (draft);
     # "integer-if-both-integers" follows libCartoSym.
@@ -93,9 +94,9 @@ class Options:
     # or "counter-clockwise-from-east" (mathematical angle).
     hillshade_azimuth: str = "clockwise-from-north"
 
-    # /req/gradients/angle: "css" (0 = towards the top, clockwise) or "math"
-    # (0 = towards the right, counter-clockwise).
-    gradient_angle: str = "css"
+    # /req/gradients/angle: "math" (0 = towards the right, counter-clockwise;
+    # draft, per Jérôme) or "css" (0 = towards the top, clockwise).
+    gradient_angle: str = "math"
     # /req/gradients/position, /req/gradients/size: relative to the feature's
     # bounding box ("feature") or to the whole map ("map").
     gradient_frame: str = "feature"

@@ -1,7 +1,7 @@
 """Coverages for the gallery, shaped like the spec examples' data.
 
-- :func:`rondane`: real elevation of Rondane, Norway (about 1020 to 2170 m),
-  from Kartverket's national terrain model averaged to 100 m cells, for the
+- :func:`rondane`: real elevation of Rondane, Norway, 45 x 30 km (about 290 to
+  2160 m), from Kartverket's national terrain model averaged to 150 m cells, for the
   elevation cards. Elevation data © Kartverket, CC BY 4.0.
 - :func:`pyramids`: three synthetic pyramids, for the direction of the light.
 - :func:`sentinel2`: synthetic integer ``B02``, ``B03``, ``B04`` (blue, green, red) and
@@ -32,7 +32,7 @@ def _cells():
 
 
 def rondane() -> Grid:
-    """Rondane, Norway: Rondeslottet, Storronden and Smiubelgen around Rondvatnet, at 100 m cells."""
+    """Rondane, Norway: the massif and the valleys around it, 45 x 30 km at 150 m cells."""
     d = rondane_data
     raw = zlib.decompress(base64.b64decode("".join(d.DATA)))
     dm = struct.unpack(f"<{d.COLS * d.ROWS}h", raw)

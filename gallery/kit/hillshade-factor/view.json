@@ -2,13 +2,13 @@
   "card": "Example 8: what hillShading factor means",
   "crs": "EPSG:25833",
   "bbox": [
-    220000.0,
-    6870500.0,
-    235000.0,
-    6880500.0
+    205000.0,
+    6860500.0,
+    250000.0,
+    6890500.0
   ],
-  "width": 300,
-  "height": 200,
+  "width": 900,
+  "height": 600,
   "scaleDenominator": 178571.4,
   "pixelSize_mm": 0.28,
   "layers": [
