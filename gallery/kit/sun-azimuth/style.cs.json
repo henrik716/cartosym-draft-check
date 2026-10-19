@@ -1,7 +1,7 @@
 {
   "metadata": {
     "title": "hill-shaded DEM with color map",
-    "abstract": "Applying hill-shading and a color map to a Digital Elevation Model with Style & Symbology Basic Coverage Styling"
+    "abstract": "Applying hill-shading and a color map to a Digital Elevation Model with Style & Symbology Basic Coverage Styling. Changed for the cartosym-draft-check gallery: hillShading.factor set to 1, hillShading.sun.azimuth set to 315, hillShading.sun.elevation set to 45, hillShading.colorMap set to [[0, \"black\"], [1, \"white\"]]."
   },
   "stylingRules": [
     {

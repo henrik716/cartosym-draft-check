@@ -94,8 +94,10 @@ Made by Henrik Gulliksen Schüller to support the review of PR #133. Developed w
 - The coverage examples in [`src/cartosym_draft/examples/`](src/cartosym_draft/examples/) are the spec's own examples 5 to 9 from [opengeospatial/cartographic-symbology](https://github.com/opengeospatial/cartographic-symbology), converted to CS-JSON where needed.
 - The requirement text and JSON schema snapshots (`requirements.json`, `CartoSym-JSON.schema.json`) come from the same repository, branch `requirements-placeholders`.
 - The named-color table in [`colors.py`](src/cartosym_draft/colors.py) was generated from [pycartosym](https://github.com/maxcollombin/pycartosym)'s web color table (MIT License, © Maxime Collombin). The values are the CSS named colors.
+- The Rondane elevation data ([`rondane_data.py`](src/cartosym_draft/rondane_data.py)) is from Kartverket's national terrain model: elevation data © Kartverket, [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+- The Sentinel-2 scene ([`sentinel2_data.py`](src/cartosym_draft/sentinel2_data.py)) contains modified Copernicus Sentinel data 2024, obtained through Element84's [Earth Search](https://element84.com/earth-search/).
 - libCartoSym ([ecere/libCartoSym](https://github.com/ecere/libCartoSym)) is used as an independent implementation in the test harness, through the `cartosym` and `ecrt` packages.
 
 ## License
 
-MIT, see [`LICENSE`](LICENSE).
+MIT, see [`LICENSE`](LICENSE). This covers the code; the Rondane elevation and Sentinel-2 data keep their own terms (see Credits).

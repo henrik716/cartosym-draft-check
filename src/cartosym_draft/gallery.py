@@ -252,9 +252,32 @@ def _example(name: str) -> dict:
     return json.loads((EXAMPLES / f"{name}.cs.json").read_text(encoding="utf-8"))
 
 
-def _tweak(style: dict, **changes) -> dict:
-    """Copy of a spec example with properties of its innermost symbolizer changed."""
-    out = copy.deepcopy(style)
+def _changed(style: dict, change: str) -> dict:
+    """Record in the style's metadata that a gallery card changed the spec example (shown in the kits)."""
+    meta = style.setdefault("metadata", {})
+    abstract = meta.get("abstract", "")
+    marker = "Changed for the cartosym-draft-check gallery:"
+    if marker not in abstract:
+        abstract = (abstract.rstrip(". ") + ". " if abstract else "") + marker
+    else:
+        abstract = abstract.rstrip(".") + ";"
+    meta["abstract"] = f"{abstract} {change}."
+    return style
+
+
+def _describe(changes: dict, prefix: str = "") -> list[str]:
+    out = []
+    for key, value in changes.items():
+        if isinstance(value, dict):
+            out += _describe(value, f"{prefix}{key}.")
+        else:
+            out.append(f"{prefix}{key} set to {json.dumps(value)}")
+    return out
+
+
+def _tweak(style: dict, *, note: str = "", **changes) -> dict:
+    """Copy of a spec example with properties of its innermost symbolizer changed (described by *note*, if given)."""
+    out = _changed(copy.deepcopy(style), note or ", ".join(_describe(changes)))
     sym = out["stylingRules"][0]["nestedRules"][0]["symbolizer"]
     for key, value in changes.items():
         if isinstance(value, dict) and isinstance(sym.get(key), dict):
@@ -266,7 +289,7 @@ def _tweak(style: dict, **changes) -> dict:
 
 def _without_hillshading(style: dict) -> dict:
     """Copy of a spec example with the hillShading of its innermost symbolizer removed."""
-    out = copy.deepcopy(style)
+    out = _changed(copy.deepcopy(style), "hillShading removed")
     out["stylingRules"][0]["nestedRules"][0]["symbolizer"].pop("hillShading", None)
     return out
 
@@ -277,7 +300,7 @@ def _stretch_color_map(style: dict, lo: float, hi: float) -> dict:
     sym = out["stylingRules"][0]["nestedRules"][0]["symbolizer"]
     v0, v1 = sym["colorMap"][0][0], sym["colorMap"][-1][0]
     sym["colorMap"] = [[round(lo + (e[0] - v0) * (hi - lo) / (v1 - v0)), *e[1:]] for e in sym["colorMap"]]
-    return out
+    return _changed(out, f"colorMap stretched from {v0:g}–{v1:g} m to {lo:g}–{hi:g} m, keeping its colors")
 
 
 def _retarget(style: dict, old: str, new: str) -> dict:
@@ -291,7 +314,7 @@ def _retarget(style: dict, old: str, new: str) -> dict:
         if isinstance(o, list):
             return [walk(v) for v in o]
         return o
-    return walk(copy.deepcopy(style))
+    return _changed(walk(copy.deepcopy(style)), f"applies to the layer {new} instead of {old}")
 
 
 def _by_layer(rules: dict[str, dict]) -> dict:
@@ -441,14 +464,17 @@ def _coverage_decisions() -> list[Decision]:
     # to RAMP, keeping its colors, so the whole ramp shows and the valley floors and summits fall outside it.
     ex8_rondane = _stretch_color_map(ex8, *RAMP)
     ex5_rondane = _stretch_color_map(ex5, *RAMP)
-    ex6_unscaled = _tweak(ex6, colorChannels=[{"property": "B04"}, {"property": "B03"}, {"property": "B02"}])
+    ex6_unscaled = _tweak(ex6, note="colorChannels set back to the original example's unscaled B04 B03 B02",
+                          colorChannels=[{"property": "B04"}, {"property": "B03"}, {"property": "B02"}])
     # Example 9 is an overlay: draw it over example 5's elevation colors on a second layer, "Terrain".
     terrain = Layer("Terrain", type="coverage", grid=rondane)
     base = _retarget(ex5_rondane, "Elevation", "Terrain")
 
     def on_terrain(overlay: dict) -> dict:
-        return {"metadata": overlay.get("metadata", {}),
-                "stylingRules": base["stylingRules"] + overlay["stylingRules"]}
+        return _changed({"metadata": copy.deepcopy(overlay.get("metadata", {})),
+                         "stylingRules": base["stylingRules"] + overlay["stylingRules"]},
+                        f"drawn over example 5's colors (colorMap stretched to {RAMP[0]}–{RAMP[1]} m) on a second "
+                        "layer named Terrain")
 
     def factor_variants(example: dict, wrap, notes: dict, plain: tuple[str, dict, str]) -> list[Variant]:
         def factor(f: int) -> dict:
@@ -506,30 +532,36 @@ def _coverage_decisions() -> list[Decision]:
             requirements=["/req/coverage/color-channels", "/req/coverage/alpha-channel"],
             question="Example 6 set `colorChannels: B04 B03 B02`, Sentinel-2 digital numbers (reflectance × 10 000), "
                      "while the schema types colorChannels as 0..1. The PR now scales the bands in the style: "
-                     "`colorChannels.r: B04 / 2500` and so on.",
+                     "`colorChannels.r: B04 / 2500` and so on. Here on a real Sentinel-2 L2A scene of Rondane "
+                     "(2 August 2024).",
             style=ex6, layers=sentinel,
             variants=[
-                Variant("Scaled in the style, ÷ 2500", DRAFT, is_draft=True),
+                Variant("Scaled in the style, ÷ 2500", DRAFT, is_draft=True,
+                        note="True color: grey rock and lichen above the tree line, green valleys and forest. The white "
+                             "patches are clouds the example's SCL rules hide (alphaChannel 0 or 0.5)."),
                 Variant("The original example: unscaled bands", DRAFT, style=ex6_unscaled,
-                        note="Band values in the hundreds and thousands clamp to 1, so every cell is white."),
+                        note="Band values in the hundreds and thousands clamp to 1, so every cell is drawn white. The faint "
+                             "shapes are the clouds, which the SCL rules make transparent or half transparent."),
             ],
             evidence="Jérôme: colorChannels is 0..1 and the example assumed pre-scaled bands; one of his working examples "
                      "divides each band by 2500. The PR now states the 0..1 range and scales example 6 that way. Still to "
-                     "raise: the defaults table gives colorChannels as fields[0], fields[1], fields[2], unscaled.",
+                     "raise: the defaults table gives colorChannels as fields[0], fields[1], fields[2], unscaled (#150).",
             **on_relief,
         ),
         Decision(
             key="ndvi-division",
             title="Example 7: NDVI with integer bands",
             requirements=["/req/arithmetic/div", "/req/coverage/single-channel", "/req/coverage/color-map"],
-            question="Example 7 computes `singleChannel: (B08 - B04)/(B08 + B04)`. Sentinel-2 L2A bands are integers. "
-                     "Is `/` a real division?",
+            question="Example 7 computes `singleChannel: (B08 - B04)/(B08 + B04)`. Sentinel-2 L2A bands are integers; "
+                     "here a real scene of Rondane (2 August 2024). Is `/` a real division?",
             style=_example("7-coverage-ndvi"), layers=sentinel,
             variants=[
-                Variant("Real quotient", DRAFT, is_draft=True),
+                Variant("Real quotient", DRAFT, is_draft=True,
+                        note="Green: forest and vegetated valleys. Brown: bare rock above the tree line. White: clouds "
+                             "hidden by the SCL rules."),
                 Variant("Integer quotient for two integers (libCartoSym)",
                         DRAFT.with_(division="integer-if-both-integers"),
-                        note="Every cell evaluates to 0, the color for NDVI 0.0."),
+                        note="Every cell evaluates to 0, so the whole scene gets the color for NDVI 0.0."),
             ],
             evidence="Jérôme confirmed: `/` is real-valued division and `div` is integer division, as in CQL2 arithmetic "
                      "expressions. libCartoSym's cs-canif (0.0.1 and main) evaluates (3000 - 1000) / (3000 + 1000) to 0, "

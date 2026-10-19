@@ -1,7 +1,7 @@
 {
   "metadata": {
     "title": "DEM with color map",
-    "abstract": "Applying a color map to a Digital Elevation Model with Style & Symbology Basic Coverage Styling"
+    "abstract": "Applying a color map to a Digital Elevation Model with Style & Symbology Basic Coverage Styling. Changed for the cartosym-draft-check gallery: colorMap stretched from 0–2500 m to 500–2000 m, keeping its colors; applies to the layer Terrain instead of Elevation."
   },
   "stylingRules": [
     {
