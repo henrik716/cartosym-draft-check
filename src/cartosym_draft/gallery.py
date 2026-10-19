@@ -228,14 +228,13 @@ def _vector_decisions() -> list[Decision]:
                 {"type": "Image", "image": {"uri": PIN}, "width": {"px": 36}, "height": {"px": 36}}]}}}]},
             layers=[Layer("POI", [_feature("Point", [90, 100]), _feature("Point", [210, 100])])],
             variants=[
-                Variant("Top left (0, 0)", DRAFT, is_draft=True),
-                Variant("Centre (0.5, 0.5), as libCartoSym", DRAFT.with_(image_hotspot=(0.5, 0.5))),
+                Variant("Centre (0.5, 0.5)", DRAFT, is_draft=True),
+                Variant("Top left (0, 0)", DRAFT.with_(image_hotspot=(0.0, 0.0))),
                 Variant("Bottom centre (0.5, 1)", DRAFT.with_(image_hotspot=(0.5, 1.0))),
             ],
-            evidence="Jérôme: the default hot spot is the top-left corner `{ 0, 0 }`; a style sets `hotSpot: { 0.5, 0.5 }` "
-                     "for the centre. The PR now says so. libCartoSym, however, defaults `hotSpot` to the centre "
-                     "(GraphicalElement.ec), which is what the draft said before. Pin-shaped icons need the bottom centre "
-                     "either way, so styles would set it explicitly.",
+            evidence="Jérôme: the default hot spot is the centre `{ 0.5, 0.5 }`, since centred icons are by far the most "
+                     "common case (after first saying top-left). This is what the draft says and what libCartoSym does "
+                     "(GraphicalElement.ec). Pin-shaped icons need the bottom centre, so styles would set it explicitly.",
             anchors=True,
         ),
     ]
@@ -467,44 +466,6 @@ def _coverage_decisions() -> list[Decision]:
     on_relief = {**common, "view": RELIEF_VIEW}
     return [
         Decision(
-            key="ndvi-division",
-            title="Example 7: NDVI with integer bands",
-            requirements=["/req/arithmetic/div", "/req/coverage/single-channel", "/req/coverage/color-map"],
-            question="Example 7 computes `singleChannel: (B08 - B04)/(B08 + B04)`. Sentinel-2 L2A bands are integers. "
-                     "Is `/` a real division?",
-            style=_example("7-coverage-ndvi"), layers=sentinel,
-            variants=[
-                Variant("Real quotient", DRAFT, is_draft=True),
-                Variant("Integer quotient for two integers (libCartoSym)",
-                        DRAFT.with_(division="integer-if-both-integers"),
-                        note="Every cell evaluates to 0, the color for NDVI 0.0."),
-            ],
-            evidence="Jérôme confirmed: `/` is real-valued division and `div` is integer division, as in CQL2 arithmetic "
-                     "expressions. libCartoSym's cs-canif (0.0.1 and main) evaluates (3000 - 1000) / (3000 + 1000) to 0, "
-                     "and to 0.5 only when an operand is real; with integer division every NDVI value truncates to 0, so "
-                     "the example's color map collapses to one color. Cloud cells are hidden by the example's SCL rules "
-                     "(alphaChannel 0 and 0.5).",
-            **common,
-        ),
-        Decision(
-            key="color-channels",
-            title="Example 6: scaling colorChannels",
-            requirements=["/req/coverage/color-channels", "/req/coverage/alpha-channel"],
-            question="Example 6 set `colorChannels: B04 B03 B02`, Sentinel-2 digital numbers (reflectance × 10 000), "
-                     "while the schema types colorChannels as 0..1. The PR now scales the bands in the style: "
-                     "`colorChannels.r: B04 / 2500` and so on.",
-            style=ex6, layers=sentinel,
-            variants=[
-                Variant("Scaled in the style, ÷ 2500", DRAFT, is_draft=True),
-                Variant("The original example: unscaled bands", DRAFT, style=ex6_unscaled,
-                        note="Band values in the hundreds and thousands clamp to 1, so every cell is white."),
-            ],
-            evidence="Jérôme: colorChannels is 0..1 and the example assumed pre-scaled bands; one of his working examples "
-                     "divides each band by 2500. The PR now states the 0..1 range and scales example 6 that way. Still to "
-                     "raise: the defaults table gives colorChannels as fields[0], fields[1], fields[2], unscaled.",
-            **common,
-        ),
-        Decision(
             key="color-map",
             title="Example 5: colorMap between and beyond entries",
             requirements=["/req/coverage/color-map", "/req/coverage/opacity-map"],
@@ -537,6 +498,44 @@ def _coverage_decisions() -> list[Decision]:
             ],
             evidence="SE 1.1 GammaValue brightens for values above 1. The draft's exponent does the opposite. gamma is also "
                      "absent from the coverage UML, tables and schema (#86), so removing it is an option.",
+            **on_relief,
+        ),
+        Decision(
+            key="color-channels",
+            title="Example 6: scaling colorChannels",
+            requirements=["/req/coverage/color-channels", "/req/coverage/alpha-channel"],
+            question="Example 6 set `colorChannels: B04 B03 B02`, Sentinel-2 digital numbers (reflectance × 10 000), "
+                     "while the schema types colorChannels as 0..1. The PR now scales the bands in the style: "
+                     "`colorChannels.r: B04 / 2500` and so on.",
+            style=ex6, layers=sentinel,
+            variants=[
+                Variant("Scaled in the style, ÷ 2500", DRAFT, is_draft=True),
+                Variant("The original example: unscaled bands", DRAFT, style=ex6_unscaled,
+                        note="Band values in the hundreds and thousands clamp to 1, so every cell is white."),
+            ],
+            evidence="Jérôme: colorChannels is 0..1 and the example assumed pre-scaled bands; one of his working examples "
+                     "divides each band by 2500. The PR now states the 0..1 range and scales example 6 that way. Still to "
+                     "raise: the defaults table gives colorChannels as fields[0], fields[1], fields[2], unscaled.",
+            **on_relief,
+        ),
+        Decision(
+            key="ndvi-division",
+            title="Example 7: NDVI with integer bands",
+            requirements=["/req/arithmetic/div", "/req/coverage/single-channel", "/req/coverage/color-map"],
+            question="Example 7 computes `singleChannel: (B08 - B04)/(B08 + B04)`. Sentinel-2 L2A bands are integers. "
+                     "Is `/` a real division?",
+            style=_example("7-coverage-ndvi"), layers=sentinel,
+            variants=[
+                Variant("Real quotient", DRAFT, is_draft=True),
+                Variant("Integer quotient for two integers (libCartoSym)",
+                        DRAFT.with_(division="integer-if-both-integers"),
+                        note="Every cell evaluates to 0, the color for NDVI 0.0."),
+            ],
+            evidence="Jérôme confirmed: `/` is real-valued division and `div` is integer division, as in CQL2 arithmetic "
+                     "expressions. libCartoSym's cs-canif (0.0.1 and main) evaluates (3000 - 1000) / (3000 + 1000) to 0, "
+                     "and to 0.5 only when an operand is real; with integer division every NDVI value truncates to 0, so "
+                     "the example's color map collapses to one color. Cloud cells are hidden by the example's SCL rules "
+                     "(alphaChannel 0 and 0.5).",
             **on_relief,
         ),
         Decision(
@@ -597,14 +596,15 @@ def _coverage_decisions() -> list[Decision]:
             style=_tweak(ex8, hillShading={"factor": 1, "sun": {"azimuth": 315, "elevation": 45},
                                            "colorMap": [[0, "black"], [1, "white"]]}), layers=pyramid_layer,
             variants=[
-                Variant("Clockwise from north (draft renderer's choice)", DRAFT,
+                Variant("Clockwise from north, a compass bearing", DRAFT, is_draft=True,
                         note="Light from the north-west: slopes facing the top left are bright."),
                 Variant("Counter-clockwise from east", DRAFT.with_(hillshade_azimuth="counter-clockwise-from-east"),
                         note="Light from the south-east: slopes facing the bottom right are bright."),
             ],
-            evidence="The draft says the azimuth is relative to north, but not in which direction. Both examples use 45°, "
-                     "which is north-east under either convention, so they do not settle it. GDAL and most GIS software "
-                     "use compass bearings.",
+            evidence="Jérôme: directions on the ground, such as the sun azimuth, are compass bearings, clockwise from "
+                     "north. Angles drawn on the map, such as a gradient's, start at 0 pointing right and turn "
+                     "counter-clockwise. The PR now says so for the azimuth. Both examples use 45°, which is north-east as a bearing. GDAL and most GIS software use "
+                     "compass bearings too.",
             **common,
         ),
     ]
@@ -628,7 +628,7 @@ def _gradient_decisions() -> list[Decision]:
                 Variant("Mathematical: 0° right, counter-clockwise", DRAFT, is_draft=True),
                 Variant("CSS: 0° up, clockwise", DRAFT.with_(gradient_angle="css")),
             ],
-            evidence="Jérôme: angles are in degrees and, in general, counter-clockwise from the right (0°). The PR now says "
+            evidence="Jérôme: angles drawn on the map are in degrees, start at 0 pointing right and turn counter-clockwise. The PR now says "
                      "so for the gradient angle. The Part 1 hatch table, however, says \"clockwise degree\", and the sun "
                      "azimuth is relative to north, so whether this applies to every angle is still to confirm.",
             **common,
@@ -832,11 +832,11 @@ def build(out_dir: Path) -> str:
             cards.append(f'<h2 class="group" id="{group_id}">{html.escape(group)}</h2>')
             contents.append((None, group, False))
             if group.startswith("Part 1: coverage"):
-                cards.append('<p class="note">The elevation cards use real elevation of Rondane, Norway, 45 × 30 km '
-                             "with 150 m cells (elevation data © Kartverket, CC BY 4.0), with the examples' color map "
-                             "stretched from 0–2500 m to 500–2000 m. The Sentinel-2 scene and the pyramids are synthetic, "
-                             "15 × 10 km with 100 m cells (see the README). The styles are the spec's examples, unchanged unless the "
-                             "question says otherwise.</p>")
+                cards.append('<p class="note">The cards use real data of Rondane, Norway, 45 × 30 km with 150 m cells: '
+                             "elevation (elevation data © Kartverket, CC BY 4.0), with the examples' color map stretched "
+                             "from 0–2500 m to 500–2000 m, and a Sentinel-2 L2A scene of 2 August 2024 (contains modified "
+                             "Copernicus Sentinel data 2024). Only the pyramids are synthetic (see the README). The styles "
+                             "are the spec's examples, unchanged unless the question says otherwise.</p>")
         styles = {"style.cs.json": d.style}
         for i, v in enumerate(d.variants):
             svg = render(v.style or d.style, d.layers, d.view, v.options, anchors=d.anchors)

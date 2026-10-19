@@ -16,7 +16,7 @@ from pathlib import Path
 from .options import Options
 
 # Modules the browser loads, in /src/cartosym_draft/ of the published repo.
-MODULES = ["__init__", "options", "evaluate", "cascade", "colors", "coverage", "render", "rondane_data", "sample_data"]
+MODULES = ["__init__", "options", "evaluate", "cascade", "colors", "coverage", "render", "rondane_data", "sample_data", "sentinel2_data"]
 PYODIDE = "https://cdn.jsdelivr.net/pyodide/v0.26.2/full/"
 
 

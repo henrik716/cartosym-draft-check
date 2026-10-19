@@ -51,10 +51,10 @@ The open points are recorded as TODO(review) notes in PR #133 (the schema issue 
 The gallery uses small datasets ([`sample_data.py`](src/cartosym_draft/sample_data.py)):
 
 - **Rondane:** real elevation of Rondane, Norway, 45 × 30 km with 150 m cells, from about 290 to 2160 m (the Rondane massif and the valleys around it), used by all the elevation cards (examples 5, 8 and 9, and gamma), so they can be compared with renders of real terrain. These cards are drawn 900 px wide, which keeps the scale at 1:178 571, inside the examples' `viz.sd < 200000`, and stretch the examples' color map (0–2500 m) to 500–2000 m, keeping its colors, so the whole ramp shows and the valley floors and summits fall outside it. From Kartverket's national terrain model (NHM DTM, via the Geonorge WCS), averaged from 30 m to 150 m cells by [`tools/fetch_rondane.py`](tools/fetch_rondane.py) and stored in [`rondane_data.py`](src/cartosym_draft/rondane_data.py). Elevation data © Kartverket, [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
-- **Sentinel-2 L2A** (synthetic, 15 × 10 km with 100 m cells): a scene with integer B02, B03, B04 and B08 bands, an SCL band with a cloud, fields, a lake and a river.
+- **Sentinel-2 L2A:** a real scene over the same 45 × 30 km of Rondane, from 2 August 2024 (`S2B_T32VNP_20240802T104620_L2A`), used by examples 6 and 7, with a few clouds that example 6's SCL rules hide. From Element84's Earth Search (`sentinel-2-c1-l2a`, cloud-optimised GeoTIFFs on AWS), reprojected to EPSG:25833 and averaged to 150 m cells (the scene classification takes each cell's most common class) by [`tools/fetch_sentinel2.py`](tools/fetch_sentinel2.py), and stored in [`sentinel2_data.py`](src/cartosym_draft/sentinel2_data.py). Since 2022, L2A digital numbers carry a +1000 offset; the tool removes it, so the bands are reflectance × 10 000, as the examples assume. Contains modified Copernicus Sentinel data 2024.
 - **Pyramids** (synthetic, 15 × 10 km with 100 m cells): three square pyramids, used where the direction of the light must be easy to see.
 
-In the render kits, the data is placed in ETRS89 / UTM zone 33N (EPSG:25833): the Rondane grid at its real position, the synthetic data near Oslo. Vector layers are GeoJSON, coverage bands ESRI ASCII grids with `.prj` files. Each file is named after its layer, which the styles' `dataLayer.id` selectors match. `view.json` gives the extent, size and scale denominator, and the attribution where a kit contains Kartverket data.
+In the render kits, the data is placed in ETRS89 / UTM zone 33N (EPSG:25833): the Rondane data at its real position, the pyramids near Oslo. Vector layers are GeoJSON, coverage bands ESRI ASCII grids with `.prj` files. Each file is named after its layer, which the styles' `dataLayer.id` selectors match. `view.json` gives the extent, size and scale denominator, and the attribution where a kit contains Kartverket or Copernicus data.
 
 The coverage styles are the spec's own examples 5 to 9 ([`examples/`](src/cartosym_draft/examples/)), unchanged except where a card says otherwise.
 
@@ -69,7 +69,7 @@ uv run python -m cartosym_draft.gallery gallery/index.html   # gallery, requirem
 
 The playground loads the renderer's Python files over HTTP, so open it from GitHub Pages or a local web server (`python -m http.server` in the repository root, then http://localhost:8000/gallery/playground.html), not as a file.
 
-To fetch the Rondane grid again: `uv run --with tifffile --with numpy python tools/fetch_rondane.py`.
+To fetch the Rondane data again: `uv run --with tifffile --with numpy python tools/fetch_rondane.py` and `uv run --with rasterio --with numpy python tools/fetch_sentinel2.py`.
 
 `extract_requirements.py` reads the checked-out branch of `../cartographic-symbology` (the PR branch, `requirements-placeholders`). Run it again after the requirements change.
 

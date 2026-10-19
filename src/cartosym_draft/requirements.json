@@ -1,6 +1,6 @@
 {
  "branch": "requirements-placeholders",
- "commit": "1893a1e",
+ "commit": "493953d",
  "uncommitted_changes": false,
  "requirements": {
   "/req/arithmetic/add": {
@@ -371,12 +371,12 @@
    "line": 45,
    "parts": [
     "An Encoding SHALL support defining a `sun` HillShading property as an object consisting of `azimuth` and `elevation` angle members representing the orientation of the sun relative to the terrain.",
-    "A Renderer SHALL support computing the shade of each cell for a light source at the `azimuth` angle (relative to North) and `elevation` angle (relative to the ground) specified by the `sun` property."
+    "A Renderer SHALL support computing the shade of each cell for a light source at the `azimuth` angle (in degrees clockwise from North, as a compass bearing) and `elevation` angle (relative to the ground) specified by the `sun` property."
    ]
   },
   "/req/hill-shading/color-map": {
    "file": "1-core/requirements/rc-hillshading.adoc",
-   "line": 58,
+   "line": 56,
    "parts": [
     "An Encoding SHALL support defining a `colorMap` HillShading property as an array of `value` (float) and `color` (Color) pairs.",
     "A Renderer SHALL support portraying each cell with the color mapped from its computed shade value by the `colorMap`, as for the `colorMap` Symbolizer property."
@@ -384,7 +384,7 @@
   },
   "/req/hill-shading/opacity-map": {
    "file": "1-core/requirements/rc-hillshading.adoc",
-   "line": 69,
+   "line": 67,
    "parts": [
     "An Encoding SHALL support defining a `opacityMap` HillShading property as an array of `value` (float) and `opacity` (float) pairs.",
     "A Renderer SHALL support portraying each cell with the opacity mapped from its computed shade value by the `opacityMap`, as for the `opacityMap` Symbolizer property."
@@ -851,7 +851,7 @@
    "line": 87,
    "parts": [
     "An Encoding SHALL support defining an Image Graphic with an `image` property referencing an image resource, and an optional uom-qualified `hotSpot` position within the image.",
-    "A Renderer SHALL support drawing the referenced image so that its `hotSpot` (by default, its top-left corner, `{ 0, 0 }`) is located at the position of the Graphic."
+    "A Renderer SHALL support drawing the referenced image so that its `hotSpot` (by default, its center, `{ 0.5, 0.5 }`) is located at the position of the Graphic."
    ]
   },
   "/req/vector/text": {
@@ -1063,7 +1063,7 @@
    "line": 52,
    "parts": [
     "An Encoding SHALL support defining an `angle` Gradient property as a float.",
-    "A Renderer SHALL support orienting the gradient according to the `angle` property, in degrees counter-clockwise from the direction to the right (0 degrees)."
+    "A Renderer SHALL support orienting the gradient according to the `angle` property, in degrees, where 0 points to the right and angles turn counter-clockwise as seen on the map."
    ]
   },
   "/req/gradients/position": {

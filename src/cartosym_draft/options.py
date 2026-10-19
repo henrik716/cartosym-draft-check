@@ -46,9 +46,9 @@ class Options:
     dash_units: str = "px"
 
     # /req/vector/image: default hot spot of an Image graphic, as a fraction
-    # of its width and height: the top-left corner (draft, per Jérôme);
-    # libCartoSym defaults to the centre (0.5, 0.5).
-    image_hotspot: tuple[float, float] = (0.0, 0.0)
+    # of its width and height: the centre (draft and libCartoSym; Jérôme
+    # confirmed it after first saying top-left).
+    image_hotspot: tuple[float, float] = (0.5, 0.5)
 
     # /req/arithmetic/div: "real" always returns a real quotient (draft);
     # "integer-if-both-integers" follows libCartoSym.
@@ -92,7 +92,7 @@ class Options:
     hillshade_factor: str = "exaggeration"
     # /req/hill-shading/sun: azimuth "clockwise-from-north" (compass bearing)
     # or "counter-clockwise-from-east" (mathematical angle).
-    hillshade_azimuth: str = "clockwise-from-north"
+    hillshade_azimuth: str = "clockwise-from-north"  # draft: a compass bearing, per Jérôme
 
     # /req/gradients/angle: "math" (0 = towards the right, counter-clockwise;
     # draft, per Jérôme) or "css" (0 = towards the top, clockwise).

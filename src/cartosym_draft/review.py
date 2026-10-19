@@ -57,16 +57,17 @@ MATRIX: dict[str, Row] = {
     "casing-width": Row("not stated", "Specify: total width of the casing band.", "TODO(review), #147"),
     "font-outline": Row("outline beneath the glyphs", "Keep as drafted (as SE Halo).", "unchanged"),
     "z-order": Row("higher zOrder on top", "Keep as drafted.", "unchanged"),
-    "hatch-angle": Row("clockwise (table)", "Keep as drafted, unless all angles follow Jérôme's general rule.",
-                       "TODO(review), #146", "Jérôme: angles are generally counter-clockwise from the right. Hatches too?"),
+    "hatch-angle": Row("clockwise (table)", "Probably counter-clockwise from 0 pointing right, as other angles drawn on "
+                       "the map (Jérôme); check graphics toolkits first.", "TODO(review), #146",
+                       "What do Win32 GDI, X and newer toolkits do? (@ebocher, @oertz, @maxcollombin)"),
     "dash-units": Row("pixels unless uom-qualified", "Done, as Jérôme answered (as SE).", "resolved"),
-    "image-hotspot": Row("top left (0, 0)", "Done, as Jérôme answered; libCartoSym defaults to the centre.",
-                         "resolved; libCartoSym and tint: TODO(review), #145",
-                         "Should libCartoSym's default change to (0, 0)?"),
+    "image-hotspot": Row("centre (0.5, 0.5)", "Keep as drafted (Jérôme confirmed; same as libCartoSym).",
+                         "resolved; tint: TODO(review), #145"),
     "default-marker": Row("a single default Dot (white, 10 px)",
-                          "Keep, as intended (Jérôme); clearing it (`marker: null`) is now in the NOTE. Fix the schema, "
-                          "and give the Dot defaults in terms of its Stroke.",
-                          "NOTE + TODO(review), #143, #144", "The Dot class has no size or color (clause 8, schema): which applies?"),
+                          "Keep, as intended (Jérôme); clearing it (`marker: null`) is now in the NOTE. Fix the schema. "
+                          "The default Dot is a white stroke 10 px wide, either as its stroke or through size and color "
+                          "on Dot (Jérôme: same result).",
+                          "NOTE + TODO(review), #143, #144", "Which way to express the default Dot?"),
     "dots": Row("not stated (#84)", "Add dot size and color properties; until then, small dots in the fill color.",
                 "TODO(review), #84", "Should stipple/dot-pattern dots have their own size and color?"),
     "label-priority": Row("higher value wins", "Keep as drafted.", "TODO(review), #148"),
@@ -84,9 +85,8 @@ MATRIX: dict[str, Row] = {
     "hillshade-factor": Row("multiplies the horizontal components of the normal", "Done, as Jérôme's renderer, "
                             "including the sample distance and the shade without a colorMap.", "resolved"),
     "hillshade-overlay": Row("dot product, 0 (full shade) to 1 (no shade)", "Done, as Jérôme described.", "resolved"),
-    "sun-azimuth": Row("relative to north, direction not stated", "Specify: clockwise from north (as GDAL).",
-                       "TODO(review), #146", "Clockwise from north, or does the general counter-clockwise rule apply?"),
-    "gradient-angle": Row("degrees, counter-clockwise from the right", "Done, as Jérôme answered.", "resolved"),
+    "sun-azimuth": Row("clockwise from north, a compass bearing", "Done, as Jérôme answered (as GDAL).", "resolved"),
+    "gradient-angle": Row("degrees, 0 pointing right, turning counter-clockwise", "Done, as Jérôme answered.", "resolved"),
     "gradient-frame": Row("pixels unless uom-qualified; frame not stated",
                           "Specify: relative to each feature's bounding box.", "TODO(review), #153"),
 }
