@@ -1,6 +1,6 @@
 # CartoSym draft requirements vs implementations
 
-Generated 2026-10-16 with libCartoSym (cs-canif built from ecere/libCartoSym main @ f180e04 and ecere/eC main @ 5601fab, on Ubuntu) and pycartosym 0.4.1.
+Generated 2026-10-19 with libCartoSym (cs-canif built from ecere/libCartoSym main @ f180e04 and ecere/eC main @ 5601fab, on Ubuntu) and pycartosym 0.4.1.
 
 Expected values are what the **draft requirement** says. `FAIL` means the implementation disagrees with the draft, which may mean the draft or the implementation is wrong. pycartosym does not evaluate expressions, so for expression cases it only reports whether the expression parses. The draft renderer is `cartosym_draft` in this repository, which implements the draft requirements; a FAIL there means it does not do what the draft says.
 
@@ -26,7 +26,7 @@ Expected values are what the **draft requirement** says. `FAIL` means the implem
 |---|---|---|---|---|---|
 | arith-div-reals | `7.0 / 2` | `3.5` | pass: 3.5 | pass: parses | pass: 3.5 |
 | arith-div-integers | `7 / 2` | `3.5` | FAIL: got `3`, draft expects `3.5` | pass: parses | pass: 3.5 |
-| | _Draft says `div` is always real-valued, even for two integers._ | | | | |
+| | _Draft says `/` is always real-valued, even for two integers (`div` is integer division)._ | | | | |
 
 ### `/req/arithmetic/int-div`
 
