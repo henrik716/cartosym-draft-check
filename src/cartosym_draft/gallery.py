@@ -17,7 +17,7 @@ from urllib.parse import quote
 from . import sample_data
 from .kit import export, zip_all
 from .nav import NAV_CSS, NAV_SCRIPT, permalink, toc, topbar
-from .review import EXTRA_ROWS, MATRIX, SOURCES
+from .review import EXTRA_ROWS, ISSUES, MATRIX, SOURCES
 from .options import Options
 from .render import Layer, View, render
 
@@ -357,7 +357,7 @@ def _more_vector_decisions() -> list[Decision]:
                 Variant("Small dots in the fill color (draft renderer's choice)", DRAFT),
                 Variant("Dot class defaults (white, 10 px)", DRAFT.with_(dots="dot-defaults")),
             ],
-            evidence="The draft leaves this open (TODO(review) in rc-stipples and rc-dotpatterns). "
+            evidence="The draft leaves this open (#84). "
                      "#84 asks whether the Dot class defaults apply. Rendered, white 10 px dots read as a different symbol, "
                      "and the fill color no longer shows.",
         ),
@@ -376,7 +376,7 @@ def _more_vector_decisions() -> list[Decision]:
                 Variant("Higher value wins", DRAFT, is_draft=True, note="Strømmen (priority 8) is kept."),
                 Variant("Lower value wins (1 = most important)", DRAFT.with_(label_priority="lower-wins"), note="Lillestrøm (priority 2) is kept."),
             ],
-            evidence="The draft proposes that a higher value wins; the spec text does not say (TODO(review) in rc-labels). "
+            evidence="The draft proposes that a higher value wins; the spec text does not say (#148). "
                      "In QGIS the label with the higher priority wins; MapLibre's symbol-sort-key places lower values first. "
                      "Both conventions are common, so the spec should state it.",
         ),
@@ -519,7 +519,7 @@ def _coverage_decisions() -> list[Decision]:
                         note="The valley floors below 500 m are left out. So are the summits above 2000 m, but next to the "
                              "map's near-white last color they hardly show."),
             ],
-            evidence="The draft proposes interpolation and clamping (TODO(review) in rc-coverage). SE 1.1 makes the choice "
+            evidence="The draft proposes interpolation and clamping (#149). SE 1.1 makes the choice "
                      "explicit with Interpolate and Categorize functions (its own DEM example uses Categorize); GeoServer's ColorMap defaults to an "
                      "interpolated ramp.",
             **on_relief,
@@ -536,7 +536,7 @@ def _coverage_decisions() -> list[Decision]:
                 Variant("c ^ (1 / gamma): brightens, as SE", DRAFT.with_(gamma="inverse")),
             ],
             evidence="SE 1.1 GammaValue brightens for values above 1. The draft's exponent does the opposite. gamma is also "
-                     "absent from the coverage UML, tables and schema (TODO(review), #86), so removing it is an option.",
+                     "absent from the coverage UML, tables and schema (#86), so removing it is an option.",
             **on_relief,
         ),
         Decision(
@@ -785,10 +785,15 @@ def _requirement_text(ids: list[str]) -> str:
     return "".join(out)
 
 
+def _issue_links(escaped: str) -> str:
+    """Link #NN / #NNN to the spec's GitHub issues (not ecere/libCartoSym#5 or HTML entities)."""
+    return re.sub(r"(?<![\w/&])#(\d{2,3})\b", lambda m: f'<a href="{ISSUES}{m.group(1)}">#{m.group(1)}</a>', escaped)
+
+
 def _inline_code(text: str) -> str:
-    """Escape text and render `code` spans."""
+    """Escape text, render `code` spans and link issue numbers."""
     pieces = html.escape(text).split("`")
-    return "".join(f"<code>{p}</code>" if i % 2 else p for i, p in enumerate(pieces))
+    return _issue_links("".join(f"<code>{p}</code>" if i % 2 else p for i, p in enumerate(pieces)))
 
 
 def _sources(key: str) -> str:
@@ -806,10 +811,10 @@ def _matrix_rows(decisions_: list[Decision]) -> str:
         if not m:
             continue
         rows.append(f'<tr><td><a href="#{d.key}">{html.escape(d.title)}</a></td><td>{_inline_code(m.draft_says)}</td>'
-                    f'<td>{_inline_code(m.view)}</td><td>{html.escape(m.status)}</td><td>{_inline_code(m.ask)}</td></tr>')
+                    f'<td>{_inline_code(m.view)}</td><td>{_inline_code(m.status)}</td><td>{_inline_code(m.ask)}</td></tr>')
     for title, m in EXTRA_ROWS:
         rows.append(f'<tr><td>{_inline_code(title)}</td><td>{_inline_code(m.draft_says)}</td>'
-                    f'<td>{_inline_code(m.view)}</td><td>{html.escape(m.status)}</td><td>{_inline_code(m.ask)}</td></tr>')
+                    f'<td>{_inline_code(m.view)}</td><td>{_inline_code(m.status)}</td><td>{_inline_code(m.ask)}</td></tr>')
     return "".join(rows)
 
 

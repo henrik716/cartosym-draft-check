@@ -1,6 +1,6 @@
 {
  "branch": "requirements-placeholders",
- "commit": "83d613d",
+ "commit": "1893a1e",
  "uncommitted_changes": false,
  "requirements": {
   "/req/arithmetic/add": {
@@ -326,7 +326,7 @@
   },
   "/req/hatches/width": {
    "file": "1-core/requirements/rc-hatches.adoc",
-   "line": 52,
+   "line": 54,
    "parts": [
     "An Encoding SHALL support defining a `width` property for the hatch fill symbolizer.",
     "A Renderer SHALL support fill hatching vector geometry based on a width property."
@@ -334,7 +334,7 @@
   },
   "/req/hatches/angle": {
    "file": "1-core/requirements/rc-hatches.adoc",
-   "line": 66,
+   "line": 68,
    "parts": [
     "An Encoding SHALL support defining an `angle` property for the hatch fill symbolizer.",
     "A Renderer SHALL support fill hatching vector geometry based on an angle property."
@@ -342,7 +342,7 @@
   },
   "/req/hatches/distance": {
    "file": "1-core/requirements/rc-hatches.adoc",
-   "line": 80,
+   "line": 82,
    "parts": [
     "An Encoding SHALL support defining a `distance` property for the hatch fill symbolizer.",
     "A Renderer SHALL support fill hatching vector geometry based on a distance property."
@@ -1028,7 +1028,7 @@
   },
   "/req/core/default-values": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 1053,
+   "line": 1055,
    "parts": [
     "An Encoding SHALL support omitting Symbolizer properties and object members for which a default value is defined in this section.",
     "A Renderer SHALL support using the default values defined in this section for Symbolizer properties and object members which are not set by any selected StylingRule."
