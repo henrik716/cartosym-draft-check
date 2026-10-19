@@ -1,7 +1,7 @@
 {
   "metadata": {
     "title": "sentinel-2 natural color",
-    "abstract": "Styling a Sentinel-2A coverage with Style & Symbology Basic Coverage Styling. Changed for the cartosym-draft-check gallery: colorChannels set back to the original example's unscaled B04 B03 B02."
+    "abstract": "Styling a Sentinel-2 L2A coverage with Style & Symbology Basic Coverage Styling. Changed for the cartosym-draft-check gallery: colorChannels set back to the original example's unscaled B04 B03 B02."
   },
   "stylingRules": [
     {

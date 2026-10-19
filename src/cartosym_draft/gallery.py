@@ -701,8 +701,8 @@ def decisions() -> list[Decision]:
 # --------------------------------------------------------------------- page
 
 CSS = """
-:root { --bg:#fbfaf7; --fg:#1f2328; --muted:#5b6370; --card:#fff; --line:#e3e0d8; --accent:#1a7f5a; --accent-bg:#e6f4ee; }
-@media (prefers-color-scheme: dark) { :root { --bg:#16181d; --fg:#e8e6e1; --muted:#a3a9b3; --card:#1f2229; --line:#30343c; --accent:#5fd3a2; --accent-bg:#1c3229; } }
+:root { --bg:#fbfaf7; --fg:#1f2328; --muted:#5b6370; --card:#fff; --line:#e3e0d8; --accent:#4f46e5; --accent-bg:#eef2ff; }
+@media (prefers-color-scheme: dark) { :root { --bg:#16181d; --fg:#e8e6e1; --muted:#a3a9b3; --card:#1f2229; --line:#30343c; --accent:#a5b4fc; --accent-bg:#1e1b4b; } }
 * { box-sizing: border-box; }
 body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
 main { max-width: 1320px; margin: 0 auto; padding: 32px 16px 64px; }
