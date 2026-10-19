@@ -238,6 +238,7 @@ def _vector_decisions() -> list[Decision]:
 
 EXAMPLES = Path(__file__).parent / "examples"
 COVERAGE_VIEW = View(bbox=sample_data.BBOX, width=300, height=200)
+RAMP = (1200, 2000)  # the examples' 0–2500 m color map, stretched to Rondane's elevations
 
 
 def _example(name: str) -> dict:
@@ -254,6 +255,36 @@ def _tweak(style: dict, **changes) -> dict:
         else:
             sym[key] = value
     return out
+
+
+def _without_hillshading(style: dict) -> dict:
+    """Copy of a spec example with the hillShading of its innermost symbolizer removed."""
+    out = copy.deepcopy(style)
+    out["stylingRules"][0]["nestedRules"][0]["symbolizer"].pop("hillShading", None)
+    return out
+
+
+def _stretch_color_map(style: dict, lo: float, hi: float) -> dict:
+    """Copy of a spec example with its innermost colorMap's values moved linearly onto lo..hi."""
+    out = copy.deepcopy(style)
+    sym = out["stylingRules"][0]["nestedRules"][0]["symbolizer"]
+    v0, v1 = sym["colorMap"][0][0], sym["colorMap"][-1][0]
+    sym["colorMap"] = [[round(lo + (e[0] - v0) * (hi - lo) / (v1 - v0)), *e[1:]] for e in sym["colorMap"]]
+    return out
+
+
+def _retarget(style: dict, old: str, new: str) -> dict:
+    """Copy of a style whose selectors compare dataLayer.id with *new* instead of *old*."""
+    def walk(o):
+        if isinstance(o, dict):
+            args = o.get("args")
+            if o.get("op") == "=" and isinstance(args, list) and args[:2] == [{"sysId": "dataLayer.id"}, old]:
+                return {**o, "args": [args[0], new]}
+            return {k: walk(v) for k, v in o.items()}
+        if isinstance(o, list):
+            return [walk(v) for v in o]
+        return o
+    return walk(copy.deepcopy(style))
 
 
 def _by_layer(rules: dict[str, dict]) -> dict:
@@ -393,21 +424,37 @@ def _more_vector_decisions() -> list[Decision]:
 
 
 def _coverage_decisions() -> list[Decision]:
-    dem, s2 = sample_data.dem(), sample_data.sentinel2()
-    elevation = [Layer("Elevation", type="coverage", grid=dem)]
+    s2, rondane = sample_data.sentinel2(), sample_data.rondane()
+    relief = [Layer("Elevation", type="coverage", grid=rondane)]
     pyramid_layer = [Layer("Elevation", type="coverage", grid=sample_data.pyramids())]
     sentinel = [Layer("sentinel2-l2a", type="coverage", grid=s2)]
     ex5, ex8, ex9 = (_example("5-coverage-dem"), _example("8-coverage-hillshading"),
                      _example("9-coverage-hillshading-opacity"))
     ex6 = _example("6-coverage-sentinel2")
+    # Rondane spans about 1020 to 2170 m: the elevation cards stretch the examples' color map (0 to 2500 m)
+    # to RAMP, keeping its colors, so the whole ramp shows and the valley floors and summits fall outside it.
+    ex8_rondane = _stretch_color_map(ex8, *RAMP)
+    ex5_rondane = _stretch_color_map(ex5, *RAMP)
     ex6_unscaled = _tweak(ex6, colorChannels=[{"property": "B04"}, {"property": "B03"}, {"property": "B02"}])
-    def factor_variants(example: dict, notes: tuple[str, str, str]) -> list[Variant]:
+    # Example 9 is an overlay: draw it over example 5's elevation colors on a second layer, "Terrain".
+    terrain = Layer("Terrain", type="coverage", grid=rondane)
+    base = _retarget(ex5_rondane, "Elevation", "Terrain")
+
+    def on_terrain(overlay: dict) -> dict:
+        return {"metadata": overlay.get("metadata", {}),
+                "stylingRules": base["stylingRules"] + overlay["stylingRules"]}
+
+    def factor_variants(example: dict, wrap, notes: dict, plain: tuple[str, dict, str]) -> list[Variant]:
+        def factor(f: int) -> dict:
+            return wrap(_tweak(example, hillShading={"factor": f}))
         return [
-            Variant("factor as vertical exaggeration (as in Jérôme's renderer)", DRAFT, is_draft=True, note=notes[0]),
-            Variant("The same with factor: 8", DRAFT, style=_tweak(example, hillShading={"factor": 8}), note=notes[1]),
-            Variant("The same with factor: 1", DRAFT, style=_tweak(example, hillShading={"factor": 1}), note=notes[2]),
-            Variant("Darkening × factor (the earlier draft text)", DRAFT.with_(hillshade_factor="intensity"),
-                    note="Almost every cell is at the darkest shade."),
+            Variant("factor: 56, as vertical exaggeration (as in Jérôme's renderer)", DRAFT, is_draft=True, note=notes[56]),
+            Variant("factor: 1", DRAFT, style=factor(1), note=notes[1]),
+            Variant("factor: 8", DRAFT, style=factor(8), note=notes[8]),
+            Variant("factor: 32", DRAFT, style=factor(32), note=notes[32]),
+            Variant(plain[0], DRAFT, style=plain[1], note=plain[2]),
+            Variant("factor: 56 as darkening × factor (the earlier draft text)", DRAFT.with_(hillshade_factor="intensity"),
+                    note="98 % of the cells are at or near the darkest shade."),
         ]
     common = dict(view=COVERAGE_VIEW, group="Part 1: coverage styling (the spec's examples 5–9)")
     return [
@@ -453,13 +500,16 @@ def _coverage_decisions() -> list[Decision]:
             key="color-map",
             title="Example 5: colorMap between and beyond entries",
             requirements=["/req/coverage/color-map", "/req/coverage/opacity-map"],
-            question="Example 5 maps elevation 0–2500 m to colors. Between entries, are colors interpolated or stepped? "
-                     "Below 0 m (the sea, south-west), is the first color used, or nothing?",
-            style=ex5, layers=elevation,
+            question="Example 5's color map, stretched from 0–2500 m to Rondane's 1200–2000 m (same colors). Between "
+                     "entries, are colors interpolated or stepped? Below 1200 m (the valley floors) and above 2000 m (the "
+                     "summits), is the first or last color used, or nothing?",
+            style=ex5_rondane, layers=relief,
             variants=[
                 Variant("Interpolate, clamp outside", DRAFT, is_draft=True),
                 Variant("Step between entries", DRAFT.with_(map_mode="step")),
-                Variant("Transparent outside the map", DRAFT.with_(map_outside="transparent"), note="The sea, below 0 m, is left out (bottom left)."),
+                Variant("Transparent outside the map", DRAFT.with_(map_outside="transparent"),
+                        note="The valley floors below 1200 m are left out. So are the summits above 2000 m, but next to the "
+                             "map's near-white last color they hardly show."),
             ],
             evidence="The draft proposes interpolation and clamping (TODO(review) in rc-coverage). SE 1.1 makes the choice "
                      "explicit with Interpolate and Categorize functions (its own DEM example uses Categorize); GeoServer's ColorMap defaults to an "
@@ -470,8 +520,9 @@ def _coverage_decisions() -> list[Decision]:
             key="gamma",
             title="Direction of coverage gamma",
             requirements=["/req/coverage/gamma"],
-            question="Example 5 with `gamma: 2`. Does a gamma above 1 darken or brighten?",
-            style=_tweak(ex5, gamma=2), layers=elevation,
+            question="Example 5 with `gamma: 2` (its color map stretched to Rondane's 1200–2000 m). "
+                     "Does a gamma above 1 darken or brighten?",
+            style=_tweak(ex5_rondane, gamma=2), layers=relief,
             variants=[
                 Variant("c ^ gamma: darkens", DRAFT, is_draft=True),
                 Variant("c ^ (1 / gamma): brightens, as SE", DRAFT.with_(gamma="inverse")),
@@ -484,19 +535,25 @@ def _coverage_decisions() -> list[Decision]:
             key="hillshade-factor",
             title="Example 8: what hillShading factor means",
             requirements=["/req/hill-shading/hill-shading", "/req/hill-shading/factor"],
-            question="Example 8 shades the DEM color map with `factor: 56`, sun at azimuth 45°, elevation 60° (100 m cells). "
-                     "What does 56 scale, and over what distance is the slope measured?",
-            style=ex8, layers=elevation,
-            variants=factor_variants(ex8, (
-                "At 100 m cells, 56 saturates the relief: 58 % of the cells are in full or near-full shade (below 0.05).",
-                "36 % of the cells are in full or near-full shade.",
-                "The terrain as it is: gentle shading, no cell darker than 0.49.")),
+            question="Example 8 shades the DEM color map with `factor: 56`, sun at azimuth 45°, elevation 60°. "
+                     "Here on Rondane at 100 m cells, with the color map stretched from 0–2500 m to Rondane's 1200–2000 m "
+                     "(same colors), and the factors of Jérôme's renders (1, 8, 32). "
+                     "Over what distance is the slope measured?",
+            style=ex8_rondane, layers=relief,
+            variants=factor_variants(ex8_rondane, lambda s: s, {
+                56: "48 % of the cells are in full or near-full shade (below 0.05): the relief is saturated.",
+                1: "The terrain as it is: no cell darker than 0.15.",
+                8: "25 % of the cells are in full or near-full shade: about as dark as Jérôme's 32.",
+                32: "44 % of the cells are in full or near-full shade."},
+                ("For reference: no hill shading", _without_hillshading(ex8_rondane), "The stretched color map alone.")),
             evidence="Jérôme: factor multiplies the horizontal components of the terrain normal before normalization, so "
-                     "factor 1 is the plain dot product of the sun direction and the normal; his illustrations (global "
-                     "imagery) use factors from 1 to 64. The PR now says so. Open: the horizontal distance the normal is "
-                     "computed over. This renderer uses metres over 100 m cells, where 56 saturates the relief; on a global "
-                     "view, slopes per pixel are far smaller and need a large factor. The PR also does not say how the "
-                     "shade applies without a hillShading colorMap; this renderer multiplies the cell's color by it.",
+                     "factor 1 is the plain dot product of the sun direction and the normal. The PR now says so, and the "
+                     "draft renderer uses the same formula. His renders of the Tibetan Plateau, with pixels of several km, "
+                     "show faint relief at 1, clear relief at 8 and strong relief at 32 and 64. On Rondane at 100 m cells "
+                     "the slopes per cell are far steeper, so 1 already gives clear relief and 8 looks like his 32. Open: the "
+                     "horizontal distance the normal is computed over, which decides what a given factor does at a given "
+                     "resolution. Without a hillShading colorMap, the cell's color is multiplied by the shade, as his "
+                     "renders appear to do.",
             **common,
         ),
         Decision(
@@ -504,17 +561,21 @@ def _coverage_decisions() -> list[Decision]:
             title="Example 9: shading intensity mapped to color and opacity",
             requirements=["/req/hill-shading/factor", "/req/hill-shading/color-map", "/req/hill-shading/opacity-map"],
             question="Example 9 maps the shade (0..1) to black–white and to opacity 0.75–0, for use as an overlay. "
-                     "With `factor: 56`, how much of the terrain does it cover?",
-            style=ex9, layers=elevation,
-            variants=factor_variants(ex9, (
-                "The overlay covers 98 % of the cells: only a shade below 0.55 shows.",
-                "The overlay covers 69 % of the cells.",
-                "Almost nothing is drawn: 2 % of the cells have a shade below 0.55.")),
+                     "Here it is drawn over example 5's elevation colors (a second layer, `Terrain`), stretched from "
+                     "0–2500 m to Rondane's 1200–2000 m. "
+                     "With `factor: 56`, how much of the terrain does it darken?",
+            style=on_terrain(ex9), layers=[terrain] + relief,
+            variants=factor_variants(ex9, on_terrain, {
+                56: "The overlay darkens 92 % of the cells: only a shade below 0.55 shows.",
+                1: "Only the steepest slopes facing away from the sun (7 % of the cells) are darkened.",
+                8: "The overlay darkens 63 % of the cells.",
+                32: "The overlay darkens 86 % of the cells."},
+                ("For reference: no overlay", base, "The stretched color map alone.")),
             evidence="Jérôme: the shade is the dot product of the sun direction and the terrain normal, from 0 (the sun at "
                      "90° from the normal, full shade) to 1 (no shade), and is the key for the hillShading colorMap and "
                      "opacityMap. His example uses a grayscale colorMap with an opacityMap that is more opaque in the shade, "
-                     "so imagery shows through on flat ground, as example 9 does. The PR now states this. How much shows "
-                     "depends on the factor and the distance the normal is computed over (see example 8).",
+                     "so imagery shows through on flat ground, as example 9 does. The PR now states this. How much is "
+                     "darkened depends on the factor and the distance the normal is computed over (see example 8).",
             **common,
         ),
         Decision(
@@ -754,8 +815,11 @@ def build(out_dir: Path) -> str:
             cards.append(f'<h2 class="group" id="{group_id}">{html.escape(group)}</h2>')
             contents.append((None, group, False))
             if group.startswith("Part 1: coverage"):
-                cards.append('<p class="note">On synthetic data (see the README): a 15 × 10 km area with 100 m cells. '
-                             "The styles are the spec's examples, unchanged unless the question says otherwise.</p>")
+                cards.append('<p class="note">A 15 × 10 km area with 100 m cells. The elevation cards use real '
+                             "elevation of Rondane, Norway (elevation data © Kartverket, CC BY 4.0), with the examples' "
+                             "color map stretched from 0–2500 m to 1200–2000 m; the Sentinel-2 scene and the pyramids are "
+                             "synthetic (see the README). The styles are the spec's examples, unchanged unless the "
+                             "question says otherwise.</p>")
         styles = {"style.cs.json": d.style}
         for i, v in enumerate(d.variants):
             svg = render(v.style or d.style, d.layers, d.view, v.options, anchors=d.anchors)

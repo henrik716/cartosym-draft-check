@@ -2,7 +2,8 @@
 
 So that another renderer can draw exactly what a card shows. Data is placed in
 ETRS89 / UTM zone 33N (EPSG:25833) by offsetting the gallery's local metre
-coordinates; vector layers become GeoJSON, coverage bands ESRI ASCII grids
+coordinates (by the grid's own origin for real data, such as the Rondane DEM,
+so it lands where it belongs); vector layers become GeoJSON, coverage bands ESRI ASCII grids
 (readable by GDAL). Each data file is named after its layer, which is what
 the styles' `dataLayer.id` selectors match.
 """
@@ -24,26 +25,26 @@ PRJ = ('PROJCS["ETRS89 / UTM zone 33N",GEOGCS["ETRS89",DATUM["European_Terrestri
        'UNIT["metre",1],AUTHORITY["EPSG","25833"]]')
 
 
-def _shift(coords):
+def _shift(coords, origin):
     if isinstance(coords[0], (int, float)):
-        return [coords[0] + ORIGIN[0], coords[1] + ORIGIN[1], *coords[2:]]
-    return [_shift(c) for c in coords]
+        return [coords[0] + origin[0], coords[1] + origin[1], *coords[2:]]
+    return [_shift(c, origin) for c in coords]
 
 
-def _geojson(layer: Layer) -> dict:
+def _geojson(layer: Layer, origin) -> dict:
     feats = []
     for f in layer.features:
         g = dict(f["geometry"])
-        g["coordinates"] = _shift(g["coordinates"])
+        g["coordinates"] = _shift(g["coordinates"], origin)
         feats.append({**f, "geometry": g})
     return {"type": "FeatureCollection", "name": layer.id,
             "crs": {"type": "name", "properties": {"name": "urn:ogc:def:crs:EPSG::25833"}}, "features": feats}
 
 
-def _ascii_grid(layer: Layer, band: str) -> str:
+def _ascii_grid(layer: Layer, band: str, origin) -> str:
     g = layer.grid
     assert g is not None
-    head = (f"ncols {g.cols}\nnrows {g.rows}\nxllcorner {g.bbox[0] + ORIGIN[0]}\nyllcorner {g.bbox[1] + ORIGIN[1]}\n"
+    head = (f"ncols {g.cols}\nnrows {g.rows}\nxllcorner {g.bbox[0] + origin[0]}\nyllcorner {g.bbox[1] + origin[1]}\n"
             f"cellsize {g.cell_size}\nNODATA_value -9999\n")
     return head + "\n".join(" ".join(str(v) for v in row) for row in g.bands[band]) + "\n"
 
@@ -53,6 +54,11 @@ def export(key: str, title: str, styles: dict[str, dict], layers: list[Layer], v
     """Write one card's kit to out_dir/key/ and return (label, relative path) links."""
     d = out_dir / "kit" / key
     d.mkdir(parents=True, exist_ok=True)
+    grids = [layer.grid for layer in layers if layer.grid is not None]
+    origins = {g.origin for g in grids if g.origin is not None}
+    assert len(origins) <= 1, f"{key}: layers placed at different origins"
+    origin = origins.pop() if origins else ORIGIN
+    attribution = "; ".join(sorted({g.attribution for g in grids if g.attribution}))
     links = []
     for name, style in styles.items():
         (d / name).write_text(json.dumps(style, indent=2, ensure_ascii=False), encoding="utf-8")
@@ -60,16 +66,16 @@ def export(key: str, title: str, styles: dict[str, dict], layers: list[Layer], v
     for layer in layers:
         if layer.type == "coverage" and layer.grid is not None:
             for band in layer.grid.bands:
-                (d / f"{layer.id}.{band}.asc").write_text(_ascii_grid(layer, band), encoding="utf-8")
+                (d / f"{layer.id}.{band}.asc").write_text(_ascii_grid(layer, band, origin), encoding="utf-8")
                 (d / f"{layer.id}.{band}.prj").write_text(PRJ, encoding="utf-8")
                 links.append((f"{layer.id}.{band}.asc", f"kit/{key}/{layer.id}.{band}.asc"))
         else:
-            (d / f"{layer.id}.geojson").write_text(json.dumps(_geojson(layer), ensure_ascii=False), encoding="utf-8")
+            (d / f"{layer.id}.geojson").write_text(json.dumps(_geojson(layer, origin), ensure_ascii=False), encoding="utf-8")
             links.append((f"{layer.id}.geojson", f"kit/{key}/{layer.id}.geojson"))
     b = view.bbox
     view_info = {
         "card": title, "crs": CRS,
-        "bbox": [b[0] + ORIGIN[0], b[1] + ORIGIN[1], b[2] + ORIGIN[0], b[3] + ORIGIN[1]],
+        "bbox": [b[0] + origin[0], b[1] + origin[1], b[2] + origin[0], b[3] + origin[1]],
         "width": view.width, "height": view.height,
         "scaleDenominator": round(view.scale_denominator, 1),
         "pixelSize_mm": 0.28,
@@ -77,6 +83,8 @@ def export(key: str, title: str, styles: dict[str, dict], layers: list[Layer], v
         "note": "Render each layer with the style, at this extent and size. Coverage bands share one grid; "
                 "a cell's properties are the band names (e.g. elevation, B04).",
     }
+    if attribution:
+        view_info["attribution"] = attribution
     (d / "view.json").write_text(json.dumps(view_info, indent=2, ensure_ascii=False), encoding="utf-8")
     links.append(("view.json", f"kit/{key}/view.json"))
     return links

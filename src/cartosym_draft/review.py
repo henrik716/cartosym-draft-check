@@ -16,6 +16,7 @@ QGIS_LABELS = "https://docs.qgis.org/latest/en/docs/user_manual/style_library/la
 GDALDEM = "https://gdal.org/en/stable/programs/gdaldem.html"
 CSS_GRADIENT = "https://developer.mozilla.org/en-US/docs/Web/CSS/gradient/linear-gradient"
 ISSUES = "https://github.com/opengeospatial/cartographic-symbology/issues/"
+PR133 = "https://github.com/opengeospatial/cartographic-symbology/pull/133"
 
 # Sources for the claims in each card's evidence line, checked 2026-10-15.
 SOURCES: dict[str, list[tuple[str, str]]] = {
@@ -31,8 +32,10 @@ SOURCES: dict[str, list[tuple[str, str]]] = {
     "color-map": [("SE 1.1, RasterSymbolizer ColorMap: Interpolate or Categorize", SE11),
                   ("GeoServer: ColorMap type ramp (interpolated) is the default", GEOSERVER_RASTER)],
     "gamma": [("SE 1.1, ContrastEnhancement: GammaValue above 1.0 brightens", SE11), ("Issue #86", ISSUES + "86")],
-    "hillshade-factor": [("gdaldem hillshade: -z is a vertical exaggeration", GDALDEM)],
-    "hillshade-overlay": [("gdaldem hillshade: -z is a vertical exaggeration", GDALDEM)],
+    "hillshade-factor": [("Jérôme's renders for factor 1, 8, 32 and 64 (PR #133)", PR133),
+                         ("gdaldem hillshade: -z is a vertical exaggeration", GDALDEM)],
+    "hillshade-overlay": [("Jérôme's renders for factor 1, 8, 32 and 64 (PR #133)", PR133),
+                          ("gdaldem hillshade: -z is a vertical exaggeration", GDALDEM)],
     "sun-azimuth": [("gdaldem hillshade: azimuth 0 = from the top, 90 = from the east", GDALDEM)],
     "gradient-angle": [("CSS linear-gradient: 0deg = to top, clockwise", CSS_GRADIENT)],
     "ndvi-division": [("Test report: arithmetic/div cases", "../reports/report.md")],

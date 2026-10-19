@@ -10,7 +10,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 
 from . import sample_data
-from .gallery import COVERAGE_VIEW, DRAFT, VIEW, _by_layer, _example, _feature, _square, _tweak
+from .gallery import COVERAGE_VIEW, DRAFT, RAMP, VIEW, _by_layer, _example, _feature, _square, _stretch_color_map, _tweak
 from .options import Options
 from .render import Layer, View
 
@@ -57,8 +57,7 @@ def _line(*coords, **props) -> dict:
 
 
 def samples() -> list[Sample]:
-    dem = sample_data.dem()
-    elevation = Layer("Elevation", type="coverage", grid=dem)
+    elevation = Layer("Elevation", type="coverage", grid=sample_data.rondane())
     parcels = Layer("Parcels", [
         _feature("Polygon", _square(20, 110, 70), landuse="forest", area=4900),
         _feature("Polygon", _square(127, 127, 36), landuse="forest", area=1296),
@@ -231,15 +230,16 @@ def samples() -> list[Sample]:
         # ------------------------------------------------------------ coverage
         Sample("coverage-opacity-map", "Coverage opacity map",
                ["/req/coverage/opacity-map", "/req/coverage/single-channel", "/req/coverage/alpha-channel"],
-               "Example 5's colors with an opacityMap from 0 at 0 m to 1 at 2000 m, over a striped background: the "
-               "stripes show through the lowlands and disappear under the peaks.",
+               "Example 5's colors (stretched to Rondane's 1200–2000 m) with an opacityMap from 0 at 1200 m to 1 at "
+               "2000 m, over a striped background: the stripes show through the valleys and disappear under the peaks. "
+               "Elevation data © Kartverket, CC BY 4.0.",
                [Panel({"stylingRules": [
                    {"selector": {"op": "=", "args": [{"sysId": "dataLayer.id"}, "Stripes"]},
                     "symbolizer": {"fill": {"color": "black", "hatch": {"width": {"px": 3}, "distance": {"px": 14}, "angle": 0}},
                                    "stroke": {"width": {"px": 0}}, "zOrder": 0}},
                    {"selector": {"op": "=", "args": [{"sysId": "dataLayer.id"}, "Elevation"]},
-                    "symbolizer": {**_tweak(_example("5-coverage-dem"), opacity=1)["stylingRules"][0]["nestedRules"][0]["symbolizer"],
-                                   "opacityMap": [[0, 0], [2000, 1]]}}]},
+                    "symbolizer": {**_tweak(_stretch_color_map(_example("5-coverage-dem"), *RAMP), opacity=1)["stylingRules"][0]["nestedRules"][0]["symbolizer"],
+                                   "opacityMap": [[RAMP[0], 0], [RAMP[1], 1]]}}]},
                    [Layer("Stripes", [_feature("Polygon", [[[0, 0], [15000, 0], [15000, 10000], [0, 10000], [0, 0]]])]), elevation],
                    COVERAGE_VIEW)]),
         # ----------------------------------------------------------- gradients

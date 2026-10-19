@@ -39,6 +39,8 @@ class Grid:
     rows: int
     bands: dict[str, list[list[Any]]] = field(default_factory=dict)
     name: str = ""  # which sample_data function made it, for the playground
+    origin: tuple[float, float] | None = None  # local (0, 0) in EPSG:25833 for real data; None: the kits' default
+    attribution: str = ""  # credit line for real data, written into the render kits
 
     @property
     def cell_size(self) -> float:

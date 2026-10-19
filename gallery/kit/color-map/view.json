@@ -2,10 +2,10 @@
   "card": "Example 5: colorMap between and beyond entries",
   "crs": "EPSG:25833",
   "bbox": [
-    597000.0,
-    6643000.0,
-    612000.0,
-    6653000.0
+    220000.0,
+    6870500.0,
+    235000.0,
+    6880500.0
   ],
   "width": 300,
   "height": 200,
@@ -17,5 +17,6 @@
       "type": "coverage"
     }
   ],
-  "note": "Render each layer with the style, at this extent and size. Coverage bands share one grid; a cell's properties are the band names (e.g. elevation, B04)."
+  "note": "Render each layer with the style, at this extent and size. Coverage bands share one grid; a cell's properties are the band names (e.g. elevation, B04).",
+  "attribution": "Elevation data © Kartverket, CC BY 4.0"
 }

@@ -1,8 +1,10 @@
-"""Synthetic coverages for the gallery, shaped like the spec examples' data.
+"""Coverages for the gallery, shaped like the spec examples' data.
 
-- :func:`dem`: an ``elevation`` band in metres (about -300 to 2500), with sea
-  in the south-west corner so values fall below the first colorMap entry.
-- :func:`sentinel2`: integer ``B02``, ``B03``, ``B04`` (blue, green, red) and
+- :func:`rondane`: real elevation of Rondane, Norway (about 1020 to 2170 m),
+  from Kartverket's national terrain model averaged to 100 m cells, for the
+  elevation cards. Elevation data © Kartverket, CC BY 4.0.
+- :func:`pyramids`: three synthetic pyramids, for the direction of the light.
+- :func:`sentinel2`: synthetic integer ``B02``, ``B03``, ``B04`` (blue, green, red) and
   ``B08`` (near infrared) bands in Sentinel-2 L2A digital numbers (reflectance
   x 10 000), and an ``SCL`` scene classification with a cloud (8 = medium,
   9 = high probability), as examples 6 and 7 expect.
@@ -10,8 +12,12 @@
 
 from __future__ import annotations
 
+import base64
 import math
+import struct
+import zlib
 
+from . import rondane_data
 from .coverage import Grid
 
 BBOX = (0.0, 0.0, 15000.0, 10000.0)  # 15 x 10 km, so 1:178 571 at 300 px wide
@@ -25,24 +31,14 @@ def _cells():
         yield r, [(BBOX[0] + (c + 0.5) * cell, y) for c in range(COLS)]
 
 
-def _gauss(x, y, cx, cy, s):
-    return math.exp(-((x - cx) ** 2 + (y - cy) ** 2) / (2 * s * s))
-
-
-def dem() -> Grid:
-    rows = []
-    for _, cells in _cells():
-        row = []
-        for x, y in cells:
-            z = (250 + 2200 * _gauss(x, y, 10500, 6500, 2300) + 1300 * _gauss(x, y, 4800, 7200, 1600)
-                 + 900 * _gauss(x, y, 12500, 2200, 1400) + 500 * _gauss(x, y, 7600, 3600, 900)
-                 + 400 * _gauss(x, y, 2600, 8600, 800) + 120 * math.sin(x / 1500) * math.cos(y / 1300))
-            coast = 1 - (x + 1.3 * y) / 6500
-            if coast > 0:
-                z -= 1100 * coast * coast
-            row.append(round(z, 1))
-        rows.append(row)
-    return Grid(BBOX, COLS, ROWS, {"elevation": rows}, name="dem")
+def rondane() -> Grid:
+    """Rondane, Norway: Rondeslottet, Storronden and Smiubelgen around Rondvatnet, at 100 m cells."""
+    d = rondane_data
+    raw = zlib.decompress(base64.b64decode("".join(d.DATA)))
+    dm = struct.unpack(f"<{d.COLS * d.ROWS}h", raw)
+    rows = [[dm[r * d.COLS + c] / 10 for c in range(d.COLS)] for r in range(d.ROWS)]
+    return Grid((0.0, 0.0, d.COLS * d.CELL, d.ROWS * d.CELL), d.COLS, d.ROWS, {"elevation": rows}, name="rondane",
+                origin=d.ORIGIN, attribution="Elevation data © Kartverket, CC BY 4.0")
 
 
 def pyramids() -> Grid:
@@ -94,4 +90,4 @@ def sentinel2() -> Grid:
                 name="sentinel2")
 
 
-__all__ = ["BBOX", "dem", "pyramids", "sentinel2"]
+__all__ = ["BBOX", "pyramids", "rondane", "sentinel2"]
