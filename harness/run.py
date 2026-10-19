@@ -25,6 +25,7 @@ LIBCARTOSYM = os.environ.get("LIBCARTOSYM_LABEL") or (
     f"cs-canif from `cartosym` {version('cartosym')}, `ecrt` {version('ecrt')}")
 
 PASS, FAIL, UNSUPPORTED, CRASH, ERROR = "pass", "FAIL", "unsupported", "CRASH", "error"
+LOCAL_WORK = str(ROOT / "work") + os.sep  # replaced by "work/" in the reports
 
 
 def _same(actual: str, expected) -> bool:
@@ -49,6 +50,27 @@ def _verdict(outcome: adapters.Outcome, expected) -> tuple[str, str]:
     if outcome.value.strip() == "null" and str(expected).strip().lower() != "null":
         return UNSUPPORTED, "returned `null` (function or operator not recognised)"
     return FAIL, f"got `{outcome.value}`, draft expects `{expected}`"
+
+
+def _expr_text(value) -> str:
+    """A short CQL2-Text form of a value in a case's definitions (numbers, @references, binary operations)."""
+    if isinstance(value, dict) and "$ref" in value:
+        return "@" + value["$ref"].rsplit("/", 1)[-1]
+    if isinstance(value, dict) and "property" in value:
+        return value["property"]
+    if isinstance(value, dict) and len(value.get("args", [])) == 2:
+        a, b = value["args"]
+        return f"{_expr_text(a)} {value['op']} {_expr_text(b)}"
+    return json.dumps(value) if isinstance(value, (dict, list, str)) else adapters._format(value)
+
+
+def _values(case: dict) -> list[str]:
+    """The values a case is evaluated with, as short `name = value` texts."""
+    out = [f"{k} = {_expr_text(v)}" for k, v in case.get("properties", {}).items()]
+    out += [f"{k} = {_expr_text(v)}" for k, v in case.get("system", {}).items()]
+    out += [f"@{k} = {_expr_text(v)}" for k, v in case.get("definitions", {}).items()]
+    out += [f"@{k} = {_expr_text(v)} (set by the application)" for k, v in case.get("variables", {}).items()]
+    return out
 
 
 def run_case(case: dict) -> dict[str, tuple[str, str]]:
@@ -105,6 +127,36 @@ def main(paths: list[str]) -> int:
     for impl, counts in sorted(totals.items()):
         lines.append(f"| {impl} | " + " | ".join(str(counts.get(v, 0)) for v in [PASS, FAIL, UNSUPPORTED, CRASH, ERROR]) + " |")
 
+    cases = [case for rows in by_req.values() for case, _ in rows]
+    n_json = sum(1 for c in cases if c.get("kind") == "expression" and "json" in c)
+    n_draft_only = sum(1 for c in cases if c.get("draft_only"))
+    n_style = sum(1 for c in cases if c.get("kind") == "style")
+    lines += [
+        "",
+        "## How the cases are run",
+        "",
+        f"- **libCartoSym:** the Input text is written to `expr.cql2` and evaluated with `cs-canif eval expr.cql2` "
+        f"({LIBCARTOSYM}).",
+        "- **pycartosym:** expressions are only parsed, with `pycartosym.cql2.parse_text(input)`; pycartosym does not "
+        "evaluate them.",
+        "- **draft renderer:** `cartosym_draft.evaluate.evaluate(expression, Context(...))`. Where a case gives its own "
+        f"CQL2-JSON ({n_json} cases), that is what it evaluates, and the result is marked _(CQL2-JSON)_; otherwise the "
+        "Input text is converted with `pycartosym.cql2.to_cql2_json(cql2.parse_text(input))`, whose parser mishandles "
+        "some inputs (string literals in function calls, arrays, conditionals, `^`).",
+        "- **Values:** feature properties, system identifiers, style variables (`@name`) and variables set by the "
+        "application that a case is evaluated with are listed under its input (_with …_).",
+        f"- **Draft renderer only** ({n_draft_only} cases): cases that need such values. The harness does not pass "
+        "them to `cs-canif` or pycartosym, so those columns show `-`.",
+    ]
+    if n_style:
+        lines.append(f"- **Styles** ({n_style} cases): libCartoSym converts them with `cs-canif convert style.cscss "
+                     "style-out.cscss` (valid if it converts); pycartosym checks them with `cartosym validate`.")
+    lines += [
+        "",
+        "The cases are in [`cases/`](../cases/), the calls in [`harness/adapters.py`](../harness/adapters.py), and "
+        "every result with the implementation's full output in [`results.json`](results.json).",
+    ]
+
     lines += ["", "## Results by requirement", ""]
     for req in sorted(by_req):
         lines += [f"### `{req}`", "", "| Case | Input | Expected | libCartoSym | pycartosym | draft renderer |",
@@ -113,17 +165,28 @@ def main(paths: list[str]) -> int:
             cells = []
             for impl in ("libCartoSym", "pycartosym", "draft renderer"):
                 v, d = results.get(impl, ("-", ""))
-                cells.append(f"{v}: {d}".replace("|", "\\|").replace("\n", " ") if d else v)
+                d = d.replace(LOCAL_WORK, "work/")  # no local paths in the report
+                cell = f"{v}: {d}".replace("|", "\\|").replace("\n", " ") if d else v
+                if impl == "draft renderer" and impl in results and "json" in case:
+                    cell += " _(CQL2-JSON)_"
+                cells.append(cell)
             inp = case["input"].strip().replace("\n", " ").replace("|", "\\|")
             if len(inp) > 60:
                 inp = inp[:57] + "..."
-            lines.append(f"| {case['id']} | `{inp}` | `{case['expect']}` | {cells[0]} | {cells[1]} | {cells[2]} |")
+            inp = f"`{inp}`"
+            if _values(case):
+                inp += "<br>with " + ", ".join(f"`{v}`".replace("|", "\\|") for v in _values(case))
+            lines.append(f"| {case['id']} | {inp} | `{adapters._format(case['expect'])}` | {cells[0]} | {cells[1]} | "
+                         f"{cells[2]} |")
             if case.get("note"):
                 lines.append(f"| | _{case['note']}_ | | | | |")
         lines.append("")
 
     results_json = {case["id"]: {"requirement": req, "input": case["input"], "expect": case["expect"],
-                                 "results": {impl: {"verdict": v, "detail": d} for impl, (v, d) in results.items()}}
+                                 **{k: case[k] for k in ("json", "properties", "system", "definitions", "variables",
+                                                         "draft_only") if k in case},
+                                 "results": {impl: {"verdict": v, "detail": d.replace(LOCAL_WORK, "work/")}
+                                             for impl, (v, d) in results.items()}}
                     for req, rows in by_req.items() for case, results in rows}
     REPORTS.mkdir(parents=True, exist_ok=True)
     (REPORTS / "results.json").write_text(json.dumps(results_json, indent=1, ensure_ascii=False), encoding="utf-8")

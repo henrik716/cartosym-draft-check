@@ -73,7 +73,7 @@
   requirement: /req/variables/definition
   kind: expression
   draft_only: true
-  input: "@roadWidth * 2  (application sets roadWidth = 5)"
+  input: "@roadWidth * 2"
   json: {op: "*", args: [{$ref: "#/$variables/roadWidth"}, 2]}
   definitions: {roadWidth: 3}
   variables: {roadWidth: 5}
@@ -82,7 +82,7 @@
   requirement: /req/variables/definition
   kind: expression
   draft_only: true
-  input: "@double  (with @base = 4 and @double = @base * 2)"
+  input: "@double"
   json: {$ref: "#/$variables/double"}
   definitions: {base: 4, double: {op: "*", args: [{$ref: "#/$variables/base"}, 2]}}
   expect: 8
@@ -97,7 +97,7 @@
   requirement: /req/core/expressions-field-identifiers
   kind: expression
   draft_only: true
-  input: "population * 2  (population = 1500)"
+  input: "population * 2"
   json: {op: "*", args: [{property: population}, 2]}
   properties: {population: 1500}
   expect: 3000
@@ -105,7 +105,7 @@
   requirement: /req/core/expressions-system-identifiers
   kind: expression
   draft_only: true
-  input: "viz.sd < 50000  (at 1:25 000)"
+  input: "viz.sd < 50000"
   json: {op: "<", args: [{sysId: viz.sd}, 50000]}
   system: {viz.sd: 25000}
   expect: true
@@ -113,7 +113,7 @@
   requirement: /req/core/scale
   kind: expression
   draft_only: true
-  input: "visualization.scaleDenominator  (at 1:25 000)"
+  input: "visualization.scaleDenominator"
   json: {sysId: visualization.scaleDenominator}
   system: {visualization.scaleDenominator: 25000}
   expect: 25000
@@ -121,7 +121,8 @@
   requirement: /req/parameter-values/expressions
   kind: expression
   draft_only: true
-  input: "lanes * 2 + 1  (lanes = 3), as a stroke width"
+  input: "lanes * 2 + 1"
   json: {op: "+", args: [{op: "*", args: [{property: lanes}, 2]}, 1]}
   properties: {lanes: 3}
   expect: 7
+  note: Used as a stroke width.

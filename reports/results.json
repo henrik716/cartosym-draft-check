@@ -3,6 +3,12 @@
   "requirement": "/req/math/acos",
   "input": "acos(1)",
   "expect": 0,
+  "json": {
+   "op": "acos",
+   "args": [
+    1
+   ]
+  },
   "results": {
    "libCartoSym": {
     "verdict": "unsupported",
@@ -22,6 +28,12 @@
   "requirement": "/req/math/asin",
   "input": "asin(1)",
   "expect": 1.5707963267948966,
+  "json": {
+   "op": "asin",
+   "args": [
+    1
+   ]
+  },
   "results": {
    "libCartoSym": {
     "verdict": "unsupported",
@@ -41,6 +53,12 @@
   "requirement": "/req/math/atan",
   "input": "atan(1)",
   "expect": 0.7853981633974483,
+  "json": {
+   "op": "atan",
+   "args": [
+    1
+   ]
+  },
   "results": {
    "libCartoSym": {
     "verdict": "unsupported",
@@ -60,6 +78,13 @@
   "requirement": "/req/math/atan2",
   "input": "atan2(1, -1)",
   "expect": 2.356194490192345,
+  "json": {
+   "op": "atan2",
+   "args": [
+    1,
+    -1
+   ]
+  },
   "results": {
    "libCartoSym": {
     "verdict": "unsupported",
@@ -79,6 +104,12 @@
   "requirement": "/req/math/ceil",
   "input": "ceil(-2.5)",
   "expect": -2,
+  "json": {
+   "op": "ceil",
+   "args": [
+    -2.5
+   ]
+  },
   "results": {
    "libCartoSym": {
     "verdict": "unsupported",
@@ -98,6 +129,12 @@
   "requirement": "/req/math/cos",
   "input": "cos(0)",
   "expect": 1,
+  "json": {
+   "op": "cos",
+   "args": [
+    0
+   ]
+  },
   "results": {
    "libCartoSym": {
     "verdict": "unsupported",
@@ -117,6 +154,12 @@
   "requirement": "/req/math/cosh",
   "input": "cosh(0)",
   "expect": 1,
+  "json": {
+   "op": "cosh",
+   "args": [
+    0
+   ]
+  },
   "results": {
    "libCartoSym": {
     "verdict": "unsupported",
@@ -136,6 +179,12 @@
   "requirement": "/req/math/exp",
   "input": "exp(1)",
   "expect": 2.718281828459045,
+  "json": {
+   "op": "exp",
+   "args": [
+    1
+   ]
+  },
   "results": {
    "libCartoSym": {
     "verdict": "unsupported",
@@ -155,6 +204,12 @@
   "requirement": "/req/math/log10",
   "input": "log10(1000)",
   "expect": 3,
+  "json": {
+   "op": "log10",
+   "args": [
+    1000
+   ]
+  },
   "results": {
    "libCartoSym": {
     "verdict": "unsupported",
@@ -174,6 +229,12 @@
   "requirement": "/req/math/sin",
   "input": "sin(0)",
   "expect": 0,
+  "json": {
+   "op": "sin",
+   "args": [
+    0
+   ]
+  },
   "results": {
    "libCartoSym": {
     "verdict": "unsupported",
@@ -193,6 +254,12 @@
   "requirement": "/req/math/sinh",
   "input": "sinh(0)",
   "expect": 0,
+  "json": {
+   "op": "sinh",
+   "args": [
+    0
+   ]
+  },
   "results": {
    "libCartoSym": {
     "verdict": "unsupported",
@@ -212,6 +279,12 @@
   "requirement": "/req/math/tan",
   "input": "tan(0)",
   "expect": 0,
+  "json": {
+   "op": "tan",
+   "args": [
+    0
+   ]
+  },
   "results": {
    "libCartoSym": {
     "verdict": "unsupported",
@@ -231,6 +304,12 @@
   "requirement": "/req/math/tanh",
   "input": "tanh(0)",
   "expect": 0,
+  "json": {
+   "op": "tanh",
+   "args": [
+    0
+   ]
+  },
   "results": {
    "libCartoSym": {
     "verdict": "unsupported",
@@ -250,6 +329,31 @@
   "requirement": "/req/math/random",
   "input": "random() >= 0 AND random() < 1",
   "expect": true,
+  "json": {
+   "op": "and",
+   "args": [
+    {
+     "op": ">=",
+     "args": [
+      {
+       "op": "random",
+       "args": []
+      },
+      0
+     ]
+    },
+    {
+     "op": "<",
+     "args": [
+      {
+       "op": "random",
+       "args": []
+      },
+      1
+     ]
+    }
+   ]
+  },
   "results": {
    "libCartoSym": {
     "verdict": "CRASH",
@@ -269,6 +373,13 @@
   "requirement": "/req/text-relation/contains",
   "input": "contains('Oslo', 'sl')",
   "expect": true,
+  "json": {
+   "op": "contains",
+   "args": [
+    "Oslo",
+    "sl"
+   ]
+  },
   "results": {
    "libCartoSym": {
     "verdict": "unsupported",
@@ -288,6 +399,13 @@
   "requirement": "/req/text-relation/starts-with",
   "input": "startsWith('Oslo', 'Os')",
   "expect": true,
+  "json": {
+   "op": "startsWith",
+   "args": [
+    "Oslo",
+    "Os"
+   ]
+  },
   "results": {
    "libCartoSym": {
     "verdict": "unsupported",
@@ -307,6 +425,13 @@
   "requirement": "/req/text-relation/ends-with",
   "input": "endsWith('Oslo', 'lo')",
   "expect": true,
+  "json": {
+   "op": "endsWith",
+   "args": [
+    "Oslo",
+    "lo"
+   ]
+  },
   "results": {
    "libCartoSym": {
     "verdict": "unsupported",
@@ -326,6 +451,13 @@
   "requirement": "/req/text-relation/not-contains",
   "input": "notContains('Oslo', 'sl')",
   "expect": false,
+  "json": {
+   "op": "notContains",
+   "args": [
+    "Oslo",
+    "sl"
+   ]
+  },
   "results": {
    "libCartoSym": {
     "verdict": "unsupported",
@@ -345,6 +477,13 @@
   "requirement": "/req/text-relation/not-starts-with",
   "input": "notStartsWith('Oslo', 'sl')",
   "expect": true,
+  "json": {
+   "op": "notStartsWith",
+   "args": [
+    "Oslo",
+    "sl"
+   ]
+  },
   "results": {
    "libCartoSym": {
     "verdict": "unsupported",
@@ -364,6 +503,13 @@
   "requirement": "/req/text-relation/not-ends-with",
   "input": "notEndsWith('Oslo', 'lo')",
   "expect": false,
+  "json": {
+   "op": "notEndsWith",
+   "args": [
+    "Oslo",
+    "lo"
+   ]
+  },
   "results": {
    "libCartoSym": {
     "verdict": "unsupported",
@@ -383,10 +529,24 @@
   "requirement": "/req/conditional/condition",
   "input": "2 > 1 ? 'yes' : 'no'",
   "expect": "yes",
+  "json": {
+   "op": "?:",
+   "args": [
+    {
+     "op": ">",
+     "args": [
+      2,
+      1
+     ]
+    },
+    "yes",
+    "no"
+   ]
+  },
   "results": {
    "libCartoSym": {
     "verdict": "error",
-    "detail": "Failed to parse C:\\Users\\schhen\\Documents\\GitHub\\cartosym-draft-check\\work\\expr.cql2 as a CQL2-Text expression"
+    "detail": "Failed to parse work/expr.cql2 as a CQL2-Text expression"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -402,10 +562,24 @@
   "requirement": "/req/conditional/condition",
   "input": "2 < 1 ? 'yes' : 'no'",
   "expect": "no",
+  "json": {
+   "op": "?:",
+   "args": [
+    {
+     "op": "<",
+     "args": [
+      2,
+      1
+     ]
+    },
+    "yes",
+    "no"
+   ]
+  },
   "results": {
    "libCartoSym": {
     "verdict": "error",
-    "detail": "Failed to parse C:\\Users\\schhen\\Documents\\GitHub\\cartosym-draft-check\\work\\expr.cql2 as a CQL2-Text expression"
+    "detail": "Failed to parse work/expr.cql2 as a CQL2-Text expression"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -421,6 +595,18 @@
   "requirement": "/req/right-hand/operands",
   "input": "3 < abs(-5)",
   "expect": true,
+  "json": {
+   "op": "<",
+   "args": [
+    3,
+    {
+     "op": "abs",
+     "args": [
+      -5
+     ]
+    }
+   ]
+  },
   "results": {
    "libCartoSym": {
     "verdict": "error",
@@ -440,6 +626,22 @@
   "requirement": "/req/right-hand/operands",
   "input": "width < height",
   "expect": true,
+  "json": {
+   "op": "<",
+   "args": [
+    {
+     "property": "width"
+    },
+    {
+     "property": "height"
+    }
+   ]
+  },
+  "properties": {
+   "width": 2,
+   "height": 5
+  },
+  "draft_only": true,
   "results": {
    "draft renderer": {
     "verdict": "pass",
@@ -451,6 +653,12 @@
   "requirement": "/req/functions/call-expressions",
   "input": "abs(-2)",
   "expect": 2,
+  "json": {
+   "op": "abs",
+   "args": [
+    -2
+   ]
+  },
   "results": {
    "libCartoSym": {
     "verdict": "unsupported",
@@ -470,6 +678,13 @@
   "requirement": "/req/functions/call-expressions",
   "input": "abs(1, 2)",
   "expect": "<invalid>",
+  "json": {
+   "op": "abs",
+   "args": [
+    1,
+    2
+   ]
+  },
   "results": {
    "libCartoSym": {
     "verdict": "unsupported",
@@ -489,6 +704,14 @@
   "requirement": "/req/functions/standard-functions",
   "input": "max(1, 5, 3)",
   "expect": 5,
+  "json": {
+   "op": "max",
+   "args": [
+    1,
+    5,
+    3
+   ]
+  },
   "results": {
    "libCartoSym": {
     "verdict": "unsupported",
@@ -508,6 +731,19 @@
   "requirement": "/req/variables/expression",
   "input": "@roadWidth * 2",
   "expect": 6,
+  "json": {
+   "op": "*",
+   "args": [
+    {
+     "$ref": "#/$variables/roadWidth"
+    },
+    2
+   ]
+  },
+  "definitions": {
+   "roadWidth": 3
+  },
+  "draft_only": true,
   "results": {
    "draft renderer": {
     "verdict": "pass",
@@ -517,8 +753,24 @@
  },
  "var-override": {
   "requirement": "/req/variables/definition",
-  "input": "@roadWidth * 2  (application sets roadWidth = 5)",
+  "input": "@roadWidth * 2",
   "expect": 10,
+  "json": {
+   "op": "*",
+   "args": [
+    {
+     "$ref": "#/$variables/roadWidth"
+    },
+    2
+   ]
+  },
+  "definitions": {
+   "roadWidth": 3
+  },
+  "variables": {
+   "roadWidth": 5
+  },
+  "draft_only": true,
   "results": {
    "draft renderer": {
     "verdict": "pass",
@@ -528,8 +780,24 @@
  },
  "var-defined-by-expression": {
   "requirement": "/req/variables/definition",
-  "input": "@double  (with @base = 4 and @double = @base * 2)",
+  "input": "@double",
   "expect": 8,
+  "json": {
+   "$ref": "#/$variables/double"
+  },
+  "definitions": {
+   "base": 4,
+   "double": {
+    "op": "*",
+    "args": [
+     {
+      "$ref": "#/$variables/base"
+     },
+     2
+    ]
+   }
+  },
+  "draft_only": true,
   "results": {
    "draft renderer": {
     "verdict": "pass",
@@ -541,6 +809,7 @@
   "requirement": "/req/core/literals",
   "input": "'abc'",
   "expect": "abc",
+  "json": "abc",
   "results": {
    "libCartoSym": {
     "verdict": "pass",
@@ -560,6 +829,7 @@
   "requirement": "/req/core/literals",
   "input": "3.25",
   "expect": 3.25,
+  "json": 3.25,
   "results": {
    "libCartoSym": {
     "verdict": "pass",
@@ -579,6 +849,7 @@
   "requirement": "/req/core/literals",
   "input": "true",
   "expect": true,
+  "json": true,
   "results": {
    "libCartoSym": {
     "verdict": "pass",
@@ -598,6 +869,21 @@
   "requirement": "/req/core/arrays",
   "input": "a_equals((1, 2, 3), (1, 2, 3))",
   "expect": true,
+  "json": {
+   "op": "a_equals",
+   "args": [
+    [
+     1,
+     2,
+     3
+    ],
+    [
+     1,
+     2,
+     3
+    ]
+   ]
+  },
   "results": {
    "libCartoSym": {
     "verdict": "pass",
@@ -615,8 +901,21 @@
  },
  "core-field-identifier": {
   "requirement": "/req/core/expressions-field-identifiers",
-  "input": "population * 2  (population = 1500)",
+  "input": "population * 2",
   "expect": 3000,
+  "json": {
+   "op": "*",
+   "args": [
+    {
+     "property": "population"
+    },
+    2
+   ]
+  },
+  "properties": {
+   "population": 1500
+  },
+  "draft_only": true,
   "results": {
    "draft renderer": {
     "verdict": "pass",
@@ -626,8 +925,21 @@
  },
  "core-system-identifier": {
   "requirement": "/req/core/expressions-system-identifiers",
-  "input": "viz.sd < 50000  (at 1:25 000)",
+  "input": "viz.sd < 50000",
   "expect": true,
+  "json": {
+   "op": "<",
+   "args": [
+    {
+     "sysId": "viz.sd"
+    },
+    50000
+   ]
+  },
+  "system": {
+   "viz.sd": 25000
+  },
+  "draft_only": true,
   "results": {
    "draft renderer": {
     "verdict": "pass",
@@ -637,8 +949,15 @@
  },
  "core-scale": {
   "requirement": "/req/core/scale",
-  "input": "visualization.scaleDenominator  (at 1:25 000)",
+  "input": "visualization.scaleDenominator",
   "expect": 25000,
+  "json": {
+   "sysId": "visualization.scaleDenominator"
+  },
+  "system": {
+   "visualization.scaleDenominator": 25000
+  },
+  "draft_only": true,
   "results": {
    "draft renderer": {
     "verdict": "pass",
@@ -648,8 +967,27 @@
  },
  "param-expression": {
   "requirement": "/req/parameter-values/expressions",
-  "input": "lanes * 2 + 1  (lanes = 3), as a stroke width",
+  "input": "lanes * 2 + 1",
   "expect": 7,
+  "json": {
+   "op": "+",
+   "args": [
+    {
+     "op": "*",
+     "args": [
+      {
+       "property": "lanes"
+      },
+      2
+     ]
+    },
+    1
+   ]
+  },
+  "properties": {
+   "lanes": 3
+  },
+  "draft_only": true,
   "results": {
    "draft renderer": {
     "verdict": "pass",
@@ -832,6 +1170,13 @@
   "requirement": "/req/arithmetic/pow",
   "input": "2 ^ 10",
   "expect": 1024,
+  "json": {
+   "op": "^",
+   "args": [
+    2,
+    10
+   ]
+  },
   "results": {
    "libCartoSym": {
     "verdict": "pass",
@@ -1098,6 +1443,13 @@
   "requirement": "/req/text-relation/like",
   "input": "'Oslo' like 'O%'",
   "expect": "true",
+  "json": {
+   "op": "like",
+   "args": [
+    "Oslo",
+    "O%"
+   ]
+  },
   "results": {
    "libCartoSym": {
     "verdict": "pass",
@@ -1117,6 +1469,13 @@
   "requirement": "/req/text-relation/like",
   "input": "'Oslo' like 'O_lo'",
   "expect": "true",
+  "json": {
+   "op": "like",
+   "args": [
+    "Oslo",
+    "O_lo"
+   ]
+  },
   "results": {
    "libCartoSym": {
     "verdict": "pass",
@@ -1136,6 +1495,13 @@
   "requirement": "/req/text-relation/like",
   "input": "'Oslo' like 'B%'",
   "expect": "false",
+  "json": {
+   "op": "like",
+   "args": [
+    "Oslo",
+    "B%"
+   ]
+  },
   "results": {
    "libCartoSym": {
     "verdict": "pass",
@@ -1155,6 +1521,13 @@
   "requirement": "/req/text-relation/like",
   "input": "'50%' like '50\\%'",
   "expect": "true",
+  "json": {
+   "op": "like",
+   "args": [
+    "50%",
+    "50\\%"
+   ]
+  },
   "results": {
    "libCartoSym": {
     "verdict": "pass",
@@ -1193,10 +1566,24 @@
   "requirement": "/req/conditional/then-exp",
   "input": "1 < 2 ? 10 : 20",
   "expect": 10,
+  "json": {
+   "op": "?:",
+   "args": [
+    {
+     "op": "<",
+     "args": [
+      1,
+      2
+     ]
+    },
+    10,
+    20
+   ]
+  },
   "results": {
    "libCartoSym": {
     "verdict": "error",
-    "detail": "Failed to parse C:\\Users\\schhen\\Documents\\GitHub\\cartosym-draft-check\\work\\expr.cql2 as a CQL2-Text expression"
+    "detail": "Failed to parse work/expr.cql2 as a CQL2-Text expression"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -1212,10 +1599,24 @@
   "requirement": "/req/conditional/else-exp",
   "input": "1 > 2 ? 10 : 20",
   "expect": 20,
+  "json": {
+   "op": "?:",
+   "args": [
+    {
+     "op": ">",
+     "args": [
+      1,
+      2
+     ]
+    },
+    10,
+    20
+   ]
+  },
   "results": {
    "libCartoSym": {
     "verdict": "error",
-    "detail": "Failed to parse C:\\Users\\schhen\\Documents\\GitHub\\cartosym-draft-check\\work\\expr.cql2 as a CQL2-Text expression"
+    "detail": "Failed to parse work/expr.cql2 as a CQL2-Text expression"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -1326,6 +1727,19 @@
   "requirement": "/req/array-relations/a-overlaps",
   "input": "a_overlaps((1, 2), (3, 4))",
   "expect": "false",
+  "json": {
+   "op": "a_overlaps",
+   "args": [
+    [
+     1,
+     2
+    ],
+    [
+     3,
+     4
+    ]
+   ]
+  },
   "results": {
    "libCartoSym": {
     "verdict": "pass",
@@ -1345,6 +1759,23 @@
   "requirement": "/req/text-manipulation/case-insensitize",
   "input": "caseInsensitize('ABC') = caseInsensitize('abc')",
   "expect": "true",
+  "json": {
+   "op": "=",
+   "args": [
+    {
+     "op": "caseInsensitize",
+     "args": [
+      "ABC"
+     ]
+    },
+    {
+     "op": "caseInsensitize",
+     "args": [
+      "abc"
+     ]
+    }
+   ]
+  },
   "results": {
    "libCartoSym": {
     "verdict": "FAIL",
@@ -1364,6 +1795,23 @@
   "requirement": "/req/text-manipulation/case-insensitize",
   "input": "casei('ABC') = casei('abc')",
   "expect": "true",
+  "json": {
+   "op": "=",
+   "args": [
+    {
+     "op": "casei",
+     "args": [
+      "ABC"
+     ]
+    },
+    {
+     "op": "casei",
+     "args": [
+      "abc"
+     ]
+    }
+   ]
+  },
   "results": {
    "libCartoSym": {
     "verdict": "pass",
@@ -1383,6 +1831,23 @@
   "requirement": "/req/text-manipulation/accent-insensitize",
   "input": "accentInsensitize('Øre') = accentInsensitize('Ore')",
   "expect": "true",
+  "json": {
+   "op": "=",
+   "args": [
+    {
+     "op": "accentInsensitize",
+     "args": [
+      "Øre"
+     ]
+    },
+    {
+     "op": "accentInsensitize",
+     "args": [
+      "Ore"
+     ]
+    }
+   ]
+  },
   "results": {
    "libCartoSym": {
     "verdict": "FAIL",
@@ -1402,6 +1867,23 @@
   "requirement": "/req/text-manipulation/accent-insensitize",
   "input": "accenti('café') = accenti('cafe')",
   "expect": "true",
+  "json": {
+   "op": "=",
+   "args": [
+    {
+     "op": "accenti",
+     "args": [
+      "café"
+     ]
+    },
+    {
+     "op": "accenti",
+     "args": [
+      "cafe"
+     ]
+    }
+   ]
+  },
   "results": {
    "libCartoSym": {
     "verdict": "pass",
@@ -1421,6 +1903,12 @@
   "requirement": "/req/text-manipulation/upper-case",
   "input": "upperCase('abc')",
   "expect": "'ABC'",
+  "json": {
+   "op": "upperCase",
+   "args": [
+    "abc"
+   ]
+  },
   "results": {
    "libCartoSym": {
     "verdict": "unsupported",
@@ -1440,6 +1928,12 @@
   "requirement": "/req/text-manipulation/lower-case",
   "input": "lowerCase('ABC')",
   "expect": "'abc'",
+  "json": {
+   "op": "lowerCase",
+   "args": [
+    "ABC"
+   ]
+  },
   "results": {
    "libCartoSym": {
     "verdict": "unsupported",
@@ -1459,6 +1953,13 @@
   "requirement": "/req/text-manipulation/concatenate",
   "input": "concatenate('ab', 'cd')",
   "expect": "'abcd'",
+  "json": {
+   "op": "concatenate",
+   "args": [
+    "ab",
+    "cd"
+   ]
+  },
   "results": {
    "libCartoSym": {
     "verdict": "pass",
@@ -1478,6 +1979,14 @@
   "requirement": "/req/text-manipulation/substitute",
   "input": "substitute('a-b-c', '-', '+')",
   "expect": "'a+b+c'",
+  "json": {
+   "op": "substitute",
+   "args": [
+    "a-b-c",
+    "-",
+    "+"
+   ]
+  },
   "results": {
    "libCartoSym": {
     "verdict": "unsupported",
