@@ -1,8 +1,10 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1"><title>CartoSym Draft Decisions</title>
 <style>
-:root { --bg:#fbfaf7; --fg:#1f2328; --muted:#5b6370; --card:#fff; --line:#e3e0d8; --accent:#b45309; --accent-bg:#fffbeb; --badge-bg:#fde68a; --badge-fg:#92400e; }
-@media (prefers-color-scheme: dark) { :root { --bg:#16181d; --fg:#e8e6e1; --muted:#a3a9b3; --card:#1f2229; --line:#30343c; --accent:#fbbf24; --accent-bg:#422006; --badge-bg:#78350f; --badge-fg:#fde68a; } }
+:root { color-scheme: light; --bg:#fbfaf7; --fg:#1f2328; --muted:#5b6370; --card:#fff; --line:#e3e0d8; --accent:#b45309; --accent-bg:#fffbeb; --badge-bg:#fde68a; --badge-fg:#92400e;
+  --json-k:#7a3e9d; --json-s:#1a7f5a; --json-n:#b35900; --json-b:#2357b0; }
+:root[data-theme="dark"] { color-scheme: dark; --bg:#16181d; --fg:#e8e6e1; --muted:#a3a9b3; --card:#1f2229; --line:#30343c; --accent:#fbbf24; --accent-bg:#422006; --badge-bg:#78350f; --badge-fg:#fde68a; --json-k:#d7a6f2; --json-s:#7fd8a9; --json-n:#f0a868; --json-b:#8fb4ff; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { color-scheme: dark; --bg:#16181d; --fg:#e8e6e1; --muted:#a3a9b3; --card:#1f2229; --line:#30343c; --accent:#fbbf24; --accent-bg:#422006; --badge-bg:#78350f; --badge-fg:#fde68a; --json-k:#d7a6f2; --json-s:#7fd8a9; --json-n:#f0a868; --json-b:#8fb4ff; } }
 * { box-sizing: border-box; }
 body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
 main { max-width: 1320px; margin: 0 auto; padding: 32px 16px 64px; }
@@ -35,8 +37,7 @@ h2.group { font-size: 21px; margin: 40px 0 0; }
 .pane-head strong { color: var(--fg); margin-right: auto; }
 .pane-head button { font: inherit; font-size: 12px; padding: 2px 8px; border-radius: 6px; border: 1px solid var(--line); background: var(--card); color: var(--fg); cursor: pointer; }
 .json { max-height: 460px; overflow: auto; font: 12px/1.45 ui-monospace, Consolas, monospace; margin: 0; }
-.json .k { color: #7a3e9d; } .json .s { color: #1a7f5a; } .json .n { color: #b35900; } .json .b { color: #2357b0; }
-@media (prefers-color-scheme: dark) { .json .k { color: #d7a6f2; } .json .s { color: #7fd8a9; } .json .n { color: #f0a868; } .json .b { color: #8fb4ff; } }
+.json .k { color: var(--json-k); } .json .s { color: var(--json-s); } .json .n { color: var(--json-n); } .json .b { color: var(--json-b); }
 
 [id] { scroll-margin-top: 64px; }
 .topbar { position: sticky; top: 0; z-index: 10; background: var(--card); border-bottom: 1px solid var(--line); }
@@ -46,7 +47,10 @@ h2.group { font-size: 21px; margin: 40px 0 0; }
 .topbar nav a { padding: 4px 10px; border-radius: 6px; text-decoration: none; color: var(--fg); font-size: 14px; }
 .topbar nav a:hover { background: var(--bg); }
 .topbar nav a.active { background: var(--accent-bg); color: var(--fg); font-weight: 600; box-shadow: inset 0 -2px 0 var(--accent); }
-.topbar .jump { margin-left: auto; max-width: 320px; font: inherit; font-size: 13px; padding: 4px 6px; border-radius: 6px;
+.topbar .tools { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+.topbar .theme { font: inherit; font-size: 13px; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--line);
+  background: var(--card); color: var(--fg); cursor: pointer; white-space: nowrap; }
+.topbar .jump { max-width: 320px; font: inherit; font-size: 13px; padding: 4px 6px; border-radius: 6px;
   border: 1px solid var(--line); background: var(--card); color: var(--fg); }
 .layout { max-width: 1600px; margin: 0 auto; }
 .toc { display: none; }
@@ -66,7 +70,26 @@ h2.group { font-size: 21px; margin: 40px 0 0; }
 .permalink:hover, .permalink.copied { opacity: 1; color: var(--accent); }
 .up { margin-left: 10px; font-size: 13px; white-space: nowrap; }
 </style></head><body class="has-toc">
-<header class="topbar"><div class="topbar-in"><span class="brand">CartoSym draft check</span><nav aria-label="Pages"><a href="index.html" class="active">Gallery</a><a href="requirements.html">Requirements</a><a href="playground.html">Playground</a></nav><select class="jump" aria-label="Jump to a section"><option value="">Jump to…</option><option value="matrix">Decision matrix</option><option value="" disabled>— Part 1: vector styling</option><option value="opacity">Symbolizer opacity: whole symbol or each part</option><option value="casing-order">Casing beneath or above the stroke</option><option value="casing-crossing">Casing at crossings</option><option value="casing-width">What casing width means</option><option value="font-outline">Font outline beneath or above the glyphs</option><option value="z-order">Which zOrder is drawn on top</option><option value="hatch-angle">Hatch angle direction</option><option value="dash-units">Units of dashPattern</option><option value="image-hotspot">Default hot spot of an Image</option><option value="default-marker">The default marker</option><option value="dots">What a stipple or dot-pattern dot looks like</option><option value="label-priority">Which label priority wins</option><option value="label-spacing">Units of label minSpacing</option><option value="label-pass">Labels on top of everything</option><option value="" disabled>— Part 1: coverage styling (the spec&#x27;s examples 5–9)</option><option value="color-map">Example 5: colorMap between and beyond entries</option><option value="gamma">Direction of coverage gamma</option><option value="color-channels">Example 6: scaling colorChannels</option><option value="ndvi-division">Example 7: NDVI with integer bands</option><option value="hillshade-factor">Example 8: what hillShading factor means</option><option value="hillshade-overlay">Example 9: shading intensity mapped to color and opacity</option><option value="sun-azimuth">Direction of the sun azimuth</option><option value="" disabled>— Part 2: gradient fills</option><option value="gradient-angle">Gradient angle convention</option><option value="gradient-frame">Gradient position and size: per feature or per map</option></select></div></header>
+<header class="topbar"><div class="topbar-in"><span class="brand">CartoSym draft check</span><nav aria-label="Pages"><a href="index.html" class="active">Gallery</a><a href="requirements.html">Requirements</a><a href="playground.html">Playground</a></nav><div class="tools"><select class="jump" aria-label="Jump to a section"><option value="">Jump to…</option><option value="matrix">Decision matrix</option><option value="" disabled>— Part 1: vector styling</option><option value="opacity">Symbolizer opacity: whole symbol or each part</option><option value="casing-order">Casing beneath or above the stroke</option><option value="casing-crossing">Casing at crossings</option><option value="casing-width">What casing width means</option><option value="font-outline">Font outline beneath or above the glyphs</option><option value="z-order">Which zOrder is drawn on top</option><option value="hatch-angle">Hatch angle direction</option><option value="dash-units">Units of dashPattern</option><option value="image-hotspot">Default hot spot of an Image</option><option value="default-marker">The default marker</option><option value="dots">What a stipple or dot-pattern dot looks like</option><option value="label-priority">Which label priority wins</option><option value="label-spacing">Units of label minSpacing</option><option value="label-pass">Labels on top of everything</option><option value="" disabled>— Part 1: coverage styling (the spec&#x27;s examples 5–9)</option><option value="color-map">Example 5: colorMap between and beyond entries</option><option value="gamma">Direction of coverage gamma</option><option value="color-channels">Example 6: scaling colorChannels</option><option value="ndvi-division">Example 7: NDVI with integer bands</option><option value="hillshade-factor">Example 8: what hillShading factor means</option><option value="hillshade-overlay">Example 9: shading intensity mapped to color and opacity</option><option value="sun-azimuth">Direction of the sun azimuth</option><option value="" disabled>— Part 2: gradient fills</option><option value="gradient-angle">Gradient angle convention</option><option value="gradient-frame">Gradient position and size: per feature or per map</option></select><button class="theme" type="button" aria-label="Switch between light and dark">◐ Auto</button></div></div></header><script>
+(() => {
+  const modes = ["auto", "light", "dark"], labels = { auto: "◐ Auto", light: "☀ Light", dark: "☾ Dark" };
+  const b = document.querySelector(".topbar .theme");
+  let mode = "auto";
+  try { mode = localStorage.getItem("theme") || "auto"; } catch (e) {}
+  const apply = () => {
+    if (mode === "auto") document.documentElement.removeAttribute("data-theme");
+    else document.documentElement.setAttribute("data-theme", mode);
+    b.textContent = labels[mode] || labels.auto;
+    b.title = "Theme: " + mode + (mode === "auto" ? " (follows your system)" : "") + ". Click to change.";
+  };
+  b.addEventListener("click", () => {
+    mode = modes[(modes.indexOf(mode) + 1) % modes.length];
+    try { localStorage.setItem("theme", mode); } catch (e) {}
+    apply();
+  });
+  apply();
+})();
+</script>
 <div class="layout has-toc"><nav class="toc" aria-label="Contents"><a href="#matrix">Decision matrix</a><div class="toc-group">Part 1: vector styling</div><a href="#opacity">Symbolizer opacity: whole symbol or each part</a><a href="#casing-order">Casing beneath or above the stroke</a><a href="#casing-crossing">Casing at crossings<span class="open-dot" title="open in draft"></span></a><a href="#casing-width">What casing width means<span class="open-dot" title="open in draft"></span></a><a href="#font-outline">Font outline beneath or above the glyphs</a><a href="#z-order">Which zOrder is drawn on top</a><a href="#hatch-angle">Hatch angle direction</a><a href="#dash-units">Units of dashPattern</a><a href="#image-hotspot">Default hot spot of an Image</a><a href="#default-marker">The default marker</a><a href="#dots">What a stipple or dot-pattern dot looks like<span class="open-dot" title="open in draft"></span></a><a href="#label-priority">Which label priority wins</a><a href="#label-spacing">Units of label minSpacing</a><a href="#label-pass">Labels on top of everything</a><div class="toc-group">Part 1: coverage styling (the spec&#x27;s examples 5–9)</div><a href="#color-map">Example 5: colorMap between and beyond entries</a><a href="#gamma">Direction of coverage gamma</a><a href="#color-channels">Example 6: scaling colorChannels</a><a href="#ndvi-division">Example 7: NDVI with integer bands</a><a href="#hillshade-factor">Example 8: what hillShading factor means</a><a href="#hillshade-overlay">Example 9: shading intensity mapped to color and opacity</a><a href="#sun-azimuth">Direction of the sun azimuth</a><div class="toc-group">Part 2: gradient fills</div><a href="#gradient-angle">Gradient angle convention</a><a href="#gradient-frame">Gradient position and size: per feature or per map<span class="open-dot" title="open in draft"></span></a></nav><main>
 <h1>CartoSym 2.0 draft: judgement calls, rendered</h1>
 <p class="lead">Where the spec text does not settle how a renderer should behave, the draft requirements in

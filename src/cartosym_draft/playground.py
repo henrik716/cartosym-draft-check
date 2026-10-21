@@ -71,8 +71,12 @@ PAGE = r"""<!doctype html><html lang="en"><head><meta charset="utf-8">
 main { max-width: 1320px; }
 .pg { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; }
 @media (min-width: 1000px) { .pg { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); } }
-.pg textarea { width: 100%; min-height: 460px; font: 12.5px/1.45 ui-monospace, Consolas, monospace; background: var(--bg);
-  color: var(--fg); border: 1px solid var(--line); border-radius: 6px; padding: 10px; resize: vertical; tab-size: 2; }
+.editor { position: relative; }
+.editor textarea, .editor pre { font: 12.5px/1.45 ui-monospace, Consolas, monospace; padding: 10px; border: 1px solid var(--line);
+  border-radius: 6px; margin: 0; white-space: pre; tab-size: 2; letter-spacing: 0; }
+.editor textarea { position: relative; display: block; width: 100%; min-height: 460px; resize: vertical; overflow: auto;
+  background: transparent; color: transparent; caret-color: var(--fg); color-scheme: light dark; }
+.editor pre { position: absolute; inset: 0; max-height: none; overflow: hidden; background: var(--bg); color: var(--fg); pointer-events: none; }
 .pg select { width: 100%; font: inherit; padding: 6px; border-radius: 6px; border: 1px solid var(--line); background: var(--card); color: var(--fg); }
 .variants-pick label { display: block; font-size: 14px; margin: 3px 0; cursor: pointer; }
 #out svg { width: 100%; height: auto; border: 1px solid var(--line); border-radius: 6px; display: block; }
@@ -94,7 +98,8 @@ browser (Python, through Pyodide); the first load takes a few seconds. Coverage 
 <p class="question" id="question"></p>
 <div class="variants-pick" id="variants"></div>
 <div class="row"><strong>Style (CartoSym-JSON)</strong><button id="reset" type="button">Reset</button><button id="copy" type="button">Copy</button></div>
-<textarea id="style" spellcheck="false" aria-label="Style (CartoSym-JSON)"></textarea>
+<div class="editor"><pre class="json" id="shade" aria-hidden="true"></pre>
+<textarea id="style" spellcheck="false" wrap="off" aria-label="Style (CartoSym-JSON)"></textarea></div>
 </div>
 <div>
 <div id="status">Loading the renderer…</div>
@@ -145,9 +150,28 @@ function pretty(obj) {
     (_, inner) => "[" + inner.split(",").map((x) => x.trim()).join(", ") + "]");
 }
 
+function shade() {
+  // Color the text behind the textarea as json_html does in the gallery.
+  const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const text = $("style").value, token = /("(?:[^"\\\n]|\\.)*")(\s*:)?|(-?\d+(?:\.\d+)?(?:[eE][-+]?\d+)?)|\b(true|false|null)\b/g;
+  let out = "", pos = 0, m;
+  while ((m = token.exec(text))) {
+    out += esc(text.slice(pos, m.index));
+    if (m[1]) out += `<span class="${m[2] ? "k" : "s"}">${esc(m[1])}</span>${m[2] || ""}`;
+    else if (m[3]) out += `<span class="n">${m[3]}</span>`;
+    else out += `<span class="b">${m[4]}</span>`;
+    pos = token.lastIndex;
+  }
+  $("shade").innerHTML = out + esc(text.slice(pos)) + "\n\n";
+  scrollShade();
+}
+
+function scrollShade() { $("shade").scrollTop = $("style").scrollTop; $("shade").scrollLeft = $("style").scrollLeft; }
+
 function loadStyle() {
   const v = current.variants[variant];
   $("style").value = pretty(v.style || current.style);
+  shade();
 }
 
 async function draw() {
@@ -172,7 +196,8 @@ async function draw() {
 }
 
 $("pick").addEventListener("change", (e) => select(e.target.value));
-$("style").addEventListener("input", () => { clearTimeout(timer); timer = setTimeout(draw, 400); });
+$("style").addEventListener("input", () => { shade(); clearTimeout(timer); timer = setTimeout(draw, 400); });
+$("style").addEventListener("scroll", scrollShade);
 $("reset").addEventListener("click", () => { loadStyle(); draw(); });
 $("copy").addEventListener("click", () => navigator.clipboard && navigator.clipboard.writeText($("style").value));
 window.addEventListener("hashchange", () => { if (location.hash.slice(1) !== current.key) select(location.hash.slice(1)); });

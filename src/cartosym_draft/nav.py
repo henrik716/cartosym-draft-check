@@ -1,6 +1,7 @@
 """Navigation shared by the gallery, requirements and playground pages.
 
-A sticky top bar with the three pages and, on long pages, a "Jump to" menu;
+A sticky top bar with the three pages, a light/dark theme switch and, on long
+pages, a "Jump to" menu;
 a table of contents beside the content on wide screens; and a small script
 for the menu, copyable card links and highlighting the current section.
 Without JavaScript the links still work.
@@ -21,7 +22,10 @@ NAV_CSS = """
 .topbar nav a { padding: 4px 10px; border-radius: 6px; text-decoration: none; color: var(--fg); font-size: 14px; }
 .topbar nav a:hover { background: var(--bg); }
 .topbar nav a.active { background: var(--accent-bg); color: var(--fg); font-weight: 600; box-shadow: inset 0 -2px 0 var(--accent); }
-.topbar .jump { margin-left: auto; max-width: 320px; font: inherit; font-size: 13px; padding: 4px 6px; border-radius: 6px;
+.topbar .tools { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+.topbar .theme { font: inherit; font-size: 13px; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--line);
+  background: var(--card); color: var(--fg); cursor: pointer; white-space: nowrap; }
+.topbar .jump { max-width: 320px; font: inherit; font-size: 13px; padding: 4px 6px; border-radius: 6px;
   border: 1px solid var(--line); background: var(--card); color: var(--fg); }
 .layout { max-width: 1600px; margin: 0 auto; }
 .toc { display: none; }
@@ -41,6 +45,28 @@ NAV_CSS = """
 .permalink:hover, .permalink.copied { opacity: 1; color: var(--accent); }
 .up { margin-left: 10px; font-size: 13px; white-space: nowrap; }
 """
+
+# Inline right after the bar, so the saved theme is set before the page content is drawn.
+THEME_SCRIPT = """<script>
+(() => {
+  const modes = ["auto", "light", "dark"], labels = { auto: "◐ Auto", light: "☀ Light", dark: "☾ Dark" };
+  const b = document.querySelector(".topbar .theme");
+  let mode = "auto";
+  try { mode = localStorage.getItem("theme") || "auto"; } catch (e) {}
+  const apply = () => {
+    if (mode === "auto") document.documentElement.removeAttribute("data-theme");
+    else document.documentElement.setAttribute("data-theme", mode);
+    b.textContent = labels[mode] || labels.auto;
+    b.title = "Theme: " + mode + (mode === "auto" ? " (follows your system)" : "") + ". Click to change.";
+  };
+  b.addEventListener("click", () => {
+    mode = modes[(modes.indexOf(mode) + 1) % modes.length];
+    try { localStorage.setItem("theme", mode); } catch (e) {}
+    apply();
+  });
+  apply();
+})();
+</script>"""
 
 NAV_SCRIPT = """<script>
 (() => {
@@ -82,7 +108,9 @@ def topbar(active: str, jump: list[tuple[str, str]] | None = None) -> str:
                 opts.append(f'<option value="{html.escape(anchor)}">{html.escape(label)}</option>')
         select = f'<select class="jump" aria-label="Jump to a section">{"".join(opts)}</select>'
     return (f'<header class="topbar"><div class="topbar-in"><span class="brand">CartoSym draft check</span>'
-            f'<nav aria-label="Pages">{links}</nav>{select}</div></header>')
+            f'<nav aria-label="Pages">{links}</nav><div class="tools">{select}'
+            f'<button class="theme" type="button" aria-label="Switch between light and dark">◐ Auto</button></div></div></header>'
+            + THEME_SCRIPT)
 
 
 def toc(items: list[tuple[str | None, str, bool]]) -> str:

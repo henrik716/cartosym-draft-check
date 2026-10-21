@@ -1,8 +1,10 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1"><title>CartoSym Draft Playground</title>
 <style>
-:root { --bg:#fbfaf7; --fg:#1f2328; --muted:#5b6370; --card:#fff; --line:#e3e0d8; --accent:#b45309; --accent-bg:#fffbeb; --badge-bg:#fde68a; --badge-fg:#92400e; }
-@media (prefers-color-scheme: dark) { :root { --bg:#16181d; --fg:#e8e6e1; --muted:#a3a9b3; --card:#1f2229; --line:#30343c; --accent:#fbbf24; --accent-bg:#422006; --badge-bg:#78350f; --badge-fg:#fde68a; } }
+:root { color-scheme: light; --bg:#fbfaf7; --fg:#1f2328; --muted:#5b6370; --card:#fff; --line:#e3e0d8; --accent:#b45309; --accent-bg:#fffbeb; --badge-bg:#fde68a; --badge-fg:#92400e;
+  --json-k:#7a3e9d; --json-s:#1a7f5a; --json-n:#b35900; --json-b:#2357b0; }
+:root[data-theme="dark"] { color-scheme: dark; --bg:#16181d; --fg:#e8e6e1; --muted:#a3a9b3; --card:#1f2229; --line:#30343c; --accent:#fbbf24; --accent-bg:#422006; --badge-bg:#78350f; --badge-fg:#fde68a; --json-k:#d7a6f2; --json-s:#7fd8a9; --json-n:#f0a868; --json-b:#8fb4ff; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { color-scheme: dark; --bg:#16181d; --fg:#e8e6e1; --muted:#a3a9b3; --card:#1f2229; --line:#30343c; --accent:#fbbf24; --accent-bg:#422006; --badge-bg:#78350f; --badge-fg:#fde68a; --json-k:#d7a6f2; --json-s:#7fd8a9; --json-n:#f0a868; --json-b:#8fb4ff; } }
 * { box-sizing: border-box; }
 body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
 main { max-width: 1320px; margin: 0 auto; padding: 32px 16px 64px; }
@@ -35,14 +37,17 @@ h2.group { font-size: 21px; margin: 40px 0 0; }
 .pane-head strong { color: var(--fg); margin-right: auto; }
 .pane-head button { font: inherit; font-size: 12px; padding: 2px 8px; border-radius: 6px; border: 1px solid var(--line); background: var(--card); color: var(--fg); cursor: pointer; }
 .json { max-height: 460px; overflow: auto; font: 12px/1.45 ui-monospace, Consolas, monospace; margin: 0; }
-.json .k { color: #7a3e9d; } .json .s { color: #1a7f5a; } .json .n { color: #b35900; } .json .b { color: #2357b0; }
-@media (prefers-color-scheme: dark) { .json .k { color: #d7a6f2; } .json .s { color: #7fd8a9; } .json .n { color: #f0a868; } .json .b { color: #8fb4ff; } }
+.json .k { color: var(--json-k); } .json .s { color: var(--json-s); } .json .n { color: var(--json-n); } .json .b { color: var(--json-b); }
 
 main { max-width: 1320px; }
 .pg { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; }
 @media (min-width: 1000px) { .pg { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); } }
-.pg textarea { width: 100%; min-height: 460px; font: 12.5px/1.45 ui-monospace, Consolas, monospace; background: var(--bg);
-  color: var(--fg); border: 1px solid var(--line); border-radius: 6px; padding: 10px; resize: vertical; tab-size: 2; }
+.editor { position: relative; }
+.editor textarea, .editor pre { font: 12.5px/1.45 ui-monospace, Consolas, monospace; padding: 10px; border: 1px solid var(--line);
+  border-radius: 6px; margin: 0; white-space: pre; tab-size: 2; letter-spacing: 0; }
+.editor textarea { position: relative; display: block; width: 100%; min-height: 460px; resize: vertical; overflow: auto;
+  background: transparent; color: transparent; caret-color: var(--fg); color-scheme: light dark; }
+.editor pre { position: absolute; inset: 0; max-height: none; overflow: hidden; background: var(--bg); color: var(--fg); pointer-events: none; }
 .pg select { width: 100%; font: inherit; padding: 6px; border-radius: 6px; border: 1px solid var(--line); background: var(--card); color: var(--fg); }
 .variants-pick label { display: block; font-size: 14px; margin: 3px 0; cursor: pointer; }
 #out svg { width: 100%; height: auto; border: 1px solid var(--line); border-radius: 6px; display: block; }
@@ -59,7 +64,10 @@ button { font: inherit; font-size: 13px; padding: 4px 10px; border-radius: 6px; 
 .topbar nav a { padding: 4px 10px; border-radius: 6px; text-decoration: none; color: var(--fg); font-size: 14px; }
 .topbar nav a:hover { background: var(--bg); }
 .topbar nav a.active { background: var(--accent-bg); color: var(--fg); font-weight: 600; box-shadow: inset 0 -2px 0 var(--accent); }
-.topbar .jump { margin-left: auto; max-width: 320px; font: inherit; font-size: 13px; padding: 4px 6px; border-radius: 6px;
+.topbar .tools { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+.topbar .theme { font: inherit; font-size: 13px; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--line);
+  background: var(--card); color: var(--fg); cursor: pointer; white-space: nowrap; }
+.topbar .jump { max-width: 320px; font: inherit; font-size: 13px; padding: 4px 6px; border-radius: 6px;
   border: 1px solid var(--line); background: var(--card); color: var(--fg); }
 .layout { max-width: 1600px; margin: 0 auto; }
 .toc { display: none; }
@@ -79,7 +87,26 @@ button { font: inherit; font-size: 13px; padding: 4px 10px; border-radius: 6px; 
 .permalink:hover, .permalink.copied { opacity: 1; color: var(--accent); }
 .up { margin-left: 10px; font-size: 13px; white-space: nowrap; }
 </style></head><body>
-<header class="topbar"><div class="topbar-in"><span class="brand">CartoSym draft check</span><nav aria-label="Pages"><a href="index.html">Gallery</a><a href="requirements.html">Requirements</a><a href="playground.html" class="active">Playground</a></nav></div></header>
+<header class="topbar"><div class="topbar-in"><span class="brand">CartoSym draft check</span><nav aria-label="Pages"><a href="index.html">Gallery</a><a href="requirements.html">Requirements</a><a href="playground.html" class="active">Playground</a></nav><div class="tools"><button class="theme" type="button" aria-label="Switch between light and dark">◐ Auto</button></div></div></header><script>
+(() => {
+  const modes = ["auto", "light", "dark"], labels = { auto: "◐ Auto", light: "☀ Light", dark: "☾ Dark" };
+  const b = document.querySelector(".topbar .theme");
+  let mode = "auto";
+  try { mode = localStorage.getItem("theme") || "auto"; } catch (e) {}
+  const apply = () => {
+    if (mode === "auto") document.documentElement.removeAttribute("data-theme");
+    else document.documentElement.setAttribute("data-theme", mode);
+    b.textContent = labels[mode] || labels.auto;
+    b.title = "Theme: " + mode + (mode === "auto" ? " (follows your system)" : "") + ". Click to change.";
+  };
+  b.addEventListener("click", () => {
+    mode = modes[(modes.indexOf(mode) + 1) % modes.length];
+    try { localStorage.setItem("theme", mode); } catch (e) {}
+    apply();
+  });
+  apply();
+})();
+</script>
 <main>
 <h1>Playground</h1>
 <p class="lead">Edit a card's style, or switch between its variants, and the draft renderer draws it again. The renderer runs in your
@@ -92,7 +119,8 @@ browser (Python, through Pyodide); the first load takes a few seconds. Coverage 
 <p class="question" id="question"></p>
 <div class="variants-pick" id="variants"></div>
 <div class="row"><strong>Style (CartoSym-JSON)</strong><button id="reset" type="button">Reset</button><button id="copy" type="button">Copy</button></div>
-<textarea id="style" spellcheck="false" aria-label="Style (CartoSym-JSON)"></textarea>
+<div class="editor"><pre class="json" id="shade" aria-hidden="true"></pre>
+<textarea id="style" spellcheck="false" wrap="off" aria-label="Style (CartoSym-JSON)"></textarea></div>
 </div>
 <div>
 <div id="status">Loading the renderer…</div>
@@ -143,9 +171,28 @@ function pretty(obj) {
     (_, inner) => "[" + inner.split(",").map((x) => x.trim()).join(", ") + "]");
 }
 
+function shade() {
+  // Color the text behind the textarea as json_html does in the gallery.
+  const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const text = $("style").value, token = /("(?:[^"\\\n]|\\.)*")(\s*:)?|(-?\d+(?:\.\d+)?(?:[eE][-+]?\d+)?)|\b(true|false|null)\b/g;
+  let out = "", pos = 0, m;
+  while ((m = token.exec(text))) {
+    out += esc(text.slice(pos, m.index));
+    if (m[1]) out += `<span class="${m[2] ? "k" : "s"}">${esc(m[1])}</span>${m[2] || ""}`;
+    else if (m[3]) out += `<span class="n">${m[3]}</span>`;
+    else out += `<span class="b">${m[4]}</span>`;
+    pos = token.lastIndex;
+  }
+  $("shade").innerHTML = out + esc(text.slice(pos)) + "\n\n";
+  scrollShade();
+}
+
+function scrollShade() { $("shade").scrollTop = $("style").scrollTop; $("shade").scrollLeft = $("style").scrollLeft; }
+
 function loadStyle() {
   const v = current.variants[variant];
   $("style").value = pretty(v.style || current.style);
+  shade();
 }
 
 async function draw() {
@@ -170,7 +217,8 @@ async function draw() {
 }
 
 $("pick").addEventListener("change", (e) => select(e.target.value));
-$("style").addEventListener("input", () => { clearTimeout(timer); timer = setTimeout(draw, 400); });
+$("style").addEventListener("input", () => { shade(); clearTimeout(timer); timer = setTimeout(draw, 400); });
+$("style").addEventListener("scroll", scrollShade);
 $("reset").addEventListener("click", () => { loadStyle(); draw(); });
 $("copy").addEventListener("click", () => navigator.clipboard && navigator.clipboard.writeText($("style").value));
 window.addEventListener("hashchange", () => { if (location.hash.slice(1) !== current.key) select(location.hash.slice(1)); });

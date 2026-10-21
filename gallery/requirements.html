@@ -1,8 +1,10 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1"><title>CartoSym Draft Requirements</title>
 <style>
-:root { --bg:#fbfaf7; --fg:#1f2328; --muted:#5b6370; --card:#fff; --line:#e3e0d8; --accent:#b45309; --accent-bg:#fffbeb; --badge-bg:#fde68a; --badge-fg:#92400e; }
-@media (prefers-color-scheme: dark) { :root { --bg:#16181d; --fg:#e8e6e1; --muted:#a3a9b3; --card:#1f2229; --line:#30343c; --accent:#fbbf24; --accent-bg:#422006; --badge-bg:#78350f; --badge-fg:#fde68a; } }
+:root { color-scheme: light; --bg:#fbfaf7; --fg:#1f2328; --muted:#5b6370; --card:#fff; --line:#e3e0d8; --accent:#b45309; --accent-bg:#fffbeb; --badge-bg:#fde68a; --badge-fg:#92400e;
+  --json-k:#7a3e9d; --json-s:#1a7f5a; --json-n:#b35900; --json-b:#2357b0; }
+:root[data-theme="dark"] { color-scheme: dark; --bg:#16181d; --fg:#e8e6e1; --muted:#a3a9b3; --card:#1f2229; --line:#30343c; --accent:#fbbf24; --accent-bg:#422006; --badge-bg:#78350f; --badge-fg:#fde68a; --json-k:#d7a6f2; --json-s:#7fd8a9; --json-n:#f0a868; --json-b:#8fb4ff; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { color-scheme: dark; --bg:#16181d; --fg:#e8e6e1; --muted:#a3a9b3; --card:#1f2229; --line:#30343c; --accent:#fbbf24; --accent-bg:#422006; --badge-bg:#78350f; --badge-fg:#fde68a; --json-k:#d7a6f2; --json-s:#7fd8a9; --json-n:#f0a868; --json-b:#8fb4ff; } }
 * { box-sizing: border-box; }
 body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
 main { max-width: 1320px; margin: 0 auto; padding: 32px 16px 64px; }
@@ -35,8 +37,7 @@ h2.group { font-size: 21px; margin: 40px 0 0; }
 .pane-head strong { color: var(--fg); margin-right: auto; }
 .pane-head button { font: inherit; font-size: 12px; padding: 2px 8px; border-radius: 6px; border: 1px solid var(--line); background: var(--card); color: var(--fg); cursor: pointer; }
 .json { max-height: 460px; overflow: auto; font: 12px/1.45 ui-monospace, Consolas, monospace; margin: 0; }
-.json .k { color: #7a3e9d; } .json .s { color: #1a7f5a; } .json .n { color: #b35900; } .json .b { color: #2357b0; }
-@media (prefers-color-scheme: dark) { .json .k { color: #d7a6f2; } .json .s { color: #7fd8a9; } .json .n { color: #f0a868; } .json .b { color: #8fb4ff; } }
+.json .k { color: var(--json-k); } .json .s { color: var(--json-s); } .json .n { color: var(--json-n); } .json .b { color: var(--json-b); }
 
 .chip { display:inline-block; font-size: 11.5px; padding: 1px 7px; border-radius: 99px; background: var(--bg); border: 1px solid var(--line); margin: 1px 2px; white-space: nowrap; }
 .gap { color: #b03a2e; } .reqtable td { font-size: 13.5px; vertical-align: top; } .reqtable details { font-size: 13px; }
@@ -55,7 +56,10 @@ h2.group { font-size: 21px; margin: 40px 0 0; }
 .topbar nav a { padding: 4px 10px; border-radius: 6px; text-decoration: none; color: var(--fg); font-size: 14px; }
 .topbar nav a:hover { background: var(--bg); }
 .topbar nav a.active { background: var(--accent-bg); color: var(--fg); font-weight: 600; box-shadow: inset 0 -2px 0 var(--accent); }
-.topbar .jump { margin-left: auto; max-width: 320px; font: inherit; font-size: 13px; padding: 4px 6px; border-radius: 6px;
+.topbar .tools { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+.topbar .theme { font: inherit; font-size: 13px; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--line);
+  background: var(--card); color: var(--fg); cursor: pointer; white-space: nowrap; }
+.topbar .jump { max-width: 320px; font: inherit; font-size: 13px; padding: 4px 6px; border-radius: 6px;
   border: 1px solid var(--line); background: var(--card); color: var(--fg); }
 .layout { max-width: 1600px; margin: 0 auto; }
 .toc { display: none; }
@@ -75,7 +79,26 @@ h2.group { font-size: 21px; margin: 40px 0 0; }
 .permalink:hover, .permalink.copied { opacity: 1; color: var(--accent); }
 .up { margin-left: 10px; font-size: 13px; white-space: nowrap; }
 </style></head><body class="has-toc">
-<header class="topbar"><div class="topbar-in"><span class="brand">CartoSym draft check</span><nav aria-label="Pages"><a href="index.html">Gallery</a><a href="requirements.html" class="active">Requirements</a><a href="playground.html">Playground</a></nav><select class="jump" aria-label="Jump to a section"><option value="">Jump to…</option><option value="c-core-clause-7">core (clause 7) (20)</option><option value="c-rc-arithmetic">rc-arithmetic (7)</option><option value="c-rc-array-relations">rc-array-relations (4)</option><option value="c-rc-casing">rc-casing (2)</option><option value="c-rc-conditional">rc-conditional (3)</option><option value="c-rc-coverage">rc-coverage (6)</option><option value="c-rc-cscss">rc-cscss (7)</option><option value="c-rc-dashes">rc-dashes (2)</option><option value="c-rc-dotpatterns">rc-dotpatterns (2)</option><option value="c-rc-font-outlines">rc-font-outlines (4)</option><option value="c-rc-functions">rc-functions (2)</option><option value="c-rc-hatches">rc-hatches (4)</option><option value="c-rc-hillshading">rc-hillshading (5)</option><option value="c-rc-json">rc-json (6)</option><option value="c-rc-labels">rc-labels (2)</option><option value="c-rc-math">rc-math (23)</option><option value="c-rc-parameter-values">rc-parameter-values (1)</option><option value="c-rc-righthand">rc-righthand (1)</option><option value="c-rc-stipples">rc-stipples (1)</option><option value="c-rc-text-manipulation">rc-text-manipulation (7)</option><option value="c-rc-text-relation">rc-text-relation (8)</option><option value="c-rc-variables">rc-variables (2)</option><option value="c-rc-vector">rc-vector (9)</option><option value="c-rc-gradients">rc-gradients (6)</option></select></div></header>
+<header class="topbar"><div class="topbar-in"><span class="brand">CartoSym draft check</span><nav aria-label="Pages"><a href="index.html">Gallery</a><a href="requirements.html" class="active">Requirements</a><a href="playground.html">Playground</a></nav><div class="tools"><select class="jump" aria-label="Jump to a section"><option value="">Jump to…</option><option value="c-core-clause-7">core (clause 7) (20)</option><option value="c-rc-arithmetic">rc-arithmetic (7)</option><option value="c-rc-array-relations">rc-array-relations (4)</option><option value="c-rc-casing">rc-casing (2)</option><option value="c-rc-conditional">rc-conditional (3)</option><option value="c-rc-coverage">rc-coverage (6)</option><option value="c-rc-cscss">rc-cscss (7)</option><option value="c-rc-dashes">rc-dashes (2)</option><option value="c-rc-dotpatterns">rc-dotpatterns (2)</option><option value="c-rc-font-outlines">rc-font-outlines (4)</option><option value="c-rc-functions">rc-functions (2)</option><option value="c-rc-hatches">rc-hatches (4)</option><option value="c-rc-hillshading">rc-hillshading (5)</option><option value="c-rc-json">rc-json (6)</option><option value="c-rc-labels">rc-labels (2)</option><option value="c-rc-math">rc-math (23)</option><option value="c-rc-parameter-values">rc-parameter-values (1)</option><option value="c-rc-righthand">rc-righthand (1)</option><option value="c-rc-stipples">rc-stipples (1)</option><option value="c-rc-text-manipulation">rc-text-manipulation (7)</option><option value="c-rc-text-relation">rc-text-relation (8)</option><option value="c-rc-variables">rc-variables (2)</option><option value="c-rc-vector">rc-vector (9)</option><option value="c-rc-gradients">rc-gradients (6)</option></select><button class="theme" type="button" aria-label="Switch between light and dark">◐ Auto</button></div></div></header><script>
+(() => {
+  const modes = ["auto", "light", "dark"], labels = { auto: "◐ Auto", light: "☀ Light", dark: "☾ Dark" };
+  const b = document.querySelector(".topbar .theme");
+  let mode = "auto";
+  try { mode = localStorage.getItem("theme") || "auto"; } catch (e) {}
+  const apply = () => {
+    if (mode === "auto") document.documentElement.removeAttribute("data-theme");
+    else document.documentElement.setAttribute("data-theme", mode);
+    b.textContent = labels[mode] || labels.auto;
+    b.title = "Theme: " + mode + (mode === "auto" ? " (follows your system)" : "") + ". Click to change.";
+  };
+  b.addEventListener("click", () => {
+    mode = modes[(modes.indexOf(mode) + 1) % modes.length];
+    try { localStorage.setItem("theme", mode); } catch (e) {}
+    apply();
+  });
+  apply();
+})();
+</script>
 <div class="layout has-toc"><nav class="toc" aria-label="Contents"><div class="toc-group">Requirements classes</div><a href="#c-core-clause-7">core (clause 7) (20)</a><a href="#c-rc-arithmetic">rc-arithmetic (7)</a><a href="#c-rc-array-relations">rc-array-relations (4)</a><a href="#c-rc-casing">rc-casing (2)</a><a href="#c-rc-conditional">rc-conditional (3)</a><a href="#c-rc-coverage">rc-coverage (6)</a><a href="#c-rc-cscss">rc-cscss (7)</a><a href="#c-rc-dashes">rc-dashes (2)</a><a href="#c-rc-dotpatterns">rc-dotpatterns (2)</a><a href="#c-rc-font-outlines">rc-font-outlines (4)</a><a href="#c-rc-functions">rc-functions (2)</a><a href="#c-rc-hatches">rc-hatches (4)</a><a href="#c-rc-hillshading">rc-hillshading (5)</a><a href="#c-rc-json">rc-json (6)</a><a href="#c-rc-labels">rc-labels (2)</a><a href="#c-rc-math">rc-math (23)</a><a href="#c-rc-parameter-values">rc-parameter-values (1)</a><a href="#c-rc-righthand">rc-righthand (1)</a><a href="#c-rc-stipples">rc-stipples (1)</a><a href="#c-rc-text-manipulation">rc-text-manipulation (7)</a><a href="#c-rc-text-relation">rc-text-relation (8)</a><a href="#c-rc-variables">rc-variables (2)</a><a href="#c-rc-vector">rc-vector (9)</a><a href="#c-rc-gradients">rc-gradients (6)</a></nav><main>
 <h1>CartoSym 2.0 draft: every requirement in PR #133</h1>
 <p class="lead">Each requirement with its text, how it is checked, and links to the evidence: a gallery card for judgement calls,

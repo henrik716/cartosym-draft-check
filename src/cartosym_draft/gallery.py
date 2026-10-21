@@ -700,10 +700,16 @@ def decisions() -> list[Decision]:
 
 # --------------------------------------------------------------------- page
 
+# Dark tokens apply when the reader picks Dark in the top bar, or picks Auto and the system is dark.
+DARK = ("color-scheme: dark; --bg:#16181d; --fg:#e8e6e1; --muted:#a3a9b3; --card:#1f2229; --line:#30343c; --accent:#fbbf24; "
+        "--accent-bg:#422006; --badge-bg:#78350f; --badge-fg:#fde68a; --json-k:#d7a6f2; --json-s:#7fd8a9; --json-n:#f0a868; --json-b:#8fb4ff;")
+
 CSS = """
-:root { --bg:#fbfaf7; --fg:#1f2328; --muted:#5b6370; --card:#fff; --line:#e3e0d8; --accent:#b45309; --accent-bg:#fffbeb; --badge-bg:#fde68a; --badge-fg:#92400e; }
-@media (prefers-color-scheme: dark) { :root { --bg:#16181d; --fg:#e8e6e1; --muted:#a3a9b3; --card:#1f2229; --line:#30343c; --accent:#fbbf24; --accent-bg:#422006; --badge-bg:#78350f; --badge-fg:#fde68a; } }
-* { box-sizing: border-box; }
+:root { color-scheme: light; --bg:#fbfaf7; --fg:#1f2328; --muted:#5b6370; --card:#fff; --line:#e3e0d8; --accent:#b45309; --accent-bg:#fffbeb; --badge-bg:#fde68a; --badge-fg:#92400e;
+  --json-k:#7a3e9d; --json-s:#1a7f5a; --json-n:#b35900; --json-b:#2357b0; }
+""" + f""":root[data-theme="dark"] {{ {DARK} }}
+@media (prefers-color-scheme: dark) {{ :root:not([data-theme="light"]) {{ {DARK} }} }}
+""" + """* { box-sizing: border-box; }
 body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
 main { max-width: 1320px; margin: 0 auto; padding: 32px 16px 64px; }
 h1 { font-size: 26px; margin: 0 0 6px; } h2 { font-size: 19px; margin: 0 0 4px; }
@@ -735,8 +741,7 @@ h2.group { font-size: 21px; margin: 40px 0 0; }
 .pane-head strong { color: var(--fg); margin-right: auto; }
 .pane-head button { font: inherit; font-size: 12px; padding: 2px 8px; border-radius: 6px; border: 1px solid var(--line); background: var(--card); color: var(--fg); cursor: pointer; }
 .json { max-height: 460px; overflow: auto; font: 12px/1.45 ui-monospace, Consolas, monospace; margin: 0; }
-.json .k { color: #7a3e9d; } .json .s { color: #1a7f5a; } .json .n { color: #b35900; } .json .b { color: #2357b0; }
-@media (prefers-color-scheme: dark) { .json .k { color: #d7a6f2; } .json .s { color: #7fd8a9; } .json .n { color: #f0a868; } .json .b { color: #8fb4ff; } }
+.json .k { color: var(--json-k); } .json .s { color: var(--json-s); } .json .n { color: var(--json-n); } .json .b { color: var(--json-b); }
 """
 
 COPY_SCRIPT = """<script>
