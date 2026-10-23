@@ -364,7 +364,7 @@ def _more_vector_decisions() -> list[Decision]:
             title="What a stipple or dot-pattern dot looks like",
             requirements=["/req/stipples/ratio", "/req/dot-patterns/dotpattern", "/req/dot-patterns/distance"],
             question="A stipple fill (`ratio: 0.15`, left) and a dot pattern (`distance: 14 px`, right), both with a dark green fill color. "
-                     "Neither the requirements nor the model say how big a dot is or which color it has (#84).",
+                     "Neither the requirements nor the model say how big a dot is or which color it has.",
             style=_by_layer({
                 "Ground": {"fill": {"color": [223, 230, 211]}, "stroke": {"width": {"px": 0}}},
                 "Stipple": {"fill": {"color": [30, 86, 49], "stipple": {"ratio": 0.15}},
@@ -379,8 +379,7 @@ def _more_vector_decisions() -> list[Decision]:
                 Variant("Small dots in the fill color (draft renderer's choice)", DRAFT),
                 Variant("Dot class defaults (white, 10 px)", DRAFT.with_(dots="dot-defaults")),
             ],
-            evidence="The draft leaves this open (#84). "
-                     "#84 asks whether the Dot class defaults apply. Rendered, white 10 px dots read as a different symbol, "
+            evidence="The draft leaves this open; #84 asks whether the Dot class defaults apply. Rendered, white 10 px dots read as a different symbol, "
                      "and the fill color no longer shows.",
         ),
         Decision(

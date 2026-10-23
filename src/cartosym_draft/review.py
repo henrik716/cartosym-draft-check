@@ -25,12 +25,11 @@ SOURCES: dict[str, list[tuple[str, str]]] = {
     "dash-units": [("SE 1.1, Stroke: stroke-dasharray lengths in the symbolizer's units of measure", SE11),
                    ("GeoServer: stroke-dasharray in pixels", GEOSERVER_LINE),
                    ("MapLibre line-dasharray: units in line widths", MAPLIBRE + "#line-dasharray")],
-    "dots": [("Issue #84", ISSUES + "84")],
     "label-priority": [("QGIS: the label with the higher priority is displayed", QGIS_LABELS),
                        ("MapLibre symbol-sort-key: lower values placed first", MAPLIBRE + "#symbol-sort-key")],
     "color-map": [("SE 1.1, RasterSymbolizer ColorMap: Interpolate or Categorize", SE11),
                   ("GeoServer: ColorMap type ramp (interpolated) is the default", GEOSERVER_RASTER)],
-    "gamma": [("SE 1.1, ContrastEnhancement: GammaValue above 1.0 brightens", SE11), ("Issue #86", ISSUES + "86")],
+    "gamma": [("SE 1.1, ContrastEnhancement: GammaValue above 1.0 brightens", SE11)],
     "hillshade-factor": [("Jérôme's renders for factor 1, 8, 32 and 64 (PR #133)", PR133),
                          ("gdaldem hillshade: -z is a vertical exaggeration", GDALDEM)],
     "hillshade-overlay": [("Jérôme's renders for factor 1, 8, 32 and 64 (PR #133)", PR133),
@@ -68,7 +67,7 @@ MATRIX: dict[str, Row] = {
                           "The default Dot is a white stroke 10 px wide, either as its stroke or through size and color "
                           "on Dot (Jérôme: same result).",
                           "NOTE + TODO(review), #143, #144", "Which way to express the default Dot?"),
-    "dots": Row("not stated (#84)", "Add dot size and color properties; until then, small dots in the fill color.",
+    "dots": Row("not stated", "Add dot size and color properties; until then, small dots in the fill color.",
                 "TODO(review), #84", "Should stipple/dot-pattern dots have their own size and color?"),
     "label-priority": Row("higher value wins", "Keep as drafted.", "TODO(review), #148"),
     "label-spacing": Row("pixels unless uom-qualified", "Done, as Jérôme answered.", "resolved"),
@@ -105,7 +104,7 @@ EXTRA_ROWS: list[tuple[str, Row]] = [
      Row("any expression on the right-hand side", "Specify how `[dataLayer.type = coverage]` (a bare word meant as a "
          "string, in the spec's examples) is read, or quote the strings in the examples.", "TODO(review), #151",
          "Is a bare word on the right a string or an identifier?")),
-    ("center vs centerLine (#120)",
+    ("center vs centerLine",
      Row("center (UML)", "Decide one name.", "TODO(review), #120", "Which name is intended?")),
     ("Schema: colors from expressions, empty arrays, and clearing the marker",
      Row("(schema on main)", "Make the oneOf branches exclusive (e.g., require r, g, b in the color object), and accept "
