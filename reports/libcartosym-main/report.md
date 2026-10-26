@@ -1,6 +1,6 @@
 # CartoSym draft requirements vs implementations
 
-Generated 2026-10-19 with libCartoSym (cs-canif built from ecere/libCartoSym main @ f180e04 and ecere/eC main @ 5601fab, on Ubuntu) and pycartosym 0.6.0.
+Generated 2026-10-26 with libCartoSym (cs-canif built from ecere/libCartoSym main @ f180e04 and ecere/eC main @ 500a9f8, on Ubuntu) and pycartosym 0.6.0.
 
 Expected values are what the **draft requirement** says. `FAIL` means the implementation disagrees with the draft, which may mean the draft or the implementation is wrong. pycartosym does not evaluate expressions, so for expression cases it is checked on converting them to CQL2-JSON (see below). The draft renderer is `cartosym_draft` in this repository, which implements the draft requirements; a FAIL there means it does not do what the draft says.
 
@@ -14,7 +14,7 @@ Expected values are what the **draft requirement** says. `FAIL` means the implem
 
 ## How the cases are run
 
-- **libCartoSym:** the Input text is written to `expr.cql2` and evaluated with `cs-canif eval expr.cql2` (cs-canif built from ecere/libCartoSym main @ f180e04 and ecere/eC main @ 5601fab, on Ubuntu).
+- **libCartoSym:** the Input text is written to `expr.cql2` and evaluated with `cs-canif eval expr.cql2` (cs-canif built from ecere/libCartoSym main @ f180e04 and ecere/eC main @ 500a9f8, on Ubuntu).
 - **pycartosym:** pycartosym does not evaluate expressions. Where a case gives its own CQL2-JSON (54 cases), the Input text is converted with `pycartosym.cql2.to_cql2_json(cql2.parse_text(input))` and passes if the result is that CQL2-JSON; otherwise it passes if `pycartosym.cql2.parse_text(input)` parses it.
 - **draft renderer:** `cartosym_draft.evaluate.evaluate(expression, Context(...))`. Where a case gives its own CQL2-JSON, that is what it evaluates, and the result is marked _(CQL2-JSON)_, so it does not depend on pycartosym's parser; otherwise the Input text is converted with pycartosym as above.
 - **Values:** feature properties, system identifiers, style variables (`@name`) and variables set by the application that a case is evaluated with are listed under its input (_with …_).
