@@ -17,12 +17,14 @@ class Options:
 
     # /req/casing/casing: "below" draws the casing beneath the main stroke.
     casing: str = "below"
-    # Casing width: "total" means casing.width is the full width of the casing
-    # band; "extra" means it extends that much beyond each side of the stroke.
-    casing_width: str = "total"
-    # Casing at crossings: "all-first" draws every casing before any stroke,
-    # so crossings and junctions merge; "with-feature" draws each line's
-    # casing with its own stroke. The draft does not say.
+    # Casing width: "extra" means it extends that much beyond each side of the
+    # stroke (draft, per Jérôme); "total" means casing.width is the full width
+    # of the casing band.
+    casing_width: str = "extra"
+    # Casing at crossings: "all-first" draws the casings of all features with
+    # the same zOrder before their strokes, so crossings and junctions merge
+    # (draft, per Jérôme and the painter's algorithm in clause 7);
+    # "with-feature" draws each line's casing with its own stroke.
     casing_pass: str = "all-first"
 
     # /req/font-outlines/outline: "below" draws the outline beneath the glyphs.

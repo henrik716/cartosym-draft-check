@@ -467,8 +467,14 @@
           "required": [ "type" ],
           "properties":
           {
-             "type": { "type": "string", "enum": [ "Dot" ] }
-          }
+             "type": { "type": "string", "enum": [ "Dot" ] },
+             "size": { "$ref": "#/$defs/unitValue" },
+             "color": { "$ref": "#/$defs/color" }
+          },
+          "not": { "anyOf": [
+             { "required": [ "size", "stroke" ], "properties": { "stroke": { "type": "object", "required": [ "width" ] } } },
+             { "required": [ "color", "stroke" ], "properties": { "stroke": { "type": "object", "required": [ "color" ] } } }
+          ] }
          }
        ]
     },

@@ -30,12 +30,14 @@ ENCODING = {
     "/req/cscss/variables": "pycartosym converts `@variables` to `$variables` and `$ref`, including variables defined by "
                             "expressions; the draft renderer resolves them",
     "/req/json/variables": "tested (variables cases) and used by the draft renderer",
+    "/req/json/dot-size-color": "enforced by the PR's JSON schema (`not` on Dot), which every style is validated against",
 }
 NOT_IMPLEMENTED = {
     "/req/core/time": "not implemented: the draft renderer has no visualization time",
     "/req/core/expressions-system-identifiers": "partly: viz.sd and dataLayer identifiers work; `capabilities` identifiers "
                                                 "are not implemented",
     "/req/labels/placement": "partly: priority and minSpacing are rendered; maxSpacing is not implemented",
+    "/per/vector/image-alpha-test": "not implemented: a permission; the draft renderer has no picking and no alpha test",
 }
 
 

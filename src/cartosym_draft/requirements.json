@@ -1,6 +1,6 @@
 {
  "branch": "requirements-placeholders",
- "commit": "d48b2d1",
+ "commit": "6588eee",
  "uncommitted_changes": false,
  "requirements": {
   "/req/arithmetic/add": {
@@ -96,7 +96,9 @@
    "line": 21,
    "parts": [
     "An Encoding SHALL support defining a `casing` Stroke property as a StrokeStyling object.",
-    "A Renderer SHALL support drawing the casing of a stroke along the same geometry as the stroke, using the StrokeStyling specified by the `casing` property, beneath the main stroke."
+    "A Renderer SHALL support drawing the casing of a stroke along the same geometry as the stroke, using the StrokeStyling specified by the `casing` property, beneath the main stroke.",
+    "A Renderer SHALL support drawing the casing so that it extends the `width` of the casing beyond each side of the main stroke, for a total width of the main stroke's `width` plus twice the casing's `width`.",
+    "A Renderer SHALL support drawing, within a single visualization pass, the casings of all features with the same `zOrder` beneath the main strokes of all those features, so that the casings of crossing and joining lines merge."
    ]
   },
   "/req/casing/center": {
@@ -160,7 +162,7 @@
    "line": 54,
    "parts": [
     "An Encoding SHALL support defining a `colorMap` Symbolizer property as an array of `value` (float) and `color` (Color) pairs which can be tagged with a `name`.",
-    "A Renderer SHALL support portraying each coverage cell with the color mapped from its `singleChannel` value by the `colorMap`, interpolating linearly between the colors of the two closest entries and using the color of the first or last entry for values outside the range of the map."
+    "A Renderer SHALL support portraying each coverage cell with the color mapped from its `singleChannel` value by the `colorMap`, using the color of an entry for a value equal to that entry's `value`, interpolating between the colors of the two closest entries for other values within the range of the map, and using the color of the first or last entry for values outside the range of the map."
    ]
   },
   "/req/coverage/opacity-map": {
@@ -168,12 +170,19 @@
    "line": 65,
    "parts": [
     "An Encoding SHALL support defining a `opacityMap` Symbolizer property as an array of `value` (float) and `opacity` (float) pairs which can be tagged with a `name`.",
-    "A Renderer SHALL support portraying each coverage cell with the opacity mapped from its `singleChannel` value by the `opacityMap`, interpolating linearly between the opacities of the two closest entries and using the opacity of the first or last entry for values outside the range of the map."
+    "A Renderer SHALL support portraying each coverage cell with the opacity mapped from its `singleChannel` value by the `opacityMap`, using the opacity of an entry for a value equal to that entry's `value`, interpolating between the opacities of the two closest entries for other values within the range of the map, and using the opacity of the first or last entry for values outside the range of the map."
+   ]
+  },
+  "/rec/coverage/map-interpolation": {
+   "file": "1-core/requirements/rc-coverage.adoc",
+   "line": 74,
+   "parts": [
+    "A Renderer SHOULD interpolate the colors of a `colorMap` and the opacities of an `opacityMap` so that the result lies between those of the two closest entries."
    ]
   },
   "/req/coverage/gamma": {
    "file": "1-core/requirements/rc-coverage.adoc",
-   "line": 78,
+   "line": 88,
    "parts": [
     "An Encoding SHOULD support defining a `gamma` Symbolizer property as a float.",
     "A Renderer SHOULD support applying a gamma correction to the portrayed color values, using the value of the `gamma` property as the exponent applied to normalized (0 to 1) color components."
@@ -421,16 +430,23 @@
     "A Renderer SHALL support updating only the array element identified by `index`, preserving the other elements of the array."
    ]
   },
-  "/req/json/variables": {
+  "/req/json/dot-size-color": {
    "file": "1-core/requirements/rc-json.adoc",
    "line": 64,
+   "parts": [
+    "An Encoding SHALL NOT set both `size` and `stroke.width`, nor both `color` and `stroke.color`, in the same Dot object."
+   ]
+  },
+  "/req/json/variables": {
+   "file": "1-core/requirements/rc-json.adoc",
+   "line": 76,
    "parts": [
     "An Encoding supporting the <<rc-variables,Variables>> requirements class SHALL encode variables as members of a top-level `$variables` object, referenced using a JSON Pointer within a `$ref` property (e.g., `{ \"$ref\": \"#/$variables/myVariable\" }`)."
    ]
   },
   "/req/json/include": {
    "file": "1-core/requirements/rc-json.adoc",
-   "line": 74,
+   "line": 86,
    "parts": [
     "An Encoding SHALL support including base style sheets using an `$include` property in the top-level object, specified as either a single relative file path string or an array of relative file path strings.",
     "A Renderer SHALL support considering the styling rules of included style sheets before the styling rules defined by the including file."
@@ -842,21 +858,30 @@
    "file": "1-core/requirements/rc-vector.adoc",
    "line": 76,
    "parts": [
-    "An Encoding SHALL support defining a Dot Graphic inheriting from a base Shape class specifying a stroke, from which the color and the size of the point is inferred.",
-    "A Renderer SHALL support drawing the Graphics as a round dot using the width of its Stroke as the point size and in the color of the Stroke."
+    "An Encoding SHALL support defining a Dot Graphic inheriting from a base Shape class specifying a stroke, with a uom-qualified `size` property and a `color` property that are the same values as the `width` and the `color` of its stroke.",
+    "A Renderer SHALL support setting the `width` and the `color` of the stroke of a Dot when its `size` and `color` are set, and the reverse, so that the value set last applies to both.",
+    "A Renderer SHALL support drawing a Dot Graphic as a filled circle whose diameter is its `size` (the `width` of its stroke), in its `color` (the `color` of its stroke)."
    ]
   },
   "/req/vector/image": {
    "file": "1-core/requirements/rc-vector.adoc",
-   "line": 87,
+   "line": 90,
    "parts": [
-    "An Encoding SHALL support defining an Image Graphic with an `image` property referencing an image resource, and an optional uom-qualified `hotSpot` position within the image.",
-    "A Renderer SHALL support drawing the referenced image so that its `hotSpot` (by default, its center, `{ 0.5, 0.5 }`) is located at the position of the Graphic."
+    "An Encoding SHALL support defining an Image Graphic with an `image` property referencing an image resource, an optional uom-qualified `hotSpot` position within the image, optional `tint` and `blackTint` Colors, and an optional `alphaThreshold` real number between 0 and 1.",
+    "A Renderer SHALL support drawing the referenced image so that its `hotSpot` (by default, its center, `{ 0.5, 0.5 }`) is located at the position of the Graphic.",
+    "A Renderer SHALL support recoloring the image so that each red, green and blue component _v_ (between 0 and 1) of each pixel becomes `tint` × _v_ + `blackTint` × (1 − _v_), using the same component of `tint` and `blackTint`."
+   ]
+  },
+  "/per/vector/image-alpha-test": {
+   "file": "1-core/requirements/rc-vector.adoc",
+   "line": 104,
+   "parts": [
+    "A Renderer MAY use `alphaThreshold` as the threshold of an alpha test, by not drawing the pixels of the image whose alpha value is below it."
    ]
   },
   "/req/vector/text": {
    "file": "1-core/requirements/rc-vector.adoc",
-   "line": 100,
+   "line": 114,
    "parts": [
     "An Encoding SHALL support defining a Text Graphic with a `text` unicode string content, a `font`, and an `alignment` with a horizontal (`horzAlignment`: `left`, `right` or `center`) and vertical component (`vertAlignment`: `top`, `middle`, `bottom`).",
     "A Renderer SHALL support drawing the `text` of a Text Graphic using the `font` and the `alignment` specified."
@@ -864,7 +889,7 @@
   },
   "/req/vector/fonts": {
    "file": "1-core/requirements/rc-vector.adoc",
-   "line": 111,
+   "line": 125,
    "parts": [
     "An Encoding SHALL support defining Fonts with a `face` property indicating the face name (also known as the font _family_), a `size` specified in _points_, a `bold` flag indicating to use a bold weight if true, and an `italic` flag indicating to use an italic style if true.",
     "A Renderer SHALL support drawing text using the fonts specified."
@@ -1028,7 +1053,7 @@
   },
   "/req/core/default-values": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 1055,
+   "line": 1065,
    "parts": [
     "An Encoding SHALL support omitting Symbolizer properties and object members for which a default value is defined in this section.",
     "A Renderer SHALL support using the default values defined in this section for Symbolizer properties and object members which are not set by any selected StylingRule."

@@ -3,7 +3,7 @@
 Usage: python tools/extract_requirements.py [path to cartographic-symbology]
 
 Reads the requirement files (and the clause files, where the core class is) of the checked-out branch (requirements-placeholders)
-and writes src/cartosym_draft/requirements.json: for each requirement identifier,
+and writes src/cartosym_draft/requirements.json: for each requirement, recommendation and permission identifier,
 the file, line and `part::` sentences. Also copies the branch's CartoSym-JSON
 schema, which the gallery build validates every style against.
 """
@@ -34,7 +34,7 @@ def main(argv: list[str]) -> int:
     for f in sorted(files):
         current = None
         for n, line in enumerate(f.read_text(encoding="utf-8").splitlines(), start=1):
-            if line.startswith("identifier:: /req/"):
+            if line.startswith(("identifier:: /req/", "identifier:: /rec/", "identifier:: /per/")):
                 current = line.split("::", 1)[1].strip()
                 reqs[current] = {"file": f.relative_to(spec).as_posix(), "line": n, "parts": []}
             elif line.startswith("part::") and current:

@@ -84,7 +84,8 @@ class _Svg:
         self.view = view
         self.defs: list[str] = []
         self.body: list[str] = []
-        self.casings: list[str] = []  # with Options.casing_pass == "all-first"
+        self.casings: list[tuple[float, str]] = []  # (zOrder key, casing), with casing_pass == "all-first"
+        self.z = 0.0  # zOrder key of the feature being painted
 
     def new_id(self, prefix: str) -> str:
         return f"{prefix}{next(self._ids)}"
@@ -328,13 +329,14 @@ def _stroke_paint(svg: _Svg, stroke: dict, path: str, opacity_mul: float, opts: 
     out: list[str] = []
     casing_svg = None
     if casing:
-        cw = to_px(casing.get("width"), view, w + 2)
         if opts.casing_width == "extra":
-            cw = w + 2 * cw
+            cw = w + 2 * to_px(casing.get("width"), view, 1)
+        else:
+            cw = to_px(casing.get("width"), view, w + 2)
         casing_svg = one(casing, cw)
     if casing_svg and opts.casing == "below":
         if opts.casing_pass == "all-first":
-            svg.casings.append(casing_svg)
+            svg.casings.append((svg.z, casing_svg))
         else:
             out.append(casing_svg)
     out.append(main)
@@ -404,8 +406,20 @@ def _marker_paint(marker: dict, x: float, y: float, view: View, opacity_mul: flo
             h = to_px(el.get("height", {"px": 24}), view, 24)
             hx, hy = el.get("hotSpot") or opts.image_hotspot
             href = (el.get("image") or {}).get("uri") if isinstance(el.get("image"), dict) else el.get("image")
+            # tint × v + blackTint × (1 − v) per channel; the defaults (white, black) leave the image unchanged.
+            tint = parse_color(el.get("tint")) or (1.0, 1.0, 1.0)
+            black = parse_color(el.get("blackTint")) or (0.0, 0.0, 0.0)
+            filt = ""
+            if (tint, black) != ((1.0, 1.0, 1.0), (0.0, 0.0, 0.0)):
+                # Same colors give the same filter, so a repeated id is harmless.
+                fid = "tint" + "".join(f"{round(c * 255):02x}" for c in (*tint, *black))
+                rows = [" ".join(f"{t - b:g}" if j == i else "0" for j in range(4)) + f" {b:g}"
+                        for i, (t, b) in enumerate(zip(tint, black))]
+                out.append(f'<filter id="{fid}" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" '
+                           f'values="{" ".join(rows)} 0 0 0 1 0"/></filter>')
+                filt = f' filter="url(#{fid})"'
             out.append(f'<image href="{html.escape(str(href))}" x="{px - hx * w:.2f}" y="{py - hy * h:.2f}" '
-                       f'width="{w:g}" height="{h:g}" opacity="{mo * opacity_mul:g}"/>')
+                       f'width="{w:g}" height="{h:g}" opacity="{mo * opacity_mul:g}"{filt}/>')
     return out
 
 
@@ -515,6 +529,8 @@ def render(style: dict, layers: list[Layer], view: View, opts: Options | None = 
                 continue
             op = float(sym.get("opacity", 1))
             mul = op if opts.opacity == "per-element" else 1.0
+            z = float(sym.get("zOrder", 1))
+            svg.z = z if opts.z_order == "higher-on-top" else -z
             frags: list[str] = []
             pts, lines, polys = _parts(feat["geometry"])
             for poly in polys:
@@ -541,8 +557,7 @@ def render(style: dict, layers: list[Layer], view: View, opts: Options | None = 
                 prio = float((label.get("placement") or {}).get("priority", 0) or 0)
                 for text, box in _label_candidates(label, pts, lines, polys, view, mul, opts):
                     labels.append(_Label(prio, seq, len(items), text, box))
-            z = float(sym.get("zOrder", 1))
-            items.append([z if opts.z_order == "higher-on-top" else -z, seq, frags, op])
+            items.append([svg.z, seq, frags, op])
             seq += 1
 
     # /req/labels/*: place in priority order, dropping labels that would overlap.
@@ -558,12 +573,16 @@ def render(style: dict, layers: list[Layer], view: View, opts: Options | None = 
         if opts.label_pass == "with-feature":
             items[lb.item][2].append(lb.svg)
 
-    svg.body.extend(svg.casings)
-    for _, _, frags, op in sorted(items, key=lambda it: (it[0], it[1])):
-        group = "".join(frags)
-        if opts.opacity == "whole" and op < 1:
-            group = f'<g opacity="{op:g}">{group}</g>'
-        svg.body.append(group)
+    # /req/casing/casing: the casings of all features with the same zOrder go
+    # beneath the main strokes of those features, so a bridge's casing covers
+    # the roads below it.
+    for z in sorted({it[0] for it in items} | {cz for cz, _ in svg.casings}):
+        svg.body.extend(c for cz, c in svg.casings if cz == z)
+        for _, _, frags, op in sorted((it for it in items if it[0] == z), key=lambda it: it[1]):
+            group = "".join(frags)
+            if opts.opacity == "whole" and op < 1:
+                group = f'<g opacity="{op:g}">{group}</g>'
+            svg.body.append(group)
     if opts.label_pass == "on-top":
         svg.body.extend(lb.svg for lb in sorted(placed, key=lambda lb: lb.seq))
     return svg.text()

@@ -96,11 +96,11 @@ def _vector_decisions() -> list[Decision]:
             key="casing-order",
             title="Casing beneath or above the stroke",
             requirements=["/req/casing/casing", "/req/casing/center"],
-            question="A road with a 14 px yellow stroke, a 22 px red casing at 60 % opacity (so what lies under it shows through) "
-                     "and a thin white centre line. Is the casing drawn beneath the stroke (an outline) or on top of it?",
+            question="A road with a 14 px yellow stroke, a red casing extending 4 px on each side at 60 % opacity (so what lies under it "
+                     "shows through) and a thin white centre line. Is the casing drawn beneath the stroke (an outline) or on top of it?",
             style={"stylingRules": [{"symbolizer": {"stroke": {
                 "color": [247, 220, 111], "width": {"px": 14},
-                "casing": {"color": [192, 57, 43], "opacity": 0.6, "width": {"px": 22}},
+                "casing": {"color": [192, 57, 43], "opacity": 0.6, "width": {"px": 4}},
                 "centerLine": {"color": "white", "width": {"px": 2}}}}}]},
             layers=[Layer("Roads", [_feature("LineString", [[20, 40], [150, 160], [280, 60]])])],
             variants=[
@@ -119,19 +119,21 @@ def _vector_decisions() -> list[Decision]:
                      "or are all casings drawn before any stroke, so the crossing merges?",
             style={"stylingRules": [{"symbolizer": {"stroke": {
                 "color": [247, 220, 111], "width": {"px": 12},
-                "casing": {"color": [77, 77, 77], "width": {"px": 16}}}}}]},
+                "casing": {"color": [77, 77, 77], "width": {"px": 2}}}}}]},
             layers=[Layer("Roads", [
                 _feature("LineString", [[20, 40], [150, 160], [280, 60]]),
                 _feature("LineString", [[20, 150], [280, 120]]),
             ])],
             variants=[
-                Variant("All casings first (draft renderer's choice)", DRAFT,
+                Variant("All casings first", DRAFT, is_draft=True,
                         note="The crossing merges, as in most road maps."),
                 Variant("Each road with its own casing", DRAFT.with_(casing_pass="with-feature"),
                         note="The second road's casing cuts across the first road."),
             ],
-            evidence="The draft does not say. Drawing every casing before any stroke is the usual way to draw road networks "
-                     "(QGIS calls this symbol levels); drawing each feature on its own is simpler but breaks crossings.",
+            evidence="The draft now says that within a visualization pass, the casings of all features with the same zOrder are drawn "
+                     "beneath their main strokes (Jérôme, #147; also the painter's algorithm in clause 7, which loops over casing "
+                     "passes inside each zOrder). A feature with a higher zOrder, such as a bridge, has its casing drawn over the "
+                     "roads below it. Drawing each feature in turn is possible with visualization or feature passes.",
         ),
         Decision(
             key="casing-width",
@@ -143,10 +145,12 @@ def _vector_decisions() -> list[Decision]:
                 "casing": {"color": [77, 77, 77], "width": {"px": 3}}}}}]},
             layers=[Layer("Roads", [_feature("LineString", [[20, 40], [150, 160], [280, 60]])])],
             variants=[
-                Variant("Total width (draft renderer's choice): 3 px, hidden under the stroke", DRAFT),
-                Variant("Extra on each side (12 + 2 × 3 px)", DRAFT.with_(casing_width="extra")),
+                Variant("Extra on each side (12 + 2 × 3 px)", DRAFT, is_draft=True),
+                Variant("Total width: 3 px, hidden under the stroke", DRAFT.with_(casing_width="total")),
             ],
-            evidence="The draft does not say. This rendering is why it matters: with the total-width reading, a casing thinner than the stroke is invisible.",
+            evidence="The draft now says the casing extends its width beyond each side of the main stroke, for a total of "
+                     "stroke width + 2 × casing width (Jérôme, #147). Annex C's road example agrees: its casings of 0.25 to 1 px "
+                     "under strokes of 2.5 to 6 px would be hidden under the total-width reading.",
         ),
         Decision(
             key="font-outline",
@@ -397,9 +401,10 @@ def _more_vector_decisions() -> list[Decision]:
                 Variant("Higher value wins", DRAFT, is_draft=True, note="Strømmen (priority 8) is kept."),
                 Variant("Lower value wins (1 = most important)", DRAFT.with_(label_priority="lower-wins"), note="Lillestrøm (priority 2) is kept."),
             ],
-            evidence="The draft proposes that a higher value wins; the spec text does not say (#148). "
-                     "In QGIS the label with the higher priority wins; MapLibre's symbol-sort-key places lower values first. "
-                     "Both conventions are common, so the spec should state it.",
+            evidence="The draft proposes that a higher value wins (#148). In QGIS and GeoServer the label with the higher "
+                     "priority wins; MapLibre's symbol-sort-key places lower values first, and so, for now, does libCartoSym's "
+                     "(incomplete) placement engine (Jérôme). Still open; the proposal is to keep the name `priority` with "
+                     "higher winning, or rename it if lower should come first.",
         ),
         Decision(
             key="label-spacing",
@@ -408,7 +413,7 @@ def _more_vector_decisions() -> list[Decision]:
             question="A road labelled with `minSpacing: 60` at 5 m per pixel. Is 60 in pixels or in metres?",
             style=_by_layer({
                 "Roads": {"stroke": {"color": [230, 126, 34], "width": {"px": 5},
-                                     "casing": {"color": [126, 60, 10], "width": {"px": 7}}},
+                                     "casing": {"color": [126, 60, 10], "width": {"px": 1}}},
                           "label": {"elements": [{"type": "Text", "text": "E6",
                                                   "font": {"face": "sans-serif", "size": 10, "bold": True,
                                                            "color": [27, 38, 49],
@@ -493,7 +498,7 @@ def _coverage_decisions() -> list[Decision]:
         Decision(
             key="color-map",
             title="Example 5: colorMap between and beyond entries",
-            requirements=["/req/coverage/color-map", "/req/coverage/opacity-map"],
+            requirements=["/req/coverage/color-map", "/req/coverage/opacity-map", "/rec/coverage/map-interpolation"],
             question="Example 5's color map, stretched from 0–2500 m to Rondane's 500–2000 m (same colors). Between "
                      "entries, are colors interpolated or stepped? Below 500 m (the valley floors) and above 2000 m (the "
                      "summits), is the first or last color used, or nothing?",
@@ -505,9 +510,12 @@ def _coverage_decisions() -> list[Decision]:
                         note="The valley floors below 500 m are left out. So are the summits above 2000 m, but next to the "
                              "map's near-white last color they hardly show."),
             ],
-            evidence="The draft proposes interpolation and clamping (#149). SE 1.1 makes the choice "
-                     "explicit with Interpolate and Categorize functions (its own DEM example uses Categorize); GeoServer's ColorMap defaults to an "
-                     "interpolated ramp.",
+            evidence="Clamping is confirmed (Jérôme, #149). The draft now says that colors are interpolated between "
+                     "entries without fixing the method (libCartoSym interpolates quadratically; this renderer linearly), and "
+                     "that a value equal to an entry takes exactly that entry's color. A recommendation says the result should stay "
+                     "between the two closest entries (a parabola through three entries can overshoot). Stepped classes for "
+                     "continuous values are written with conditional expressions (Jérôme: OK for Part 1). SE 1.1 makes the choice explicit with Interpolate and Categorize functions (its own DEM "
+                     "example uses Categorize); GeoServer's ColorMap defaults to an interpolated ramp.",
             **on_relief,
         ),
         Decision(
@@ -685,7 +693,7 @@ def _gradient_decisions() -> list[Decision]:
                      "gradient; per map, one gradient runs across all features. Jérôme: units are pixels unless "
                      "qualified, which the PR now says; this card's unqualified 0.5 and 1 are read as fractions of the "
                      "frame, which under the draft needs a percent unit. The `repeating` type also needs a definition "
-                     "(repeating what, and how often).",
+                     "(repeating what, and how often). Jérôme (#153): decide once two or three renderers can be compared.",
             **common,
         ),
     ]

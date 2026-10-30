@@ -8,6 +8,7 @@ They have no alternatives; the gallery cards cover the open questions.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from urllib.parse import quote
 
 from . import sample_data
 from .gallery import COVERAGE_VIEW, DRAFT, RAMP, RELIEF_VIEW, VIEW, _by_layer, _example, _feature, _square, _stretch_color_map, _tweak
@@ -50,6 +51,14 @@ class Sample:
     requirements: list[str]
     check: str  # what a reviewer should see
     panels: list[Panel]
+
+
+# A monochrome icon for the tint sample: white, black, and a 50 % grey door.
+ICON = "data:image/svg+xml," + quote(
+    '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">'
+    '<rect x="1" y="1" width="22" height="22" rx="4" fill="#fff" stroke="#000" stroke-width="2"/>'
+    '<path d="M4 12 L12 4 L20 12 L17.5 12 L17.5 20 L6.5 20 L6.5 12 Z" fill="#000"/>'
+    '<rect x="10" y="14" width="4" height="6" fill="#808080"/></svg>')
 
 
 def _line(*coords, **props) -> dict:
@@ -182,6 +191,19 @@ def samples() -> list[Sample]:
                    {"type": "Text", "text": "Monospace", "alignment": ["right", "middle"], "position": [{"px": 0}, {"px": -30}],
                     "font": {"face": "monospace", "size": 10}}]}}}]},
                    [Layer("POI", [_feature("Point", [150, 100])])], anchors=True)]),
+        Sample("image-tint", "Image tint and black tint",
+               ["/req/vector/image"],
+               "The same black-and-white icon four times. Left: unchanged (the defaults, tint white and blackTint black). "
+               "Then tint gold (the white parts turn gold), blackTint darkRed (the black parts turn dark red), and both "
+               "(lightSkyBlue and navy). The grey door is halfway between black and white, so it takes the colour halfway "
+               "between blackTint and tint.",
+               [Panel(_by_layer({
+                   name: {"marker": {"elements": [{"type": "Image", "image": {"uri": ICON},
+                                                   "width": {"px": 48}, "height": {"px": 48}, **tints}]}}
+                   for name, tints in [("A", {}), ("B", {"tint": "gold"}), ("C", {"blackTint": "darkRed"}),
+                                       ("D", {"tint": "lightSkyBlue", "blackTint": "navy"})]}),
+                   [Layer(name, [_feature("Point", [x, 105])]) for name, x in [("A", 45), ("B", 115), ("C", 185), ("D", 255)]],
+                   notes=[(45, 62, "defaults"), (115, 62, "tint"), (185, 62, "blackTint"), (255, 62, "both")])]),
         # ------------------------------------------------------ strokes, fills
         Sample("dash-offset", "Dash offset",
                ["/req/dashes/dash-offset"],
