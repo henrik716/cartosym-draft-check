@@ -1829,7 +1829,7 @@
  },
  "textfn-accent-insensitize": {
   "requirement": "/req/text-manipulation/accent-insensitize",
-  "input": "accentInsensitize('Øre') = accentInsensitize('Ore')",
+  "input": "accentInsensitize('café') = accentInsensitize('cafe')",
   "expect": "true",
   "json": {
    "op": "=",
@@ -1837,13 +1837,13 @@
     {
      "op": "accentInsensitize",
      "args": [
-      "Øre"
+      "café"
      ]
     },
     {
      "op": "accentInsensitize",
      "args": [
-      "Ore"
+      "cafe"
      ]
     }
    ]
@@ -1858,8 +1858,44 @@
     "detail": "converts to the case's CQL2-JSON"
    },
    "draft renderer": {
+    "verdict": "pass",
+    "detail": "true"
+   }
+  }
+ },
+ "textfn-accenti-o-stroke": {
+  "requirement": "/req/text-manipulation/accent-insensitize",
+  "input": "accenti('Øre') = accenti('Ore')",
+  "expect": "false",
+  "json": {
+   "op": "=",
+   "args": [
+    {
+     "op": "accenti",
+     "args": [
+      "Øre"
+     ]
+    },
+    {
+     "op": "accenti",
+     "args": [
+      "Ore"
+     ]
+    }
+   ]
+  },
+  "results": {
+   "libCartoSym": {
     "verdict": "FAIL",
-    "detail": "got `false`, draft expects `true`"
+    "detail": "got `true`, draft expects `false`"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "converts to the case's CQL2-JSON"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "false"
    }
   }
  },

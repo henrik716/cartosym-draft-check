@@ -226,11 +226,19 @@
 - id: textfn-accent-insensitize
   requirement: /req/text-manipulation/accent-insensitize
   kind: expression
-  input: "accentInsensitize('Øre') = accentInsensitize('Ore')"
-  json: {"op": "=", "args": [{"op": "accentInsensitize", "args": ["Øre"]}, {"op": "accentInsensitize", "args": ["Ore"]}]}
+  input: "accentInsensitize('café') = accentInsensitize('cafe')"
+  json: {"op": "=", "args": [{"op": "accentInsensitize", "args": ["café"]}, {"op": "accentInsensitize", "args": ["cafe"]}]}
   expect: "true"
   note: Draft function name.
   disputed: "The draft names the function accentInsensitize; the JSON schema and libCartoSym use the CQL2 name accenti (https://github.com/opengeospatial/cartographic-symbology/issues/140)."
+- id: textfn-accenti-o-stroke
+  requirement: /req/text-manipulation/accent-insensitize
+  kind: expression
+  input: "accenti('Øre') = accenti('Ore')"
+  json: {"op": "=", "args": [{"op": "accenti", "args": ["Øre"]}, {"op": "accenti", "args": ["Ore"]}]}
+  expect: "false"
+  note: Ø does not decompose in Unicode.
+  disputed: "The draft does not say which letters are folded, so this follows decomposition alone. libCartoSym folds Ø to O with a diacritic folding table taken from Unicode TR #30, and Jérôme prefers that, which would make this true (https://github.com/opengeospatial/cartographic-symbology/issues/152)."
 - id: textfn-accenti
   requirement: /req/text-manipulation/accent-insensitize
   kind: expression
