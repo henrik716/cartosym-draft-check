@@ -1,6 +1,6 @@
 {
  "branch": "requirements-placeholders",
- "commit": "6588eee",
+ "commit": "0405c09",
  "uncommitted_changes": false,
  "requirements": {
   "/req/arithmetic/add": {
@@ -434,7 +434,7 @@
    "file": "1-core/requirements/rc-json.adoc",
    "line": 64,
    "parts": [
-    "An Encoding SHALL NOT set both `size` and `stroke.width`, nor both `color` and `stroke.color`, in the same Dot object."
+    "An Encoding SHALL NOT set both `size` and `stroke.width`, nor both `color` and `stroke.color`, for the same Dot within a single styling rule."
    ]
   },
   "/req/json/variables": {
