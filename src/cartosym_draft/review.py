@@ -71,9 +71,9 @@ MATRIX: dict[str, Row] = {
                          "test), #145"),
     "default-marker": Row("a single default Dot (white, 10 px)",
                           "Keep, as intended (Jérôme); clearing it (`marker: null`) is now in the NOTE. Fix the schema "
-                          "(`anyOf` in graphicArray plus a `marker` change, #143). In the PR: Dot has `size` and `color`, the same "
+                          "(`anyOf` in graphicArray plus a `marker` change, and test `label`, #143), as the SWG agreed on 6 November. In the PR: Dot has `size` and `color`, the same "
                           "values as its stroke's width and color, always a filled circle; CS-JSON forbids setting both within "
-                          "a single styling rule (#144).", "NOTE + TODO(review), #143; answered, #144", "Schema change OK?"),
+                          "a single styling rule (#144).", "NOTE + TODO(review), #143 agreed by the SWG, PR still to follow; answered, #144"),
     "dots": Row("not stated", "Add dot size and color properties; until then, small dots in the fill color.",
                 "TODO(review), #84", "Should stipple/dot-pattern dots have their own size and color?"),
     "label-priority": Row("higher value wins", "Keep as drafted (as QGIS and GeoServer, and as zOrder); libCartoSym's "
@@ -92,8 +92,8 @@ MATRIX: dict[str, Row] = {
                      "quadratically. Stepped classes via conditional expressions (Jérôme). Added by the PR: a "
                      "recommendation that the result stays between the two closest entries.",
                      "recommendation + NOTE, #149", "Recommendation OK?"),
-    "gamma": Row("c ^ gamma (darkens above 1)", "Remove from coverage (not in the model); if kept, use SE's direction.",
-                 "TODO(review), #86"),
+    "gamma": Row("c ^ gamma (darkens above 1)", "Remove from coverage (not in the model), as the SWG agreed on 6 November.",
+                 "agreed by the SWG, PR still to follow, #86"),
     "hillshade-factor": Row("multiplies the horizontal components of the normal", "In the PR, as Jérôme's renderer, "
                             "including the sample distance and the shade without a colorMap.", "answered"),
     "hillshade-overlay": Row("dot product, 0 (full shade) to 1 (no shade)", "In the PR, as Jérôme described.", "answered"),
@@ -130,7 +130,7 @@ EXTRA_ROWS: list[tuple[str, Row]] = [
          "(`~`, `^^`, `$`).", "open, #156", "Functions or operators?")),
     ("Schema: colors from expressions, empty arrays, and clearing the marker",
      Row("(schema on main)", "Make the oneOf branches exclusive (e.g., require r, g, b in the color object). For the "
-         "marker: `anyOf` in graphicArray, and `marker` accepting null and an object without elements (tested).",
+         "marker: `anyOf` in graphicArray, and `marker` accepting null and an object without elements (tested; the SWG agreed the marker part on 6 November).",
          "not in PR (schema), #140, #143")),
     ("format string syntax",
      Row("C printf conversion specifiers (ANSI C)", "In the PR, as Jérôme answered.", "answered")),
