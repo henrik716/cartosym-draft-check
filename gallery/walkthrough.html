@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PR #133 walkthrough</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+/* Layout idea: a spec reviewer's running sheet. A sticky contents rail on the left, one column of
+   decisions with a status stripe, in the order of the spec's requirements classes. */
+:root {
+  --paper:#f5f8fa; --panel:#ffffff; --ink:#15232e; --muted:#536473; --rule:#d3dde4; --accent:#0a5d88;
+  --agreed:#14745a; --drafted:#586a79; --due:#9a5800; --open:#b02a1f;
+  --c-agree:#2a78d6; --c-bug:#eb6834; --c-name:#1baf7a; --c-ne:#8c98a3; --c-nr:#c3ccd3;
+  --display:"IBM Plex Sans Condensed","Arial Narrow",Arial,sans-serif;
+  --body:"IBM Plex Sans","Segoe UI",Arial,sans-serif;
+  --mono:"IBM Plex Mono",Consolas,monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper:#0f171d; --panel:#16212a; --ink:#e3eaef; --muted:#9bacb9; --rule:#2c3b47; --accent:#74bce2;
+    --agreed:#5cc6a2; --drafted:#a3b3c0; --due:#e8ad5c; --open:#f28b80; color-scheme:dark;
+    --c-agree:#3987e5; --c-bug:#d95926; --c-name:#199e70; --c-ne:#74838f; --c-nr:#4a5a67;
+  }
+}
+:root[data-theme="dark"] {
+  --paper:#0f171d; --panel:#16212a; --ink:#e3eaef; --muted:#9bacb9; --rule:#2c3b47; --accent:#74bce2;
+  --agreed:#5cc6a2; --drafted:#a3b3c0; --due:#e8ad5c; --open:#f28b80; color-scheme:dark;
+  --c-agree:#3987e5; --c-bug:#d95926; --c-name:#199e70; --c-ne:#74838f; --c-nr:#4a5a67;
+}
+* { box-sizing:border-box; }
+html { scroll-behavior:smooth; scroll-padding-top:16px; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior:auto; } }
+body { margin:0; background:var(--paper); color:var(--ink); font:400 15.5px/1.55 var(--body); }
+a { color:var(--accent); text-underline-offset:2px; }
+a:focus-visible, button:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+code { font:0.9em var(--mono); overflow-wrap:anywhere; }
+h1,h2,h3,h4 { text-wrap:balance; margin:0; }
+h1 { font:600 2.5rem/1.1 var(--display); }
+h2 { font:600 1.55rem/1.2 var(--display); }
+.wrap { display:grid; grid-template-columns:232px minmax(0,1fr); gap:44px; max-width:1180px; margin:0 auto; padding:32px 24px 72px; }
+nav { position:sticky; top:16px; align-self:start; max-height:calc(100vh - 32px); overflow:auto; font-size:.875rem; }
+nav h2 { font:600 .78rem var(--body); letter-spacing:.05em; text-transform:uppercase; color:var(--muted); margin:18px 0 6px; }
+nav h2:first-child { margin-top:0; }
+nav ol, nav ul { margin:0; padding:0; list-style:none; display:grid; gap:2px; }
+nav a { display:block; padding:3px 0; color:var(--ink); text-decoration:none; }
+nav a:hover { color:var(--accent); text-decoration:underline; }
+main { min-width:0; display:grid; gap:44px; }
+.lede { display:grid; gap:12px; }
+.lede > p { max-width:68ch; }
+.lede p { margin:0; }
+.sub { color:var(--muted); font-size:.92rem; }
+.nums { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); border-top:2px solid var(--ink); border-bottom:1px solid var(--rule); margin-top:8px; }
+.nums div { padding:12px 14px 12px 0; }
+.nums b { display:block; font:600 1.75rem/1.1 var(--display); font-variant-numeric:tabular-nums; }
+.nums span { font-size:.84rem; color:var(--muted); line-height:1.35; display:block; }
+.short { display:grid; grid-template-columns:minmax(0,3fr) minmax(0,2fr); gap:0 28px; background:var(--panel); border:1px solid var(--rule); border-top:3px solid var(--accent); padding:12px 16px; max-width:none; font-size:.93rem; }
+.short h3 { font:600 .78rem var(--body); letter-spacing:.05em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
+.short ul, .short ol { margin:0; padding-left:1.2em; display:grid; gap:4px; }
+tr.grp th { font:600 .9rem var(--body); padding-top:16px; color:var(--ink); border-bottom:1px solid var(--ink); }
+.terms { margin:0; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px 28px; font-size:.9rem; }
+.terms dt { font-weight:600; }
+.terms dd { margin:0; color:var(--muted); }
+.block { display:grid; gap:14px; }
+.block > p { margin:0; max-width:68ch; }
+.rules { margin:0; padding:0 0 0 1.3em; display:grid; gap:8px; max-width:68ch; }
+.who { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:0 28px; background:var(--panel); border:1px solid var(--rule); padding:14px 16px; }
+.who h3 { font:600 .92rem var(--body); margin-bottom:4px; }
+.who p { margin:0; font-size:.93rem; }
+.tablewrap { overflow-x:auto; }
+table { border-collapse:collapse; width:100%; font-size:.92rem; }
+th, td { text-align:left; vertical-align:top; padding:9px 12px 9px 0; border-bottom:1px solid var(--rule); }
+thead th { font:600 .78rem var(--body); letter-spacing:.04em; text-transform:uppercase; color:var(--muted); border-bottom:2px solid var(--ink); }
+tbody th { font-weight:500; }
+td.n, th.n { text-align:right; font-variant-numeric:tabular-nums; }
+.nowrap { white-space:nowrap; }
+table.prov { font-size:.86rem; min-width:760px; }
+.fig { margin:0; display:grid; gap:8px; }
+.figscroll { overflow-x:auto; background:var(--panel); border:1px solid var(--rule); padding:14px; }
+.figscroll svg { display:block; width:100%; min-width:760px; height:auto; color:var(--ink); font-family:var(--body); }
+figcaption { color:var(--muted); font-size:.88rem; max-width:68ch; }
+.v-head { font-size:11px; font-weight:600; letter-spacing:.04em; fill:var(--muted); text-transform:uppercase; }
+.v-t { font-size:12.5px; font-weight:600; fill:var(--ink); }
+.v-s { font-size:11px; fill:var(--muted); }
+.v-rule { stroke:var(--ink); stroke-width:1.5; }
+.v-line { stroke:currentColor; stroke-width:1.5; opacity:.55; fill:none; }
+.v-box { fill:var(--paper); stroke:var(--rule); }
+.v-end { stroke:var(--ink); }
+.v-st { fill:var(--ink); stroke:var(--panel); stroke-width:2; }
+.v-pr { fill:var(--accent); }
+.v-node { fill:var(--ink); }
+.v-agree { --c:var(--c-agree); } .v-bug { --c:var(--c-bug); } .v-name { --c:var(--c-name); } .v-ne { --c:var(--c-ne); } .v-nr { --c:var(--c-nr); }
+.v-rib { fill:var(--c); opacity:.5; transition:opacity .12s; }
+.v-rib:hover { opacity:.85; }
+.v-bar { fill:var(--c); }
+.why { display:grid; grid-template-columns:200px minmax(0,1fr); gap:24px; background:var(--panel); border:1px solid var(--rule); padding:16px 18px; }
+.why h3 { font:600 1rem var(--body); margin-bottom:4px; }
+.why p { margin:0 0 8px; font-size:.95rem; }
+.why p:last-child { margin-bottom:0; }
+.hero b { display:block; font:600 2.3rem/1.05 var(--display); font-variant-numeric:tabular-nums; }
+.hero span { font-size:.86rem; color:var(--muted); display:block; margin-top:6px; }
+blockquote { margin:8px 0; padding:2px 0 2px 12px; border-left:3px solid var(--accent); font-size:.95rem; }
+cite { display:block; font-style:normal; color:var(--muted); font-size:.85rem; margin-top:2px; }
+.strip { display:grid; gap:2px; background:var(--panel); border:1px solid var(--rule); padding:10px 14px; }
+.srow { display:grid; grid-template-columns:minmax(0,260px) minmax(0,1fr) 56px; gap:12px; align-items:center; font-size:.88rem; min-height:24px; }
+.srow > a { color:var(--ink); text-decoration:none; }
+.srow > a:hover { color:var(--accent); text-decoration:underline; }
+.marks { display:flex; flex-wrap:wrap; gap:4px; }
+.sn { color:var(--muted); font-size:.8rem; text-align:right; font-variant-numeric:tabular-nums; }
+.mk { display:inline-block; width:12px; height:12px; flex:none; box-sizing:border-box; }
+.m-agreed { background:var(--agreed); }
+.m-partial { background:linear-gradient(135deg, var(--agreed) 50%, transparent 50%); outline:1.5px solid var(--agreed); outline-offset:-1.5px; }
+.m-drafted { border:2px solid var(--drafted); background:transparent; }
+.m-open { background:var(--open); border-radius:50%; }
+.slegend { margin:0; font-size:.84rem; color:var(--muted); display:flex; flex-wrap:wrap; gap:4px 8px; align-items:center; }
+.slegend .mk + * { margin-left:0; }
+#tip { position:fixed; z-index:5; pointer-events:none; background:var(--ink); color:var(--paper); font-size:.8rem; padding:3px 8px; max-width:280px; display:none; }
+table.prov tbody th { min-width:140px; }
+table.prov tbody th code { overflow-wrap:normal; }
+.filters { display:flex; flex-wrap:wrap; gap:6px; align-items:center; }
+.filters button { font:500 .85rem var(--body); color:var(--ink); background:var(--panel); border:1px solid var(--rule); padding:5px 11px; cursor:pointer; }
+.filters button:hover { border-color:var(--accent); }
+.filters button[aria-pressed="true"] { background:var(--ink); color:var(--paper); border-color:var(--ink); }
+.filters .c { font-variant-numeric:tabular-nums; opacity:.75; }
+.cls { display:grid; gap:12px; scroll-margin-top:16px; }
+.cls + .cls { margin-top:30px; }
+.clshead { border-top:2px solid var(--ink); padding-top:10px; display:grid; gap:4px; }
+.meta { margin:0; color:var(--muted); font-size:.9rem; }
+.intro { margin:4px 0 0; max-width:68ch; }
+.dec { background:var(--panel); border:1px solid var(--rule); border-left:4px solid var(--st); padding:12px 16px 11px; display:grid; gap:9px; scroll-margin-top:16px; }
+.s-agreed { --st:var(--agreed); } .s-partial { --st:var(--due); } .s-drafted { --st:var(--drafted); } .s-due { --st:var(--due); } .s-open { --st:var(--open); }
+.dec header { display:flex; gap:14px; justify-content:space-between; align-items:baseline; }
+.dec h3 { font:600 1rem/1.35 var(--body); }
+.pill { flex:none; font:500 .76rem var(--body); color:var(--st); border:1px solid var(--st); padding:1px 7px; white-space:nowrap; }
+.cols { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:0 24px; }
+.dec h4 { font:600 .72rem var(--body); letter-spacing:.05em; text-transform:uppercase; color:var(--muted); margin-bottom:2px; }
+.dec p { margin:0; font-size:.94rem; }
+.prop { border-top:1px dashed var(--rule); padding-top:8px; }
+.dec .ev { font-size:.82rem; display:flex; flex-wrap:wrap; gap:3px 14px; }
+footer { color:var(--muted); font-size:.85rem; border-top:1px solid var(--rule); padding-top:12px; max-width:68ch; }
+@media (max-width:900px) {
+  .wrap { grid-template-columns:minmax(0,1fr); gap:24px; padding:20px 16px 56px; }
+  nav { position:static; max-height:none; }
+  nav ul { grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); }
+}
+@media (max-width:760px) {
+  .why, .short, .terms { grid-template-columns:minmax(0,1fr); }
+  .short > div + div { margin-top:10px; }
+  .srow { grid-template-columns:minmax(0,1fr); gap:2px; padding-bottom:6px; }
+  .sn { text-align:left; }
+}
+@media (max-width:560px) {
+  h1 { font-size:2rem; }
+  .nums, .who, .cols { grid-template-columns:minmax(0,1fr); }
+  .nums { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .cols { gap:8px; }
+  .dec header { flex-direction:column; gap:4px; align-items:flex-start; }
+  .nowrap { white-space:normal; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav aria-label="Contents">
+<h2>Running order</h2>
+<ol>
+<li><a href="#method">1. How the PR was made</a></li>
+<li><a href="#nodecision">2. Changes needing no decision</a></li>
+<li><a href="#sources">3. Where the requirements came from</a></li>
+<li><a href="#libcartosym">4. Where libCartoSym differs</a></li>
+<li><a href="#classes">5. Class by class</a></li>
+<li><a href="#open">6. Open decisions</a></li>
+<li><a href="#merge">7. Before merge</a></li>
+<li><a href="#evidence">8. Evidence and its limits</a></li>
+</ol>
+<h2>Classes</h2>
+<ul>
+<li><a href="#core">Core</a></li>
+<li><a href="#vector">Basic Vector Styling</a></li>
+<li><a href="#casing">Casing and Centerline</a></li>
+<li><a href="#outlines">Font Outlines</a></li>
+<li><a href="#fills">Dashes, Hatches, Stipples, Dot Patterns</a></li>
+<li><a href="#labels">Labels</a></li>
+<li><a href="#coverage">Basic Coverage Styling</a></li>
+<li><a href="#hillshading">Hill Shading</a></li>
+<li><a href="#expressions">Expressions and functions</a></li>
+<li><a href="#encodings">CartoSym-JSON and CartoSym-CSS</a></li>
+<li><a href="#gradients">Part 2: Gradient Fills</a></li>
+</ul>
+<h2>Links</h2>
+<ul>
+<li><a href="https://github.com/opengeospatial/cartographic-symbology/pull/133">PR #133</a></li>
+<li><a href="https://henrik716.github.io/cartosym-draft-check/gallery/index.html">Gallery</a></li>
+<li><a href="https://henrik716.github.io/cartosym-draft-check/gallery/requirements.html">All requirements</a></li>
+<li><a href="https://henrik716.github.io/cartosym-draft-check/gallery/playground.html">Playground</a></li>
+</ul>
+</nav>
+<main>
+<header class="lede">
+<h1>PR #133 walkthrough</h1>
+<p class="sub">CartoSym 2.0 Part 1 requirements and Part 2 gradient fills. OGC CartoSym SWG meeting, 6 November 2026, 10:00 ET / 16:00 Norway. Branch <code>requirements-placeholders</code> at <code>e2f2aa8</code>; issues as of 6 November.</p>
+<p>The PR replaces the placeholder text in Part 1 with normative requirements, puts every requirement on one identifier scheme, and moves gradients to Part 2. This page takes it class by class: what the PR chose, why, where the answer came from, and where the evidence is.</p>
+<div class="short">
+<div><h3>Where it stands</h3><ul>
+<li><strong>20 of 49</strong> choices follow answers from Jérôme and 5 do in part. 9 are the PR's own choices, and 15 are open. All of them are for the SWG to confirm.</li>
+<li><strong>47 of 58</strong> harness cases that libCartoSym can evaluate agree with the draft. <a href="#libcartosym">The other 11</a> are 9 reported bugs and 2 name differences.</li>
+<li><strong>No other renderer</strong> has run the render kits yet, so the rendered choices have no independent check.</li>
+</ul></div>
+<div><h3>Suggested for the meeting</h3><ol>
+<li>Raise anything in the <strong>25</strong> answered choices that the SWG sees differently.</li>
+<li>Discuss the <strong>2</strong> questions that <a href="#open">affect merging</a>: the marker schema (<a href="https://github.com/opengeospatial/cartographic-symbology/issues/143">#143</a>) and <code>gamma</code> (<a href="https://github.com/opengeospatial/cartographic-symbology/issues/86">#86</a>).</li>
+<li>Go through the <strong>8</strong> proposals, as far as time allows.</li>
+<li>See who could help with <strong>4</strong> questions that need more input.</li>
+</ol></div>
+</div>
+<div class="nums">
+<div><b>156</b><span>placeholder lines filled, 0 left</span></div>
+<div><b>135</b><span>requirements, plus 1 recommendation and 1 permission</span></div>
+<div><b>15</b><span>decisions still open, of 49 on this page</span></div>
+<div><b>15</b><span>commits, 38 files, +827 / −476</span></div>
+</div>
+</header>
+
+<section class="block" id="method">
+<h2>1. How the PR was made</h2>
+<p>Most requirements follow directly from existing text. These rules decided the rest.</p>
+<ol class="rules">
+<li><strong>Existing text first.</strong> Requirements come from the clause text, the UML and CQL2.</li>
+<li><strong>Two parts each.</strong> Each requirement says what an Encoding supports and what a Renderer does.</li>
+<li><strong>libCartoSym breaks ties.</strong> Where the text is silent and libCartoSym has a default, the PR follows it, as with the hot spot and the tints.</li>
+<li><strong>Minimal where unsettled.</strong> The requirement stays small and gets a <code>TODO(review)</code>. Since Oct 19 each one points to an issue, as Jérôme asked.</li>
+<li><strong>Render before deciding.</strong> Each judgement call has a gallery card showing the draft's choice next to the alternatives. Rendering surfaced the all-white example 6, the NDVI division and the default marker on every vertex.</li>
+<li><strong>The PR follows the answers given in review.</strong> Where Jérôme answered a question on the PR or an issue, the PR followed, including reversals such as the hot spot and the casing width. These are proposals for the SWG to confirm.</li>
+</ol>
+<dl class="terms">
+<div><dt>Draft renderer</dt><dd>A small renderer written to do what the draft says, so each choice can be seen. It is a discussion tool, not a reference implementation.</dd></div>
+<div><dt>Test harness</dt><dd>93 expression cases, with expected values taken from the requirement text, run through the implementations below.</dd></div>
+<div><dt>libCartoSym</dt><dd>Ecere's library, and Jérôme's. <code>cs-canif</code> is its command-line tool, used here to evaluate expressions.</dd></div>
+<div><dt>pycartosym</dt><dd>Maxime Collombin's library, used to read CartoSym-CSS and CQL2-Text and to check conversion.</dd></div>
+<div><dt>Gallery and render kits</dt><dd>The gallery renders each judgement call next to its alternatives. A render kit holds the style, data and view of a card, so other renderers can draw the same map.</dd></div>
+</dl>
+<div class="who">
+<div><h3>What Claude did</h3><p>Drafted the requirement text, cross-checked it against the open issues, libCartoSym and pycartosym, and wrote the draft renderer and test harness.</p></div>
+<div><h3>What Henrik did</h3><p>Set the direction, made the decisions on scope and conventions and on which questions to settle or leave open, and reviewed the results.</p></div>
+</div>
+</section>
+
+<section class="block" id="nodecision">
+<h2>2. Changes needing no decision</h2>
+<p>These are consistency fixes. They can be skimmed in a minute.</p>
+<div class="tablewrap"><table><tbody>
+<tr><th scope="row">Requirement identifiers</th><td>All follow <code>/req/{class}/{name}</code> in kebab-case, e.g. <code>/req/math-functions/abs</code> became <code>/req/math/abs</code>.</td></tr>
+<tr><th scope="row">Anchors</th><td><code>req-{class}-{name}</code> for requirements, <code>rc-table-{class}</code> for class tables.</td></tr>
+<tr><th scope="row">Class URIs in clause 2</th><td>Aligned with the requirement files: <code>font-outlines</code>, <code>hill-shading</code>, <code>right-hand</code>, <code>text-relation</code>, <code>array-relations</code>, <code>text-manipulation</code>, <code>parameter-values</code>, <code>math</code>.</td></tr>
+<tr><th scope="row">Base URI typo</th><td><code>speccartosym-12.0</code> is now <code>spec/cartosym-1/2.0</code>.</td></tr>
+<tr><th scope="row">Abstract tests</th><td>The vector and coverage subjects point to <code>rc-vector</code> and <code>rc-coverage</code>.</td></tr>
+<tr><th scope="row">Clause 15</th><td>The empty Definition columns of the array and text function tables are filled. Section 3 covers what that involved, including <code>a_equals</code>.</td></tr>
+<tr><th scope="row">Examples 6 and 7</th><td>The abstracts say Sentinel-2 L2A, since the examples work for any L2A product.</td></tr>
+<tr><th scope="row">Left alone</th><td>The <code>capabilities.*</code> names (encoding keywords), <code>inherit::</code> dependencies, and the <code>symbology-1</code> URIs in Parts 2 to 4 (<a href="https://github.com/opengeospatial/cartographic-symbology/issues/82">#82</a>).</td></tr>
+</tbody></table></div>
+</section>
+
+<section class="block" id="sources">
+<h2>3. Where the requirements came from</h2>
+<p>Many requirements have no gallery card and no decision behind them, but each one still needed a source. Tracing them turned up two open questions, on <code>a_equals</code> (<a href="https://github.com/opengeospatial/cartographic-symbology/issues/154">#154</a>) and NULL (<a href="https://github.com/opengeospatial/cartographic-symbology/issues/155">#155</a>), plus the math rounding rules, all now in section 5.</p>
+<figure class="fig"><div class="figscroll"><svg viewBox="0 0 960 446" role="img" aria-label="Each group of requirements starts from the spec on main, picks up CQL2, Jérôme's answers, libCartoSym defaults or the PR's own choices, and is then rendered, run in the harness or parsed."><defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L8 4L0 8z" fill="currentColor"/></marker></defs><text x="0" y="16" text-anchor="start" class="v-head">Spec on main</text><text x="195" y="16" text-anchor="middle" class="v-head">CQL2</text><text x="310" y="16" text-anchor="middle" class="v-head">Jérôme&#x27;s answers</text><text x="425" y="16" text-anchor="middle" class="v-head">libCartoSym</text><text x="540" y="16" text-anchor="middle" class="v-head">The PR&#x27;s own choice</text><text x="622" y="16" text-anchor="start" class="v-head">Requirements</text><text x="795" y="16" text-anchor="start" class="v-head">Checked by</text><line x1="0" x2="960" y1="26" y2="26" class="v-rule"/><line x1="124" x2="620" y1="60" y2="60" class="v-line" marker-end="url(#arr)"/><line x1="772" x2="792" y1="60" y2="60" class="v-line" marker-end="url(#arr)"/><rect x="0" y="41" width="124" height="38" class="v-box"/><text x="8" y="57" class="v-t">Clause 7</text><text x="8" y="72" class="v-s">text and UML</text><rect x="622" y="41" width="150" height="38" class="v-box v-end"/><text x="630" y="57" class="v-t">Core</text><text x="630" y="72" class="v-s">20 requirements</text><text x="798" y="57" class="v-t">Rendered and harness</text><text x="798" y="72" class="v-s">libCartoSym 12 of 20 cases</text><circle cx="195" cy="60" r="6.5" class="v-st"/><text x="195" y="80" text-anchor="middle" class="v-s">Basic predicates</text><circle cx="310" cy="60" r="6.5" class="v-st"/><text x="310" y="80" text-anchor="middle" class="v-s">default marker</text><circle cx="540" cy="60" r="6.5" class="v-st v-pr"/><text x="540" y="80" text-anchor="middle" class="v-s">opacity, zOrder</text><line x1="124" x2="620" y1="128" y2="128" class="v-line" marker-end="url(#arr)"/><line x1="772" x2="792" y1="128" y2="128" class="v-line" marker-end="url(#arr)"/><rect x="0" y="109" width="124" height="38" class="v-box"/><text x="8" y="125" class="v-t">Clauses 7 to 12</text><text x="8" y="140" class="v-s">text and UML</text><rect x="622" y="109" width="150" height="38" class="v-box v-end"/><text x="630" y="125" class="v-t">Styling classes</text><text x="630" y="140" class="v-s">37 requirements</text><text x="798" y="125" class="v-t">Rendered</text><text x="798" y="140" class="v-s">gallery cards and samples</text><circle cx="310" cy="128" r="6.5" class="v-st"/><text x="310" y="148" text-anchor="middle" class="v-s">casing, hill shading,</text><text x="310" y="161" text-anchor="middle" class="v-s">units</text><circle cx="425" cy="128" r="6.5" class="v-st"/><text x="425" y="148" text-anchor="middle" class="v-s">hot spot, tints</text><circle cx="540" cy="128" r="6.5" class="v-st v-pr"/><text x="540" y="148" text-anchor="middle" class="v-s">casing and outlines</text><text x="540" y="161" text-anchor="middle" class="v-s">beneath</text><line x1="124" x2="620" y1="196" y2="196" class="v-line" marker-end="url(#arr)"/><line x1="772" x2="792" y1="196" y2="196" class="v-line" marker-end="url(#arr)"/><rect x="0" y="177" width="124" height="38" class="v-box"/><text x="8" y="193" class="v-t">Clauses 13 to 15</text><text x="8" y="208" class="v-s">text and UML</text><rect x="622" y="177" width="150" height="38" class="v-box v-end"/><text x="630" y="193" class="v-t">Expressions in CQL2</text><text x="630" y="208" class="v-s">29 requirements</text><text x="798" y="193" class="v-t">Harness</text><text x="798" y="208" class="v-s">libCartoSym 29 of 42 cases</text><circle cx="195" cy="196" r="6.5" class="v-st"/><text x="195" y="216" text-anchor="middle" class="v-s">Requirements 5, 8,</text><text x="195" y="229" text-anchor="middle" class="v-s">9, 16, 18, 19</text><circle cx="310" cy="196" r="6.5" class="v-st"/><text x="310" y="216" text-anchor="middle" class="v-s">/, format,</text><text x="310" y="229" text-anchor="middle" class="v-s">bare words</text><circle cx="425" cy="196" r="6.5" class="v-st"/><text x="425" y="216" text-anchor="middle" class="v-s">accenti</text><circle cx="540" cy="196" r="6.5" class="v-st v-pr"/><text x="540" y="216" text-anchor="middle" class="v-s">a_equals order,</text><text x="540" y="229" text-anchor="middle" class="v-s">mod sign</text><line x1="124" x2="620" y1="264" y2="264" class="v-line" marker-end="url(#arr)"/><line x1="772" x2="792" y1="264" y2="264" class="v-line" marker-end="url(#arr)"/><rect x="0" y="245" width="124" height="38" class="v-box"/><text x="8" y="261" class="v-t">Clauses 13 to 15</text><text x="8" y="276" class="v-s">text and UML</text><rect x="622" y="245" width="150" height="38" class="v-box v-end"/><text x="630" y="261" class="v-t">CartoSym expressions</text><text x="630" y="276" class="v-s">29 requirements</text><text x="798" y="261" class="v-t">Harness</text><text x="798" y="276" class="v-s">libCartoSym 6 of 31 cases</text><circle cx="540" cy="264" r="6.5" class="v-st v-pr"/><text x="540" y="284" text-anchor="middle" class="v-s">math ranges,</text><text x="540" y="297" text-anchor="middle" class="v-s">rounding of halves</text><line x1="124" x2="620" y1="332" y2="332" class="v-line" marker-end="url(#arr)"/><line x1="772" x2="792" y1="332" y2="332" class="v-line" marker-end="url(#arr)"/><rect x="0" y="313" width="124" height="38" class="v-box"/><text x="8" y="329" class="v-t">Clauses 16 and 17</text><text x="8" y="344" class="v-s">schema, grammar</text><rect x="622" y="313" width="150" height="38" class="v-box v-end"/><text x="630" y="329" class="v-t">Encodings</text><text x="630" y="344" class="v-s">14 requirements</text><text x="798" y="329" class="v-t">Parsing and conversion</text><text x="798" y="344" class="v-s">pycartosym, libCartoSym</text><circle cx="195" cy="332" r="6.5" class="v-st"/><text x="195" y="352" text-anchor="middle" class="v-s">CQL2-Text,</text><text x="195" y="365" text-anchor="middle" class="v-s">CQL2-JSON</text><circle cx="310" cy="332" r="6.5" class="v-st"/><text x="310" y="352" text-anchor="middle" class="v-s">Dot in one rule</text><line x1="124" x2="620" y1="400" y2="400" class="v-line" marker-end="url(#arr)"/><line x1="772" x2="792" y1="400" y2="400" class="v-line" marker-end="url(#arr)"/><rect x="0" y="381" width="124" height="38" class="v-box"/><text x="8" y="397" class="v-t">Part 2</text><text x="8" y="412" class="v-s">Gradient model</text><rect x="622" y="381" width="150" height="38" class="v-box v-end"/><text x="630" y="397" class="v-t">Gradient fills</text><text x="630" y="412" class="v-s">6 requirements</text><text x="798" y="397" class="v-t">Rendered</text><text x="798" y="412" class="v-s">gallery cards</text><circle cx="310" cy="400" r="6.5" class="v-st"/><text x="310" y="420" text-anchor="middle" class="v-s">angle, units</text></svg></div>
+<figcaption>Every group starts from the spec on main and picks up other sources along the way. A dot means that source shaped part of the text. Blue dots are the PR's own choices, which is where review matters most.</figcaption></figure>
+<p>This figure and the table below were reconstructed on 6 November by comparing the PR with the text on main, its UML and <a href="https://docs.ogc.org/is/21-065r2/21-065r2.html">CQL2 1.0</a>. Sources were not recorded per requirement when the text was drafted, so they show what each requirement matches, not a log of what was used.</p>
+<div class="tablewrap"><table class="prov">
+<thead><tr><th>Class</th><th class="n">Reqs</th><th>Names and signatures</th><th>Behavior</th><th>Added by the PR</th><th>libCartoSym agrees</th></tr></thead>
+<tbody>
+<tr><th scope="row">Core</th><td class="n">20</td><td>Clause 7 UML and tables</td><td>Clause text and CQL2 Basic</td><td>Group opacity, <code>zOrder</code> direction</td><td>12 of 20</td></tr>
+<tr><th scope="row">Arithmetic</th><td class="n">7</td><td>Clause 14 UML and table</td><td>CQL2 7.12 (Requirement 19), and Jérôme for <code>/</code></td><td><code>intDiv</code> truncation, sign of <code>mod</code></td><td>7 of 10</td></tr>
+<tr><th scope="row">Math</th><td class="n">23</td><td>Clause 15 UML, including <code>round</code> returning <code>long</code></td><td>Neither the spec nor CQL2 defines these. Usual meaning, as in Java's <code>Math</code></td><td>Result ranges, radians, rounding of halves</td><td>2 of 23</td></tr>
+<tr><th scope="row">Array Relations</th><td class="n">4</td><td>Clause 15 UML and table, Definitions empty</td><td>CQL2 7.9 (Requirement 16)</td><td><code>a_equals</code> compares in order, unlike CQL2</td><td>6 of 6</td></tr>
+<tr><th scope="row">Text Relation</th><td class="n">8</td><td>Clause 14 UML and table</td><td><code>like</code>: same wildcards as CQL2 Requirement 5. <code>contains</code> and the others are not in CQL2: plain meaning</td><td><code>not*</code> as negation of the positive form</td><td>11 of 11</td></tr>
+<tr><th scope="row">Text Manipulation</th><td class="n">7</td><td>Clause 15 table, Definitions empty</td><td><code>casei</code> and <code>accenti</code>: CQL2 Requirements 8 and 9. <code>format</code>: Jérôme. The rest: plain meaning</td><td>The Definition column text</td><td>5 of 10</td></tr>
+<tr><th scope="row">Conditional</th><td class="n">3</td><td>Clause 13 UML and class table</td><td>Same. Not in CQL2</td><td>Else branch when the condition is not true</td><td>4 of 4</td></tr>
+<tr><th scope="row">Right-hand</th><td class="n">1</td><td>Clause 13</td><td>CQL2 Property-Property (7.10), as clause 13 says</td><td>None</td><td>0 of 2</td></tr>
+<tr><th scope="row">Functions</th><td class="n">2</td><td>Clause 15 UML</td><td>CQL2 Functions (Requirement 18)</td><td>Wrong arguments are invalid</td><td>0 of 3</td></tr>
+<tr><th scope="row">Parameter Values</th><td class="n">1</td><td>Clause 13</td><td>Clause text</td><td>None</td><td>0 of 1</td></tr>
+<tr><th scope="row">Variables</th><td class="n">2</td><td>Clause 13 UML and text</td><td>Clause text</td><td>None</td><td>0 of 3</td></tr>
+<tr><th scope="row">Vector, Coverage, Hill Shading, Labels, Outlines, Casing, Dashes, Fills</th><td class="n">37</td><td>Clauses 7 to 12: UML and tables</td><td>Clause text, then Jérôme's answers</td><td>Listed in section 5</td><td>Rendered only</td></tr>
+<tr><th scope="row">CartoSym-JSON, CartoSym-CSS</th><td class="n">14</td><td>Clauses 16 and 17, schema, grammar</td><td>Clause text</td><td>Listed in section 5</td><td>Parsing only</td></tr>
+<tr><th scope="row">Part 2 Gradient Fills</th><td class="n">6</td><td>Part 2 Gradient model</td><td>Jérôme's answers</td><td>Listed in section 5</td><td>Rendered only</td></tr>
+</tbody></table></div>
+<p>The last column counts harness cases where libCartoSym main agrees with the draft. It is the only independent check on behavior here: pycartosym checks conversion, and the draft renderer implements the draft. Section 4 explains the rest. A low number here mostly means the function is not evaluated yet, not that libCartoSym disagrees.</p>
+</section>
+
+<section class="block" id="libcartosym">
+<h2>4. Where libCartoSym differs</h2>
+<p>The text was written from the spec, not from libCartoSym, and the comparison came afterwards. So each difference raised a question: should the text change, or libCartoSym? libCartoSym was followed where the text was silent. Where they differed, CQL2 and the spec's own examples came first, and the PR then followed Jérôme's answer.</p>
+<div class="why">
+<div class="hero"><b>47 of 58</b><span>cases libCartoSym can evaluate agree with the draft. The other 11 are 9 reported bugs and 2 name differences.</span></div>
+<div><h3>Why so many cases say unsupported</h3>
+<p>CartoSym Part 1 adds functions that CQL2 does not define, such as <code>sin</code>, <code>round</code> and <code>upperCase</code>. They have not been added to libCartoSym's evaluator yet, so <code>cs-canif eval</code> returns null, and the harness can only report that as unsupported. It means not implemented yet. It does not mean libCartoSym disagrees.</p>
+<blockquote>"I think I just never got around to align those extended functions introduced by CartoSym - Part 1 (not defined in the CQL2 standard)."<cite>Jérôme, <a href="https://github.com/ecere/libCartoSym/issues/9">libCartoSym#9</a>, who plans to add them, starting with the ones the examples use</cite></blockquote>
+<p>This cuts both ways: those 27 cases have no independent check yet, so for now only the draft renderer runs them.</p></div>
+</div>
+<figure class="fig"><div class="figscroll"><svg viewBox="0 0 920 516" role="img" aria-label="Flow from the labels in the test report to what they mean: 47 agree, 27 not evaluated yet, 9 bugs with an issue, 2 name differences and 8 not run. 26 of the 28 unsupported cases are functions not added yet."><text x="140" y="16" text-anchor="end" class="v-head">What the report says</text><text x="522" y="16" class="v-head">What it means</text><path d="M141 40.0C320.0 40.0 320.0 40.0 499 40.0L499 213.1C320.0 213.1 320.0 213.1 141 213.1Z" class="v-rib v-agree" data-tip="pass → agree with the draft: 47 cases"/><path d="M141 229.9C320.0 229.9 320.0 243.9 499 243.9L499 339.3C320.0 339.3 320.0 325.3 141 325.3Z" class="v-rib v-ne" data-tip="unsupported → not evaluated yet: 26 cases"/><path d="M141 326.1C320.0 326.1 320.0 373.8 499 373.8L499 380.4C320.0 380.4 320.0 332.7 141 332.7Z" class="v-rib v-bug" data-tip="unsupported → bug with an issue: 2 cases"/><path d="M141 349.5C320.0 349.5 320.0 381.2 499 381.2L499 391.5C320.0 391.5 320.0 359.8 141 359.8Z" class="v-rib v-bug" data-tip="FAIL → bug with an issue: 3 cases"/><path d="M141 360.6C320.0 360.6 320.0 437.1 499 437.1L499 443.7C320.0 443.7 320.0 367.2 141 367.2Z" class="v-rib v-name" data-tip="FAIL → name differs: 2 cases"/><path d="M141 384.0C320.0 384.0 320.0 392.3 499 392.3L499 402.6C320.0 402.6 320.0 394.3 141 394.3Z" class="v-rib v-bug" data-tip="CRASH → bug with an issue: 3 cases"/><path d="M141 411.1C320.0 411.1 320.0 340.1 499 340.1L499 343.0C320.0 343.0 320.0 414.0 141 414.0Z" class="v-rib v-ne" data-tip="error → not evaluated yet: 1 case"/><path d="M141 414.8C320.0 414.8 320.0 403.4 499 403.4L499 406.3C320.0 406.3 320.0 417.7 141 417.7Z" class="v-rib v-bug" data-tip="error → bug with an issue: 1 case"/><path d="M141 434.5C320.0 434.5 320.0 474.5 499 474.5L499 503.3C320.0 503.3 320.0 463.3 141 463.3Z" class="v-rib v-nr" data-tip="not run → not run: 8 cases"/><rect x="128" y="40.0" width="12" height="173.9" rx="3" class="v-node"/><text x="120" y="130.9" text-anchor="end" class="v-t">47 pass</text><rect x="128" y="229.9" width="12" height="103.6" rx="3" class="v-node"/><text x="120" y="285.7" text-anchor="end" class="v-t">28 unsupported</text><rect x="128" y="349.5" width="12" height="18.5" rx="3" class="v-node"/><text x="120" y="362.8" text-anchor="end" class="v-t">5 FAIL</text><rect x="128" y="384.0" width="12" height="11.1" rx="3" class="v-node"/><text x="120" y="393.6" text-anchor="end" class="v-t">3 CRASH</text><rect x="128" y="411.1" width="12" height="7.4" rx="3" class="v-node"/><text x="120" y="418.8" text-anchor="end" class="v-t">2 error</text><rect x="128" y="434.5" width="12" height="29.6" rx="3" class="v-node"/><text x="120" y="453.3" text-anchor="end" class="v-t">8 not run</text><rect x="500" y="40.0" width="12" height="173.9" rx="3" class="v-bar v-agree"/><text x="522" y="125.0" class="v-t">47  Agree with the draft</text><text x="522" y="139.9" class="v-s">Same result</text><rect x="500" y="243.9" width="12" height="99.9" rx="3" class="v-bar v-ne"/><text x="522" y="291.9" class="v-t">27  Not evaluated yet</text><text x="522" y="306.9" class="v-s">Part 1 functions not added to cs-canif eval (libCartoSym#9)</text><rect x="500" y="373.8" width="12" height="33.3" rx="3" class="v-bar v-bug"/><text x="522" y="388.4" class="v-t">9  Bugs, each with an issue</text><text x="522" y="403.4" class="v-s">/, &lt;&gt;, in, not, div and random() (libCartoSym#5 to #8, #11)</text><rect x="500" y="437.1" width="12" height="7.4" rx="3" class="v-bar v-name"/><text x="522" y="438.8" class="v-t">2  Name differs</text><text x="522" y="453.8" class="v-s">casei and accenti (#140)</text><rect x="500" y="474.5" width="12" height="29.6" rx="3" class="v-bar v-nr"/><text x="522" y="487.3" class="v-t">8  Not run</text><text x="522" y="502.3" class="v-s">Need values the harness does not pass</text></svg></div>
+<figcaption>All 93 harness cases against libCartoSym main. Each case is counted once on each side, so ribbon widths add up. Of the 28 marked unsupported, 26 are functions not added yet and 2 are the <code>not</code> bug (<a href="https://github.com/ecere/libCartoSym/issues/8">libCartoSym#8</a>).</figcaption></figure>
+<p>Only 2 cases are about what the text should say, both about function names, with a proposal in <a href="https://github.com/opengeospatial/cartographic-symbology/issues/140">#140</a>.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>What it means</th><th class="n">Cases</th><th>Detail</th></tr></thead>
+<tbody>
+<tr><th scope="row">Agree</th><td class="n">47</td><td>Same result as the draft. This includes 6 text operators the report wrongly showed as unsupported until 6 November, because the harness wrote them as function calls, and <code>accenti('Øre')</code>, where the draft now follows libCartoSym.</td></tr>
+<tr><th scope="row">Not evaluated yet</th><td class="n">27</td><td>Math functions, <code>upperCase</code>, <code>lowerCase</code>, <code>substitute</code>. <code>cs-canif eval</code> returns null because these Part 1 functions have not been added yet, which says nothing either way (<a href="https://github.com/ecere/libCartoSym/issues/9">libCartoSym#9</a>).</td></tr>
+<tr><th scope="row">Bugs with an open issue</th><td class="n">9</td><td><code>/</code> on two integers, <code>&lt;&gt;</code> and <code>in</code> returning numbers, <code>not</code> returning null, crashes on <code>div</code> and <code>random()</code>. See the table below.</td></tr>
+<tr><th scope="row">Name differs</th><td class="n">2</td><td><code>caseInsensitize</code> and <code>accentInsensitize</code> are the draft's names. libCartoSym uses <code>casei</code> and <code>accenti</code> (<a href="https://github.com/opengeospatial/cartographic-symbology/issues/140">#140</a>).</td></tr>
+<tr><th scope="row">Not run</th><td class="n">8</td><td>Cases that need feature or application values, which the harness does not pass to <code>cs-canif</code>.</td></tr>
+</tbody></table></div>
+<p>Each place the text and libCartoSym differ, including those the harness cannot see, and how the text was decided:</p>
+<div class="tablewrap"><table class="prov">
+<thead><tr><th>Topic</th><th>The text</th><th>libCartoSym</th><th>How the text was decided</th><th>Outcome</th></tr></thead>
+<tbody>
+<tr><th scope="row"><code>/</code> on two integers</th><td>Real-valued: <code>7 / 2</code> is 3.5</td><td>Truncates to 3</td><td>CQL2 names <code>div</code> separately for integer division, and integer <code>/</code> turned every NDVI value in example 7 to 0. Jérôme agreed.</td><td>libCartoSym changes (<a href="https://github.com/ecere/libCartoSym/issues/11">libCartoSym#11</a>)</td></tr>
+<tr><th scope="row"><code>&lt;&gt;</code>, <code>in</code>, <code>not</code></th><td>Boolean results</td><td><code>&lt;&gt;</code> gives -1, <code>in</code> gives 1, <code>not (1 = 2)</code> gives null</td><td>CQL2 predicates evaluate to true or false. The text was not changed.</td><td>libCartoSym changes (<a href="https://github.com/ecere/libCartoSym/issues/7">libCartoSym#7</a>, <a href="https://github.com/ecere/libCartoSym/issues/8">#8</a>)</td></tr>
+<tr><th scope="row"><code>div</code>, <code>random()</code></th><td><code>7 div 2</code> is 3, <code>random()</code> is below 1</td><td><code>cs-canif</code> crashes</td><td>Clear bugs, not a difference of meaning.</td><td>libCartoSym changes (<a href="https://github.com/ecere/libCartoSym/issues/5">libCartoSym#5</a>, <a href="https://github.com/ecere/libCartoSym/issues/6">#6</a>)</td></tr>
+<tr><th scope="row"><code>accenti</code> and <code>Ø</code></th><td>Follows libCartoSym</td><td>Folds <code>Ø</code> to <code>O</code></td><td>The first proposal in <a href="https://github.com/opengeospatial/cartographic-symbology/issues/152">#152</a> used decomposition only. It changed after the CQL2 history showed folding was intended, and Jérôme preferred it.</td><td>Answered (<a href="https://github.com/opengeospatial/cartographic-symbology/issues/152">#152</a>)</td></tr>
+<tr><th scope="row">Hot spot, tints, <code>alphaThreshold</code>, Dot</th><td>Same as libCartoSym</td><td>Same</td><td>Where the text was silent or its parts disagreed, the PR followed libCartoSym, and Jérôme confirmed each one.</td><td>Answered</td></tr>
+<tr><th scope="row">Function names</th><td><code>caseInsensitize</code>, <code>accentInsensitize</code>, from the model</td><td><code>casei</code>, <code>accenti</code>, as in CQL2 and the schema</td><td>The PR kept the model's names and flagged the mismatch.</td><td>Open (<a href="https://github.com/opengeospatial/cartographic-symbology/issues/140">#140</a>), proposal is libCartoSym's names</td></tr>
+<tr><th scope="row"><code>contains</code>, <code>startsWith</code>, <code>endsWith</code></th><td>An operation with no CartoSym-CSS syntax</td><td>Operators <code>~</code>, <code>^^</code>, <code>$</code>, <code>!~</code>, <code>!^</code>, <code>!$</code>, marked in its source as "REVIEW: Will this be functions instead?"</td><td>The CartoSym-CSS grammar has only <code>like</code>, so neither the PR nor the harness had a syntax to use.</td><td>Open (<a href="https://github.com/opengeospatial/cartographic-symbology/issues/156">#156</a>)</td></tr>
+<tr><th scope="row">Label <code>priority</code></th><td>Higher wins</td><td>Its incomplete engine places lower first</td><td>QGIS, GeoServer and the direction of <code>zOrder</code>.</td><td>Open (<a href="https://github.com/opengeospatial/cartographic-symbology/issues/148">#148</a>)</td></tr>
+<tr><th scope="row">Hatches</th><td><code>width</code>, <code>angle</code>, <code>distance</code>, from the Part 1 model</td><td>An older <code>forward</code>, <code>backward</code>, <code>xCross</code>, <code>cross</code> type</td><td>The PR follows the model. Nobody has discussed this difference yet.</td><td>To raise</td></tr>
+<tr><th scope="row"><code>colorMap</code> between entries</th><td>Method left open, result SHOULD stay between entries</td><td>Eases between entries</td><td>Written so that libCartoSym's method is allowed.</td><td>Answered (<a href="https://github.com/opengeospatial/cartographic-symbology/issues/149">#149</a>)</td></tr>
+<tr><th scope="row"><code>a_equals</code> order</th><td>Compares in order</td><td>Compares in order</td><td>They agree with each other, but both differ from CQL2 Requirement 16.</td><td>Open (<a href="https://github.com/opengeospatial/cartographic-symbology/issues/154">#154</a>)</td></tr>
+</tbody></table></div>
+<p>libCartoSym is one implementation, and it is checked here through <code>cs-canif eval</code>, not through a renderer, so rendering behavior is not compared. The rows on hatches and label priority come from reading its source and from Jérôme's comments.</p>
+</section>
+
+<section class="block" id="classes">
+<h2>5. Class by class</h2>
+<p>Classes appear in spec order. Answered means Jérôme gave that answer in a comment on the PR or an issue. It is not an SWG decision, and the final wording has not been reviewed. Partly answered items say which part is still the PR's own. Not yet reviewed means it is the PR's own choice and nobody has commented on it yet, so it is not agreed. The filter narrows the list.</p>
+<figure class="fig"><div class="strip"><div class="srow"><a href="#core">Core</a><span class="marks"><a class="mk m-drafted" href="#core-1" aria-label="Not yet reviewed: Does opacity apply to the whole symbol or to each part?" data-tip="Does opacity apply to the whole symbol or to each part?"></a><a class="mk m-drafted" href="#core-2" aria-label="Not yet reviewed: Which zOrder is drawn on top?" data-tip="Which zOrder is drawn on top?"></a><a class="mk m-agreed" href="#core-3" aria-label="Answered by Jérôme: Does the default marker apply to every geometry type?" data-tip="Does the default marker apply to every geometry type?"></a><a class="mk m-open" href="#core-4" aria-label="Open: How does a CartoSym-JSON style clear the default marker?" data-tip="How does a CartoSym-JSON style clear the default marker?"></a></span><span class="sn">1 open</span></div><div class="srow"><a href="#vector">Basic Vector Styling</a><span class="marks"><a class="mk m-partial" href="#vector-1" aria-label="Partly answered: Do gamma and gradients stay in Basic Vector Styling?" data-tip="Do gamma and gradients stay in Basic Vector Styling?"></a><a class="mk m-agreed" href="#vector-2" aria-label="Answered by Jérôme: Should Dot have size and color?" data-tip="Should Dot have size and color?"></a><a class="mk m-agreed" href="#vector-3" aria-label="Answered by Jérôme: Where is the default hot spot of an Image?" data-tip="Where is the default hot spot of an Image?"></a><a class="mk m-agreed" href="#vector-4" aria-label="Answered by Jérôme: Do tint and blackTint belong in Part 1, and in which class?" data-tip="Do tint and blackTint belong in Part 1, and in which class?"></a><a class="mk m-agreed" href="#vector-5" aria-label="Answered by Jérôme: What does alphaThreshold do?" data-tip="What does alphaThreshold do?"></a></span><span class="sn"></span></div><div class="srow"><a href="#casing">Casing and Centerline</a><span class="marks"><a class="mk m-drafted" href="#casing-1" aria-label="Not yet reviewed: Is the casing drawn beneath or above the stroke?" data-tip="Is the casing drawn beneath or above the stroke?"></a><a class="mk m-agreed" href="#casing-2" aria-label="Answered by Jérôme: What does the casing width measure?" data-tip="What does the casing width measure?"></a><a class="mk m-agreed" href="#casing-3" aria-label="Answered by Jérôme: What happens where cased lines cross?" data-tip="What happens where cased lines cross?"></a><a class="mk m-open" href="#casing-4" aria-label="Open: Is the property called center or centerLine?" data-tip="Is the property called center or centerLine?"></a></span><span class="sn">1 open</span></div><div class="srow"><a href="#outlines">Font Outlines</a><span class="marks"><a class="mk m-drafted" href="#outlines-1" aria-label="Not yet reviewed: Is a font outline drawn beneath or above the glyphs?" data-tip="Is a font outline drawn beneath or above the glyphs?"></a></span><span class="sn"></span></div><div class="srow"><a href="#fills">Dashes, Hatches, Stipples, Dot Patterns</a><span class="marks"><a class="mk m-partial" href="#fills-1" aria-label="Partly answered: What unit is dashPattern in?" data-tip="What unit is dashPattern in?"></a><a class="mk m-open" href="#fills-2" aria-label="Open: Which way does the hatch angle turn?" data-tip="Which way does the hatch angle turn?"></a><a class="mk m-open" href="#fills-3" aria-label="Open: What do stipple and dot-pattern dots look like?" data-tip="What do stipple and dot-pattern dots look like?"></a></span><span class="sn">2 open</span></div><div class="srow"><a href="#labels">Labels</a><span class="marks"><a class="mk m-drafted" href="#labels-1" aria-label="Not yet reviewed: Are labels drawn with their feature or on top of everything?" data-tip="Are labels drawn with their feature or on top of everything?"></a><a class="mk m-agreed" href="#labels-2" aria-label="Answered by Jérôme: What unit are minSpacing and maxSpacing in?" data-tip="What unit are minSpacing and maxSpacing in?"></a><a class="mk m-open" href="#labels-3" aria-label="Open: Does a higher priority value win?" data-tip="Does a higher priority value win?"></a></span><span class="sn">1 open</span></div><div class="srow"><a href="#coverage">Basic Coverage Styling</a><span class="marks"><a class="mk m-partial" href="#coverage-1" aria-label="Partly answered: What range is colorChannels, and who scales the bands?" data-tip="What range is colorChannels, and who scales the bands?"></a><a class="mk m-open" href="#coverage-2" aria-label="Open: What about the default colorChannels, and which product is example 6 for?" data-tip="What about the default colorChannels, and which product is example 6 for?"></a><a class="mk m-partial" href="#coverage-3" aria-label="Partly answered: How do colorMap and opacityMap treat values between and beyond entries?" data-tip="How do colorMap and opacityMap treat values between and beyond entries?"></a><a class="mk m-agreed" href="#coverage-4" aria-label="Answered by Jérôme: How are stepped classes written?" data-tip="How are stepped classes written?"></a><a class="mk m-open" href="#coverage-5" aria-label="Open: Does gamma stay in coverage styling?" data-tip="Does gamma stay in coverage styling?"></a></span><span class="sn">2 open</span></div><div class="srow"><a href="#hillshading">Hill Shading</a><span class="marks"><a class="mk m-agreed" href="#hillshading-1" aria-label="Answered by Jérôme: What does factor mean?" data-tip="What does factor mean?"></a><a class="mk m-agreed" href="#hillshading-2" aria-label="Answered by Jérôme: What is the shade value?" data-tip="What is the shade value?"></a><a class="mk m-agreed" href="#hillshading-3" aria-label="Answered by Jérôme: Over what distance is the normal computed?" data-tip="Over what distance is the normal computed?"></a><a class="mk m-agreed" href="#hillshading-4" aria-label="Answered by Jérôme: What happens without a colorMap?" data-tip="What happens without a colorMap?"></a><a class="mk m-agreed" href="#hillshading-5" aria-label="Answered by Jérôme: Which way does the sun azimuth turn?" data-tip="Which way does the sun azimuth turn?"></a></span><span class="sn"></span></div><div class="srow"><a href="#expressions">Expressions and functions</a><span class="marks"><a class="mk m-agreed" href="#expressions-1" aria-label="Answered by Jérôme: Is / real or integer division?" data-tip="Is / real or integer division?"></a><a class="mk m-drafted" href="#expressions-2" aria-label="Not yet reviewed: How do intDiv and mod round?" data-tip="How do intDiv and mod round?"></a><a class="mk m-drafted" href="#expressions-3" aria-label="Not yet reviewed: How do round and rint treat halves?" data-tip="How do round and rint treat halves?"></a><a class="mk m-open" href="#expressions-4" aria-label="Open: Does a_equals care about element order?" data-tip="Does a_equals care about element order?"></a><a class="mk m-open" href="#expressions-5" aria-label="Open: What happens when an operand is NULL?" data-tip="What happens when an operand is NULL?"></a><a class="mk m-drafted" href="#expressions-6" aria-label="Not yet reviewed: What does a function call with wrong arguments do?" data-tip="What does a function call with wrong arguments do?"></a><a class="mk m-agreed" href="#expressions-7" aria-label="Answered by Jérôme: What is coverage in [dataLayer.type = coverage]?" data-tip="What is coverage in [dataLayer.type = coverage]?"></a><a class="mk m-agreed" href="#expressions-8" aria-label="Answered by Jérôme: What syntax does format use?" data-tip="What syntax does format use?"></a><a class="mk m-open" href="#expressions-9" aria-label="Open: How is a chain a ? b : c ? d : e read?" data-tip="How is a chain a ? b : c ? d : e read?"></a><a class="mk m-open" href="#expressions-10" aria-label="Open: How is contains written in CartoSym-CSS?" data-tip="How is contains written in CartoSym-CSS?"></a><a class="mk m-open" href="#expressions-11" aria-label="Open: Do notLike, notContains and the others need their own JSON encoding?" data-tip="Do notLike, notContains and the others need their own JSON encoding?"></a><a class="mk m-open" href="#expressions-12" aria-label="Open: caseInsensitize and accentInsensitize, or casei and accenti?" data-tip="caseInsensitize and accentInsensitize, or casei and accenti?"></a><a class="mk m-agreed" href="#expressions-13" aria-label="Answered by Jérôme: What counts as an accent?" data-tip="What counts as an accent?"></a></span><span class="sn">6 open</span></div><div class="srow"><a href="#encodings">CartoSym-JSON and CartoSym-CSS</a><span class="marks"><a class="mk m-partial" href="#encodings-1" aria-label="Partly answered: Can one Dot set both size and stroke.width?" data-tip="Can one Dot set both size and stroke.width?"></a><a class="mk m-drafted" href="#encodings-2" aria-label="Not yet reviewed: How do CartoSym-CSS selectors combine?" data-tip="How do CartoSym-CSS selectors combine?"></a><a class="mk m-open" href="#encodings-3" aria-label="Open: What does $include point at after conversion?" data-tip="What does $include point at after conversion?"></a></span><span class="sn">1 open</span></div><div class="srow"><a href="#gradients">Part 2: Gradient Fills</a><span class="marks"><a class="mk m-agreed" href="#gradients-1" aria-label="Answered by Jérôme: Where do the gradient requirements go?" data-tip="Where do the gradient requirements go?"></a><a class="mk m-agreed" href="#gradients-2" aria-label="Answered by Jérôme: How is the gradient angle measured?" data-tip="How is the gradient angle measured?"></a><a class="mk m-open" href="#gradients-3" aria-label="Open: Are position and size relative to each feature or to the map?" data-tip="Are position and size relative to each feature or to the map?"></a></span><span class="sn">1 open</span></div></div><p class="slegend"><span class="mk m-agreed"></span> Answered by Jérôme <span class="mk m-partial"></span> Partly answered <span class="mk m-drafted"></span> Not yet reviewed <span class="mk m-open"></span> Open</p><figcaption>49 decisions by class. Each mark links to its decision.</figcaption></figure>
+<div class="filters" role="group" aria-label="Filter decisions by status"><button type="button" data-f="all" aria-pressed="true">All</button><button type="button" data-f="agreed" aria-pressed="false" class="f-agreed">Answered by Jérôme <span class="c">20</span></button><button type="button" data-f="partial" aria-pressed="false" class="f-partial">Partly answered <span class="c">5</span></button><button type="button" data-f="drafted" aria-pressed="false" class="f-drafted">Not yet reviewed <span class="c">9</span></button><button type="button" data-f="open" aria-pressed="false" class="f-open">Open <span class="c">15</span></button></div>
+<section class="cls" id="core"><div class="clshead"><h2>Core</h2><p class="meta">20 requirements in clause 7. Rendered and tested. The visualization time and <code>capabilities</code> identifiers are not implemented in the renderer.</p><p class="intro">The placeholders in clause 7 are filled from the clause text and the UML.</p></div><article class="dec s-drafted" data-status="drafted" id="core-1">
+<header><h3>Does <code>opacity</code> apply to the whole symbol or to each part?</h3><span class="pill">Not yet reviewed</span></header>
+<div class="cols"><div><h4>In the PR</h4><p>To the portrayal as a whole, as group opacity.</p></div><div><h4>Why</h4><p>SVG and CSS group opacity work this way. Applied to fill and stroke separately, the overlap shows through as a darker band.</p></div></div>
+<p class="ev"><a href="https://henrik716.github.io/cartosym-draft-check/gallery/requirements.html#r-req-core-opacity"><code>/req/core/opacity</code></a> <a href="https://henrik716.github.io/cartosym-draft-check/gallery/index.html#opacity">Gallery card</a></p>
+</article>
+<article class="dec s-drafted" data-status="drafted" id="core-2">
+<header><h3>Which <code>zOrder</code> is drawn on top?</h3><span class="pill">Not yet reviewed</span></header>
+<div class="cols"><div><h4>In the PR</h4><p>A higher <code>zOrder</code> is drawn on top.</p></div><div><h4>Why</h4><p>Clause 7 said only that <code>zOrder</code> modifies the default order, with no direction, so the requirement states one.</p></div></div>
+<p class="ev"><a href="https://henrik716.github.io/cartosym-draft-check/gallery/requirements.html#r-req-core-z-order"><code>/req/core/z-order</code></a> <a href="https://henrik716.github.io/cartosym-draft-check/gallery/index.html#z-order">Gallery card</a></p>
+</article>
+<article class="dec s-agreed" data-status="agreed" id="core-3">
+<header><h3>Does the default marker apply to every geometry type?</h3><span class="pill">Answered by Jérôme</span></header>
+<div class="cols"><div><h4>In the PR</h4><p>Yes. A style that sets no marker draws a white 10 px Dot at each point, line vertex and polygon centroid. A NOTE says a base style normally unsets it for lines and polygons.</p></div><div><h4>Why</h4><p>Rendering raised this. Jérôme confirmed it is intended: points stay visible by default, and geometry-specific defaults would break the single default Symbolizer.</p></div></div>
+<p class="ev"><a href="https://henrik716.github.io/cartosym-draft-check/gallery/index.html#default-marker">Gallery card</a> <a href="https://github.com/henrik716/cartographic-symbology/commit/9485a89">9485a89</a> <a href="https://github.com/henrik716/cartographic-symbology/commit/83d613d">83d613d</a></p>
+</article>
+<article class="dec s-open" data-status="open" id="core-4">
+<header><h3>How does a CartoSym-JSON style clear the default marker?</h3><span class="pill">Open</span></header>
+<div class="cols"><div><h4>In the PR</h4><p>The NOTE says <code>marker: null</code> and <code>marker: { elements: [] }</code> unset it, and <code>marker: { }</code> keeps the default Dot, as Jérôme described. The JSON schema rejects all three today.</p></div><div><h4>Why</h4><p>Tested with Python <code>jsonschema</code>: <code>anyOf</code> in <code>graphicArray</code> fixes only <code>{ elements: [] }</code>, and the other two need a change to <code>marker</code>. <code>label</code> has not been tested yet.</p></div></div>
+<div class="prop"><h4>Proposal</h4><p>Make both schema changes, and test <code>label</code> the same way.</p></div><p class="ev"><a href="https://github.com/opengeospatial/cartographic-symbology/issues/143">#143</a> <a href="https://henrik716.github.io/cartosym-draft-check/gallery/index.html#default-marker">Gallery card</a></p>
+</article></section>
+<section class="cls" id="vector"><div class="clshead"><h2>Basic Vector Styling</h2><p class="meta">9 requirements and 1 permission. Rendered; the alpha-test permission is not implemented.</p><p class="intro">The Image requirement duplicated the Dot one on main, so it is rewritten.</p></div><article class="dec s-partial" data-status="partial" id="vector-1">
+<header><h3>Do <code>gamma</code> and gradients stay in Basic Vector Styling?</h3><span class="pill">Partly answered</span></header>
+<div class="cols"><div><h4>In the PR</h4><p>No. Both are removed from this class, and gradient requirements move to Part 2.</p></div><div><h4>Why</h4><p><code>oertz</code> proposed removing them on <a href="https://github.com/opengeospatial/cartographic-symbology/issues/86">#86</a> in 2024. Jérôme confirmed on <a href="https://github.com/opengeospatial/cartographic-symbology/issues/153">#153</a> that gradients belong in Part 2, but has not commented on <code>gamma</code>.</p></div></div>
+<p class="ev"><a href="https://github.com/opengeospatial/cartographic-symbology/issues/86">#86</a> <a href="https://github.com/opengeospatial/cartographic-symbology/issues/153">#153</a></p>
+</article>
+<article class="dec s-agreed" data-status="agreed" id="vector-2">
+<header><h3>Should Dot have <code>size</code> and <code>color</code>?</h3><span class="pill">Answered by Jérôme</span></header>
+<div class="cols"><div><h4>In the PR</h4><p>Yes. They are the same values as its stroke's <code>width</code> and <code>color</code>: setting one sets the other, and the value set last applies. In Part 1 a Dot is always a filled circle. An outline is two concentric Dots.</p></div><div><h4>Why</h4><p>Table 22 gave a Dot <code>size</code> and <code>color</code>, but the class and schema did not have them. A design with fallback values was dropped because Jérôme wants them in sync, as in libCartoSym. A Dot is a stroke drawn on one point, as if a pen were put down and lifted.</p></div></div>
+<p class="ev"><a href="https://henrik716.github.io/cartosym-draft-check/gallery/requirements.html#r-req-vector-dot"><code>/req/vector/dot</code></a> <a href="https://github.com/opengeospatial/cartographic-symbology/issues/144">#144</a> <a href="https://github.com/henrik716/cartographic-symbology/commit/6588eee">6588eee</a></p>
+</article>
+<article class="dec s-agreed" data-status="agreed" id="vector-3">
+<header><h3>Where is the default hot spot of an Image?</h3><span class="pill">Answered by Jérôme</span></header>
+<div class="cols"><div><h4>In the PR</h4><p>The center, <code>{ 0.5, 0.5 }</code>.</p></div><div><h4>Why</h4><p>This is libCartoSym's default. Jérôme first said top-left, then took it back because centered icons are the common case. The PR followed both answers (83d613d, then 493953d).</p></div></div>
+<p class="ev"><a href="https://henrik716.github.io/cartosym-draft-check/gallery/requirements.html#r-req-vector-image"><code>/req/vector/image</code></a> <a href="https://henrik716.github.io/cartosym-draft-check/gallery/index.html#image-hotspot">Gallery card</a> <a href="https://github.com/henrik716/cartographic-symbology/commit/493953d">493953d</a></p>
+</article>
+<article class="dec s-agreed" data-status="agreed" id="vector-4">
+<header><h3>Do <code>tint</code> and <code>blackTint</code> belong in Part 1, and in which class?</h3><span class="pill">Answered by Jérôme</span></header>
+<div class="cols"><div><h4>In the PR</h4><p>Yes, in <code>/req/vector/image</code>. Each component v becomes <code>tint</code> × v + <code>blackTint</code> × (1 − v). The defaults, white and black, leave the image unchanged.</p></div><div><h4>Why</h4><p>Jérôme confirmed the formula and the class. Recoloring a monochrome icon per category is common (MapLibre <code>icon-color</code>, QGIS SVG parameters), and the use case came from GeoServer in the Vector Tile Pilots.</p></div></div>
+<p class="ev"><a href="https://henrik716.github.io/cartosym-draft-check/gallery/requirements.html#r-req-vector-image"><code>/req/vector/image</code></a> <a href="https://github.com/opengeospatial/cartographic-symbology/issues/145">#145</a></p>
+</article>
+<article class="dec s-agreed" data-status="agreed" id="vector-5">
+<header><h3>What does <code>alphaThreshold</code> do?</h3><span class="pill">Answered by Jérôme</span></header>
+<div class="cols"><div><h4>In the PR</h4><p>An Encoding stores it, and a NOTE says it is meant for picking. No Renderer requirement applies, but a permission lets a Renderer use it as an alpha-test threshold.</p></div><div><h4>Why</h4><p>Jérôme wants it kept as an encoding property. Part 1 has no picking requirements, so a Renderer SHALL would have nothing to attach to.</p></div></div>
+<p class="ev"><a href="https://henrik716.github.io/cartosym-draft-check/gallery/requirements.html#r-per-vector-image-alpha-test"><code>/per/vector/image-alpha-test</code></a> <a href="https://github.com/opengeospatial/cartographic-symbology/issues/145">#145</a></p>
+</article></section>
+<section class="cls" id="casing"><div class="clshead"><h2>Casing and Centerline</h2><p class="meta">2 requirements. Rendered.</p></div><article class="dec s-drafted" data-status="drafted" id="casing-1">
+<header><h3>Is the casing drawn beneath or above the stroke?</h3><span class="pill">Not yet reviewed</span></header>
+<div class="cols"><div><h4>In the PR</h4><p>Beneath the main stroke.</p></div><div><h4>Why</h4><p>Drawn on top it hides the stroke, so it stops being an outline. libCartoSym models casing and center as StrokeStyling, as the draft does.</p></div></div>
+<p class="ev"><a href="https://henrik716.github.io/cartosym-draft-check/gallery/requirements.html#r-req-casing-casing"><code>/req/casing/casing</code></a> <a href="https://henrik716.github.io/cartosym-draft-check/gallery/index.html#casing-order">Gallery card</a></p>
+</article>
+<article class="dec s-agreed" data-status="agreed" id="casing-2">
+<header><h3>What does the casing <code>width</code> measure?</h3><span class="pill">Answered by Jérôme</span></header>
+<div class="cols"><div><h4>In the PR</h4><p>The distance it extends beyond each side of the main stroke, for a total of stroke width + 2 × casing width.</p></div><div><h4>Why</h4><p>Jérôme's answer, with a render. The first draft had it the other way round.</p></div></div>
+<p class="ev"><a href="https://github.com/opengeospatial/cartographic-symbology/issues/147">#147</a> <a href="https://henrik716.github.io/cartosym-draft-check/gallery/index.html#casing-width">Gallery card</a> <a href="https://github.com/henrik716/cartographic-symbology/commit/62a3189">62a3189</a></p>
+</article>
+<article class="dec s-agreed" data-status="agreed" id="casing-3">
+<header><h3>What happens where cased lines cross?</h3><span class="pill">Answered by Jérôme</span></header>
+<div class="cols"><div><h4>In the PR</h4><p>Within a visualization pass, the casings of all features with the same <code>zOrder</code> go beneath the main strokes of those features. A NOTE allows single-pass methods such as signed distance fields if the result is the same.</p></div><div><h4>Why</h4><p>Casings of crossing lines merge, and a bridge with a higher <code>zOrder</code> keeps its casing over the roads below. This matches the painter's algorithm in clause 7, which is in a comment block.</p></div></div>
+<p class="ev"><a href="https://github.com/opengeospatial/cartographic-symbology/issues/147">#147</a> <a href="https://henrik716.github.io/cartosym-draft-check/gallery/index.html#casing-crossing">Gallery card</a> <a href="https://github.com/henrik716/cartographic-symbology/commit/62a3189">62a3189</a></p>
+</article>
+<article class="dec s-open" data-status="open" id="casing-4">
+<header><h3>Is the property called <code>center</code> or <code>centerLine</code>?</h3><span class="pill">Open</span></header>
+<div class="cols"><div><h4>In the PR</h4><p><code>center</code>, from the UML. The JSON schema says <code>centerLine</code>.</p></div><div><h4>Why</h4><p>The two sources disagree, and the PR did not choose for the schema.</p></div></div>
+<div class="prop"><h4>Proposal</h4><p>Use <code>center</code>, as the UML and libCartoSym do, and change the schema.</p></div><p class="ev"><a href="https://github.com/opengeospatial/cartographic-symbology/issues/120">#120</a> <a href="https://henrik716.github.io/cartosym-draft-check/gallery/requirements.html#r-req-casing-center"><code>/req/casing/center</code></a></p>
+</article></section>
+<section class="cls" id="outlines"><div class="clshead"><h2>Font Outlines</h2><p class="meta">4 requirements. Rendered.</p></div><article class="dec s-drafted" data-status="drafted" id="outlines-1">
+<header><h3>Is a font outline drawn beneath or above the glyphs?</h3><span class="pill">Not yet reviewed</span></header>
+<div class="cols"><div><h4>In the PR</h4><p>Beneath the glyphs.</p></div><div><h4>Why</h4><p>This is the convention: SE Halo, the QGIS text buffer and the MapLibre text-halo all work this way.</p></div></div>
+<p class="ev"><a href="https://henrik716.github.io/cartosym-draft-check/gallery/requirements.html#r-req-font-outlines-outline"><code>/req/font-outlines/outline</code></a> <a href="https://henrik716.github.io/cartosym-draft-check/gallery/index.html#font-outline">Gallery card</a></p>
+</article></section>
+<section class="cls" id="fills"><div class="clshead"><h2>Dashes, Hatches, Stipples, Dot Patterns</h2><p class="meta">9 requirements in 4 classes. Rendered. Dot Pattern Fills is new in clause 2.</p></div><article class="dec s-partial" data-status="partial" id="fills-1">
+<header><h3>What unit is <code>dashPattern</code> in?</h3><span class="pill">Partly answered</span></header>
+<div class="cols"><div><h4>In the PR</h4><p>Pixels unless qualified with another unit.</p></div><div><h4>Why</h4><p>Jérôme gave this rule for <code>minSpacing</code>, <code>maxSpacing</code> and gradients, following Graphical Units of Measure. The PR applies it to <code>dashPattern</code> as well, which Jérôme was not asked about directly.</p></div></div>
+<p class="ev"><a href="https://henrik716.github.io/cartosym-draft-check/gallery/requirements.html#r-req-dashes-dash-pattern"><code>/req/dashes/dash-pattern</code></a> <a href="https://henrik716.github.io/cartosym-draft-check/gallery/index.html#dash-units">Gallery card</a> <a href="https://github.com/henrik716/cartographic-symbology/commit/83d613d">83d613d</a></p>
+</article>
+<article class="dec s-open" data-status="open" id="fills-2">
+<header><h3>Which way does the hatch <code>angle</code> turn?</h3><span class="pill">Open</span></header>
+<div class="cols"><div><h4>In the PR</h4><p>The requirement gives no direction. The Hatch table still says clockwise.</p></div><div><h4>Why</h4><p>Jérôme expects it to follow other angles drawn on the map, but wants to see what graphics toolkits do first.</p></div></div>
+<div class="prop"><h4>Proposal</h4><p>Counter-clockwise from 0 pointing right. <code>ebocher</code>, <code>oertz</code> and <code>maxcollombin</code> to check Win32 GDI, X and newer toolkits.</p></div><p class="ev"><a href="https://github.com/opengeospatial/cartographic-symbology/issues/146">#146</a> <a href="https://henrik716.github.io/cartosym-draft-check/gallery/index.html#hatch-angle">Gallery card</a></p>
+</article>
+<article class="dec s-open" data-status="open" id="fills-3">
+<header><h3>What do stipple and dot-pattern dots look like?</h3><span class="pill">Open</span></header>
+<div class="cols"><div><h4>In the PR</h4><p>Not stated. The renderer draws small dots in the fill color.</p></div><div><h4>Why</h4><p>Rendered with the Dot defaults, white 10 px dots read as a different symbol and the fill color disappears.</p></div></div>
+<div class="prop"><h4>Proposal</h4><p>Add dot <code>size</code> and <code>color</code> properties.</p></div><p class="ev"><a href="https://github.com/opengeospatial/cartographic-symbology/issues/84">#84</a> <a href="https://henrik716.github.io/cartosym-draft-check/gallery/index.html#dots">Gallery card</a></p>
+</article></section>
+<section class="cls" id="labels"><div class="clshead"><h2>Labels</h2><p class="meta">2 requirements. Rendered; <code>maxSpacing</code> is not implemented in the renderer.</p></div><article class="dec s-drafted" data-status="drafted" id="labels-1">
+<header><h3>Are labels drawn with their feature or on top of everything?</h3><span class="pill">Not yet reviewed</span></header>
+<div class="cols"><div><h4>In the PR</h4><p>In a separate pass on top of all features and coverages. Labels that cannot be placed without overlap are omitted.</p></div><div><h4>Why</h4><p>Drawn with the feature, a later feature can cover the label.</p></div></div>
+<p class="ev"><a href="https://henrik716.github.io/cartosym-draft-check/gallery/requirements.html#r-req-labels-label"><code>/req/labels/label</code></a> <a href="https://henrik716.github.io/cartosym-draft-check/gallery/index.html#label-pass">Gallery card</a></p>
+</article>
+<article class="dec s-agreed" data-status="agreed" id="labels-2">
+<header><h3>What unit are <code>minSpacing</code> and <code>maxSpacing</code> in?</h3><span class="pill">Answered by Jérôme</span></header>
+<div class="cols"><div><h4>In the PR</h4><p>Pixels unless qualified with another unit.</p></div><div><h4>Why</h4><p>Jérôme's answer.</p></div></div>
+<p class="ev"><a href="https://henrik716.github.io/cartosym-draft-check/gallery/requirements.html#r-req-labels-placement"><code>/req/labels/placement</code></a> <a href="https://henrik716.github.io/cartosym-draft-check/gallery/index.html#label-spacing">Gallery card</a> <a href="https://github.com/henrik716/cartographic-symbology/commit/83d613d">83d613d</a></p>
+</article>
+<article class="dec s-open" data-status="open" id="labels-3">
+<header><h3>Does a higher <code>priority</code> value win?</h3><span class="pill">Open</span></header>
+<div class="cols"><div><h4>In the PR</h4><p>Yes, a higher value wins.</p></div><div><h4>Why</h4><p>QGIS and GeoServer read it this way and <code>zOrder</code> runs in the same direction. libCartoSym's incomplete placement engine places lower values first, as MapLibre does.</p></div></div>
+<div class="prop"><h4>Proposal</h4><p>Keep <code>priority</code> with higher winning. If lower should come first, rename it to something like <code>sortKey</code> or <code>order</code>.</p></div><p class="ev"><a href="https://github.com/opengeospatial/cartographic-symbology/issues/148">#148</a> <a href="https://henrik716.github.io/cartosym-draft-check/gallery/index.html#label-priority">Gallery card</a></p>
+</article></section>
+<section class="cls" id="coverage"><div class="clshead"><h2>Basic Coverage Styling</h2><p class="meta">6 requirements and 1 recommendation. Rendered.</p><p class="intro">The spec's examples 5 to 9 are rendered on real data: Kartverket DTM for Rondane and a Sentinel-2 scene.</p></div><article class="dec s-partial" data-status="partial" id="coverage-1">
+<header><h3>What range is <code>colorChannels</code>, and who scales the bands?</h3><span class="pill">Partly answered</span></header>
+<div class="cols"><div><h4>In the PR</h4><p>Each component is 0 to 1. Example 6 scales the bands in the style, with <code>colorChannels.r: B04 / 2500</code> and so on.</p></div><div><h4>Why</h4><p>Example 6 rendered all white without this. Jérôme's own style divides by 2500, but Jérôme said example 6 assumed pre-scaled bands and did not ask for it to change. The 0 to 1 range comes from the schema, and <a href="https://github.com/opengeospatial/cartographic-symbology/issues/150">#150</a> may change the example again.</p></div></div>
+<p class="ev"><a href="https://henrik716.github.io/cartosym-draft-check/gallery/requirements.html#r-req-coverage-color-channels"><code>/req/coverage/color-channels</code></a> <a href="https://henrik716.github.io/cartosym-draft-check/gallery/index.html#color-channels">Gallery card</a> <a href="https://github.com/henrik716/cartographic-symbology/commit/1d69ffd">1d69ffd</a></p>
+</article>
+<article class="dec s-open" data-status="open" id="coverage-2">
+<header><h3>What about the default <code>colorChannels</code>, and which product is example 6 for?</h3><span class="pill">Open</span></header>
+<div class="cols"><div><h4>In the PR</h4><p>The default still uses the first three fields unscaled. Example 6 assumes no offset, so <code>B04 / 2500</code> comes out 0.4 too bright on Sentinel-2 L2A from baseline 04.00. Example 7 is affected too: the offset does not cancel in a ratio, so an NDVI of 0.71 comes out as 0.45.</p></div><div><h4>Why</h4><p>Scale and offset belong to the data product. Jérôme asked for a range of baselines rather than "or later", and suggested two kinds of style: one hardcoded per product, and one assuming a GeoDataClass that has already applied them.</p></div></div>
+<div class="prop"><h4>Proposal</h4><p>Examples 6 and 7 assume reflectance (<code>B04 * 4</code>). A second version handles digital numbers for baselines 04.00 to 05.11. The TODO becomes a NOTE: field values follow the logical schema, and a Renderer does not look up a product's scale. Posted on <a href="https://github.com/opengeospatial/cartographic-symbology/issues/150">#150</a> on 6 November, waiting for Jérôme.</p></div><p class="ev"><a href="https://github.com/opengeospatial/cartographic-symbology/issues/150">#150</a> <a href="https://henrik716.github.io/cartosym-draft-check/gallery/index.html#color-channels">Gallery card</a></p>
+</article>
+<article class="dec s-partial" data-status="partial" id="coverage-3">
+<header><h3>How do <code>colorMap</code> and <code>opacityMap</code> treat values between and beyond entries?</h3><span class="pill">Partly answered</span></header>
+<div class="cols"><div><h4>In the PR</h4><p>Exact at an entry, interpolated between entries, clamped outside the map. The method is left open, and a recommendation says the result SHOULD stay between the two closest entries.</p></div><div><h4>Why</h4><p>Clamping, exact entries and leaving the method open are Jérôme's answers. The recommendation is the PR's addition: Jérôme discussed overshoot on <a href="https://github.com/opengeospatial/cartographic-symbology/issues/149">#149</a> and did not object, but has not confirmed it. libCartoSym's easing meets it, while a parabola through three entries can overshoot.</p></div></div>
+<p class="ev"><a href="https://henrik716.github.io/cartosym-draft-check/gallery/requirements.html#r-req-coverage-color-map"><code>/req/coverage/color-map</code></a> <a href="https://henrik716.github.io/cartosym-draft-check/gallery/requirements.html#r-rec-coverage-map-interpolation"><code>/rec/coverage/map-interpolation</code></a> <a href="https://github.com/opengeospatial/cartographic-symbology/issues/149">#149</a> <a href="https://henrik716.github.io/cartosym-draft-check/gallery/index.html#color-map">Gallery card</a> <a href="https://github.com/henrik716/cartographic-symbology/commit/dc881e2">dc881e2</a></p>
+</article>
+<article class="dec s-agreed" data-status="agreed" id="coverage-4">
+<header><h3>How are stepped classes written?</h3><span class="pill">Answered by Jérôme</span></header>
+<div class="cols"><div><h4>In the PR</h4><p>With chained conditional expressions. A NOTE gives an example.</p></div><div><h4>Why</h4><p>Jérôme confirmed this, with a possible <code>categorize()</code> function later.</p></div></div>
+<p class="ev"><a href="https://github.com/opengeospatial/cartographic-symbology/issues/149">#149</a> <a href="https://github.com/henrik716/cartographic-symbology/commit/dc881e2">dc881e2</a></p>
+</article>
+<article class="dec s-open" data-status="open" id="coverage-5">
+<header><h3>Does <code>gamma</code> stay in coverage styling?</h3><span class="pill">Open</span></header>
+<div class="cols"><div><h4>In the PR</h4><p><code>/req/coverage/gamma</code> remains as a SHOULD, with <code>gamma</code> as the exponent on color components.</p></div><div><h4>Why</h4><p>It is absent from the coverage UML, tables and schema. As written it darkens above 1, the opposite of SE <code>GammaValue</code>.</p></div></div>
+<div class="prop"><h4>Proposal</h4><p>Remove it. If it stays, use the SE direction and make it a recommendation, since a requirement block should not carry SHOULD.</p></div><p class="ev"><a href="https://github.com/opengeospatial/cartographic-symbology/issues/86">#86</a> <a href="https://henrik716.github.io/cartosym-draft-check/gallery/requirements.html#r-req-coverage-gamma"><code>/req/coverage/gamma</code></a> <a href="https://henrik716.github.io/cartosym-draft-check/gallery/index.html#gamma">Gallery card</a></p>
+</article></section>
+<section class="cls" id="hillshading"><div class="clshead"><h2>Hill Shading</h2><p class="meta">5 requirements. Rendered with Rondane terrain at factors 1, 8 and 32.</p><p class="intro">Examples 8 and 9 (<code>factor: 56</code>) gave no usable result under any reading tried, so this class went to Jérôme as a question. All five answers below are Jérôme's, who also posted renders at factors 1, 8, 32 and 64 on the PR.</p></div><article class="dec s-agreed" data-status="agreed" id="hillshading-1">
+<header><h3>What does <code>factor</code> mean?</h3><span class="pill">Answered by Jérôme</span></header>
+<div class="cols"><div><h4>In the PR</h4><p>It multiplies the horizontal components of the terrain normal before normalizing. A factor of 1 shades the terrain as it is.</p></div><div><h4>Why</h4><p>Jérôme's definition.</p></div></div>
+<p class="ev"><a href="https://henrik716.github.io/cartosym-draft-check/gallery/requirements.html#r-req-hill-shading-factor"><code>/req/hill-shading/factor</code></a> <a href="https://henrik716.github.io/cartosym-draft-check/gallery/index.html#hillshade-factor">Gallery card</a> <a href="https://github.com/henrik716/cartographic-symbology/commit/1d69ffd">1d69ffd</a></p>
+</article>
+<article class="dec s-agreed" data-status="agreed" id="hillshading-2">
+<header><h3>What is the shade value?</h3><span class="pill">Answered by Jérôme</span></header>
+<div class="cols"><div><h4>In the PR</h4><p>The dot product of the unit normal and the unit vector to the sun, clamped to 0 to 1. 0 is full shade and 1 is no shade. It is the key to <code>colorMap</code> and <code>opacityMap</code>.</p></div><div><h4>Why</h4><p>Jérôme's definition.</p></div></div>
+<p class="ev"><a href="https://henrik716.github.io/cartosym-draft-check/gallery/requirements.html#r-req-hill-shading-hill-shading"><code>/req/hill-shading/hill-shading</code></a> <a href="https://henrik716.github.io/cartosym-draft-check/gallery/index.html#hillshade-overlay">Gallery card</a> <a href="https://github.com/henrik716/cartographic-symbology/commit/1d69ffd">1d69ffd</a></p>
+</article>
+<article class="dec s-agreed" data-status="agreed" id="hillshading-3">
+<header><h3>Over what distance is the normal computed?</h3><span class="pill">Answered by Jérôme</span></header>
+<div class="cols"><div><h4>In the PR</h4><p>Between neighboring DEM samples at the resolution being rendered. A NOTE says the factor that suits a style therefore depends on resolution.</p></div><div><h4>Why</h4><p>Jérôme's answer, which also covers multi-resolution tiles.</p></div></div>
+<p class="ev"><a href="https://henrik716.github.io/cartosym-draft-check/gallery/requirements.html#r-req-hill-shading-hill-shading"><code>/req/hill-shading/hill-shading</code></a> <a href="https://github.com/henrik716/cartographic-symbology/commit/83d613d">83d613d</a></p>
+</article>
+<article class="dec s-agreed" data-status="agreed" id="hillshading-4">
+<header><h3>What happens without a <code>colorMap</code>?</h3><span class="pill">Answered by Jérôme</span></header>
+<div class="cols"><div><h4>In the PR</h4><p>Each cell's RGB is multiplied by its shade.</p></div><div><h4>Why</h4><p>Jérôme's answer: as in a typical shader.</p></div></div>
+<p class="ev"><a href="https://henrik716.github.io/cartosym-draft-check/gallery/requirements.html#r-req-hill-shading-hill-shading"><code>/req/hill-shading/hill-shading</code></a> <a href="https://github.com/henrik716/cartographic-symbology/commit/83d613d">83d613d</a></p>
+</article>
+<article class="dec s-agreed" data-status="agreed" id="hillshading-5">
+<header><h3>Which way does the sun <code>azimuth</code> turn?</h3><span class="pill">Answered by Jérôme</span></header>
+<div class="cols"><div><h4>In the PR</h4><p>Clockwise from north, as a compass bearing.</p></div><div><h4>Why</h4><p>Jérôme's rule: directions on the ground are bearings, and angles drawn on the map start at 0 pointing right and turn counter-clockwise.</p></div></div>
+<p class="ev"><a href="https://henrik716.github.io/cartosym-draft-check/gallery/requirements.html#r-req-hill-shading-sun"><code>/req/hill-shading/sun</code></a> <a href="https://henrik716.github.io/cartosym-draft-check/gallery/index.html#sun-azimuth">Gallery card</a> <a href="https://github.com/henrik716/cartographic-symbology/commit/493953d">493953d</a></p>
+</article></section>
+<section class="cls" id="expressions"><div class="clshead"><h2>Expressions and functions</h2><p class="meta">58 requirements in 10 classes: Arithmetic, Math, Conditional, Right-hand, Functions, Parameter Values, Variables, Text Relation, Text Manipulation, Array Relations. Tested in the harness.</p><p class="intro">Section 3 traces where these requirements came from, and section 4 covers libCartoSym. The entries here are the ones that involve a choice.</p></div><article class="dec s-agreed" data-status="agreed" id="expressions-1">
+<header><h3>Is <code>/</code> real or integer division?</h3><span class="pill">Answered by Jérôme</span></header>
+<div class="cols"><div><h4>In the PR</h4><p><code>/</code> is always real-valued, even for two integers. <code>div</code> is integer division.</p></div><div><h4>Why</h4><p>This follows CQL2, as Jérôme confirmed. Integer division turns every NDVI value in example 7 to 0, which the render showed, so an earlier plan to make <code>/</code> integer was dropped. Jérôme agrees libCartoSym should change.</p></div></div>
+<p class="ev"><a href="https://henrik716.github.io/cartosym-draft-check/gallery/requirements.html#r-req-arithmetic-div"><code>/req/arithmetic/div</code></a> <a href="https://henrik716.github.io/cartosym-draft-check/gallery/index.html#ndvi-division">Gallery card</a> <a href="https://github.com/ecere/libCartoSym/issues/11">libCartoSym#11</a></p>
+</article>
+<article class="dec s-drafted" data-status="drafted" id="expressions-2">
+<header><h3>How do <code>intDiv</code> and <code>mod</code> round?</h3><span class="pill">Not yet reviewed</span></header>
+<div class="cols"><div><h4>In the PR</h4><p><code>intDiv</code> truncates toward zero, and <code>mod</code> takes the sign of the first operand.</p></div><div><h4>Why</h4><p>The clauses had no text on this, and CQL2 only names <code>%</code> and <code>div</code>, so the PR supplied it. libCartoSym agrees on <code>-7 % 3</code> but crashes on <code>div</code>. It is not in the decision matrix, so nobody has been asked yet.</p></div></div>
+<p class="ev"><a href="https://henrik716.github.io/cartosym-draft-check/gallery/requirements.html#r-req-arithmetic-int-div"><code>/req/arithmetic/int-div</code></a> <a href="https://henrik716.github.io/cartosym-draft-check/gallery/requirements.html#r-req-arithmetic-mod"><code>/req/arithmetic/mod</code></a></p>
+</article>
+<article class="dec s-drafted" data-status="drafted" id="expressions-3">
+<header><h3>How do <code>round</code> and <code>rint</code> treat halves?</h3><span class="pill">Not yet reviewed</span></header>
+<div class="cols"><div><h4>In the PR</h4><p><code>round</code> goes toward positive infinity and <code>rint</code> goes to the even value. The other math functions have their usual meaning, with angles in radians.</p></div><div><h4>Why</h4><p>The UML gives only names and signatures, and CQL2 has no math functions. The list, and <code>round</code> returning <code>long</code>, match Java's <code>Math</code> class, and the PR's rules are the same as Java's. libCartoSym does not evaluate these yet (<a href="https://github.com/ecere/libCartoSym/issues/9">libCartoSym#9</a>), so only the draft renderer checks them.</p></div></div>
+<p class="ev"><a href="https://henrik716.github.io/cartosym-draft-check/gallery/requirements.html#r-req-math-round"><code>/req/math/round</code></a> <a href="https://henrik716.github.io/cartosym-draft-check/gallery/requirements.html#r-req-math-rint"><code>/req/math/rint</code></a> <a href="https://github.com/ecere/libCartoSym/issues/9">libCartoSym#9</a></p>
+</article>
+<article class="dec s-open" data-status="open" id="expressions-4">
+<header><h3>Does <code>a_equals</code> care about element order?</h3><span class="pill">Open</span></header>
+<div class="cols"><div><h4>In the PR</h4><p>Yes: the same number of elements, equal at each position. <code>a_equals((1, 2), (2, 1))</code> is false.</p></div><div><h4>Why</h4><p>CQL2 Requirement 16 evaluates arrays as sets with no inherent order, which makes those two equal. libCartoSym returns false, like the PR. The harness case only checks the draft's own reading, so it could not catch this.</p></div></div>
+<div class="prop"><h4>Proposal</h4><p>Follow CQL2 and compare as sets. If order is intended, say that it differs from CQL2 <code>A_EQUALS</code>.</p></div><p class="ev"><a href="https://github.com/opengeospatial/cartographic-symbology/issues/154">#154</a> <a href="https://henrik716.github.io/cartosym-draft-check/gallery/requirements.html#r-req-array-relations-a-equals"><code>/req/array-relations/a-equals</code></a></p>
+</article>
+<article class="dec s-open" data-status="open" id="expressions-5">
+<header><h3>What happens when an operand is NULL?</h3><span class="pill">Open</span></header>
+<div class="cols"><div><h4>In the PR</h4><p>The expression requirements do not say. <code>/req/conditional/else-exp</code> takes the else branch when the condition does not evaluate to true.</p></div><div><h4>Why</h4><p>CQL2 gives NULL for arithmetic with a NULL operand, for comparisons, and for <code>LIKE</code>, <code>CASEI</code> and <code>ACCENTI</code>. A missing property is common in real data, so this matters for styles.</p></div></div>
+<div class="prop"><h4>Proposal</h4><p>Say that expressions follow CQL2 for NULL, and that a selector evaluating to NULL does not select the feature. What a Symbolizer property does with NULL still needs an answer.</p></div><p class="ev"><a href="https://github.com/opengeospatial/cartographic-symbology/issues/155">#155</a> <a href="https://henrik716.github.io/cartosym-draft-check/gallery/requirements.html#r-req-conditional-else-exp"><code>/req/conditional/else-exp</code></a></p>
+</article>
+<article class="dec s-drafted" data-status="drafted" id="expressions-6">
+<header><h3>What does a function call with wrong arguments do?</h3><span class="pill">Not yet reviewed</span></header>
+<div class="cols"><div><h4>In the PR</h4><p>A Renderer treats it as invalid.</p></div><div><h4>Why</h4><p>The clauses had no text on this, so the PR supplied it. It is not in the decision matrix either.</p></div></div>
+<p class="ev"><a href="https://henrik716.github.io/cartosym-draft-check/gallery/requirements.html#r-req-functions-call-expressions"><code>/req/functions/call-expressions</code></a></p>
+</article>
+<article class="dec s-agreed" data-status="agreed" id="expressions-7">
+<header><h3>What is <code>coverage</code> in <code>[dataLayer.type = coverage]</code>?</h3><span class="pill">Answered by Jérôme</span></header>
+<div class="cols"><div><h4>In the PR</h4><p>An enumeration value, as clause 17 says. A NOTE on <code>/req/right-hand/operands</code> points there.</p></div><div><h4>Why</h4><p>Jérôme's answer: <code>coverage</code> is the enumeration value, <code>'coverage'</code> is a string accepted for compatibility, and <code>"coverage"</code> is an identifier.</p></div></div>
+<p class="ev"><a href="https://henrik716.github.io/cartosym-draft-check/gallery/requirements.html#r-req-right-hand-operands"><code>/req/right-hand/operands</code></a> <a href="https://github.com/opengeospatial/cartographic-symbology/issues/151">#151</a> <a href="https://github.com/henrik716/cartographic-symbology/commit/cb172ac">cb172ac</a></p>
+</article>
+<article class="dec s-agreed" data-status="agreed" id="expressions-8">
+<header><h3>What syntax does <code>format</code> use?</h3><span class="pill">Answered by Jérôme</span></header>
+<div class="cols"><div><h4>In the PR</h4><p>C <code>printf</code> conversion specifiers (ANSI C).</p></div><div><h4>Why</h4><p>Jérôme's answer. The exact subset is not specified.</p></div></div>
+<p class="ev"><a href="https://henrik716.github.io/cartosym-draft-check/gallery/requirements.html#r-req-text-manipulation-format"><code>/req/text-manipulation/format</code></a> <a href="https://github.com/henrik716/cartographic-symbology/commit/83d613d">83d613d</a></p>
+</article>
+<article class="dec s-open" data-status="open" id="expressions-9">
+<header><h3>How is a chain <code>a ? b : c ? d : e</code> read?</h3><span class="pill">Open</span></header>
+<div class="cols"><div><h4>In the PR</h4><p>The spec does not say. The NOTE on stepped classes uses parentheses and avoids the question.</p></div><div><h4>Why</h4><p>pycartosym reads an unparenthesized chain left-associatively. No issue is filed yet.</p></div></div>
+<div class="prop"><h4>Proposal</h4><p>State the associativity. No proposal yet on which way.</p></div><p class="ev"><a href="https://henrik716.github.io/cartosym-draft-check/gallery/requirements.html#r-req-conditional-condition"><code>/req/conditional/condition</code></a></p>
+</article>
+<article class="dec s-open" data-status="open" id="expressions-10">
+<header><h3>How is <code>contains</code> written in CartoSym-CSS?</h3><span class="pill">Open</span></header>
+<div class="cols"><div><h4>In the PR</h4><p>The requirements define <code>contains</code>, <code>startsWith</code> and <code>endsWith</code> as operations with no syntax. The JSON schema has them, but the CartoSym-CSS grammar has only <code>like</code>.</p></div><div><h4>Why</h4><p>libCartoSym uses operators (<code>~</code>, <code>^^</code>, <code>$</code>) and its source asks whether they should be functions. The harness had guessed function calls and reported them as unsupported, which is now corrected.</p></div></div>
+<div class="prop"><h4>Proposal</h4><p>Use functions such as <code>contains(a, b)</code>, with <code>not contains(a, b)</code> for the negative form.</p></div><p class="ev"><a href="https://github.com/opengeospatial/cartographic-symbology/issues/156">#156</a> <a href="https://henrik716.github.io/cartosym-draft-check/gallery/requirements.html#r-req-text-relation-contains"><code>/req/text-relation/contains</code></a> <a href="https://henrik716.github.io/cartosym-draft-check/gallery/requirements.html#r-req-text-relation-starts-with"><code>/req/text-relation/starts-with</code></a> <a href="https://henrik716.github.io/cartosym-draft-check/gallery/requirements.html#r-req-text-relation-ends-with"><code>/req/text-relation/ends-with</code></a></p>
+</article>
+<article class="dec s-open" data-status="open" id="expressions-11">
+<header><h3>Do <code>notLike</code>, <code>notContains</code> and the others need their own JSON encoding?</h3><span class="pill">Open</span></header>
+<div class="cols"><div><h4>In the PR</h4><p>They are separate operations in the text. The JSON schema has none of them.</p></div><div><h4>Why</h4><p>CQL2 expresses them as <code>not</code> applied to the positive form.</p></div></div>
+<div class="prop"><h4>Proposal</h4><p>Encode them as <code>not</code> applied to the positive form, with no schema change.</p></div><p class="ev"><a href="https://github.com/opengeospatial/cartographic-symbology/issues/140">#140</a> <a href="https://henrik716.github.io/cartosym-draft-check/gallery/requirements.html#r-req-text-relation-not-like"><code>/req/text-relation/not-like</code></a></p>
+</article>
+<article class="dec s-open" data-status="open" id="expressions-12">
+<header><h3><code>caseInsensitize</code> and <code>accentInsensitize</code>, or <code>casei</code> and <code>accenti</code>?</h3><span class="pill">Open</span></header>
+<div class="cols"><div><h4>In the PR</h4><p>The long names, from the model. The JSON schema and libCartoSym use the short CQL2 names.</p></div><div><h4>Why</h4><p>In CQL2-Text and CartoSym-CSS function names are case-insensitive. In CQL2-JSON and CartoSym-JSON they are lower case (Jérôme, <a href="https://github.com/opengeospatial/cartographic-symbology/issues/152">#152</a>).</p></div></div>
+<div class="prop"><h4>Proposal</h4><p>Use the CQL2 names <code>casei</code> and <code>accenti</code>.</p></div><p class="ev"><a href="https://github.com/opengeospatial/cartographic-symbology/issues/140">#140</a> <a href="https://henrik716.github.io/cartosym-draft-check/gallery/requirements.html#r-req-text-manipulation-accent-insensitize"><code>/req/text-manipulation/accent-insensitize</code></a></p>
+</article>
+<article class="dec s-agreed" data-status="agreed" id="expressions-13">
+<header><h3>What counts as an accent?</h3><span class="pill">Answered by Jérôme</span></header>
+<div class="cols"><div><h4>In the PR</h4><p>What CQL2 <code>accenti</code> does: accent stripping and diacritic folding. A NOTE says this also folds letters like <code>Ø</code> and <code>Ł</code>, as libCartoSym does, and points to the Unicode TR #30 table. No annex.</p></div><div><h4>Why</h4><p>Jérôme prefers libCartoSym's behavior, from the table in Unicode TR #30, and asks for pointers to where the tables and errata can be found. Only 127 of eC's 936 entries are ever used, since accents are removed first. 7 of those are wrong (Cyrillic), filed as <a href="https://github.com/ecere/eC/issues/7">eC#7</a>.</p></div></div>
+<p class="ev"><a href="https://github.com/opengeospatial/cartographic-symbology/issues/152">#152</a> <a href="https://henrik716.github.io/cartosym-draft-check/gallery/requirements.html#r-req-text-manipulation-accent-insensitize"><code>/req/text-manipulation/accent-insensitize</code></a> <a href="https://github.com/ecere/eC/issues/7">eC#7</a></p>
+</article></section>
+<section class="cls" id="encodings"><div class="clshead"><h2>CartoSym-JSON and CartoSym-CSS</h2><p class="meta">7 + 7 requirements, both classes new. Checked through pycartosym conversion and libCartoSym parsing, with 2 rendered samples.</p><p class="intro">Written from the existing clause text. The rules for combining selectors and for <code>.include</code> order are the ones to read closely.</p></div><article class="dec s-partial" data-status="partial" id="encodings-1">
+<header><h3>Can one Dot set both <code>size</code> and <code>stroke.width</code>?</h3><span class="pill">Partly answered</span></header>
+<div class="cols"><div><h4>In the PR</h4><p>Not within a single styling rule, in CartoSym-JSON. The schema enforces this with a <code>not</code> on Dot. Across rules, and in CartoSym-CSS, the last value set applies.</p></div><div><h4>Why</h4><p>JSON members have no order (RFC 8259), so "last set wins" means nothing inside one object. Jérôme asked whether to call it undefined or invalid, and the PR chose invalid so a validator can flag it. "Single styling rule" follows Jérôme's comment on <a href="https://github.com/opengeospatial/cartographic-symbology/issues/144">#144</a>, but Jérôme has not confirmed the final wording.</p></div></div>
+<p class="ev"><a href="https://henrik716.github.io/cartosym-draft-check/gallery/requirements.html#r-req-json-dot-size-color"><code>/req/json/dot-size-color</code></a> <a href="https://github.com/opengeospatial/cartographic-symbology/issues/144">#144</a> <a href="https://github.com/henrik716/cartographic-symbology/commit/0405c09">0405c09</a></p>
+</article>
+<article class="dec s-drafted" data-status="drafted" id="encodings-2">
+<header><h3>How do CartoSym-CSS selectors combine?</h3><span class="pill">Not yet reviewed</span></header>
+<div class="cols"><div><h4>In the PR</h4><p>Expression selectors with AND, data layer names with OR, and those two groups with AND.</p></div><div><h4>Why</h4><p>Taken from clause 17.</p></div></div>
+<p class="ev"><a href="https://henrik716.github.io/cartosym-draft-check/gallery/requirements.html#r-req-cscss-selectors"><code>/req/cscss/selectors</code></a></p>
+</article>
+<article class="dec s-open" data-status="open" id="encodings-3">
+<header><h3>What does <code>$include</code> point at after conversion?</h3><span class="pill">Open</span></header>
+<div class="cols"><div><h4>In the PR</h4><p>It keeps pointing at the <code>.cscss</code> file, which a CartoSym-JSON reader cannot read. The draft does not say whether an included file must use the same encoding.</p></div><div><h4>Why</h4><p>Found while checking conversion. No issue is filed yet.</p></div></div>
+<div class="prop"><h4>Proposal</h4><p>No proposal yet.</p></div><p class="ev"><a href="https://henrik716.github.io/cartosym-draft-check/gallery/requirements.html#r-req-json-include"><code>/req/json/include</code></a></p>
+</article></section>
+<section class="cls" id="gradients"><div class="clshead"><h2>Part 2: Gradient Fills</h2><p class="meta">6 requirements. Rendered.</p><p class="intro">The only Part 2 content in this PR. Other Part 2 fixes are on a separate branch.</p></div><article class="dec s-agreed" data-status="agreed" id="gradients-1">
+<header><h3>Where do the gradient requirements go?</h3><span class="pill">Answered by Jérôme</span></header>
+<div class="cols"><div><h4>In the PR</h4><p>To <code>2-shapes/requirements/rc-gradients.adoc</code>, rewritten against the Part 2 Gradient model (<code>keys</code>, <code>angle</code>, <code>position</code>, <code>size</code>), with <code>cartosym-2/1.0</code> URIs.</p></div><div><h4>Why</h4><p>Follows <a href="https://github.com/opengeospatial/cartographic-symbology/issues/86">#86</a>, and Jérôme confirmed on <a href="https://github.com/opengeospatial/cartographic-symbology/issues/153">#153</a>. Part 1's requirements, tables and schema have no gradient properties left.</p></div></div>
+<p class="ev"><a href="https://github.com/opengeospatial/cartographic-symbology/issues/86">#86</a> <a href="https://github.com/opengeospatial/cartographic-symbology/issues/153">#153</a></p>
+</article>
+<article class="dec s-agreed" data-status="agreed" id="gradients-2">
+<header><h3>How is the gradient <code>angle</code> measured?</h3><span class="pill">Answered by Jérôme</span></header>
+<div class="cols"><div><h4>In the PR</h4><p>In degrees, 0 pointing right, counter-clockwise as seen on the map.</p></div><div><h4>Why</h4><p>Jérôme's rule for angles drawn on the map. "As seen on the map" stops it being read in pixel coordinates, where y points down.</p></div></div>
+<p class="ev"><a href="https://henrik716.github.io/cartosym-draft-check/gallery/index.html#gradient-angle">Gallery card</a> <a href="https://github.com/henrik716/cartographic-symbology/commit/493953d">493953d</a></p>
+</article>
+<article class="dec s-open" data-status="open" id="gradients-3">
+<header><h3>Are <code>position</code> and <code>size</code> relative to each feature or to the map?</h3><span class="pill">Open</span></header>
+<div class="cols"><div><h4>In the PR</h4><p>Units are pixels unless qualified. The frame is not stated, and neither is the <code>repeating</code> type.</p></div><div><h4>Why</h4><p>Jérôme prefers to wait and compare real renderers before deciding.</p></div></div>
+<div class="prop"><h4>Proposal</h4><p>Wait until two or three renderers can be compared.</p></div><p class="ev"><a href="https://github.com/opengeospatial/cartographic-symbology/issues/153">#153</a> <a href="https://henrik716.github.io/cartosym-draft-check/gallery/index.html#gradient-frame">Gallery card</a></p>
+</article></section>
+</section>
+
+<section class="block" id="open">
+<h2>6. Open decisions</h2>
+<p>All 15, grouped by where each one stands, with the PR's proposal. None of these has to be settled today. If time runs short, this is a good place to start.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Question</th><th>Proposal</th><th>Issue</th></tr></thead>
+<tbody>
+<tr class="grp"><th colspan="3" scope="colgroup">Affects merging (2)</th></tr><tr><td><a href="#core-4">How does a CartoSym-JSON style clear the default marker?</a></td><td>Make both schema changes, and test <code>label</code> the same way.</td><td class="nowrap"><a href="https://github.com/opengeospatial/cartographic-symbology/issues/143">#143</a></td></tr>
+<tr><td><a href="#coverage-5">Does <code>gamma</code> stay in coverage styling?</a></td><td>Remove it. If it stays, use the SE direction and make it a recommendation, since a requirement block should not carry SHOULD.</td><td class="nowrap"><a href="https://github.com/opengeospatial/cartographic-symbology/issues/86">#86</a></td></tr>
+<tr class="grp"><th colspan="3" scope="colgroup">Has a proposal, for discussion (8)</th></tr><tr><td><a href="#casing-4">Is the property called <code>center</code> or <code>centerLine</code>?</a></td><td>Use <code>center</code>, as the UML and libCartoSym do, and change the schema.</td><td class="nowrap"><a href="https://github.com/opengeospatial/cartographic-symbology/issues/120">#120</a></td></tr>
+<tr><td><a href="#fills-3">What do stipple and dot-pattern dots look like?</a></td><td>Add dot <code>size</code> and <code>color</code> properties.</td><td class="nowrap"><a href="https://github.com/opengeospatial/cartographic-symbology/issues/84">#84</a></td></tr>
+<tr><td><a href="#labels-3">Does a higher <code>priority</code> value win?</a></td><td>Keep <code>priority</code> with higher winning. If lower should come first, rename it to something like <code>sortKey</code> or <code>order</code>.</td><td class="nowrap"><a href="https://github.com/opengeospatial/cartographic-symbology/issues/148">#148</a></td></tr>
+<tr><td><a href="#coverage-2">What about the default <code>colorChannels</code>, and which product is example 6 for?</a></td><td>Examples 6 and 7 assume reflectance (<code>B04 * 4</code>). A second version handles digital numbers for baselines 04.00 to 05.11. The TODO becomes a NOTE: field values follow the logical schema, and a Renderer does not look up a product's scale. Posted on <a href="https://github.com/opengeospatial/cartographic-symbology/issues/150">#150</a> on 6 November, waiting for Jérôme.</td><td class="nowrap"><a href="https://github.com/opengeospatial/cartographic-symbology/issues/150">#150</a></td></tr>
+<tr><td><a href="#expressions-4">Does <code>a_equals</code> care about element order?</a></td><td>Follow CQL2 and compare as sets. If order is intended, say that it differs from CQL2 <code>A_EQUALS</code>.</td><td class="nowrap"><a href="https://github.com/opengeospatial/cartographic-symbology/issues/154">#154</a></td></tr>
+<tr><td><a href="#expressions-10">How is <code>contains</code> written in CartoSym-CSS?</a></td><td>Use functions such as <code>contains(a, b)</code>, with <code>not contains(a, b)</code> for the negative form.</td><td class="nowrap"><a href="https://github.com/opengeospatial/cartographic-symbology/issues/156">#156</a></td></tr>
+<tr><td><a href="#expressions-11">Do <code>notLike</code>, <code>notContains</code> and the others need their own JSON encoding?</a></td><td>Encode them as <code>not</code> applied to the positive form, with no schema change.</td><td class="nowrap"><a href="https://github.com/opengeospatial/cartographic-symbology/issues/140">#140</a></td></tr>
+<tr><td><a href="#expressions-12"><code>caseInsensitize</code> and <code>accentInsensitize</code>, or <code>casei</code> and <code>accenti</code>?</a></td><td>Use the CQL2 names <code>casei</code> and <code>accenti</code>.</td><td class="nowrap"><a href="https://github.com/opengeospatial/cartographic-symbology/issues/140">#140</a></td></tr>
+<tr class="grp"><th colspan="3" scope="colgroup">Needs more input (4)</th></tr><tr><td><a href="#fills-2">Which way does the hatch <code>angle</code> turn?</a></td><td>Counter-clockwise from 0 pointing right. <code>ebocher</code>, <code>oertz</code> and <code>maxcollombin</code> to check Win32 GDI, X and newer toolkits.</td><td class="nowrap"><a href="https://github.com/opengeospatial/cartographic-symbology/issues/146">#146</a></td></tr>
+<tr><td><a href="#expressions-5">What happens when an operand is NULL?</a></td><td>Say that expressions follow CQL2 for NULL, and that a selector evaluating to NULL does not select the feature. What a Symbolizer property does with NULL still needs an answer.</td><td class="nowrap"><a href="https://github.com/opengeospatial/cartographic-symbology/issues/155">#155</a></td></tr>
+<tr><td><a href="#expressions-9">How is a chain <code>a ? b : c ? d : e</code> read?</a></td><td>State the associativity. No proposal yet on which way.</td><td class="nowrap">not filed</td></tr>
+<tr><td><a href="#encodings-3">What does <code>$include</code> point at after conversion?</a></td><td>No proposal yet.</td><td class="nowrap">not filed</td></tr>
+<tr class="grp"><th colspan="3" scope="colgroup">Can wait for now (1)</th></tr><tr><td><a href="#gradients-3">Are <code>position</code> and <code>size</code> relative to each feature or to the map?</a></td><td>Wait until two or three renderers can be compared.</td><td class="nowrap"><a href="https://github.com/opengeospatial/cartographic-symbology/issues/153">#153</a></td></tr>
+</tbody></table></div>
+</section>
+
+<section class="block" id="merge">
+<h2>7. Before merge</h2>
+<p>These are problems with the PR itself, separate from the open questions above. The example and schema results were checked on 6 November by validating all 11 examples from main against both schemas.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Problem</th><th>Fix</th></tr></thead>
+<tbody>
+<tr><td><strong>Example 11 fails the branch's schema.</strong> On main, Dot has <code>"size": "10"</code> as a string. The PR's new <code>size</code> rejects strings, so a file that validates today stops validating. Max's <a href="https://github.com/opengeospatial/cartographic-symbology/issues/135">#135</a> changes it to a number.</td><td>Merge <a href="https://github.com/opengeospatial/cartographic-symbology/issues/135">#135</a> first, or fix it here.</td></tr>
+<tr><td><strong>The branch is 3 commits behind main and lacks 9 <code>.cs.json</code> examples.</strong> Git reports no conflict, but <code>6-coverage-sentinel2.cs.json</code> on main is still unscaled while the PR changes only the <code>.cscss</code>.</td><td>Rebase, regenerate example 6, and validate all 11 examples.</td></tr>
+<tr><td><strong>The marker NOTE contradicts <code>/req/json/schema</code>.</strong> The NOTE offers <code>marker: null</code>, the requirement says a style must validate, and the schema rejects it.</td><td>Decide <a href="https://github.com/opengeospatial/cartographic-symbology/issues/143">#143</a> before merging.</td></tr>
+<tr><td><strong>Gamma is still open.</strong> <code>/req/coverage/gamma</code> and its TODO point at <a href="https://github.com/opengeospatial/cartographic-symbology/issues/86">#86</a>, so the PR now says <code>Refs <a href="https://github.com/opengeospatial/cartographic-symbology/issues/86">#86</a></code> rather than <code>Fixes <a href="https://github.com/opengeospatial/cartographic-symbology/issues/86">#86</a></code>.</td><td>Decide gamma before merging.</td></tr>
+<tr><td><strong>The document has not been built with Metanorma.</strong> The PR description says so, and nothing later says otherwise. Cross-references were checked by script.</td><td>Run a build.</td></tr>
+<tr><td><strong>Two other changes overlap.</strong> <a href="https://github.com/opengeospatial/cartographic-symbology/issues/88">#88</a> adds a figure after the <code>fill</code> requirement. The <code>part2-class-names</code> branch for <a href="https://github.com/opengeospatial/cartographic-symbology/issues/134">#134</a> may conflict in <code>2-shapes/sections/clause_2_conformance.adoc</code>.</td><td>Whichever goes second rebases.</td></tr>
+</tbody></table></div>
+</section>
+
+<section class="block" id="evidence">
+<h2>8. Evidence and its limits</h2>
+<p>All 135 requirements are checked in at least one way: rendered, tested in the harness, or checked through the encodings. <a href="https://henrik716.github.io/cartosym-draft-check/gallery/requirements.html">The requirements page</a> lists how each one is checked. The harness has 93 cases, with expected values taken from the requirement text.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Implementation</th><th class="n">Pass</th><th class="n">Fail</th><th class="n">Unsupp.</th><th class="n">Crash</th><th class="n">Error</th><th>Note</th></tr></thead>
+<tbody>
+<tr><th scope="row">Draft renderer</th><td class="n">93</td><td class="n">0</td><td class="n">0</td><td class="n">0</td><td class="n">0</td><td>Implements the draft, so this shows it matches the text.</td></tr>
+<tr><th scope="row">pycartosym 0.6.1</th><td class="n">85</td><td class="n">0</td><td class="n">0</td><td class="n">0</td><td class="n">0</td><td>Conversion checked for 55 cases, parse-only for the rest.</td></tr>
+<tr><th scope="row">libCartoSym main (f180e04)</th><td class="n">47</td><td class="n">5</td><td class="n">28</td><td class="n">3</td><td class="n">2</td><td>Built from GitHub by CI, Nov 6.</td></tr>
+<tr><th scope="row">libCartoSym pip 0.0.1</th><td class="n">43</td><td class="n">5</td><td class="n">28</td><td class="n">3</td><td class="n">6</td><td>The released package, run on Nov 6.</td></tr>
+</tbody></table></div>
+<ul class="rules">
+<li><strong>Tested does not always mean independently tested.</strong> libCartoSym main agrees on 47 of the 93 cases, and on 2 of the 23 math cases. Elsewhere only the draft renderer evaluates the expression, so a pass shows the renderer matches the text. Sections 3 and 4 give the detail.</li>
+<li><strong>A FAIL can go either way.</strong> It means the implementation disagrees with the draft, and either one may be wrong.</li>
+<li><strong>The renderer implements the draft.</strong> Passing shows it matches the text, not that the text is right. It is a discussion tool, not a reference implementation.</li>
+<li><strong>No independent render yet.</strong> The threads show no render kit run through another renderer. That is the one real independent check still to do.</li>
+<li><strong>Not implemented in the renderer:</strong> the alpha-test permission, the visualization time and <code>capabilities</code> system identifiers, and label <code>maxSpacing</code>.</li>
+<li><strong>Implementation bugs went upstream.</strong> pycartosym's reports are fixed and released. libCartoSym issues <a href="https://github.com/ecere/libCartoSym/issues/5">#5</a> to <a href="https://github.com/ecere/libCartoSym/issues/9">#9</a> and <a href="https://github.com/ecere/libCartoSym/issues/11">#11</a> are open.</li>
+</ul>
+</section>
+<footer>Drafted with Claude from the PR, its issues, the gallery and the test reports. Status counts are computed from the entries on this page. Updated 6 November with sections 3 and 4.</footer>
+</main>
+</div>
+<div id="tip" role="status"></div>
+<script>
+(function () {
+  var tip = document.getElementById('tip');
+  document.querySelectorAll('[data-tip]').forEach(function (el) {
+    el.addEventListener('mousemove', function (e) {
+      tip.textContent = el.getAttribute('data-tip');
+      tip.style.display = 'block';
+      tip.style.left = Math.min(e.clientX + 12, window.innerWidth - 290) + 'px';
+      tip.style.top = (e.clientY + 14) + 'px';
+    });
+    el.addEventListener('mouseleave', function () { tip.style.display = 'none'; });
+  });
+  var buttons = document.querySelectorAll('.filters button');
+  var classes = document.querySelectorAll('#classes .cls');
+  buttons.forEach(function (b) {
+    b.addEventListener('click', function () {
+      var f = b.getAttribute('data-f');
+      buttons.forEach(function (o) { o.setAttribute('aria-pressed', o === b ? 'true' : 'false'); });
+      classes.forEach(function (s) {
+        var shown = 0;
+        s.querySelectorAll('.dec').forEach(function (d) {
+          var on = f === 'all' || d.getAttribute('data-status') === f;
+          d.hidden = !on;
+          d.style.display = on ? '' : 'none';
+          if (on) shown++;
+        });
+        s.style.display = shown ? '' : 'none';
+      });
+    });
+  });
+})();
+</script>
+</body>
+</html>
