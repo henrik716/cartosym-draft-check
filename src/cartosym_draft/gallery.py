@@ -219,8 +219,9 @@ def _vector_decisions() -> list[Decision]:
                 Variant("Pixels", DRAFT, is_draft=True),
                 Variant("Multiples of stroke width", DRAFT.with_(dash_units="stroke-width")),
             ],
-            evidence="Jérôme: units are as in Graphical Units of Measure, pixels unless qualified with another unit. The PR "
-                     "now says so for dashPattern, as SE does for `stroke-dasharray`; MapLibre's `line-dasharray` is in "
+            evidence="Jérôme gave this rule for label spacing and gradients: units are as in Graphical Units of Measure, pixels "
+                     "unless qualified with another unit. The PR applies it to dashPattern too, as SE does for "
+                     "`stroke-dasharray`; MapLibre's `line-dasharray` is in "
                      "multiples of the line width.",
         ),
         Decision(
@@ -512,7 +513,7 @@ def _coverage_decisions() -> list[Decision]:
             ],
             evidence="Clamping is confirmed (Jérôme, #149). The draft now says that colors are interpolated between "
                      "entries without fixing the method (libCartoSym interpolates quadratically; this renderer linearly), and "
-                     "that a value equal to an entry takes exactly that entry's color. A recommendation says the result should stay "
+                     "that a value equal to an entry takes exactly that entry's color (Jérôme, #149). The PR adds a recommendation that the result should stay "
                      "between the two closest entries (a parabola through three entries can overshoot). Stepped classes for "
                      "continuous values are written with conditional expressions (Jérôme: OK for Part 1). SE 1.1 makes the choice explicit with Interpolate and Categorize functions (its own DEM "
                      "example uses Categorize); GeoServer's ColorMap defaults to an interpolated ramp.",
@@ -550,9 +551,10 @@ def _coverage_decisions() -> list[Decision]:
                         note="Band values in the hundreds and thousands clamp to 1, so every cell is drawn white. The faint "
                              "shapes are the clouds, which the SCL rules make transparent or half transparent."),
             ],
-            evidence="Jérôme: colorChannels is 0..1 and the example assumed pre-scaled bands; one of his working examples "
-                     "divides each band by 2500. The PR now states the 0..1 range and scales example 6 that way. Still to "
-                     "raise: the defaults table gives colorChannels as fields[0], fields[1], fields[2], unscaled (#150).",
+            evidence="Jérôme: the example assumed pre-scaled bands, and one of Jérôme's working examples divides each band by "
+                     "2500. The 0..1 range comes from the schema. The PR states it and scales example 6 that way, and #150 "
+                     "proposes that examples 6 and 7 assume reflectance instead, with a second version for digital numbers. "
+                     "The defaults table also gives colorChannels as fields[0], fields[1], fields[2], unscaled (#150).",
             **on_relief,
         ),
         Decision(
@@ -596,7 +598,7 @@ def _coverage_decisions() -> list[Decision]:
                      "factor 1 is the plain dot product of the sun direction and the normal. The PR now says so, and the "
                      "draft renderer uses the same formula. His renders of the Tibetan Plateau, with pixels of several km, "
                      "show faint relief at 1, clear relief at 8 and strong relief at 32 and 64. On Rondane at 150 m cells "
-                     "the slopes per cell are steeper than at his pixel size, so the same factor gives stronger relief: "
+                     "the slopes per cell are steeper than at the pixel size of those renders, so the same factor gives stronger relief: "
                      "1 already shows it clearly, 8 is strong, and the example's 56 saturates it. Jérôme: the "
                      "normal is computed between the samples of the DEM at the resolution being rendered, over the "
                      "horizontal distance between them, in the same units as the heights, so the factor that suits a "

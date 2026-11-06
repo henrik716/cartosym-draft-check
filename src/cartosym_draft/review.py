@@ -64,15 +64,16 @@ MATRIX: dict[str, Row] = {
     "hatch-angle": Row("clockwise (table)", "Probably counter-clockwise from 0 pointing right, as other angles drawn on "
                        "the map (Jérôme); check graphics toolkits first.", "TODO(review), #146",
                        "What do Win32 GDI, X and newer toolkits do? (@ebocher, @oertz, @maxcollombin)"),
-    "dash-units": Row("pixels unless uom-qualified", "Done, as Jérôme answered (as SE).", "resolved"),
+    "dash-units": Row("pixels unless uom-qualified", "Done: applies the rule Jérôme gave for spacing and gradients (as SE).",
+                      "resolved", "OK for dashPattern too?"),
     "image-hotspot": Row("centre (0.5, 0.5)", "Keep as drafted (Jérôme confirmed; same as libCartoSym).",
                          "resolved; tint and blackTint added, alphaThreshold for picking (permission for the alpha "
                          "test), #145"),
     "default-marker": Row("a single default Dot (white, 10 px)",
                           "Keep, as intended (Jérôme); clearing it (`marker: null`) is now in the NOTE. Fix the schema "
                           "(`anyOf` in graphicArray plus a `marker` change, #143). Done: Dot has `size` and `color`, the same "
-                          "values as its stroke's width and color, always a filled circle; CS-JSON forbids setting both in "
-                          "one object (#144).", "NOTE + TODO(review), #143; resolved, #144", "Schema change OK?"),
+                          "values as its stroke's width and color, always a filled circle; CS-JSON forbids setting both within "
+                          "a single styling rule (#144).", "NOTE + TODO(review), #143; resolved, #144", "Schema change OK?"),
     "dots": Row("not stated", "Add dot size and color properties; until then, small dots in the fill color.",
                 "TODO(review), #84", "Should stipple/dot-pattern dots have their own size and color?"),
     "label-priority": Row("higher value wins", "Keep as drafted (as QGIS and GeoServer, and as zOrder); libCartoSym's "
@@ -82,12 +83,15 @@ MATRIX: dict[str, Row] = {
     "label-pass": Row("separate pass on top", "Keep as drafted.", "unchanged"),
     "ndvi-division": Row("real quotient", "Keep as drafted (confirmed by Jérôme, as CQL2); libCartoSym should change "
                          "(it returns 0 for example 7; Jérôme agrees).", "unchanged, ecere/libCartoSym#11"),
-    "color-channels": Row("0..1; example 6 scales the bands", "Done: as Jérôme's renderer, the style scales the bands "
-                          "(÷ 2500 in example 6).", "resolved; default: TODO(review), #150",
-                          "The default colorChannels (fields[0..2]) is unscaled too: keep it?"),
+    "color-channels": Row("0..1; example 6 scales the bands", "Example 6 scales the bands in the style (÷ 2500), as one of "
+                          "Jérôme's own styles does, though Jérôme said the example assumed pre-scaled bands. Proposed on "
+                          "#150: examples 6 and 7 assume reflectance, with a second version for digital numbers.",
+                          "TODO(review), #150", "Which data should examples 6 and 7 assume, and is the unscaled default OK?"),
     "color-map": Row("interpolate (method open), exact at entries, clamp outside",
-                     "Done, as Jérôme answered; libCartoSym interpolates quadratically. SHOULD stay between the two "
-                     "closest entries; stepped classes via conditional expressions (Jérôme).", "recommendation + NOTE, #149"),
+                     "Done, as Jérôme answered (clamp, exact at entries, method open); libCartoSym interpolates "
+                     "quadratically. Stepped classes via conditional expressions (Jérôme). Added by the PR: a "
+                     "recommendation that the result stays between the two closest entries.",
+                     "recommendation + NOTE, #149", "Recommendation OK?"),
     "gamma": Row("c ^ gamma (darkens above 1)", "Remove from coverage (not in the model); if kept, use SE's direction.",
                  "TODO(review), #86"),
     "hillshade-factor": Row("multiplies the horizontal components of the normal", "Done, as Jérôme's renderer, "
@@ -113,7 +117,17 @@ EXTRA_ROWS: list[tuple[str, Row]] = [
      Row("any expression on the right-hand side", "Done: where an enumeration is expected, a bare word is an "
          "enumeration value (clause 17); a NOTE now points there.", "resolved, #151")),
     ("center vs centerLine",
-     Row("center (UML)", "Decide one name.", "TODO(review), #120", "Which name is intended?")),
+     Row("center (UML)", "Use center, as the UML and libCartoSym do, and change the schema.", "TODO(review), #120",
+         "Which name is intended?")),
+    ("a_equals and element order",
+     Row("compares in order, as libCartoSym does", "Follow CQL2 Requirement 16 and compare as sets. If order is intended, "
+         "say that it differs from CQL2.", "open, #154", "Compare as sets?")),
+    ("NULL in expressions",
+     Row("not stated", "Follow CQL2 for NULL, and a selector evaluating to NULL does not select the feature.",
+         "open, #155", "What does a Symbolizer property do with NULL?")),
+    ("CartoSym-CSS syntax for contains, startsWith, endsWith",
+     Row("no syntax (the grammar has only like)", "Use functions such as `contains(a, b)`. libCartoSym has operators "
+         "(`~`, `^^`, `$`).", "open, #156", "Functions or operators?")),
     ("Schema: colors from expressions, empty arrays, and clearing the marker",
      Row("(schema on main)", "Make the oneOf branches exclusive (e.g., require r, g, b in the color object). For the "
          "marker: `anyOf` in graphicArray, and `marker` accepting null and an object without elements (tested).",
