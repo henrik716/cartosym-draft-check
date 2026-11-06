@@ -1,0 +1,17 @@
+# Operations with a null operand (/req/core/operations, issue #155): expressions
+# follow CQL2, so arithmetic, comparisons and LIKE give null, and logic is
+# three-valued: `false and null` is false, `true or null` is true, and `not null`
+# is null. `null` is written here as a literal; a missing property behaves the same.
+
+- {id: null-arithmetic, requirement: /req/core/operations, kind: expression, input: "null + 1", json: {op: "+", args: [null, 1]}, expect: "null"}
+- {id: null-equal, requirement: /req/core/operations, kind: expression, input: "null = 1", json: {op: "=", args: [null, 1]}, expect: "null"}
+- {id: null-not-equal, requirement: /req/core/operations, kind: expression, input: "null <> 1", json: {op: "<>", args: [null, 1]}, expect: "null"}
+- {id: null-compare, requirement: /req/core/operations, kind: expression, input: "null > 1", json: {op: ">", args: [null, 1]}, expect: "null"}
+- {id: null-like, requirement: /req/core/operations, kind: expression, input: "null like 'a%'", json: {op: like, args: [null, "a%"]}, expect: "null"}
+- {id: null-not, requirement: /req/core/operations, kind: expression, input: "not (null > 1)", json: {op: not, args: [{op: ">", args: [null, 1]}]}, expect: "null",
+   note: "This is why `not (x > 1)` does not select a feature with no `x`."}
+- {id: null-and-true, requirement: /req/core/operations, kind: expression, input: "(null > 1) and true", json: {op: and, args: [{op: ">", args: [null, 1]}, true]}, expect: "null"}
+- {id: null-and-false, requirement: /req/core/operations, kind: expression, input: "(null > 1) and false", json: {op: and, args: [{op: ">", args: [null, 1]}, false]}, expect: "false"}
+- {id: null-or-true, requirement: /req/core/operations, kind: expression, input: "(null > 1) or true", json: {op: or, args: [{op: ">", args: [null, 1]}, true]}, expect: "true"}
+- {id: null-or-false, requirement: /req/core/operations, kind: expression, input: "(null > 1) or false", json: {op: or, args: [{op: ">", args: [null, 1]}, false]}, expect: "null"}
+- {id: null-is-null, requirement: /req/core/operations, kind: expression, input: "(null + 1) is null", json: {op: isNull, args: [{op: "+", args: [null, 1]}]}, expect: "true"}

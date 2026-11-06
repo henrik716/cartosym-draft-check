@@ -1803,6 +1803,326 @@
    }
   }
  },
+ "null-arithmetic": {
+  "requirement": "/req/core/operations",
+  "input": "null + 1",
+  "expect": "null",
+  "json": {
+   "op": "+",
+   "args": [
+    null,
+    1
+   ]
+  },
+  "results": {
+   "libCartoSym": {
+    "verdict": "error",
+    "detail": "Unresolved expression (flags: )"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "converts to the case's CQL2-JSON"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "null"
+   }
+  }
+ },
+ "null-equal": {
+  "requirement": "/req/core/operations",
+  "input": "null = 1",
+  "expect": "null",
+  "json": {
+   "op": "=",
+   "args": [
+    null,
+    1
+   ]
+  },
+  "results": {
+   "libCartoSym": {
+    "verdict": "FAIL",
+    "detail": "got `false`, draft expects `null`"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "converts to the case's CQL2-JSON"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "null"
+   }
+  }
+ },
+ "null-not-equal": {
+  "requirement": "/req/core/operations",
+  "input": "null <> 1",
+  "expect": "null",
+  "json": {
+   "op": "<>",
+   "args": [
+    null,
+    1
+   ]
+  },
+  "results": {
+   "libCartoSym": {
+    "verdict": "FAIL",
+    "detail": "got `false`, draft expects `null`"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "converts to the case's CQL2-JSON"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "null"
+   }
+  }
+ },
+ "null-compare": {
+  "requirement": "/req/core/operations",
+  "input": "null > 1",
+  "expect": "null",
+  "json": {
+   "op": ">",
+   "args": [
+    null,
+    1
+   ]
+  },
+  "results": {
+   "libCartoSym": {
+    "verdict": "error",
+    "detail": "Unresolved expression (flags: )"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "converts to the case's CQL2-JSON"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "null"
+   }
+  }
+ },
+ "null-like": {
+  "requirement": "/req/core/operations",
+  "input": "null like 'a%'",
+  "expect": "null",
+  "json": {
+   "op": "like",
+   "args": [
+    null,
+    "a%"
+   ]
+  },
+  "results": {
+   "libCartoSym": {
+    "verdict": "error",
+    "detail": "Unresolved expression (flags: )"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "converts to the case's CQL2-JSON"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "null"
+   }
+  }
+ },
+ "null-not": {
+  "requirement": "/req/core/operations",
+  "input": "not (null > 1)",
+  "expect": "null",
+  "json": {
+   "op": "not",
+   "args": [
+    {
+     "op": ">",
+     "args": [
+      null,
+      1
+     ]
+    }
+   ]
+  },
+  "results": {
+   "libCartoSym": {
+    "verdict": "error",
+    "detail": "Unresolved expression (flags: )"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "converts to the case's CQL2-JSON"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "null"
+   }
+  }
+ },
+ "null-and-true": {
+  "requirement": "/req/core/operations",
+  "input": "(null > 1) and true",
+  "expect": "null",
+  "json": {
+   "op": "and",
+   "args": [
+    {
+     "op": ">",
+     "args": [
+      null,
+      1
+     ]
+    },
+    true
+   ]
+  },
+  "results": {
+   "libCartoSym": {
+    "verdict": "error",
+    "detail": "Unresolved expression (flags: )"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "converts to the case's CQL2-JSON"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "null"
+   }
+  }
+ },
+ "null-and-false": {
+  "requirement": "/req/core/operations",
+  "input": "(null > 1) and false",
+  "expect": "false",
+  "json": {
+   "op": "and",
+   "args": [
+    {
+     "op": ">",
+     "args": [
+      null,
+      1
+     ]
+    },
+    false
+   ]
+  },
+  "results": {
+   "libCartoSym": {
+    "verdict": "error",
+    "detail": "Unresolved expression (flags: )"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "converts to the case's CQL2-JSON"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "false"
+   }
+  }
+ },
+ "null-or-true": {
+  "requirement": "/req/core/operations",
+  "input": "(null > 1) or true",
+  "expect": "true",
+  "json": {
+   "op": "or",
+   "args": [
+    {
+     "op": ">",
+     "args": [
+      null,
+      1
+     ]
+    },
+    true
+   ]
+  },
+  "results": {
+   "libCartoSym": {
+    "verdict": "error",
+    "detail": "Unresolved expression (flags: )"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "converts to the case's CQL2-JSON"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "true"
+   }
+  }
+ },
+ "null-or-false": {
+  "requirement": "/req/core/operations",
+  "input": "(null > 1) or false",
+  "expect": "null",
+  "json": {
+   "op": "or",
+   "args": [
+    {
+     "op": ">",
+     "args": [
+      null,
+      1
+     ]
+    },
+    false
+   ]
+  },
+  "results": {
+   "libCartoSym": {
+    "verdict": "error",
+    "detail": "Unresolved expression (flags: )"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "converts to the case's CQL2-JSON"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "null"
+   }
+  }
+ },
+ "null-is-null": {
+  "requirement": "/req/core/operations",
+  "input": "(null + 1) is null",
+  "expect": "true",
+  "json": {
+   "op": "isNull",
+   "args": [
+    {
+     "op": "+",
+     "args": [
+      null,
+      1
+     ]
+    }
+   ]
+  },
+  "results": {
+   "libCartoSym": {
+    "verdict": "error",
+    "detail": "Unresolved expression (flags: )"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "converts to the case's CQL2-JSON"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "true"
+   }
+  }
+ },
  "text-like-percent": {
   "requirement": "/req/text-relation/like",
   "input": "'Oslo' like 'O%'",

@@ -140,13 +140,26 @@ def _operation(op: str, args: list, ctx: Context) -> Any:
         cond = evaluate(args[0], ctx)
         return evaluate(args[1] if cond is True else args[2], ctx)
 
-    # Short-circuit logical operators (/req/core/logical).
+    # Three-valued logic, as CQL2 (/req/core/logical, /req/core/operations).
     if op_l == "and":
-        return all(evaluate(a, ctx) is True for a in args)
+        values = [evaluate(a, ctx) for a in args]
+        if any(x is False for x in values):
+            return False
+        return None if any(x is None for x in values) else all(x is True for x in values)
     if op_l == "or":
-        return any(evaluate(a, ctx) is True for a in args)
+        values = [evaluate(a, ctx) for a in args]
+        if any(x is True for x in values):
+            return True
+        return None if any(x is None for x in values) else False
 
     v = [evaluate(a, ctx) for a in args]
+
+    if op_l == "isnull":
+        return v[0] is None
+
+    # A null operand gives null, as CQL2 (/req/core/operations).
+    if any(x is None for x in v):
+        return None
 
     if op_l == "not":
         return not v[0]
@@ -157,15 +170,11 @@ def _operation(op: str, args: list, ctx: Context) -> Any:
     if op_l in ("<>", "!=", "ne"):
         return v[0] != v[1]
     if op_l in ("<", ">", "<=", ">="):
-        if v[0] is None or v[1] is None:
-            return False
         return {"<": v[0] < v[1], ">": v[0] > v[1], "<=": v[0] <= v[1], ">=": v[0] >= v[1]}[op_l]
     if op_l == "between":
         return v[1] <= v[0] <= v[2]
     if op_l == "in":
         return v[0] in v[1]
-    if op_l == "isnull":
-        return v[0] is None
 
     # Arithmetic (/req/arithmetic/*)
     if op_l == "+":

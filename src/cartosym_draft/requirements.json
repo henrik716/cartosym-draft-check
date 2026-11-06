@@ -1,6 +1,6 @@
 {
  "branch": "requirements-placeholders",
- "commit": "e2f2aa8",
+ "commit": "39f4da6",
  "uncommitted_changes": false,
  "requirements": {
   "/req/arithmetic/add": {
@@ -85,7 +85,7 @@
   },
   "/req/array-relations/a-overlaps": {
    "file": "1-core/requirements/rc-array-relations.adoc",
-   "line": 54,
+   "line": 56,
    "parts": [
     "An Encoding SHALL support defining a call to the `a_overlaps` standard function taking two array arguments.",
     "A Renderer SHALL support evaluating `a_overlaps(a, b)` to true if and only if arrays `a` and `b` have at least one element in common."
@@ -180,14 +180,6 @@
     "A Renderer SHOULD interpolate the colors of a `colorMap` and the opacities of an `opacityMap` so that the result lies between those of the two closest entries."
    ]
   },
-  "/req/coverage/gamma": {
-   "file": "1-core/requirements/rc-coverage.adoc",
-   "line": 88,
-   "parts": [
-    "An Encoding SHOULD support defining a `gamma` Symbolizer property as a float.",
-    "A Renderer SHOULD support applying a gamma correction to the portrayed color values, using the value of the `gamma` property as the exponent applied to normalized (0 to 1) color components."
-   ]
-  },
   "/req/cscss/grammar": {
    "file": "1-core/requirements/rc-cscss.adoc",
    "line": 21,
@@ -218,20 +210,22 @@
    "line": 55,
    "parts": [
     "An Encoding SHALL encode expressions using CQL2-Text, extended with instance expressions, tuples, units of measure, conditional expressions and enumeration values as specified in this requirements class.",
+    "An Encoding supporting the <<rc-text-relation,Text Relation Operators>> requirements class SHALL encode the `contains`, `startsWith` and `endsWith` operations as function calls (e.g., `contains(name, 'Oslo')`).",
     "A Renderer SHALL support evaluating CQL2-Text expressions (including WKT geometry) used directly as a selector or symbolizer parameter value."
    ]
   },
   "/req/cscss/include": {
    "file": "1-core/requirements/rc-cscss.adoc",
-   "line": 66,
+   "line": 67,
    "parts": [
     "An Encoding SHALL support including another style sheet using the `.include` directive followed by a relative path enclosed within single quotes.",
-    "A Renderer SHALL support replacing an `.include` directive by the content of the referenced style sheet, recursively, before interpreting the style."
+    "A Renderer SHALL support replacing an `.include` directive by the content of the referenced style sheet, recursively, before interpreting the style.",
+    "A Renderer SHALL support including style sheets encoded as CartoSym-CSS."
    ]
   },
   "/req/cscss/comments": {
    "file": "1-core/requirements/rc-cscss.adoc",
-   "line": 77,
+   "line": 81,
    "parts": [
     "An Encoding SHALL support C-style multi-line comments (between `/\\*` and `*/`) and C++-style single-line comments (starting with `//`).",
     "A Renderer SHALL support ignoring comments when interpreting a style sheet."
@@ -239,7 +233,7 @@
   },
   "/req/cscss/variables": {
    "file": "1-core/requirements/rc-cscss.adoc",
-   "line": 88,
+   "line": 92,
    "parts": [
     "An Encoding supporting the <<rc-variables,Variables>> requirements class SHALL define variables before the styling rules using the syntax `@<identifier> = <expression>;`, and reference them as an expression using `@<identifier>`."
    ]
@@ -449,7 +443,8 @@
    "line": 86,
    "parts": [
     "An Encoding SHALL support including base style sheets using an `$include` property in the top-level object, specified as either a single relative file path string or an array of relative file path strings.",
-    "A Renderer SHALL support considering the styling rules of included style sheets before the styling rules defined by the including file."
+    "A Renderer SHALL support considering the styling rules of included style sheets before the styling rules defined by the including file.",
+    "A Renderer SHALL support including style sheets encoded as CartoSym-JSON."
    ]
   },
   "/req/labels/label": {
@@ -897,7 +892,7 @@
   },
   "/req/core/rules": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 94,
+   "line": 96,
    "parts": [
     "An Encoding SHALL support individually storing and preserving the order of each StylingRule constituting a Style.",
     "A Renderer SHALL support considering in order each individual StylingRule constituting a style.",
@@ -906,7 +901,7 @@
   },
   "/req/core/selector": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 171,
+   "line": 173,
    "parts": [
     "An Encoding SHALL support defining an optional `selector` for a StylingRule as an Expression evaluating to a boolean value.",
     "A Renderer SHALL support applying the Symbolizer of a StylingRule to a feature or coverage cell only if the rule has no `selector` or if its `selector` evaluates to true for that feature or coverage cell."
@@ -914,7 +909,7 @@
   },
   "/req/core/nested": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 182,
+   "line": 186,
    "parts": [
     "An Encoding SHALL support defining a StylingRule with an ordered list of nested StylingRules.",
     "A Renderer SHALL support considering the nested rules of a StylingRule only if that parent rule is selected.",
@@ -923,7 +918,7 @@
   },
   "/req/core/symbolizer": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 256,
+   "line": 260,
    "parts": [
     "An Encoding SHALL support defining a Symbolizer for a StylingRule, specifying any subset of the Symbolizer properties.",
     "A Renderer SHALL support portraying data using the Symbolizer properties resulting from all selected StylingRules, using the default values for properties not set by any selected rule."
@@ -931,7 +926,7 @@
   },
   "/req/core/visibility": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 267,
+   "line": 271,
    "parts": [
     "An Encoding SHALL support defining a `visibility` Symbolizer property as a boolean.",
     "A Renderer SHALL support not portraying a feature or coverage cell for which the resolved `visibility` property is false."
@@ -939,7 +934,7 @@
   },
   "/req/core/opacity": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 278,
+   "line": 282,
    "parts": [
     "An Encoding SHALL support defining an `opacity` Symbolizer property as a float between 0 (fully transparent) and 1 (fully opaque).",
     "A Renderer SHALL support portraying a feature or coverage cell with the opacity specified by the resolved `opacity` property, applied to the portrayal as a whole."
@@ -947,7 +942,7 @@
   },
   "/req/core/z-order": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 289,
+   "line": 293,
    "parts": [
     "An Encoding SHALL support defining a `zOrder` Symbolizer property as an integer.",
     "A Renderer SHALL support portraying features and coverage cells of a single rendering pass in increasing order of their resolved `zOrder` property, so that portrayals with a higher `zOrder` are drawn on top of those with a lower `zOrder`."
@@ -955,7 +950,7 @@
   },
   "/req/core/parameters": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 353,
+   "line": 357,
    "parts": [
     "An Encoding SHALL support defining Symbolizer properties as Parameter Values using Literal Expressions compatible with the data type expected by the property.",
     "A Renderer SHALL support resolving Parameter Values to the data type expected by the Symbolizer property."
@@ -963,7 +958,7 @@
   },
   "/req/core/expressions-field-identifiers": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 370,
+   "line": 374,
    "parts": [
     "An Encoding SHALL support defining Identifier Expressions referring to feature properties or coverage range fields by name.",
     "A Renderer SHALL support resolving an Identifier Expression to the value of the named feature property or coverage range field for the feature or coverage cell being portrayed."
@@ -971,7 +966,7 @@
   },
   "/req/core/expressions-system-identifiers": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 712,
+   "line": 716,
    "parts": [
     "An Encoding SHALL support defining System Identifier Expressions referring to the System Identifiers defined in this requirements class, including the `capabilities` System Identifiers.",
     "A Renderer SHALL support resolving System Identifier Expressions to the corresponding state of the system, with each `capabilities` System Identifier resolving to true if and only if the Renderer supports the corresponding requirements class."
@@ -979,7 +974,7 @@
   },
   "/req/core/scale": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 721,
+   "line": 725,
    "parts": [
     "An Encoding SHALL support defining expressions using the `visualization.scaleDenominator` System Identifier.",
     "A Renderer SHALL support resolving the `visualization.scaleDenominator` System Identifier to the scale denominator of the map being rendered."
@@ -987,7 +982,7 @@
   },
   "/req/core/time": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 730,
+   "line": 734,
    "parts": [
     "An Encoding SHALL support defining expressions using the `visualization.dateTime`, `visualization.date`, `visualization.timeOfDay` and `visualization.timeInterval` System Identifiers.",
     "A Renderer SHALL support resolving the visualization time System Identifiers to the time instant or interval of the map being rendered."
@@ -995,7 +990,7 @@
   },
   "/req/core/layers": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 739,
+   "line": 743,
    "parts": [
     "An Encoding SHALL support defining expressions using the `dataLayer.identifier` and `dataLayer.type` System Identifiers.",
     "A Renderer SHALL support resolving the `dataLayer.identifier` System Identifier to the identifier of the data layer being portrayed, and the `dataLayer.type` System Identifier to its type (`map`, `vector` or `coverage`)."
@@ -1003,7 +998,7 @@
   },
   "/req/core/literals": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 801,
+   "line": 805,
    "parts": [
     "An Encoding SHALL support defining integer, real, text, null, enumeration value, boolean, array and instance literals.",
     "A Renderer SHALL support resolving literal expressions to their fixed value."
@@ -1011,16 +1006,17 @@
   },
   "/req/core/operations": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 904,
+   "line": 908,
    "parts": [
     "An Encoding SHALL support defining operation expressions consisting of operands and an operator for unary, binary and ternary operators.",
     "An Encoding SHALL support defining the priority of expressions using multiple operators (e.g., using parentheses: `(` `)`).",
-    "A Renderer SHALL support evaluating operation expressions while respecting the priority of operations."
+    "A Renderer SHALL support evaluating operation expressions while respecting the priority of operations.",
+    "A Renderer SHALL support evaluating operation expressions with a null operand as specified by CQL2."
    ]
   },
   "/req/core/logical": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 914,
+   "line": 921,
    "parts": [
     "An Encoding SHALL support defining operation expressions using the `and`, `or` and `not` logical operators.",
     "A Renderer SHALL support evaluating the `and`, `or` and `not` logical operators as defined in the Logical Operators table."
@@ -1028,7 +1024,7 @@
   },
   "/req/core/relational": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 923,
+   "line": 930,
    "parts": [
     "An Encoding SHALL support defining operation expressions using the relational operators `equal`, `notEqual`, `is`, `isNot`, `lesser`, `greater`, `lesserEqual`, `greaterEqual`, `in`, `notIn`, `between` and `notBetween`.",
     "A Renderer SHALL support evaluating the relational operators as defined in the Relational Operators table."
@@ -1036,7 +1032,7 @@
   },
   "/req/core/arrays": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 941,
+   "line": 948,
    "parts": [
     "An Encoding SHALL support defining array expressions as an ordered list of zero or more element expressions.",
     "A Renderer SHALL support resolving array expressions to an ordered array of the values of their element expressions."
@@ -1044,7 +1040,7 @@
   },
   "/req/core/instances": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 991,
+   "line": 998,
    "parts": [
     "An Encoding SHALL support defining instance expressions of a class, optionally specifying values for its members.",
     "An Encoding SHALL support overriding a single member of an object Symbolizer property without replacing the other members.",
@@ -1053,7 +1049,7 @@
   },
   "/req/core/default-values": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 1065,
+   "line": 1072,
    "parts": [
     "An Encoding SHALL support omitting Symbolizer properties and object members for which a default value is defined in this section.",
     "A Renderer SHALL support using the default values defined in this section for Symbolizer properties and object members which are not set by any selected StylingRule."

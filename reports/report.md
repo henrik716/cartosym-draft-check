@@ -8,14 +8,14 @@ Expected values are what the **draft requirement** says. `FAIL` means the implem
 
 | Implementation | pass | FAIL | unsupported | CRASH | error |
 |---|---|---|---|---|---|
-| draft renderer | 104 | 0 | 0 | 0 | 0 |
-| libCartoSym | 50 | 10 | 29 | 3 | 6 |
-| pycartosym | 98 | 0 | 0 | 0 | 0 |
+| draft renderer | 115 | 0 | 0 | 0 | 0 |
+| libCartoSym | 50 | 12 | 29 | 3 | 15 |
+| pycartosym | 109 | 0 | 0 | 0 | 0 |
 
 ## How the cases are run
 
 - **libCartoSym:** the Input text is written to `expr.cql2` and evaluated with `cs-canif eval expr.cql2` (cs-canif from `cartosym` 0.0.1, `ecrt` 0.0.6). Where the spec gives no CartoSym-CSS syntax for an operation, a case can give libCartoSym's own (_as …_ in its column).
-- **pycartosym:** pycartosym does not evaluate expressions. Where a case gives its own CQL2-JSON (66 cases), the Input text is converted with `pycartosym.cql2.to_cql2_json(cql2.parse_text(input))` and passes if the result is that CQL2-JSON; otherwise it passes if `pycartosym.cql2.parse_text(input)` parses it.
+- **pycartosym:** pycartosym does not evaluate expressions. Where a case gives its own CQL2-JSON (77 cases), the Input text is converted with `pycartosym.cql2.to_cql2_json(cql2.parse_text(input))` and passes if the result is that CQL2-JSON; otherwise it passes if `pycartosym.cql2.parse_text(input)` parses it.
 - **draft renderer:** `cartosym_draft.evaluate.evaluate(expression, Context(...))`. Where a case gives its own CQL2-JSON, that is what it evaluates, and the result is marked _(CQL2-JSON)_, so it does not depend on pycartosym's parser; otherwise the Input text is converted with pycartosym as above.
 - **Values:** feature properties, system identifiers, style variables (`@name`) and variables set by the application that a case is evaluated with are listed under its input (_with …_).
 - **Draft renderer only** (9 cases): cases that need such values. The harness does not pass them to `cs-canif` or pycartosym, so those columns show `-`.
@@ -159,6 +159,18 @@ The cases are in [`cases/`](../cases/), the calls in [`harness/adapters.py`](../
 | Case | Input | Expected | libCartoSym | pycartosym | draft renderer |
 |---|---|---|---|---|---|
 | core-priority | `(1 + 2) * 3` | `9` | pass: 9 | pass: parses | pass: 9 |
+| null-arithmetic | `null + 1` | `null` | error: Unresolved expression (flags: ) | pass: converts to the case's CQL2-JSON | pass: null _(CQL2-JSON)_ |
+| null-equal | `null = 1` | `null` | FAIL: got `false`, draft expects `null` | pass: converts to the case's CQL2-JSON | pass: null _(CQL2-JSON)_ |
+| null-not-equal | `null <> 1` | `null` | FAIL: got `false`, draft expects `null` | pass: converts to the case's CQL2-JSON | pass: null _(CQL2-JSON)_ |
+| null-compare | `null > 1` | `null` | error: Unresolved expression (flags: ) | pass: converts to the case's CQL2-JSON | pass: null _(CQL2-JSON)_ |
+| null-like | `null like 'a%'` | `null` | error: Unresolved expression (flags: ) | pass: converts to the case's CQL2-JSON | pass: null _(CQL2-JSON)_ |
+| null-not | `not (null > 1)` | `null` | error: Unresolved expression (flags: ) | pass: converts to the case's CQL2-JSON | pass: null _(CQL2-JSON)_ |
+| | _This is why `not (x > 1)` does not select a feature with no `x`._ | | | | |
+| null-and-true | `(null > 1) and true` | `null` | error: Unresolved expression (flags: ) | pass: converts to the case's CQL2-JSON | pass: null _(CQL2-JSON)_ |
+| null-and-false | `(null > 1) and false` | `false` | error: Unresolved expression (flags: ) | pass: converts to the case's CQL2-JSON | pass: false _(CQL2-JSON)_ |
+| null-or-true | `(null > 1) or true` | `true` | error: Unresolved expression (flags: ) | pass: converts to the case's CQL2-JSON | pass: true _(CQL2-JSON)_ |
+| null-or-false | `(null > 1) or false` | `null` | error: Unresolved expression (flags: ) | pass: converts to the case's CQL2-JSON | pass: null _(CQL2-JSON)_ |
+| null-is-null | `(null + 1) is null` | `true` | error: Unresolved expression (flags: ) | pass: converts to the case's CQL2-JSON | pass: true _(CQL2-JSON)_ |
 
 ### `/req/core/relational`
 

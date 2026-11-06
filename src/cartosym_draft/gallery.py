@@ -522,7 +522,7 @@ def _coverage_decisions() -> list[Decision]:
         Decision(
             key="gamma",
             title="Direction of coverage gamma",
-            requirements=["/req/coverage/gamma"],
+            requirements=[],
             question="Example 5 with `gamma: 2` (its color map stretched to Rondane's 500–2000 m). "
                      "Does a gamma above 1 darken or brighten?",
             style=_tweak(ex5_rondane, gamma=2), layers=relief,
