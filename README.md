@@ -89,7 +89,7 @@ The full list, with a proposed resolution for each, is the decision matrix at th
 - **The default Marker** (clause 7) puts a white dot on every point, line vertex and polygon centroid of a style that sets no marker. Jérôme confirmed this is intended, so every feature is visible, and a typical base style unsets it for lines and polygons (`marker: null`); the PR now says so. Still open: the JSON schema rejects `marker: null` and `marker: { elements: [] }` (a tested fix is proposed in #143). The Dot defaults gave a size and color the Dot class did not have; as agreed with Jérôme, Dot now has `size` and `color`, the same values as its stroke's width and color (#144).
 - **The JSON schema (on main) rejects colors given as expressions, and empty arrays**, because its `oneOf` branches overlap.
 
-The open points are recorded as TODO(review) notes in PR #133 (the schema issue is outside the PR). In the test harness the draft renderer passes all 93 cases and libCartoSym 36 of the 85 it can run. pycartosym converts all 55 expressions that have an expected CQL2-JSON to exactly that JSON.
+The open points are recorded as TODO(review) notes in PR #133 (the schema issue is outside the PR). In the test harness the draft renderer passes all 93 cases and libCartoSym 43 of the 85 it can run. pycartosym converts all 55 expressions that have an expected CQL2-JSON to exactly that JSON.
 
 ## Data
 

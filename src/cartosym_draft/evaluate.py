@@ -86,8 +86,21 @@ def _like(text: str, pattern: str) -> bool:
     return re.fullmatch(regex, text, re.DOTALL) is not None
 
 
+# Letters that NFKD and removing Mn leave as they are, folded one to one: the 127 entries of eC's
+# diacriticFolding.txt (from Unicode TR #30) that its accenti can reach, with seven Cyrillic entries
+# corrected (U+04B3, U+04B6, U+04B7, U+04B8, U+04BF, U+04CB, U+04CC; see issue #152 of the spec).
+_DIACRITIC_FOLDING = str.maketrans(
+    "ØøĐđĦħŁłŦŧƀƁƂƃƇƈƊƋƌƑƒƓƗƘƙƚƝƞƟƤƥƫƬƭƮƲƳƴƵƶƺǤǥȠȡȤȥȴȵȶɓɕɖɗɚɠɦɨɫɬɭɱɲɳɼɽʂʆʈʋʐʑʓʝʠѼѽҊҋҎ"
+    "ҏҐґҒғҔҕҖҗҘҙҚқҜҝҞҟҢңҦҧҪҫҬҭҰұҲҳҶҷҸҹҾҿӃӄӅӆӇӈӉӊӋӌӍӎ",
+    "OoDdHhLlTtbBBbCcDDdFfGIKklNnOPptTtTVYyZzʒGgNdZzlntbcddəghilllmnnrrsʃtvzzʒjqѠѡЙйР"
+    "рГгГгГгЖжЗзКкКкКкНнПпСсТтҮүХхЧчЧчҼҽКкЛлНнНнЧчМм",
+)
+
+
 def _accenti(s: str) -> str:
-    return "".join(c for c in unicodedata.normalize("NFD", s) if unicodedata.category(c) != "Mn")
+    """Accent stripping and diacritic folding, as libCartoSym, keeping the dakuten and handakuten (CQL2 Rec. 2)."""
+    kept = (c for c in unicodedata.normalize("NFKD", s) if unicodedata.category(c) != "Mn" or c in "\u3099\u309a")
+    return "".join(kept).translate(_DIACRITIC_FOLDING)
 
 
 def _divide(a, b, opts: Options):

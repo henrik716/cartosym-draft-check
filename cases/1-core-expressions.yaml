@@ -194,7 +194,7 @@
   kind: expression
   input: "a_equals((1, 2), (2, 1))"
   expect: "false"
-  note: Draft says order matters.
+  note: Draft says order matters, as libCartoSym does. CQL2 Requirement 16 evaluates arrays as sets, so the SWG may change this.
 - id: array-overlaps
   requirement: /req/array-relations/a-overlaps
   kind: expression
@@ -236,9 +236,8 @@
   kind: expression
   input: "accenti('Øre') = accenti('Ore')"
   json: {"op": "=", "args": [{"op": "accenti", "args": ["Øre"]}, {"op": "accenti", "args": ["Ore"]}]}
-  expect: "false"
-  note: Ø does not decompose in Unicode.
-  disputed: "The draft does not say which letters are folded, so this follows decomposition alone. libCartoSym folds Ø to O with a diacritic folding table taken from Unicode TR #30, and Jérôme prefers that, which would make this true (https://github.com/opengeospatial/cartographic-symbology/issues/152)."
+  expect: "true"
+  note: Diacritic folding also folds Ø, which does not decompose in Unicode, as libCartoSym does (#152).
 - id: textfn-accenti
   requirement: /req/text-manipulation/accent-insensitize
   kind: expression

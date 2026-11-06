@@ -91,7 +91,7 @@ def run_case(case: dict) -> dict[str, tuple[str, str]]:
     results = {}
     if kind == "expression":
         if not case.get("draft_only"):
-            results["libCartoSym"] = _verdict(adapters.libcartosym_eval(case["input"]), expected)
+            results["libCartoSym"] = _verdict(adapters.libcartosym_eval(case.get("libcartosym_input", case["input"])), expected)
             results["pycartosym"] = _pycartosym_verdict(case)
         results["draft renderer"] = _verdict(adapters.draft_eval(
             case["input"], case.get("json"), case.get("properties"), case.get("variables"), case.get("definitions"),
@@ -148,7 +148,8 @@ def main(paths: list[str]) -> int:
         "## How the cases are run",
         "",
         f"- **libCartoSym:** the Input text is written to `expr.cql2` and evaluated with `cs-canif eval expr.cql2` "
-        f"({LIBCARTOSYM}).",
+        f"({LIBCARTOSYM}). Where the spec gives no CartoSym-CSS syntax for an operation, a case can give "
+        "libCartoSym's own (_as …_ in its column).",
         "- **pycartosym:** pycartosym does not evaluate expressions. Where a case gives its own CQL2-JSON "
         f"({n_json} cases), the Input text is converted with `pycartosym.cql2.to_cql2_json(cql2.parse_text(input))` "
         "and passes if the result is that CQL2-JSON; otherwise it passes if `pycartosym.cql2.parse_text(input)` "
@@ -180,6 +181,8 @@ def main(paths: list[str]) -> int:
                 v, d = results.get(impl, ("-", ""))
                 d = d.replace(LOCAL_WORK, "work/")  # no local paths in the report
                 cell = f"{v}: {d}".replace("|", "\\|").replace("\n", " ") if d else v
+                if impl == "libCartoSym" and impl in results and "libcartosym_input" in case:
+                    cell += f" _(as `{case['libcartosym_input']}`)_"
                 if impl == "draft renderer" and impl in results and "json" in case:
                     cell += " _(CQL2-JSON)_"
                 cells.append(cell)
@@ -196,8 +199,8 @@ def main(paths: list[str]) -> int:
         lines.append("")
 
     results_json = {case["id"]: {"requirement": req, "input": case["input"], "expect": case["expect"],
-                                 **{k: case[k] for k in ("json", "properties", "system", "definitions", "variables",
-                                                         "draft_only") if k in case},
+                                 **{k: case[k] for k in ("json", "libcartosym_input", "properties", "system", "definitions",
+                                                         "variables", "draft_only") if k in case},
                                  "results": {impl: {"verdict": v, "detail": d.replace(LOCAL_WORK, "work/")}
                                              for impl, (v, d) in results.items()}}
                     for req, rows in by_req.items() for case, results in rows}

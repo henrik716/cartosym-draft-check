@@ -923,7 +923,7 @@ small map with the draft's choice and the alternatives. Because the draft render
 what each choice looks like, but not whether that choice is the intended one: that is for the SWG to decide. Comparing with an
 independent renderer shows whether others read the requirements the same way, so each card links its style, data and view settings
 (all in <a href="kit.zip">kit.zip</a>), and the <a href="playground.html">playground</a> lets you edit a style and see the result.</p>
-<p class="legend"><strong><a href="requirements.html">All 134 requirements and how each is checked →</a></strong> ·
+<p class="legend"><strong><a href="requirements.html">All 135 requirements and how each is checked →</a></strong> ·
 <strong><a href="playground.html">Playground: edit a style and see it rendered →</a></strong></p>
 <p class="legend"><span class="badge">draft</span> the draft's choice. <span class="badge open">open in draft</span> the draft
 does not settle the question; the variant labelled "draft renderer's choice" is the proposed resolution. {snapshot}</p>

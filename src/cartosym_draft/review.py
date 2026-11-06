@@ -81,7 +81,7 @@ MATRIX: dict[str, Row] = {
     "label-spacing": Row("pixels unless uom-qualified", "Done, as Jérôme answered.", "resolved"),
     "label-pass": Row("separate pass on top", "Keep as drafted.", "unchanged"),
     "ndvi-division": Row("real quotient", "Keep as drafted (confirmed by Jérôme, as CQL2); libCartoSym should change "
-                         "(it returns 0 for example 7).", "unchanged", "Open the libCartoSym issue?"),
+                         "(it returns 0 for example 7; Jérôme agrees).", "unchanged, ecere/libCartoSym#11"),
     "color-channels": Row("0..1; example 6 scales the bands", "Done: as Jérôme's renderer, the style scales the bands "
                           "(÷ 2500 in example 6).", "resolved; default: TODO(review), #150",
                           "The default colorChannels (fields[0..2]) is unscaled too: keep it?"),
@@ -107,9 +107,8 @@ EXTRA_ROWS: list[tuple[str, Row]] = [
     ("caseInsensitize / accentInsensitize vs casei / accenti",
      Row("long names (model); short in the schema", "Use the CQL2 names casei and accenti.", "TODO(review), #140")),
     ("What counts as an accent (`Ø`)",
-     Row("“removes accents”", "Reference CQL2 Requirement 9. Either remove nonspacing marks only (Ø stays, as this "
-         "renderer does), or also fold with a named one-to-one table (Ø → O, as libCartoSym does).", "TODO(review), #152",
-         "Which of the two?")),
+     Row("accent stripping and diacritic folding (CQL2 Requirement 9)", "Done, as Jérôme answered: folds Ø → O as "
+         "libCartoSym does, with a NOTE pointing to Unicode TR #30.", "resolved, #152")),
     ("Right-hand identifiers vs the CSCSS examples",
      Row("any expression on the right-hand side", "Done: where an enumeration is expected, a bare word is an "
          "enumeration value (clause 17); a NOTE now points there.", "resolved, #151")),
