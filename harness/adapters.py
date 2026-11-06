@@ -95,7 +95,7 @@ def libcartosym_parse_style(style: str, fmt: str) -> Outcome:
 
 def _cartosym_cli(*args: str) -> subprocess.CompletedProcess:
     env = dict(os.environ, PYTHONIOENCODING="utf-8")
-    exe = Path(sys.prefix) / "Scripts" / "cartosym.exe"
+    exe = Path(sys.prefix) / ("Scripts" if os.name == "nt" else "bin") / "cartosym"
     return subprocess.run(
         [str(exe), *args],
         capture_output=True, text=True, env=env, timeout=60,
