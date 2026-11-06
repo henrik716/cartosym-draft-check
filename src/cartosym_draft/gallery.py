@@ -531,7 +531,8 @@ def _coverage_decisions() -> list[Decision]:
                 Variant("c ^ (1 / gamma): brightens, as SE", DRAFT.with_(gamma="inverse")),
             ],
             evidence="SE 1.1 GammaValue brightens for values above 1. The draft's exponent does the opposite. gamma is also "
-                     "absent from the coverage UML, tables and schema (#86), so removing it is an option.",
+                     "absent from the coverage UML, tables and schema, and the SWG agreed on 6 November to take it out of Part 1 (#86). "
+                     "`colorChannels.r: (B04 / 2500) ^ 0.5` gives the same image as `gamma: 0.5`.",
             **on_relief,
         ),
         Decision(

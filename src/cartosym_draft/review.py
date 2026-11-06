@@ -92,7 +92,7 @@ MATRIX: dict[str, Row] = {
                      "quadratically. Stepped classes via conditional expressions (Jérôme). Added by the PR: a "
                      "recommendation that the result stays between the two closest entries.",
                      "recommendation + NOTE, #149", "Recommendation OK?"),
-    "gamma": Row("c ^ gamma (darkens above 1)", "Remove from coverage (not in the model), as the SWG agreed on 6 November.",
+    "gamma": Row("c ^ gamma (darkens above 1)", "Take out of Part 1, as the SWG agreed on 6 November. The ^ operator in colorChannels does the same.",
                  "agreed by the SWG, PR still to follow, #86"),
     "hillshade-factor": Row("multiplies the horizontal components of the normal", "In the PR, as Jérôme's renderer, "
                             "including the sample distance and the shade without a colorMap.", "answered"),
@@ -120,14 +120,14 @@ EXTRA_ROWS: list[tuple[str, Row]] = [
      Row("center (UML)", "Use center, as the UML and libCartoSym do, and change the schema.", "TODO(review), #120",
          "Which name is intended?")),
     ("a_equals and element order",
-     Row("compares in order, as libCartoSym does", "Follow CQL2 Requirement 16 and compare as sets. If order is intended, "
-         "say that it differs from CQL2.", "open, #154", "Compare as sets?")),
+     Row("compares in order, as libCartoSym does", "Jérôme would rather keep arrays ordered, but keep CQL2's meaning as far as possible, "
+         "and suggests raising it with OGC API - Features.", "partly answered, #154", "Ordered, or sets as in CQL2?")),
     ("NULL in expressions",
      Row("not stated", "Follow CQL2 for NULL, and a selector evaluating to NULL does not select the feature.",
-         "open, #155", "What does a Symbolizer property do with NULL?")),
+         "partly answered, #155; not in the PR yet", "What does a Symbolizer property do with NULL?")),
     ("CartoSym-CSS syntax for contains, startsWith, endsWith",
      Row("no syntax (the grammar has only like)", "Use functions such as `contains(a, b)`. libCartoSym has operators "
-         "(`~`, `^^`, `$`).", "open, #156", "Functions or operators?")),
+         "(`~`, `^^`, `$`), left over from GNOSIS CMSS, Jérôme says.", "answered, #156; not in the PR yet")),
     ("Schema: colors from expressions, empty arrays, and clearing the marker",
      Row("(schema on main)", "Make the oneOf branches exclusive (e.g., require r, g, b in the color object). For the "
          "marker: `anyOf` in graphicArray, and `marker` accepting null and an object without elements (tested; the SWG agreed the marker part on 6 November).",
