@@ -8,17 +8,18 @@ Expected values are what the **draft requirement** says. `FAIL` means the implem
 
 | Implementation | pass | FAIL | unsupported | CRASH | error |
 |---|---|---|---|---|---|
-| draft renderer | 93 | 0 | 0 | 0 | 0 |
-| libCartoSym | 47 | 5 | 28 | 3 | 2 |
-| pycartosym | 85 | 0 | 0 | 0 | 0 |
+| draft renderer | 104 | 0 | 0 | 0 | 0 |
+| libCartoSym | 54 | 10 | 29 | 3 | 2 |
+| pycartosym | 98 | 0 | 0 | 0 | 0 |
 
 ## How the cases are run
 
 - **libCartoSym:** the Input text is written to `expr.cql2` and evaluated with `cs-canif eval expr.cql2` (cs-canif built from ecere/libCartoSym main @ f180e04 and ecere/eC main @ 500a9f8, on Ubuntu). Where the spec gives no CartoSym-CSS syntax for an operation, a case can give libCartoSym's own (_as …_ in its column).
-- **pycartosym:** pycartosym does not evaluate expressions. Where a case gives its own CQL2-JSON (55 cases), the Input text is converted with `pycartosym.cql2.to_cql2_json(cql2.parse_text(input))` and passes if the result is that CQL2-JSON; otherwise it passes if `pycartosym.cql2.parse_text(input)` parses it.
+- **pycartosym:** pycartosym does not evaluate expressions. Where a case gives its own CQL2-JSON (66 cases), the Input text is converted with `pycartosym.cql2.to_cql2_json(cql2.parse_text(input))` and passes if the result is that CQL2-JSON; otherwise it passes if `pycartosym.cql2.parse_text(input)` parses it.
 - **draft renderer:** `cartosym_draft.evaluate.evaluate(expression, Context(...))`. Where a case gives its own CQL2-JSON, that is what it evaluates, and the result is marked _(CQL2-JSON)_, so it does not depend on pycartosym's parser; otherwise the Input text is converted with pycartosym as above.
 - **Values:** feature properties, system identifiers, style variables (`@name`) and variables set by the application that a case is evaluated with are listed under its input (_with …_).
-- **Draft renderer only** (8 cases): cases that need such values. The harness does not pass them to `cs-canif` or pycartosym, so those columns show `-`.
+- **Draft renderer only** (9 cases): cases that need such values. The harness does not pass them to `cs-canif` or pycartosym, so those columns show `-`.
+- **Styles** (3 cases): libCartoSym converts them with `cs-canif convert style.cscss style-out.cscss` (valid if it converts); pycartosym checks them with `cartosym validate`.
 
 The cases are in [`cases/`](../cases/), the calls in [`harness/adapters.py`](../harness/adapters.py), and every result with the implementation's full output in [`results.json`](results.json).
 
@@ -171,6 +172,21 @@ The cases are in [`cases/`](../cases/), the calls in [`harness/adapters.py`](../
 | core-in | `2 in (1, 2, 3)` | `true` | FAIL: got `1`, draft expects `true` | pass: parses | pass: true |
 | core-not-in | `4 not in (1, 2, 3)` | `true` | unsupported: returned `null` (function or operator not recognised) | pass: parses | pass: true |
 | core-is-null | `null is null` | `true` | pass: true | pass: parses | pass: true |
+| neq-equal-operands | `2 <> 2` | `false` | pass: false | pass: converts to the case's CQL2-JSON | pass: false _(CQL2-JSON)_ |
+| neq-reversed | `3 <> 2` | `true` | pass: true | pass: converts to the case's CQL2-JSON | pass: true _(CQL2-JSON)_ |
+| neq-larger-first | `10 <> 2` | `true` | FAIL: got `-1`, draft expects `true` | pass: converts to the case's CQL2-JSON | pass: true _(CQL2-JSON)_ |
+| neq-text | `'a' <> 'b'` | `true` | FAIL: got `-1`, draft expects `true` | pass: converts to the case's CQL2-JSON | pass: true _(CQL2-JSON)_ |
+| neq-text-equal | `'a' <> 'a'` | `false` | pass: false | pass: converts to the case's CQL2-JSON | pass: false _(CQL2-JSON)_ |
+| neq-no-spaces | `2<>3` | `true` | FAIL: got `-1`, draft expects `true` | pass: converts to the case's CQL2-JSON | pass: true _(CQL2-JSON)_ |
+| neq-arithmetic | `1 + 1 <> 3` | `true` | FAIL: got `-1`, draft expects `true` | pass: converts to the case's CQL2-JSON | pass: true _(CQL2-JSON)_ |
+| neq-and | `1 <> 2 and 3 <> 4` | `true` | pass: true | pass: converts to the case's CQL2-JSON | pass: true _(CQL2-JSON)_ |
+| neq-compared-to-true | `(2 <> 3) = true` | `true` | FAIL: got `false`, draft expects `true` | pass: converts to the case's CQL2-JSON | pass: true _(CQL2-JSON)_ |
+| | _The result of `<>` is a boolean, so it equals `true` (libCartoSym#7)._ | | | | |
+| neq-not | `not (2 <> 2)` | `true` | unsupported: returned `null` (function or operator not recognised) | pass: converts to the case's CQL2-JSON | pass: true _(CQL2-JSON)_ |
+| neq-property | `a <> 1`<br>with `a = 2` | `true` | - | - | pass: true _(CQL2-JSON)_ |
+| neq-selector | `[a <> 1] { opacity: 0.5; }` | `valid` | pass: valid | pass: valid | - |
+| neq-selector-no-spaces | `[a<>1] { opacity: 0.5; }` | `valid` | pass: valid | pass: valid | - |
+| neq-selector-and | `[a <> 1 and b <> 2] { opacity: 0.5; }` | `valid` | pass: valid | pass: valid | - |
 
 ### `/req/core/scale`
 
