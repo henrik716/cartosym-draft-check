@@ -380,10 +380,11 @@
     "sl"
    ]
   },
+  "libcartosym_input": "'Oslo' ~ 'sl'",
   "results": {
    "libCartoSym": {
-    "verdict": "unsupported",
-    "detail": "returned `null` (function or operator not recognised)"
+    "verdict": "pass",
+    "detail": "true"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -406,10 +407,11 @@
     "Os"
    ]
   },
+  "libcartosym_input": "'Oslo' ^^ 'Os'",
   "results": {
    "libCartoSym": {
-    "verdict": "unsupported",
-    "detail": "returned `null` (function or operator not recognised)"
+    "verdict": "pass",
+    "detail": "true"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -432,10 +434,11 @@
     "lo"
    ]
   },
+  "libcartosym_input": "'Oslo' $ 'lo'",
   "results": {
    "libCartoSym": {
-    "verdict": "unsupported",
-    "detail": "returned `null` (function or operator not recognised)"
+    "verdict": "pass",
+    "detail": "true"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -458,10 +461,11 @@
     "sl"
    ]
   },
+  "libcartosym_input": "'Oslo' !~ 'sl'",
   "results": {
    "libCartoSym": {
-    "verdict": "unsupported",
-    "detail": "returned `null` (function or operator not recognised)"
+    "verdict": "pass",
+    "detail": "false"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -484,10 +488,11 @@
     "sl"
    ]
   },
+  "libcartosym_input": "'Oslo' !^ 'sl'",
   "results": {
    "libCartoSym": {
-    "verdict": "unsupported",
-    "detail": "returned `null` (function or operator not recognised)"
+    "verdict": "pass",
+    "detail": "true"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -510,10 +515,11 @@
     "lo"
    ]
   },
+  "libcartosym_input": "'Oslo' !$ 'lo'",
   "results": {
    "libCartoSym": {
-    "verdict": "unsupported",
-    "detail": "returned `null` (function or operator not recognised)"
+    "verdict": "pass",
+    "detail": "false"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -1866,7 +1872,7 @@
  "textfn-accenti-o-stroke": {
   "requirement": "/req/text-manipulation/accent-insensitize",
   "input": "accenti('Øre') = accenti('Ore')",
-  "expect": "false",
+  "expect": "true",
   "json": {
    "op": "=",
    "args": [
@@ -1886,8 +1892,8 @@
   },
   "results": {
    "libCartoSym": {
-    "verdict": "FAIL",
-    "detail": "got `true`, draft expects `false`"
+    "verdict": "pass",
+    "detail": "true"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -1895,7 +1901,7 @@
    },
    "draft renderer": {
     "verdict": "pass",
-    "detail": "false"
+    "detail": "true"
    }
   }
  },

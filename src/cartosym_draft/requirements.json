@@ -1,6 +1,6 @@
 {
  "branch": "requirements-placeholders",
- "commit": "0405c09",
+ "commit": "e2f2aa8",
  "uncommitted_changes": false,
  "requirements": {
   "/req/arithmetic/add": {
@@ -690,13 +690,13 @@
    "file": "1-core/requirements/rc-text-manipulation.adoc",
    "line": 32,
    "parts": [
-    "An Encoding SHALL support defining an `accentInsensitize` function that removes accents from a string.",
-    "A Renderer SHALL support removing accents from a string using the `accentInsensitize` function (equivalent to the CQL2 `ACCENTI` function)."
+    "An Encoding SHALL support defining an `accentInsensitize` function that strips accents and folds diacritics in a string.",
+    "A Renderer SHALL support evaluating the `accentInsensitize` function as the CQL2 `accenti` function, implementing accent stripping and diacritic folding."
    ]
   },
   "/req/text-manipulation/lower-case": {
    "file": "1-core/requirements/rc-text-manipulation.adoc",
-   "line": 45,
+   "line": 47,
    "parts": [
     "An Encoding SHALL support defining a `lowerCase` function that converts a string to lowercase.",
     "A Renderer SHALL support converting a string to lowercase using the `lowerCase` function."
@@ -704,7 +704,7 @@
   },
   "/req/text-manipulation/upper-case": {
    "file": "1-core/requirements/rc-text-manipulation.adoc",
-   "line": 56,
+   "line": 58,
    "parts": [
     "An Encoding SHALL support defining an `upperCase` function that converts a string to uppercase.",
     "A Renderer SHALL support converting a string to uppercase using the `upperCase` function."
@@ -712,7 +712,7 @@
   },
   "/req/text-manipulation/concatenate": {
    "file": "1-core/requirements/rc-text-manipulation.adoc",
-   "line": 67,
+   "line": 69,
    "parts": [
     "An Encoding SHALL support defining a `concatenate` function that concatenates strings.",
     "A Renderer SHALL support concatenating strings using the `concatenate` function."
@@ -720,7 +720,7 @@
   },
   "/req/text-manipulation/substitute": {
    "file": "1-core/requirements/rc-text-manipulation.adoc",
-   "line": 78,
+   "line": 80,
    "parts": [
     "An Encoding SHALL support defining a `substitute` function that replaces a substring with another string.",
     "A Renderer SHALL support replacing a substring with another string using the `substitute` function."
@@ -728,7 +728,7 @@
   },
   "/req/text-manipulation/format": {
    "file": "1-core/requirements/rc-text-manipulation.adoc",
-   "line": 89,
+   "line": 91,
    "parts": [
     "An Encoding SHALL support defining a `format` function that formats a string.",
     "A Renderer SHALL support formatting a string using the `format` function, whose format string uses the conversion specifiers of the C `printf` function (ANSI C)."
