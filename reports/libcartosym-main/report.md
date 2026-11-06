@@ -1,6 +1,6 @@
 # CartoSym draft requirements vs implementations
 
-Generated 2026-11-02 with libCartoSym (cs-canif built from ecere/libCartoSym main @ f180e04 and ecere/eC main @ 500a9f8, on Ubuntu) and pycartosym 0.6.1.
+Generated 2026-11-06 with libCartoSym (cs-canif built from ecere/libCartoSym main @ f180e04 and ecere/eC main @ 500a9f8, on Ubuntu) and pycartosym 0.6.1.
 
 Expected values are what the **draft requirement** says. `FAIL` means the implementation disagrees with the draft, which may mean the draft or the implementation is wrong. pycartosym does not evaluate expressions, so for expression cases it is checked on converting them to CQL2-JSON (see below). The draft renderer is `cartosym_draft` in this repository, which implements the draft requirements; a FAIL there means it does not do what the draft says.
 
@@ -9,12 +9,12 @@ Expected values are what the **draft requirement** says. `FAIL` means the implem
 | Implementation | pass | FAIL | unsupported | CRASH | error |
 |---|---|---|---|---|---|
 | draft renderer | 93 | 0 | 0 | 0 | 0 |
-| libCartoSym | 40 | 6 | 34 | 3 | 2 |
+| libCartoSym | 47 | 5 | 28 | 3 | 2 |
 | pycartosym | 85 | 0 | 0 | 0 | 0 |
 
 ## How the cases are run
 
-- **libCartoSym:** the Input text is written to `expr.cql2` and evaluated with `cs-canif eval expr.cql2` (cs-canif built from ecere/libCartoSym main @ f180e04 and ecere/eC main @ 500a9f8, on Ubuntu).
+- **libCartoSym:** the Input text is written to `expr.cql2` and evaluated with `cs-canif eval expr.cql2` (cs-canif built from ecere/libCartoSym main @ f180e04 and ecere/eC main @ 500a9f8, on Ubuntu). Where the spec gives no CartoSym-CSS syntax for an operation, a case can give libCartoSym's own (_as …_ in its column).
 - **pycartosym:** pycartosym does not evaluate expressions. Where a case gives its own CQL2-JSON (55 cases), the Input text is converted with `pycartosym.cql2.to_cql2_json(cql2.parse_text(input))` and passes if the result is that CQL2-JSON; otherwise it passes if `pycartosym.cql2.parse_text(input)` parses it.
 - **draft renderer:** `cartosym_draft.evaluate.evaluate(expression, Context(...))`. Where a case gives its own CQL2-JSON, that is what it evaluates, and the result is marked _(CQL2-JSON)_, so it does not depend on pycartosym's parser; otherwise the Input text is converted with pycartosym as above.
 - **Values:** feature properties, system identifiers, style variables (`@name`) and variables set by the application that a case is evaluated with are listed under its input (_with …_).
@@ -90,7 +90,7 @@ The cases are in [`cases/`](../cases/), the calls in [`harness/adapters.py`](../
 |---|---|---|---|---|---|
 | array-equals | `a_equals((1, 2), (1, 2))` | `true` | pass: true | pass: parses | pass: true |
 | array-equals-order | `a_equals((1, 2), (2, 1))` | `false` | pass: false | pass: parses | pass: false |
-| | _Draft says order matters._ | | | | |
+| | _Draft says order matters, as libCartoSym does. CQL2 Requirement 16 evaluates arrays as sets, so the SWG may change this._ | | | | |
 
 ### `/req/array-relations/a-overlaps`
 
@@ -354,8 +354,8 @@ The cases are in [`cases/`](../cases/), the calls in [`harness/adapters.py`](../
 |---|---|---|---|---|---|
 | textfn-accent-insensitize | `accentInsensitize('café') = accentInsensitize('cafe')` | `true` | FAIL: got `false`, draft expects `true` | pass: converts to the case's CQL2-JSON | pass: true _(CQL2-JSON)_ |
 | | _Draft function name._ | | | | |
-| textfn-accenti-o-stroke | `accenti('Øre') = accenti('Ore')` | `false` | FAIL: got `true`, draft expects `false` | pass: converts to the case's CQL2-JSON | pass: false _(CQL2-JSON)_ |
-| | _Ø does not decompose in Unicode._ | | | | |
+| textfn-accenti-o-stroke | `accenti('Øre') = accenti('Ore')` | `true` | pass: true | pass: converts to the case's CQL2-JSON | pass: true _(CQL2-JSON)_ |
+| | _Diacritic folding also folds Ø, which does not decompose in Unicode, as libCartoSym does (#152)._ | | | | |
 | textfn-accenti | `accenti('café') = accenti('cafe')` | `true` | pass: true | pass: converts to the case's CQL2-JSON | pass: true _(CQL2-JSON)_ |
 | | _CQL2 name used by both implementations._ | | | | |
 
@@ -402,13 +402,13 @@ The cases are in [`cases/`](../cases/), the calls in [`harness/adapters.py`](../
 
 | Case | Input | Expected | libCartoSym | pycartosym | draft renderer |
 |---|---|---|---|---|---|
-| text-contains | `contains('Oslo', 'sl')` | `true` | unsupported: returned `null` (function or operator not recognised) | pass: converts to the case's CQL2-JSON | pass: true _(CQL2-JSON)_ |
+| text-contains | `contains('Oslo', 'sl')` | `true` | pass: true _(as `'Oslo' ~ 'sl'`)_ | pass: converts to the case's CQL2-JSON | pass: true _(CQL2-JSON)_ |
 
 ### `/req/text-relation/ends-with`
 
 | Case | Input | Expected | libCartoSym | pycartosym | draft renderer |
 |---|---|---|---|---|---|
-| text-ends-with | `endsWith('Oslo', 'lo')` | `true` | unsupported: returned `null` (function or operator not recognised) | pass: converts to the case's CQL2-JSON | pass: true _(CQL2-JSON)_ |
+| text-ends-with | `endsWith('Oslo', 'lo')` | `true` | pass: true _(as `'Oslo' $ 'lo'`)_ | pass: converts to the case's CQL2-JSON | pass: true _(CQL2-JSON)_ |
 
 ### `/req/text-relation/like`
 
@@ -424,13 +424,13 @@ The cases are in [`cases/`](../cases/), the calls in [`harness/adapters.py`](../
 
 | Case | Input | Expected | libCartoSym | pycartosym | draft renderer |
 |---|---|---|---|---|---|
-| text-not-contains | `notContains('Oslo', 'sl')` | `false` | unsupported: returned `null` (function or operator not recognised) | pass: converts to the case's CQL2-JSON | pass: false _(CQL2-JSON)_ |
+| text-not-contains | `notContains('Oslo', 'sl')` | `false` | pass: false _(as `'Oslo' !~ 'sl'`)_ | pass: converts to the case's CQL2-JSON | pass: false _(CQL2-JSON)_ |
 
 ### `/req/text-relation/not-ends-with`
 
 | Case | Input | Expected | libCartoSym | pycartosym | draft renderer |
 |---|---|---|---|---|---|
-| text-not-ends-with | `notEndsWith('Oslo', 'lo')` | `false` | unsupported: returned `null` (function or operator not recognised) | pass: converts to the case's CQL2-JSON | pass: false _(CQL2-JSON)_ |
+| text-not-ends-with | `notEndsWith('Oslo', 'lo')` | `false` | pass: false _(as `'Oslo' !$ 'lo'`)_ | pass: converts to the case's CQL2-JSON | pass: false _(CQL2-JSON)_ |
 
 ### `/req/text-relation/not-like`
 
@@ -442,13 +442,13 @@ The cases are in [`cases/`](../cases/), the calls in [`harness/adapters.py`](../
 
 | Case | Input | Expected | libCartoSym | pycartosym | draft renderer |
 |---|---|---|---|---|---|
-| text-not-starts-with | `notStartsWith('Oslo', 'sl')` | `true` | unsupported: returned `null` (function or operator not recognised) | pass: converts to the case's CQL2-JSON | pass: true _(CQL2-JSON)_ |
+| text-not-starts-with | `notStartsWith('Oslo', 'sl')` | `true` | pass: true _(as `'Oslo' !^ 'sl'`)_ | pass: converts to the case's CQL2-JSON | pass: true _(CQL2-JSON)_ |
 
 ### `/req/text-relation/starts-with`
 
 | Case | Input | Expected | libCartoSym | pycartosym | draft renderer |
 |---|---|---|---|---|---|
-| text-starts-with | `startsWith('Oslo', 'Os')` | `true` | unsupported: returned `null` (function or operator not recognised) | pass: converts to the case's CQL2-JSON | pass: true _(CQL2-JSON)_ |
+| text-starts-with | `startsWith('Oslo', 'Os')` | `true` | pass: true _(as `'Oslo' ^^ 'Os'`)_ | pass: converts to the case's CQL2-JSON | pass: true _(CQL2-JSON)_ |
 
 ### `/req/variables/definition`
 
