@@ -55,31 +55,31 @@ class Row:
 MATRIX: dict[str, Row] = {
     "opacity": Row("whole symbol (group opacity)", "Keep as drafted.", "unchanged"),
     "casing-order": Row("casing beneath the stroke", "Keep as drafted.", "unchanged"),
-    "casing-crossing": Row("all casings with the same zOrder beneath the strokes", "Done, as Jérôme answered and as "
-                           "the painter's algorithm in clause 7 loops (casing passes inside each zOrder).", "resolved, #147"),
-    "casing-width": Row("extends beyond each side of the stroke", "Done, as Jérôme answered (total = stroke + 2 × casing).",
-                        "resolved, #147"),
+    "casing-crossing": Row("all casings with the same zOrder beneath the strokes", "In the PR, as Jérôme answered and as "
+                           "the painter's algorithm in clause 7 loops (casing passes inside each zOrder).", "answered, #147"),
+    "casing-width": Row("extends beyond each side of the stroke", "In the PR, as Jérôme answered (total = stroke + 2 × casing).",
+                        "answered, #147"),
     "font-outline": Row("outline beneath the glyphs", "Keep as drafted (as SE Halo).", "unchanged"),
     "z-order": Row("higher zOrder on top", "Keep as drafted.", "unchanged"),
     "hatch-angle": Row("clockwise (table)", "Probably counter-clockwise from 0 pointing right, as other angles drawn on "
                        "the map (Jérôme); check graphics toolkits first.", "TODO(review), #146",
                        "What do Win32 GDI, X and newer toolkits do? (@ebocher, @oertz, @maxcollombin)"),
-    "dash-units": Row("pixels unless uom-qualified", "Done: applies the rule Jérôme gave for spacing and gradients (as SE).",
-                      "resolved", "OK for dashPattern too?"),
+    "dash-units": Row("pixels unless uom-qualified", "In the PR: applies the rule Jérôme gave for spacing and gradients (as SE).",
+                      "in the PR", "OK for dashPattern too?"),
     "image-hotspot": Row("centre (0.5, 0.5)", "Keep as drafted (Jérôme confirmed; same as libCartoSym).",
-                         "resolved; tint and blackTint added, alphaThreshold for picking (permission for the alpha "
+                         "answered; tint and blackTint added, alphaThreshold for picking (permission for the alpha "
                          "test), #145"),
     "default-marker": Row("a single default Dot (white, 10 px)",
                           "Keep, as intended (Jérôme); clearing it (`marker: null`) is now in the NOTE. Fix the schema "
-                          "(`anyOf` in graphicArray plus a `marker` change, #143). Done: Dot has `size` and `color`, the same "
+                          "(`anyOf` in graphicArray plus a `marker` change, #143). In the PR: Dot has `size` and `color`, the same "
                           "values as its stroke's width and color, always a filled circle; CS-JSON forbids setting both within "
-                          "a single styling rule (#144).", "NOTE + TODO(review), #143; resolved, #144", "Schema change OK?"),
+                          "a single styling rule (#144).", "NOTE + TODO(review), #143; answered, #144", "Schema change OK?"),
     "dots": Row("not stated", "Add dot size and color properties; until then, small dots in the fill color.",
                 "TODO(review), #84", "Should stipple/dot-pattern dots have their own size and color?"),
     "label-priority": Row("higher value wins", "Keep as drafted (as QGIS and GeoServer, and as zOrder); libCartoSym's "
                           "engine currently places lower values first.", "TODO(review), #148",
                           "Higher wins, or rename the property if lower should come first?"),
-    "label-spacing": Row("pixels unless uom-qualified", "Done, as Jérôme answered.", "resolved"),
+    "label-spacing": Row("pixels unless uom-qualified", "In the PR, as Jérôme answered.", "answered"),
     "label-pass": Row("separate pass on top", "Keep as drafted.", "unchanged"),
     "ndvi-division": Row("real quotient", "Keep as drafted (confirmed by Jérôme, as CQL2); libCartoSym should change "
                          "(it returns 0 for example 7; Jérôme agrees).", "unchanged, ecere/libCartoSym#11"),
@@ -88,17 +88,17 @@ MATRIX: dict[str, Row] = {
                           "#150: examples 6 and 7 assume reflectance, with a second version for digital numbers.",
                           "TODO(review), #150", "Which data should examples 6 and 7 assume, and is the unscaled default OK?"),
     "color-map": Row("interpolate (method open), exact at entries, clamp outside",
-                     "Done, as Jérôme answered (clamp, exact at entries, method open); libCartoSym interpolates "
+                     "In the PR, as Jérôme answered (clamp, exact at entries, method open); libCartoSym interpolates "
                      "quadratically. Stepped classes via conditional expressions (Jérôme). Added by the PR: a "
                      "recommendation that the result stays between the two closest entries.",
                      "recommendation + NOTE, #149", "Recommendation OK?"),
     "gamma": Row("c ^ gamma (darkens above 1)", "Remove from coverage (not in the model); if kept, use SE's direction.",
                  "TODO(review), #86"),
-    "hillshade-factor": Row("multiplies the horizontal components of the normal", "Done, as Jérôme's renderer, "
-                            "including the sample distance and the shade without a colorMap.", "resolved"),
-    "hillshade-overlay": Row("dot product, 0 (full shade) to 1 (no shade)", "Done, as Jérôme described.", "resolved"),
-    "sun-azimuth": Row("clockwise from north, a compass bearing", "Done, as Jérôme answered (as GDAL).", "resolved"),
-    "gradient-angle": Row("degrees, 0 pointing right, turning counter-clockwise", "Done, as Jérôme answered.", "resolved"),
+    "hillshade-factor": Row("multiplies the horizontal components of the normal", "In the PR, as Jérôme's renderer, "
+                            "including the sample distance and the shade without a colorMap.", "answered"),
+    "hillshade-overlay": Row("dot product, 0 (full shade) to 1 (no shade)", "In the PR, as Jérôme described.", "answered"),
+    "sun-azimuth": Row("clockwise from north, a compass bearing", "In the PR, as Jérôme answered (as GDAL).", "answered"),
+    "gradient-angle": Row("degrees, 0 pointing right, turning counter-clockwise", "In the PR, as Jérôme answered.", "answered"),
     "gradient-frame": Row("pixels unless uom-qualified; frame not stated (Part 2)",
                           "Wait until two or three renderers can be compared (Jérôme).", "TODO(review), #153"),
 }
@@ -111,11 +111,11 @@ EXTRA_ROWS: list[tuple[str, Row]] = [
     ("caseInsensitize / accentInsensitize vs casei / accenti",
      Row("long names (model); short in the schema", "Use the CQL2 names casei and accenti.", "TODO(review), #140")),
     ("What counts as an accent (`Ø`)",
-     Row("accent stripping and diacritic folding (CQL2 Requirement 9)", "Done, as Jérôme answered: folds Ø → O as "
-         "libCartoSym does, with a NOTE pointing to Unicode TR #30.", "resolved, #152")),
+     Row("accent stripping and diacritic folding (CQL2 Requirement 9)", "In the PR, as Jérôme answered: folds Ø → O as "
+         "libCartoSym does, with a NOTE pointing to Unicode Technical Report 30.", "answered, #152")),
     ("Right-hand identifiers vs the CSCSS examples",
-     Row("any expression on the right-hand side", "Done: where an enumeration is expected, a bare word is an "
-         "enumeration value (clause 17); a NOTE now points there.", "resolved, #151")),
+     Row("any expression on the right-hand side", "In the PR: where an enumeration is expected, a bare word is an "
+         "enumeration value (clause 17); a NOTE now points there.", "answered, #151")),
     ("center vs centerLine",
      Row("center (UML)", "Use center, as the UML and libCartoSym do, and change the schema.", "TODO(review), #120",
          "Which name is intended?")),
@@ -133,7 +133,7 @@ EXTRA_ROWS: list[tuple[str, Row]] = [
          "marker: `anyOf` in graphicArray, and `marker` accepting null and an object without elements (tested).",
          "not in PR (schema), #140, #143")),
     ("format string syntax",
-     Row("C printf conversion specifiers (ANSI C)", "Done, as Jérôme answered.", "resolved")),
+     Row("C printf conversion specifiers (ANSI C)", "In the PR, as Jérôme answered.", "answered")),
     ("intDiv in libCartoSym 0.0.1",
      Row("truncating integer division", "Fix in libCartoSym: cs-canif crashes on `7 div 2`.",
          "n/a (implementation), ecere/libCartoSym#5")),
