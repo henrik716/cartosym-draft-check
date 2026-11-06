@@ -1,0 +1,20 @@
+# The notEqual operator `<>` (/req/core/relational), beyond core-not-equal in
+# 1-core-expressions.yaml: the other results, text operands, operator spacing,
+# and `<>` in a selector, which is what PR #124 (issue #119) makes parseable in
+# the spec's grammar. The grammar itself is checked by tools/check_grammar.py.
+
+- {id: neq-equal-operands, requirement: /req/core/relational, kind: expression, input: "2 <> 2", json: {op: "<>", args: [2, 2]}, expect: "false"}
+- {id: neq-reversed, requirement: /req/core/relational, kind: expression, input: "3 <> 2", json: {op: "<>", args: [3, 2]}, expect: "true"}
+- {id: neq-larger-first, requirement: /req/core/relational, kind: expression, input: "10 <> 2", json: {op: "<>", args: [10, 2]}, expect: "true"}
+- {id: neq-text, requirement: /req/core/relational, kind: expression, input: "'a' <> 'b'", json: {op: "<>", args: ["a", "b"]}, expect: "true"}
+- {id: neq-text-equal, requirement: /req/core/relational, kind: expression, input: "'a' <> 'a'", json: {op: "<>", args: ["a", "a"]}, expect: "false"}
+- {id: neq-no-spaces, requirement: /req/core/relational, kind: expression, input: "2<>3", json: {op: "<>", args: [2, 3]}, expect: "true"}
+- {id: neq-arithmetic, requirement: /req/core/relational, kind: expression, input: "1 + 1 <> 3", json: {op: "<>", args: [{op: "+", args: [1, 1]}, 3]}, expect: "true"}
+- {id: neq-and, requirement: /req/core/relational, kind: expression, input: "1 <> 2 and 3 <> 4", json: {op: and, args: [{op: "<>", args: [1, 2]}, {op: "<>", args: [3, 4]}]}, expect: "true"}
+- {id: neq-compared-to-true, requirement: /req/core/relational, kind: expression, input: "(2 <> 3) = true", json: {op: "=", args: [{op: "<>", args: [2, 3]}, true]}, expect: "true",
+   note: "The result of `<>` is a boolean, so it equals `true` (libCartoSym#7)."}
+- {id: neq-not, requirement: /req/core/relational, kind: expression, input: "not (2 <> 2)", json: {op: not, args: [{op: "<>", args: [2, 2]}]}, expect: "true"}
+- {id: neq-property, requirement: /req/core/relational, kind: expression, draft_only: true, input: "a <> 1", json: {op: "<>", args: [{property: a}, 1]}, properties: {a: 2}, expect: "true"}
+- {id: neq-selector, requirement: /req/core/relational, kind: style, format: cscss, input: "[a <> 1] { opacity: 0.5; }\n", expect: valid}
+- {id: neq-selector-no-spaces, requirement: /req/core/relational, kind: style, format: cscss, input: "[a<>1] { opacity: 0.5; }\n", expect: valid}
+- {id: neq-selector-and, requirement: /req/core/relational, kind: style, format: cscss, input: "[a <> 1 and b <> 2] { opacity: 0.5; }\n", expect: valid}

@@ -1,0 +1,44 @@
+# Inputs for tools/check_grammar.py, which runs them through a parser generated
+# from the spec's CartoSym-CSS grammar. In a subfolder because harness/run.py
+# reads cases/*.yaml.
+#
+# selector: the text between [ and ], in the style `[...] { opacity: 0.5; }`
+# style:    a complete style sheet
+# expect:   "accepted", "rejected", or for a selector the expected parse, with
+#           brackets around each operation
+
+# --- notEqual (issue #119, PR #124) -----------------------------------------
+- {selector: "a <> 1", expect: "(a <> 1)"}
+- {selector: "a<>1", expect: "(a <> 1)"}
+- {selector: "a <> 'x'", expect: "(a <> 'x')"}
+- {selector: "a <> b", expect: "(a <> b)"}
+- {selector: "a + 1 <> 2", expect: "((a + 1) <> 2)"}
+- {selector: "not a <> 1", expect: "(not (a <> 1))"}
+- {selector: "(a <> 1) and (b <> 2)", expect: "((( (a <> 1) )) and (( (b <> 2) )))"}
+- {style: "{ opacity: a <> 1 ? 1 : 0; }\n", expect: accepted}
+- {style: "@v = 1 <> 2;\n{ opacity: 1; }\n", expect: accepted}
+
+# --- Must keep working ------------------------------------------------------
+- {selector: "a = 1", expect: "(a = 1)"}
+- {selector: "a < 1", expect: "(a < 1)"}
+- {selector: "a > 1", expect: "(a > 1)"}
+- {selector: "a <= 1", expect: "(a <= 1)"}
+- {selector: "a >= 1", expect: "(a >= 1)"}
+- {selector: "name = '<>'", expect: "(name = '<>')"}
+
+# --- Must stay errors -------------------------------------------------------
+- {selector: "a < > 1", expect: rejected}
+- {selector: "a >< 1", expect: rejected}
+- {selector: "a != 1", expect: rejected}
+- {selector: "a <>", expect: rejected}
+- {selector: "<> 1", expect: rejected}
+- {selector: "a <> <> 1", expect: rejected}
+
+# --- Operator priority (issue #118, PR #123) --------------------------------
+- {selector: "viz.sd > 20000 and viz.sd < 200000", expect: "(((viz . sd) > 20000) and ((viz . sd) < 200000))"}
+- {selector: "a = 1 and b = 2", expect: "((a = 1) and (b = 2))"}
+- {selector: "a <> 1 and b <> 2", expect: "((a <> 1) and (b <> 2))"}
+- {selector: "a <> 1 or b <> 2 and c <> 3", expect: "((a <> 1) or ((b <> 2) and (c <> 3)))"}
+- {selector: "not a <> 1 and b <> 2", expect: "((not (a <> 1)) and (b <> 2))"}
+- {selector: "a between 1 and 5 and b <> 2", expect: "((a between 1 and 5) and (b <> 2))",
+   note: "PR #123 lists this as a remaining limitation."}

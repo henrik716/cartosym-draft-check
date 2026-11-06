@@ -13,7 +13,7 @@ Requirements written without an implementation are hard to get right. This repos
 | **Playground** | [`gallery/playground.html`](gallery/playground.html) | Pick any card or sample, edit its style or switch between its variants, and see it rendered again. The draft renderer runs in the browser through [Pyodide](https://pyodide.org). |
 | **Render kits** | [`gallery/kit/`](gallery/kit/), [`gallery/kit.zip`](gallery/kit.zip) | The style, data and view settings of every card and sample, to render the same maps with another renderer. |
 | **Draft renderer** | [`src/cartosym_draft/`](src/cartosym_draft/) | A CQL2 expression evaluator and SVG renderer that does what the draft requirements say. Each open behavior is a switchable option ([`options.py`](src/cartosym_draft/options.py)). |
-| **Test harness** | [`harness/`](harness/), [`cases/`](cases/) | 93 test cases whose expected values are taken from the requirement text. Each case is run through libCartoSym, pycartosym and the draft renderer. |
+| **Test harness** | [`harness/`](harness/), [`cases/`](cases/) | 107 test cases whose expected values are taken from the requirement text. Each case is run through libCartoSym, pycartosym and the draft renderer. |
 | **Test report** | [`reports/report.md`](reports/report.md), [`reports/results.json`](reports/results.json) | Results per requirement and implementation, with libCartoSym from the `cartosym` pip package. [`reports/libcartosym-main/`](reports/libcartosym-main/) has the same against the latest libCartoSym from GitHub. |
 
 Three implementations are involved, and they do different things. The **draft renderer** (this repository) evaluates expressions, resolves the style for each feature and draws the map. **libCartoSym** (Ecere) reads and writes CartoSym-CSS, CartoSym-JSON, SLD/SE and Mapbox styles, and evaluates expressions and styles for a feature (`cs-canif eval`); the test harness compares its results with what the draft says. **pycartosym** (Maxime Collombin) converts between CartoSym-CSS, CartoSym-JSON, SLD/SE and MapLibre styles; the draft renderer uses it to read CartoSym-CSS and CQL2-Text, and the test harness checks its conversion to CQL2-JSON.
@@ -60,7 +60,7 @@ cartosym-draft-check/
 ├── cases/                # test cases, with expected values from the requirement text
 ├── reports/              # test reports; libcartosym-main/ is written by CI
 ├── gallery/              # the generated pages and render kits, served by GitHub Pages
-└── tools/                # requirement snapshot, Rondane and Sentinel-2 fetchers
+└── tools/                # requirement snapshot, grammar check, Rondane and Sentinel-2 fetchers
 ```
 
 ## Reading the gallery
@@ -89,7 +89,7 @@ The full list, with a proposed resolution for each, is the decision matrix at th
 - **The default Marker** (clause 7) puts a white dot on every point, line vertex and polygon centroid of a style that sets no marker. Jérôme confirmed this is intended, so every feature is visible, and a typical base style unsets it for lines and polygons (`marker: null`); the PR now says so. Still open: the JSON schema rejects `marker: null` and `marker: { elements: [] }` (a tested fix is proposed in #143). The Dot defaults gave a size and color the Dot class did not have; as agreed with Jérôme, Dot now has `size` and `color`, the same values as its stroke's width and color (#144).
 - **The JSON schema (on main) rejects colors given as expressions, and empty arrays**, because its `oneOf` branches overlap.
 
-The open points are recorded as TODO(review) notes in PR #133 (the schema issue is outside the PR). In the test harness the draft renderer passes all 93 cases and libCartoSym 43 of the 85 it can run. pycartosym converts all 55 expressions that have an expected CQL2-JSON to exactly that JSON.
+The open points are recorded as TODO(review) notes in PR #133 (the schema issue is outside the PR). In the test harness the draft renderer passes all 104 expression cases and libCartoSym 50 of the 98 it can run. pycartosym converts all 57 expressions that have an expected CQL2-JSON to exactly that JSON.
 
 ## Data
 
@@ -109,6 +109,7 @@ The coverage styles are the spec's own examples 5 to 9 ([`examples/`](src/cartos
 uv sync
 uv run python tools/extract_requirements.py         # requirement text and JSON schema from ../cartographic-symbology
 uv run python harness/run.py                        # test report; the requirements page reads its results
+uv run --with antlr4-tools python tools/check_grammar.py   # the CartoSym-CSS grammar in ../cartographic-symbology (needs Java)
 uv run python -m cartosym_draft.gallery gallery/index.html   # gallery, requirements page and render kits
 ```
 
