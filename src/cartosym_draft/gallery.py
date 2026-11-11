@@ -75,22 +75,28 @@ def _vector_decisions() -> list[Decision]:
         Decision(
             key="opacity",
             title="Symbolizer opacity: whole symbol or each part",
-            requirements=["/req/core/opacity"],
+            requirements=["/req/core/opacity", "/rec/core/opacity-together"],
             question="With `opacity: 0.5`, is the symbol made translucent as a whole, or are fill and stroke made translucent separately? "
-                     "Separately, the stroke and fill overlap shows through.",
+                     "Separately, the stroke and fill overlap shows through. Does the opacity apply to the label?",
             style={"stylingRules": [
                 {"selector": {"op": "=", "args": [{"sysId": "dataLayer.id"}, "Background"]},
                  "symbolizer": {"fill": {"color": [46, 134, 222]}, "stroke": {"width": {"px": 0}}}},
                 {"selector": {"op": "=", "args": [{"sysId": "dataLayer.id"}, "Parcels"]},
                  "symbolizer": {"opacity": 0.5, "fill": {"color": [243, 156, 18]},
-                                "stroke": {"color": [110, 44, 0], "width": {"px": 14}}}},
+                                "stroke": {"color": [110, 44, 0], "width": {"px": 14}},
+                                "label": {"elements": [{"type": "Text", "text": "Parcel 12",
+                                                        "font": {"face": "sans-serif", "size": 13, "bold": True,
+                                                                 "color": [27, 38, 49]}}]}}},
             ]},
             layers=[background, Layer("Parcels", [_feature("Polygon", _square(80, 50, 130))])],
             variants=[
-                Variant("Whole symbol (group opacity)", DRAFT, is_draft=True),
-                Variant("Fill and stroke separately", DRAFT.with_(opacity="per-element"), note="Where the stroke overlaps the fill, a darker band shows inside the stroke."),
+                Variant("Fill and stroke together (recommended)", DRAFT, is_draft=True, note="The label stays fully opaque."),
+                Variant("Fill and stroke separately", DRAFT.with_(opacity="per-element"), note="Where the stroke overlaps the fill, a darker band shows inside the stroke. This also meets the requirement."),
             ],
-            evidence="The draft says the opacity applies to the portrayal as a whole, as SVG and CSS group opacity do. Applied to fill and stroke separately, the overlap shows through.",
+            evidence="As Jérôme answered on #162, the requirement says the opacity multiplies the opacity of the fill, the stroke, "
+                     "the marker graphics and the coverage cells, and a NOTE says it does not apply to labels. A recommendation "
+                     "applies it to the parts together, as SVG and CSS group opacity do, so the overlap does not show through. "
+                     "Both variants meet the requirement; only the first follows the recommendation.",
         ),
         Decision(
             key="casing-order",
@@ -209,8 +215,8 @@ def _vector_decisions() -> list[Decision]:
         Decision(
             key="dash-units",
             title="Units of dashPattern",
-            requirements=["/req/dashes/dash-pattern"],
-            question="A 6 px wide line with `dashPattern: [4, 2]`. Are the values pixels, or multiples of the stroke width?",
+            requirements=["/req/dashes/dash-pattern", "/per/dashes/dash-pattern-units"],
+            question="A 6 px wide line with `dashPattern: [4, 2]`. Are unqualified values pixels, or multiples of the stroke width?",
             style={"stylingRules": [{"symbolizer": {"stroke": {
                 "color": [192, 57, 43], "width": {"px": 6}, "dashPattern": [4, 2]}}}]},
             layers=[Layer("Boundaries", [_feature("LineString", [[20, 60], [280, 60]]),
@@ -219,10 +225,11 @@ def _vector_decisions() -> list[Decision]:
                 Variant("Pixels", DRAFT, is_draft=True),
                 Variant("Multiples of stroke width", DRAFT.with_(dash_units="stroke-width")),
             ],
-            evidence="Jérôme gave this rule for label spacing and gradients: units are as in Graphical Units of Measure, pixels "
-                     "unless qualified with another unit. The PR applies it to dashPattern too, as SE does for "
-                     "`stroke-dasharray`; MapLibre's `line-dasharray` is in "
-                     "multiples of the line width.",
+            evidence="Pixels unless qualified, as Jérôme gave for label spacing and gradients, and as SE does for "
+                     "`stroke-dasharray`; MapLibre's `line-dasharray` is in multiples of the line width. Since #161, "
+                     "dashPattern lengths are UnitValues: a Renderer supports px, pt, mm, cm and inches, and a permission "
+                     "covers meters, feet and percent of the stroke width, so a style that wants the MapLibre reading writes "
+                     "`[{pc: 400}, {pc: 200}]` (see the dash units sample).",
         ),
         Decision(
             key="image-hotspot",
@@ -390,7 +397,7 @@ def _more_vector_decisions() -> list[Decision]:
         Decision(
             key="label-priority",
             title="Which label priority wins",
-            requirements=["/req/labels/label", "/req/labels/placement"],
+            requirements=["/req/labels/label", "/req/labels/placement", "/rec/labels/overlap"],
             question="Two nearby places whose labels overlap. Lillestrøm has `priority: 2`, Strømmen `priority: 8`. "
                      "Only one label fits. Which one is kept?",
             style=_by_layer({

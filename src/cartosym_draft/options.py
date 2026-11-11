@@ -11,8 +11,11 @@ from dataclasses import dataclass, replace
 
 @dataclass(frozen=True)
 class Options:
-    # /req/core/opacity: "whole" applies Symbolizer opacity to the portrayal
-    # as a group; "per-element" multiplies it into fill and stroke separately.
+    # /req/core/opacity: the Symbolizer opacity multiplies the opacity of the
+    # fill, the stroke and the marker graphics, not labels. "whole" applies it
+    # to these parts together, as a group (/rec/core/opacity-together);
+    # "per-element" multiplies it into each part separately, which meets the
+    # requirement but lets them show through each other.
     opacity: str = "whole"
 
     # /req/casing/casing: "below" draws the casing beneath the main stroke.
@@ -43,8 +46,10 @@ class Options:
     # "Hatches orientation clockwise degree"), or "counter-clockwise".
     hatch_angle: str = "clockwise"
 
-    # /req/dashes/dash-pattern: dashPattern values in "px", or as multiples
-    # of the stroke width ("stroke-width"). The draft does not say.
+    # /req/dashes/dash-pattern: unqualified dashPattern lengths in "px"
+    # (draft), or as multiples of the stroke width ("stroke-width", as
+    # MapLibre). Qualified lengths always follow their unit; `pc` is percent
+    # of the stroke width (/per/dashes/dash-pattern-units).
     dash_units: str = "px"
 
     # /req/vector/image: default hot spot of an Image graphic, as a fraction
@@ -68,6 +73,7 @@ class Options:
     label_spacing_units: str = "px"
     # /req/labels/label: "on-top" draws labels in a separate pass above all
     # features; "with-feature" draws each label with its own feature.
+    # /rec/labels/overlap: labels that would overlap are always omitted.
     label_pass: str = "on-top"
 
     # /req/coverage/color-map, /req/coverage/opacity-map: "interpolate"

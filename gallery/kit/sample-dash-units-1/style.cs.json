@@ -1,0 +1,66 @@
+{
+  "stylingRules": [
+    {
+      "symbolizer": {
+        "stroke": {
+          "color": "black",
+          "width": {
+            "px": 5
+          },
+          "dashPattern": [
+            16,
+            8
+          ]
+        }
+      }
+    },
+    {
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "property": "unit"
+          },
+          "mm"
+        ]
+      },
+      "symbolizer": {
+        "stroke": {
+          "alter": true,
+          "dashPattern": [
+            {
+              "mm": 4
+            },
+            {
+              "mm": 2
+            }
+          ]
+        }
+      }
+    },
+    {
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "property": "unit"
+          },
+          "pc"
+        ]
+      },
+      "symbolizer": {
+        "stroke": {
+          "alter": true,
+          "dashPattern": [
+            {
+              "pc": 320
+            },
+            {
+              "pc": 160
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

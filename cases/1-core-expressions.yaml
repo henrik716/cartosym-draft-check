@@ -306,13 +306,13 @@
   kind: expression
   input: "round(2.5)"
   expect: 3
-  note: Draft says halves round toward positive infinity.
-- id: math-rint-half
-  requirement: /req/math/rint
+  note: Draft says halfway cases round away from zero, as C (#162).
+- id: math-round-negative-half
+  requirement: /req/math/round
   kind: expression
-  input: "rint(2.5)"
-  expect: 2
-  note: Draft says halves round to even.
+  input: "round(-2.5)"
+  expect: -3
+  note: Away from zero gives -3; the earlier draft (toward positive infinity) gave -2.
 - id: math-sqrt
   requirement: /req/math/sqrt
   kind: expression

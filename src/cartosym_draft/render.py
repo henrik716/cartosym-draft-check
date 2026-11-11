@@ -60,8 +60,9 @@ def to_px(value: Any, view: View, default: float = 0) -> float:
         return float(value)
     if isinstance(value, dict) and len(value) == 1:
         unit, v = next(iter(value.items()))
-        factor = {"px": 1, "m": view.px_per_m, "mm": 1 / MM_PER_PX, "pt": 25.4 / 72 / MM_PER_PX,
-                  "inch": 25.4 / MM_PER_PX, "cm": 10 / MM_PER_PX}.get(unit)
+        factor = {"px": 1, "m": view.px_per_m, "ft": 0.3048 * view.px_per_m, "mm": 1 / MM_PER_PX,
+                  "pt": 25.4 / 72 / MM_PER_PX, "inch": 25.4 / MM_PER_PX, "in": 25.4 / MM_PER_PX,
+                  "cm": 10 / MM_PER_PX}.get(unit)
         if factor is not None:
             return float(v) * factor
     return default
@@ -320,9 +321,19 @@ def _stroke_paint(svg: _Svg, stroke: dict, path: str, opacity_mul: float, opts: 
         # Flat caps: round caps would extend each dash by half the width and
         # can close short gaps entirely.
         attrs = 'fill="none" stroke-linejoin="round" stroke-linecap="butt"'
+        # /req/dashes/dash-pattern: lengths are UnitValues, in pixels unless
+        # qualified. /per/dashes/dash-pattern-units: `pc` is percent of the
+        # stroke width. The "stroke-width" option reads plain numbers as
+        # multiples of the width, as MapLibre does.
         k = w if opts.dash_units == "stroke-width" else 1
-        offset = to_px(stroke.get("dashOffset"), view, 0) * k
-        dash = f' stroke-dasharray="{" ".join(f"{v * k:g}" for v in stroke["dashPattern"])}" stroke-dashoffset="{offset:g}"'
+
+        def length(v) -> float:
+            if isinstance(v, dict) and set(v) == {"pc"}:
+                return float(v["pc"]) / 100 * w
+            return to_px(v, view, 0) * (k if isinstance(v, (int, float)) else 1)
+
+        offset = length(stroke.get("dashOffset") or 0)
+        dash = f' stroke-dasharray="{" ".join(f"{length(v):g}" for v in stroke["dashPattern"])}" stroke-dashoffset="{offset:g}"'
 
     main = one(stroke, w, dash)
     casing = stroke.get("casing")
@@ -504,7 +515,7 @@ def render(style: dict, layers: list[Layer], view: View, opts: Options | None = 
     """
     opts = opts or Options()
     svg = _Svg(view)
-    items: list[list] = []  # [zOrder, sequence, fragments, group opacity]
+    items: list[list] = []  # [zOrder, sequence, fragments, group opacity, labels]
     labels: list[_Label] = []
     seq = 0
     for layer in layers:
@@ -519,7 +530,7 @@ def render(style: dict, layers: list[Layer], view: View, opts: Options | None = 
                 gx1, gy0 = view.xy(layer.grid.bbox[2], layer.grid.bbox[3])
                 frag = (f'<image href="{uri}" x="{gx0:.2f}" y="{gy0:.2f}" width="{gx1 - gx0:.2f}" '
                         f'height="{gy1 - gy0:.2f}" preserveAspectRatio="none" style="image-rendering:pixelated"/>')
-                items.append([z if opts.z_order == "higher-on-top" else -z, seq, [frag], 1.0])
+                items.append([z if opts.z_order == "higher-on-top" else -z, seq, [frag], 1.0, []])
                 seq += 1
             continue
         for feat in layer.features:
@@ -555,9 +566,10 @@ def render(style: dict, layers: list[Layer], view: View, opts: Options | None = 
             label = sym.get("label")
             if isinstance(label, dict) and label.get("elements"):
                 prio = float((label.get("placement") or {}).get("priority", 0) or 0)
-                for text, box in _label_candidates(label, pts, lines, polys, view, mul, opts):
+                # The Symbolizer opacity does not apply to labels (NOTE in /req/core/opacity).
+                for text, box in _label_candidates(label, pts, lines, polys, view, 1.0, opts):
                     labels.append(_Label(prio, seq, len(items), text, box))
-            items.append([svg.z, seq, frags, op])
+            items.append([svg.z, seq, frags, op, []])
             seq += 1
 
     # /req/labels/*: place in priority order, dropping labels that would overlap.
@@ -571,18 +583,18 @@ def render(style: dict, layers: list[Layer], view: View, opts: Options | None = 
             continue
         placed.append(lb)
         if opts.label_pass == "with-feature":
-            items[lb.item][2].append(lb.svg)
+            items[lb.item][4].append(lb.svg)
 
     # /req/casing/casing: the casings of all features with the same zOrder go
     # beneath the main strokes of those features, so a bridge's casing covers
     # the roads below it.
     for z in sorted({it[0] for it in items} | {cz for cz, _ in svg.casings}):
         svg.body.extend(c for cz, c in svg.casings if cz == z)
-        for _, _, frags, op in sorted((it for it in items if it[0] == z), key=lambda it: it[1]):
+        for _, _, frags, op, item_labels in sorted((it for it in items if it[0] == z), key=lambda it: it[1]):
             group = "".join(frags)
             if opts.opacity == "whole" and op < 1:
                 group = f'<g opacity="{op:g}">{group}</g>'
-            svg.body.append(group)
+            svg.body.append(group + "".join(item_labels))
     if opts.label_pass == "on-top":
         svg.body.extend(lb.svg for lb in sorted(placed, key=lambda lb: lb.seq))
     return svg.text()

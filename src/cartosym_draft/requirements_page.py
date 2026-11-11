@@ -38,6 +38,7 @@ NOT_IMPLEMENTED = {
                                                 "are not implemented",
     "/req/labels/placement": "partly: priority and minSpacing are rendered; maxSpacing is not implemented",
     "/per/vector/image-alpha-test": "not implemented: a permission; the draft renderer has no picking and no alpha test",
+    "/rec/parameter-values/report-null": "not implemented: the draft renderer applies the NULL values but does not report them",
 }
 
 

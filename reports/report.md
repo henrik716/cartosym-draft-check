@@ -1,6 +1,6 @@
 # CartoSym draft requirements vs implementations
 
-Generated 2026-11-06 with libCartoSym (cs-canif from `cartosym` 0.0.1, `ecrt` 0.0.6) and pycartosym 0.6.1.
+Generated 2026-11-11 with libCartoSym (cs-canif from `cartosym` 0.0.1, `ecrt` 0.0.6) and pycartosym 0.6.4.
 
 Expected values are what the **draft requirement** says. `FAIL` means the implementation disagrees with the draft, which may mean the draft or the implementation is wrong. pycartosym does not evaluate expressions, so for expression cases it is checked on converting them to CQL2-JSON (see below). The draft renderer is `cartosym_draft` in this repository, which implements the draft requirements; a FAIL there means it does not do what the draft says.
 
@@ -8,14 +8,14 @@ Expected values are what the **draft requirement** says. `FAIL` means the implem
 
 | Implementation | pass | FAIL | unsupported | CRASH | error |
 |---|---|---|---|---|---|
-| draft renderer | 115 | 0 | 0 | 0 | 0 |
-| libCartoSym | 50 | 12 | 29 | 3 | 15 |
-| pycartosym | 109 | 0 | 0 | 0 | 0 |
+| draft renderer | 116 | 0 | 0 | 0 | 0 |
+| libCartoSym | 49 | 12 | 31 | 3 | 15 |
+| pycartosym | 110 | 0 | 0 | 0 | 0 |
 
 ## How the cases are run
 
 - **libCartoSym:** the Input text is written to `expr.cql2` and evaluated with `cs-canif eval expr.cql2` (cs-canif from `cartosym` 0.0.1, `ecrt` 0.0.6). Where the spec gives no CartoSym-CSS syntax for an operation, a case can give libCartoSym's own (_as …_ in its column).
-- **pycartosym:** pycartosym does not evaluate expressions. Where a case gives its own CQL2-JSON (77 cases), the Input text is converted with `pycartosym.cql2.to_cql2_json(cql2.parse_text(input))` and passes if the result is that CQL2-JSON; otherwise it passes if `pycartosym.cql2.parse_text(input)` parses it.
+- **pycartosym:** pycartosym does not evaluate expressions. Where a case gives its own CQL2-JSON (78 cases), the Input text is converted with `pycartosym.cql2.to_cql2_json(cql2.parse_text(input))` and passes if the result is that CQL2-JSON; otherwise it passes if `pycartosym.cql2.parse_text(input)` parses it.
 - **draft renderer:** `cartosym_draft.evaluate.evaluate(expression, Context(...))`. Where a case gives its own CQL2-JSON, that is what it evaluates, and the result is marked _(CQL2-JSON)_, so it does not depend on pycartosym's parser; otherwise the Input text is converted with pycartosym as above.
 - **Values:** feature properties, system identifiers, style variables (`@name`) and variables set by the application that a case is evaluated with are listed under its input (_with …_).
 - **Draft renderer only** (9 cases): cases that need such values. The harness does not pass them to `cs-canif` or pycartosym, so those columns show `-`.
@@ -211,8 +211,10 @@ The cases are in [`cases/`](../cases/), the calls in [`harness/adapters.py`](../
 | Case | Input | Expected | libCartoSym | pycartosym | draft renderer |
 |---|---|---|---|---|---|
 | fn-call | `abs(-2)` | `2` | unsupported: returned `null` (function or operator not recognised) | pass: converts to the case's CQL2-JSON | pass: 2 _(CQL2-JSON)_ |
-| fn-wrong-arity | `abs(1, 2)` | `<invalid>` | unsupported: returned `null` (function or operator not recognised) | pass: converts to the case's CQL2-JSON | pass: <invalid> _(CQL2-JSON)_ |
-| | _The draft says a call whose arguments do not match the function's parameters is invalid._ | | | | |
+| fn-wrong-arity | `pow(2)` | `null` | pass: null | pass: converts to the case's CQL2-JSON | pass: null _(CQL2-JSON)_ |
+| | _A call whose arguments do not match the function's parameters evaluates to NULL (#162). Uses `pow`, which libCartoSym evaluates, so its null is not just an unsupported function._ | | | | |
+| fn-wrong-type | `pow('a', 2)` | `null` | pass: null | pass: converts to the case's CQL2-JSON | pass: null _(CQL2-JSON)_ |
+| | _A call whose arguments do not match the function's parameters in type evaluates to NULL (#162). Whether text converts to a number is open in_ | | | | |
 
 ### `/req/functions/standard-functions`
 
@@ -317,19 +319,14 @@ The cases are in [`cases/`](../cases/), the calls in [`harness/adapters.py`](../
 |---|---|---|---|---|---|
 | math-random | `random() >= 0 AND random() < 1` | `true` | CRASH: exit code 3221225477 | pass: converts to the case's CQL2-JSON | pass: true _(CQL2-JSON)_ |
 
-### `/req/math/rint`
-
-| Case | Input | Expected | libCartoSym | pycartosym | draft renderer |
-|---|---|---|---|---|---|
-| math-rint-half | `rint(2.5)` | `2` | unsupported: returned `null` (function or operator not recognised) | pass: parses | pass: 2.0 |
-| | _Draft says halves round to even._ | | | | |
-
 ### `/req/math/round`
 
 | Case | Input | Expected | libCartoSym | pycartosym | draft renderer |
 |---|---|---|---|---|---|
 | math-round-half | `round(2.5)` | `3` | unsupported: returned `null` (function or operator not recognised) | pass: parses | pass: 3 |
-| | _Draft says halves round toward positive infinity._ | | | | |
+| | _Draft says halfway cases round away from zero, as C (#162)._ | | | | |
+| math-round-negative-half | `round(-2.5)` | `-3` | unsupported: returned `null` (function or operator not recognised) | pass: parses | pass: -3 |
+| | _Away from zero gives -3; the earlier draft (toward positive infinity) gave -2._ | | | | |
 
 ### `/req/math/sin`
 
@@ -431,12 +428,14 @@ The cases are in [`cases/`](../cases/), the calls in [`harness/adapters.py`](../
 | Case | Input | Expected | libCartoSym | pycartosym | draft renderer |
 |---|---|---|---|---|---|
 | text-contains | `contains('Oslo', 'sl')` | `true` | pass: true _(as `'Oslo' ~ 'sl'`)_ | pass: converts to the case's CQL2-JSON | pass: true _(CQL2-JSON)_ |
+| text-not-contains | `not contains('Oslo', 'sl')` | `false` | unsupported: returned `null` (function or operator not recognised) _(as `not ('Oslo' ~ 'sl')`)_ | pass: converts to the case's CQL2-JSON | pass: false _(CQL2-JSON)_ |
 
 ### `/req/text-relation/ends-with`
 
 | Case | Input | Expected | libCartoSym | pycartosym | draft renderer |
 |---|---|---|---|---|---|
 | text-ends-with | `endsWith('Oslo', 'lo')` | `true` | pass: true _(as `'Oslo' $ 'lo'`)_ | pass: converts to the case's CQL2-JSON | pass: true _(CQL2-JSON)_ |
+| text-not-ends-with | `not endsWith('Oslo', 'lo')` | `false` | unsupported: returned `null` (function or operator not recognised) _(as `not ('Oslo' $ 'lo')`)_ | pass: converts to the case's CQL2-JSON | pass: false _(CQL2-JSON)_ |
 
 ### `/req/text-relation/like`
 
@@ -448,35 +447,18 @@ The cases are in [`cases/`](../cases/), the calls in [`harness/adapters.py`](../
 | text-like-escape | `'50%' like '50\%'` | `true` | pass: true | pass: converts to the case's CQL2-JSON | pass: true _(CQL2-JSON)_ |
 | | _The draft does not mention an escape character; libCartoSym's code supports backslash._ | | | | |
 
-### `/req/text-relation/not-contains`
-
-| Case | Input | Expected | libCartoSym | pycartosym | draft renderer |
-|---|---|---|---|---|---|
-| text-not-contains | `notContains('Oslo', 'sl')` | `false` | pass: false _(as `'Oslo' !~ 'sl'`)_ | pass: converts to the case's CQL2-JSON | pass: false _(CQL2-JSON)_ |
-
-### `/req/text-relation/not-ends-with`
-
-| Case | Input | Expected | libCartoSym | pycartosym | draft renderer |
-|---|---|---|---|---|---|
-| text-not-ends-with | `notEndsWith('Oslo', 'lo')` | `false` | pass: false _(as `'Oslo' !$ 'lo'`)_ | pass: converts to the case's CQL2-JSON | pass: false _(CQL2-JSON)_ |
-
 ### `/req/text-relation/not-like`
 
 | Case | Input | Expected | libCartoSym | pycartosym | draft renderer |
 |---|---|---|---|---|---|
 | text-not-like | `'Oslo' not like 'B%'` | `true` | pass: true | pass: parses | pass: true |
 
-### `/req/text-relation/not-starts-with`
-
-| Case | Input | Expected | libCartoSym | pycartosym | draft renderer |
-|---|---|---|---|---|---|
-| text-not-starts-with | `notStartsWith('Oslo', 'sl')` | `true` | pass: true _(as `'Oslo' !^ 'sl'`)_ | pass: converts to the case's CQL2-JSON | pass: true _(CQL2-JSON)_ |
-
 ### `/req/text-relation/starts-with`
 
 | Case | Input | Expected | libCartoSym | pycartosym | draft renderer |
 |---|---|---|---|---|---|
 | text-starts-with | `startsWith('Oslo', 'Os')` | `true` | pass: true _(as `'Oslo' ^^ 'Os'`)_ | pass: converts to the case's CQL2-JSON | pass: true _(CQL2-JSON)_ |
+| text-not-starts-with | `not startsWith('Oslo', 'sl')` | `true` | unsupported: returned `null` (function or operator not recognised) _(as `not ('Oslo' ^^ 'sl')`)_ | pass: converts to the case's CQL2-JSON | pass: true _(CQL2-JSON)_ |
 
 ### `/req/variables/definition`
 

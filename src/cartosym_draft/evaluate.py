@@ -110,27 +110,45 @@ def _divide(a, b, opts: Options):
     return a / b
 
 
-# Number of arguments of each standard function and fixed-arity operator
-# (/req/functions/call-expressions: a call that does not match is invalid).
+# Number of arguments of each standard function and fixed-arity operator.
 _ARITY = {
     "not": 1, "isnull": 1, "between": 3, "like": 2, "in": 2,
     "contains": 2, "startswith": 2, "endswith": 2,
-    "notlike": 2, "notcontains": 2, "notstartswith": 2, "notendswith": 2,
+    "notlike": 2,
     "a_contains": 2, "a_containedby": 2, "a_equals": 2, "a_overlaps": 2,
     "casei": 1, "caseinsensitize": 1, "accenti": 1, "accentinsensitize": 1,
     "lowercase": 1, "lower": 1, "uppercase": 1, "upper": 1, "substitute": 3,
     "abs": 1, "acos": 1, "asin": 1, "atan": 1, "ceil": 1, "cos": 1, "cosh": 1, "exp": 1, "floor": 1,
-    "log": 1, "log10": 1, "sin": 1, "sinh": 1, "sqrt": 1, "tan": 1, "tanh": 1, "rint": 1, "round": 1,
+    "log": 1, "log10": 1, "sin": 1, "sinh": 1, "sqrt": 1, "tan": 1, "tanh": 1, "round": 1,
     "atan2": 2, "pow": 2, "^": 2, "random": 0, "*": 2, "/": 2, "div": 2, "//": 2, "%": 2, "mod": 2,
     "+": 2, "=": 2, "eq": 2, "<>": 2, "!=": 2, "ne": 2, "<": 2, ">": 2, "<=": 2, ">=": 2,
     "?:": 3, "if": 3,
 }
+
+# The standard functions (clause 15, and the text relation functions since #133 at 6da77bf).
+# /req/functions/call-expressions: a call whose arguments do not match the
+# function's parameters, in number or type, evaluates to NULL. An operator
+# with the wrong number of operands is still invalid.
+_FUNCTIONS = {
+    "abs", "acos", "asin", "atan", "atan2", "ceil", "cos", "cosh", "exp", "floor", "log", "log10", "max", "min",
+    "pow", "random", "round", "sin", "sinh", "sqrt", "tan", "tanh",
+    "casei", "caseinsensitize", "accenti", "accentinsensitize", "lowercase", "lower", "uppercase", "upper",
+    "concatenate", "substitute", "format", "contains", "startswith", "endswith",
+}
+
+
+def _text(v: Any) -> str:
+    if not isinstance(v, str):
+        raise EvaluationError(f"expected text, got {v!r}")
+    return v
 
 
 def _operation(op: str, args: list, ctx: Context) -> Any:
     op_l = op.lower()
     expected = _ARITY.get(op_l)
     if expected is not None and len(args) != expected:
+        if op_l in _FUNCTIONS:
+            return None
         raise EvaluationError(f"{op} takes {expected} argument(s), got {len(args)}")
     if op_l == "random":  # /req/math/random
         return random.random()
@@ -161,6 +179,12 @@ def _operation(op: str, args: list, ctx: Context) -> Any:
     if any(x is None for x in v):
         return None
 
+    if op_l in _FUNCTIONS:
+        try:
+            return _call_function(op_l, v)
+        except (EvaluationError, TypeError):  # arguments of the wrong type
+            return None
+
     if op_l == "not":
         return not v[0]
 
@@ -190,22 +214,14 @@ def _operation(op: str, args: list, ctx: Context) -> Any:
     if op_l in ("%", "mod"):
         return math.fmod(_num(v[0]), _num(v[1])) if isinstance(v[0], float) or isinstance(v[1], float) \
             else int(math.fmod(v[0], v[1]))  # sign of the first operand
-    if op_l in ("^", "pow"):
+    if op_l == "^":
         return _num(v[0]) ** _num(v[1])
 
     # Text relation (/req/text-relation/*)
     if op_l == "like":
         return _like(str(v[0]), str(v[1]))
-    if op_l in ("contains", "startswith", "endswith"):
-        a, b = str(v[0]), str(v[1])
-        return {"contains": b in a, "startswith": a.startswith(b), "endswith": a.endswith(b)}[op_l]
-    # The negated forms are separate operations in the draft, but have no
-    # encoding in the JSON schema (which would use `not`).
     if op_l == "notlike":
         return not _like(str(v[0]), str(v[1]))
-    if op_l in ("notcontains", "notstartswith", "notendswith"):
-        a, b = str(v[0]), str(v[1])
-        return not {"notcontains": b in a, "notstartswith": a.startswith(b), "notendswith": a.endswith(b)}[op_l]
 
     # Array relations (/req/array-relations/*)
     if op_l == "a_contains":
@@ -217,21 +233,32 @@ def _operation(op: str, args: list, ctx: Context) -> Any:
     if op_l == "a_overlaps":
         return any(x in v[1] for x in v[0])
 
+    raise EvaluationError(f"unsupported operator or function {op!r}")
+
+
+def _call_function(op_l: str, v: list) -> Any:
+    """A standard function, with arguments already evaluated and not null."""
+    # Text relation functions (/req/text-relation/contains, starts-with, ends-with).
+    # Their negations are written with `not`, as the NOTE in rc-text-relation says.
+    if op_l in ("contains", "startswith", "endswith"):
+        a, b = _text(v[0]), _text(v[1])
+        return {"contains": b in a, "startswith": a.startswith(b), "endswith": a.endswith(b)}[op_l]
+
     # Text manipulation (/req/text-manipulation/*)
     if op_l in ("casei", "caseinsensitize"):
-        return str(v[0]).casefold()
+        return _text(v[0]).casefold()
     if op_l in ("accenti", "accentinsensitize"):
-        return _accenti(str(v[0]))
+        return _accenti(_text(v[0]))
     if op_l in ("lowercase", "lower"):
-        return str(v[0]).lower()
+        return _text(v[0]).lower()
     if op_l in ("uppercase", "upper"):
-        return str(v[0]).upper()
+        return _text(v[0]).upper()
     if op_l == "concatenate":
         return "".join(str(x) for x in v)
     if op_l == "substitute":
-        return str(v[0]).replace(str(v[1]), str(v[2]))
+        return _text(v[0]).replace(_text(v[1]), _text(v[2]))
     if op_l == "format":
-        return str(v[0]) % tuple(v[1:])
+        return _text(v[0]) % tuple(v[1:])
 
     # Math (/req/math/*)
     unary = {
@@ -239,19 +266,21 @@ def _operation(op: str, args: list, ctx: Context) -> Any:
         "cos": math.cos, "cosh": math.cosh, "exp": math.exp, "floor": math.floor, "log": math.log,
         "log10": math.log10, "sin": math.sin, "sinh": math.sinh, "sqrt": math.sqrt, "tan": math.tan,
         "tanh": math.tanh,
-        "rint": lambda x: float(round(x)),  # Python round() is half-to-even
-        "round": lambda x: math.floor(x + 0.5),  # halves toward positive infinity
+        # Halfway cases away from zero, as C round() (#162).
+        "round": lambda x: int(math.copysign(math.floor(abs(x) + 0.5), x)),
     }
     if op_l in unary:
         return unary[op_l](_num(v[0]))
     if op_l == "atan2":
         return math.atan2(_num(v[0]), _num(v[1]))
+    if op_l == "pow":
+        return _num(v[0]) ** _num(v[1])
     if op_l == "max":
         return max(v)
     if op_l == "min":
         return min(v)
 
-    raise EvaluationError(f"unsupported operator or function {op!r}")
+    raise EvaluationError(f"unsupported function {op_l!r}")
 
 
 def matches_selector(selector: Any, ctx: Context) -> bool:

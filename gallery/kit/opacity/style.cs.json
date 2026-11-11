@@ -53,6 +53,24 @@
           "width": {
             "px": 14
           }
+        },
+        "label": {
+          "elements": [
+            {
+              "type": "Text",
+              "text": "Parcel 12",
+              "font": {
+                "face": "sans-serif",
+                "size": 13,
+                "bold": true,
+                "color": [
+                  27,
+                  38,
+                  49
+                ]
+              }
+            }
+          ]
         }
       }
     }

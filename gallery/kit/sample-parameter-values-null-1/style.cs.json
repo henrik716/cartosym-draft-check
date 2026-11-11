@@ -1,0 +1,52 @@
+{
+  "stylingRules": [
+    {
+      "symbolizer": {
+        "marker": {
+          "elements": [
+            {
+              "type": "Dot",
+              "stroke": {
+                "color": "darkRed",
+                "width": {
+                  "px": {
+                    "op": "*",
+                    "args": [
+                      {
+                        "property": "size"
+                      },
+                      4
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "label": {
+          "elements": [
+            {
+              "type": "Text",
+              "text": {
+                "property": "name"
+              },
+              "position": [
+                {
+                  "px": 0
+                },
+                {
+                  "px": 16
+                }
+              ],
+              "font": {
+                "face": "sans-serif",
+                "size": 12,
+                "color": "black"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

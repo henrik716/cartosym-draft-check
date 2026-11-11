@@ -6,6 +6,7 @@
   objects with ``alter: true`` and ``{index, value}`` updates modify only part of a property.
 - /req/core/default-values: unset properties take the defaults from clause 7.
 - /req/parameter-values/expressions: expressions in property values are evaluated per feature.
+- /req/parameter-values/null: an expression evaluating to NULL gives a value by the property's data type.
 """
 
 from __future__ import annotations
@@ -59,17 +60,44 @@ def _apply_rules(rules: list[dict], ctx: Context, sym: dict) -> None:
         _apply_rules(rule.get("nestedRules"), ctx, sym)
 
 
-def _evaluate_values(v: Any, ctx: Context) -> Any:
+# /req/parameter-values/null: the value of a property whose expression evaluates
+# to NULL, by the data type of the property (table-parameter-values-null).
+_COLOR_KEYS = {"color", "tint", "blackTint", "colorChannels"}
+_TEXT_KEYS = {"text", "face", "image", "uri"}
+_ENUM_KEYS = {"hAlignment", "vAlignment", "type"}
+_GRAPHIC_KEYS = {"marker", "label"}
+_DROP = object()  # an enumeration: leave it unset, so its default applies
+
+
+def _null_value(key: str | None) -> Any:
+    if key in _GRAPHIC_KEYS:
+        return None  # `null`, emptying its graphical elements
+    if key == "visibility":
+        return False
+    if key in _COLOR_KEYS:
+        return "black"
+    if key in _TEXT_KEYS:
+        return ""
+    if key in _ENUM_KEYS:
+        return _DROP
+    return 0  # integer or real, such as stroke.width, opacity or zOrder
+
+
+def _evaluate_values(v: Any, ctx: Context, key: str | None = None) -> Any:
     if _is_expression(v):
         try:
-            return evaluate(v, ctx)
+            result = evaluate(v, ctx)
         except EvaluationError:
-            return None
+            result = None
+        # A property set to `null` directly is not an expression, so it stays null.
+        return _null_value(key) if result is None else result
     if isinstance(v, dict):
-        return {k: _evaluate_values(x, ctx) for k, x in v.items()}
+        items = {k: _evaluate_values(x, ctx, k) for k, x in v.items()}
+        return {k: x for k, x in items.items() if x is not _DROP}
     if isinstance(v, list):
-        return [_evaluate_values(x, ctx) for x in v]
+        return [_evaluate_values(x, ctx, key) for x in v]
     return v
+
 
 
 def load(path: str | Path) -> dict:

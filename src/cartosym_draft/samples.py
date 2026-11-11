@@ -141,6 +141,21 @@ def samples() -> list[Sample]:
                    "op": "+", "args": [{"op": "*", "args": [{"property": "lanes"}, 3]}, 1]}}}}}]},
                    [Layer("Roads", roads)],
                    notes=[(45, 162, "1 lane"), (235, 108, "2 lanes"), (255, 160, "4 lanes")])]),
+        Sample("parameter-values-null", "Expressions evaluating to NULL",
+               ["/req/parameter-values/null"],
+               "Dot width = size × 4 px and label text from `name`. The place with no `name` keeps its Dot, with an empty "
+               "label (NULL gives the empty string for text). The place with no `size` gets a Dot of width 0 (NULL gives 0 "
+               "for a number), so only its label shows: one NULL property does not hide the rest of the Symbolizer. "
+               "(A color from a property would give black, but the schema rejects colors from expressions, #140.)",
+               [Panel({"stylingRules": [{"symbolizer": {
+                   "marker": {"elements": [{"type": "Dot", "stroke": {"color": "darkRed", "width": {"px": {
+                       "op": "*", "args": [{"property": "size"}, 4]}}}}]},
+                   "label": {"elements": [{"type": "Text", "text": {"property": "name"}, "position": [{"px": 0}, {"px": 16}],
+                                           "font": {"face": "sans-serif", "size": 12, "color": "black"}}]}}}]},
+                   [Layer("Places", [_feature("Point", [55, 100], name="Kongsberg", size=3),
+                                     _feature("Point", [150, 100], size=3),
+                                     _feature("Point", [245, 100], name="Hvittingfoss")])],
+                   notes=[(55, 60, "name and size"), (150, 60, "no name"), (245, 60, "no size")])]),
         # -------------------------------------------------------------- vector
         Sample("vector-fill-stroke", "Fill and stroke",
                ["/req/vector/fill", "/req/vector/stroke"],
@@ -205,6 +220,19 @@ def samples() -> list[Sample]:
                    [Layer(name, [_feature("Point", [x, 105])]) for name, x in [("A", 45), ("B", 115), ("C", 185), ("D", 255)]],
                    notes=[(45, 62, "defaults"), (115, 62, "tint"), (185, 62, "blackTint"), (255, 62, "both")])]),
         # ------------------------------------------------------ strokes, fills
+        Sample("dash-units", "Dash pattern units",
+               ["/req/dashes/dash-pattern", "/per/dashes/dash-pattern-units"],
+               "Three 5 px lines: [16, 8] in pixels, [4 mm, 2 mm] (about 14 and 7 px at 0.28 mm per pixel), and "
+               "[320 %, 160 %] of the stroke width (16 and 8 px, the same as the top line).",
+               [Panel({"stylingRules": [
+                   {"symbolizer": {"stroke": {"color": "black", "width": {"px": 5}, "dashPattern": [16, 8]}}},
+                   {"selector": {"op": "=", "args": [{"property": "unit"}, "mm"]},
+                    "symbolizer": {"stroke": {"alter": True, "dashPattern": [{"mm": 4}, {"mm": 2}]}}},
+                   {"selector": {"op": "=", "args": [{"property": "unit"}, "pc"]},
+                    "symbolizer": {"stroke": {"alter": True, "dashPattern": [{"pc": 320}, {"pc": 160}]}}}]},
+                   [Layer("Lines", [_line((20, 160), (280, 160), unit="px"), _line((20, 100), (280, 100), unit="mm"),
+                                    _line((20, 40), (280, 40), unit="pc")])],
+                   notes=[(150, 175, "pixels"), (150, 115, "millimeters"), (150, 55, "percent of the width")])]),
         Sample("dash-offset", "Dash offset",
                ["/req/dashes/dash-offset"],
                "Both lines use dashPattern [16, 8]; the lower one has dashOffset 8 px, so its dashes start 8 px later.",

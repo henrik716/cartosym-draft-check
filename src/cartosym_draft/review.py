@@ -53,19 +53,23 @@ class Row:
 
 
 MATRIX: dict[str, Row] = {
-    "opacity": Row("whole symbol (group opacity)", "Keep as drafted.", "unchanged"),
-    "casing-order": Row("casing beneath the stroke", "Keep as drafted.", "unchanged"),
+    "opacity": Row("multiplies fill, stroke, marker graphics and coverage cells; not labels",
+                   "In the PR, as Jérôme answered, with a recommendation to apply it to the parts together (group "
+                   "opacity). Jérôme asked about the cost of compositing; the draft renderer uses SVG group opacity, "
+                   "with no performance data.", "answered, #162"),
+    "casing-order": Row("casing beneath the stroke", "Keep as drafted.", "no objection, #162"),
     "casing-crossing": Row("all casings with the same zOrder beneath the strokes", "In the PR, as Jérôme answered and as "
                            "the painter's algorithm in clause 7 loops (casing passes inside each zOrder).", "answered, #147"),
     "casing-width": Row("extends beyond each side of the stroke", "In the PR, as Jérôme answered (total = stroke + 2 × casing).",
                         "answered, #147"),
-    "font-outline": Row("outline beneath the glyphs", "Keep as drafted (as SE Halo).", "unchanged"),
-    "z-order": Row("higher zOrder on top", "Keep as drafted.", "unchanged"),
+    "font-outline": Row("outline beneath the glyphs", "Keep as drafted (as SE Halo).", "no objection, #162"),
+    "z-order": Row("higher zOrder on top", "Keep as drafted.", "no objection, #162"),
     "hatch-angle": Row("clockwise (table)", "Probably counter-clockwise from 0 pointing right, as other angles drawn on "
                        "the map (Jérôme); check graphics toolkits first.", "TODO(review), #146",
                        "What do Win32 GDI, X and newer toolkits do? (@ebocher, @oertz, @maxcollombin)"),
-    "dash-units": Row("pixels unless uom-qualified", "In the PR: applies the rule Jérôme gave for spacing and gradients (as SE).",
-                      "in the PR", "OK for dashPattern too?"),
+    "dash-units": Row("UnitValues, pixels unless qualified",
+                      "In the PR, as Jérôme answered: a Renderer supports px, pt, mm, cm and inches, and a permission in "
+                      "three parts covers meters and feet, and percent of the stroke width.", "answered, #161"),
     "image-hotspot": Row("centre (0.5, 0.5)", "Keep as drafted (Jérôme confirmed; same as libCartoSym).",
                          "answered; tint and blackTint added, alphaThreshold for picking (permission for the alpha "
                          "test), #145"),
@@ -80,7 +84,10 @@ MATRIX: dict[str, Row] = {
                           "engine currently places lower values first.", "TODO(review), #148",
                           "Higher wins, or rename the property if lower should come first?"),
     "label-spacing": Row("pixels unless uom-qualified", "In the PR, as Jérôme answered.", "answered"),
-    "label-pass": Row("separate pass on top", "Keep as drafted.", "unchanged"),
+    "label-pass": Row("separate pass on top; omitting overlaps is recommended",
+                      "In the PR: the separate pass as drafted, and omitting labels that overlap is now a "
+                      "recommendation, unless a property of the Symbolizer allows the overlap (Jérôme).",
+                      "answered, #162"),
     "ndvi-division": Row("real quotient", "Keep as drafted (confirmed by Jérôme, as CQL2); libCartoSym should change "
                          "(it returns 0 for example 7; Jérôme agrees).", "unchanged, ecere/libCartoSym#11"),
     "color-channels": Row("0..1; example 6 scales the bands", "Example 6 scales the bands in the style (÷ 2500), as one of "
@@ -105,8 +112,9 @@ MATRIX: dict[str, Row] = {
 
 # Findings without a gallery card (from the test harness and the schema).
 EXTRA_ROWS: list[tuple[str, Row]] = [
-    ("notLike, notContains, notStartsWith, notEndsWith",
-     Row("separate operations", "Encode as `not` applied to the positive form (as CQL2); no schema change.",
+    ("notLike in CartoSym-JSON",
+     Row("a separate operation; the schema has none", "Encode as `not` applied to `like` (as CQL2); no schema change. "
+         "notContains, notStartsWith and notEndsWith are removed: their negations use `not` (#156).",
          "TODO(review), #140")),
     ("caseInsensitize / accentInsensitize vs casei / accenti",
      Row("long names (model); short in the schema", "Use the CQL2 names casei and accenti.", "TODO(review), #140")),
@@ -123,11 +131,28 @@ EXTRA_ROWS: list[tuple[str, Row]] = [
      Row("compares in order, as libCartoSym does", "Jérôme would rather keep arrays ordered, but keep CQL2's meaning as far as possible, "
          "and suggests raising it with OGC API - Features.", "partly answered, #154", "Ordered, or sets as in CQL2?")),
     ("NULL in expressions",
-     Row("operations follow CQL2; a Symbolizer property is not stated", "Follow CQL2 for NULL, and a selector evaluating to NULL does not select the feature.",
-         "partly answered, #155", "What does a Symbolizer property do with NULL?")),
-    ("CartoSym-CSS syntax for contains, startsWith, endsWith",
-     Row("function calls", "Use functions such as `contains(a, b)`. libCartoSym has operators "
-         "(`~`, `^^`, `$`), left over from GNOSIS CMSS, Jérôme says.", "answered, #156")),
+     Row("operations follow CQL2; a Symbolizer property takes a value per data type",
+         "In the PR, as Jérôme answered: 0, false, black, the empty string, the default for an enumeration, and "
+         "null for a Marker or Label, with a recommendation to report it.", "answered, #155")),
+    ("contains, startsWith, endsWith: functions or operators",
+     Row("functions, no prefix; not* removed", "In the PR as a preliminary approach, as Jérôme agreed (no prefix, "
+         "not* removed, class renamed, clauses 14 and 15 merged). libCartoSym has operators (`~`, `^^`, `$`), "
+         "left over from GNOSIS CMSS.", "preliminary, SWG decides 13 November, #156",
+         "Functions or operators?")),
+    ("intDiv and mod",
+     Row("truncate toward zero; sign of the first operand", "Keep, as C-style languages do (Jérôme); worth "
+         "raising with OGC API - Features for CQL2.", "answered, #162")),
+    ("round and rint",
+     Row("round: halves away from zero; rint removed", "In the PR, as Jérôme answered (the C rule).",
+         "answered, #162")),
+    ("Function call with wrong arguments",
+     Row("evaluates to NULL", "In the PR, as Jérôme answered. Which conversions apply (integer to real, text to "
+         "an enumeration) is open.", "answered, #162; conversions in #163",
+         "Which argument conversions are required?")),
+    ("CartoSym-CSS selectors",
+     Row("expressions ANDed; only short-hand data layer names ORed",
+         "In the PR, with a NOTE and Jérôme's example in clause 17. pycartosym ANDed several names until "
+         "0.6.4 (maxcollombin/pycartosym#169).", "answered, #162")),
     ("Schema: colors from expressions, empty arrays, and clearing the marker",
      Row("(schema on main)", "Make the oneOf branches exclusive (e.g., require r, g, b in the color object). For the "
          "marker: `anyOf` in graphicArray, and `marker` accepting null and an object without elements (tested; the SWG agreed the marker part on 6 November).",

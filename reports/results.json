@@ -396,6 +396,38 @@
    }
   }
  },
+ "text-not-contains": {
+  "requirement": "/req/text-relation/contains",
+  "input": "not contains('Oslo', 'sl')",
+  "expect": false,
+  "json": {
+   "op": "not",
+   "args": [
+    {
+     "op": "contains",
+     "args": [
+      "Oslo",
+      "sl"
+     ]
+    }
+   ]
+  },
+  "libcartosym_input": "not ('Oslo' ~ 'sl')",
+  "results": {
+   "libCartoSym": {
+    "verdict": "unsupported",
+    "detail": "returned `null` (function or operator not recognised)"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "converts to the case's CQL2-JSON"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "false"
+   }
+  }
+ },
  "text-starts-with": {
   "requirement": "/req/text-relation/starts-with",
   "input": "startsWith('Oslo', 'Os')",
@@ -412,6 +444,38 @@
    "libCartoSym": {
     "verdict": "pass",
     "detail": "true"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "converts to the case's CQL2-JSON"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "true"
+   }
+  }
+ },
+ "text-not-starts-with": {
+  "requirement": "/req/text-relation/starts-with",
+  "input": "not startsWith('Oslo', 'sl')",
+  "expect": true,
+  "json": {
+   "op": "not",
+   "args": [
+    {
+     "op": "startsWith",
+     "args": [
+      "Oslo",
+      "sl"
+     ]
+    }
+   ]
+  },
+  "libcartosym_input": "not ('Oslo' ^^ 'sl')",
+  "results": {
+   "libCartoSym": {
+    "verdict": "unsupported",
+    "detail": "returned `null` (function or operator not recognised)"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -450,76 +514,27 @@
    }
   }
  },
- "text-not-contains": {
-  "requirement": "/req/text-relation/not-contains",
-  "input": "notContains('Oslo', 'sl')",
-  "expect": false,
-  "json": {
-   "op": "notContains",
-   "args": [
-    "Oslo",
-    "sl"
-   ]
-  },
-  "libcartosym_input": "'Oslo' !~ 'sl'",
-  "results": {
-   "libCartoSym": {
-    "verdict": "pass",
-    "detail": "false"
-   },
-   "pycartosym": {
-    "verdict": "pass",
-    "detail": "converts to the case's CQL2-JSON"
-   },
-   "draft renderer": {
-    "verdict": "pass",
-    "detail": "false"
-   }
-  }
- },
- "text-not-starts-with": {
-  "requirement": "/req/text-relation/not-starts-with",
-  "input": "notStartsWith('Oslo', 'sl')",
-  "expect": true,
-  "json": {
-   "op": "notStartsWith",
-   "args": [
-    "Oslo",
-    "sl"
-   ]
-  },
-  "libcartosym_input": "'Oslo' !^ 'sl'",
-  "results": {
-   "libCartoSym": {
-    "verdict": "pass",
-    "detail": "true"
-   },
-   "pycartosym": {
-    "verdict": "pass",
-    "detail": "converts to the case's CQL2-JSON"
-   },
-   "draft renderer": {
-    "verdict": "pass",
-    "detail": "true"
-   }
-  }
- },
  "text-not-ends-with": {
-  "requirement": "/req/text-relation/not-ends-with",
-  "input": "notEndsWith('Oslo', 'lo')",
+  "requirement": "/req/text-relation/ends-with",
+  "input": "not endsWith('Oslo', 'lo')",
   "expect": false,
   "json": {
-   "op": "notEndsWith",
+   "op": "not",
    "args": [
-    "Oslo",
-    "lo"
+    {
+     "op": "endsWith",
+     "args": [
+      "Oslo",
+      "lo"
+     ]
+    }
    ]
   },
-  "libcartosym_input": "'Oslo' !$ 'lo'",
+  "libcartosym_input": "not ('Oslo' $ 'lo')",
   "results": {
    "libCartoSym": {
-    "verdict": "pass",
-    "detail": "false"
+    "verdict": "unsupported",
+    "detail": "returned `null` (function or operator not recognised)"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -682,19 +697,18 @@
  },
  "fn-wrong-arity": {
   "requirement": "/req/functions/call-expressions",
-  "input": "abs(1, 2)",
-  "expect": "<invalid>",
+  "input": "pow(2)",
+  "expect": "null",
   "json": {
-   "op": "abs",
+   "op": "pow",
    "args": [
-    1,
     2
    ]
   },
   "results": {
    "libCartoSym": {
-    "verdict": "unsupported",
-    "detail": "returned `null` (function or operator not recognised)"
+    "verdict": "pass",
+    "detail": "null"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -702,7 +716,33 @@
    },
    "draft renderer": {
     "verdict": "pass",
-    "detail": "<invalid>"
+    "detail": "null"
+   }
+  }
+ },
+ "fn-wrong-type": {
+  "requirement": "/req/functions/call-expressions",
+  "input": "pow('a', 2)",
+  "expect": "null",
+  "json": {
+   "op": "pow",
+   "args": [
+    "a",
+    2
+   ]
+  },
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "null"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "converts to the case's CQL2-JSON"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "null"
    }
   }
  },
@@ -2855,10 +2895,10 @@
    }
   }
  },
- "math-rint-half": {
-  "requirement": "/req/math/rint",
-  "input": "rint(2.5)",
-  "expect": 2,
+ "math-round-negative-half": {
+  "requirement": "/req/math/round",
+  "input": "round(-2.5)",
+  "expect": -3,
   "results": {
    "libCartoSym": {
     "verdict": "unsupported",
@@ -2870,7 +2910,7 @@
    },
    "draft renderer": {
     "verdict": "pass",
-    "detail": "2.0"
+    "detail": "-3"
    }
   }
  },

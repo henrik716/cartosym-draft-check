@@ -9,11 +9,11 @@ Requirements written without an implementation are hard to get right. This repos
 | | Where | What it is |
 |---|---|---|
 | **Render gallery** | [`gallery/index.html`](gallery/index.html) | For decisions. A decision matrix with a proposed resolution for each question, then 23 cards, one per judgement call: the requirement text, the same map rendered with the draft's choice and the alternatives, and sources. Start here. |
-| **Requirements** | [`gallery/requirements.html`](gallery/requirements.html) | For verification. All 135 requirements in the PR, plus its one recommendation and one permission, each with its text, how it is checked and a link to the evidence. Straightforward visual requirements get one of 16 sample renders, with a "Check" line saying what to look for. |
+| **Requirements** | [`gallery/requirements.html`](gallery/requirements.html) | For verification. All 131 requirements in the PR, plus its four recommendations and two permissions, each with its text, how it is checked and a link to the evidence. Straightforward visual requirements get one of 18 sample renders, with a "Check" line saying what to look for. |
 | **Playground** | [`gallery/playground.html`](gallery/playground.html) | Pick any card or sample, edit its style or switch between its variants, and see it rendered again. The draft renderer runs in the browser through [Pyodide](https://pyodide.org). |
 | **Render kits** | [`gallery/kit/`](gallery/kit/), [`gallery/kit.zip`](gallery/kit.zip) | The style, data and view settings of every card and sample, to render the same maps with another renderer. |
 | **Draft renderer** | [`src/cartosym_draft/`](src/cartosym_draft/) | A CQL2 expression evaluator and SVG renderer that does what the draft requirements say. Each open behavior is a switchable option ([`options.py`](src/cartosym_draft/options.py)). |
-| **Test harness** | [`harness/`](harness/), [`cases/`](cases/) | 107 test cases whose expected values are taken from the requirement text. Each case is run through libCartoSym, pycartosym and the draft renderer. |
+| **Test harness** | [`harness/`](harness/), [`cases/`](cases/) | 119 test cases whose expected values are taken from the requirement text. Each case is run through libCartoSym, pycartosym and the draft renderer. |
 | **Test report** | [`reports/report.md`](reports/report.md), [`reports/results.json`](reports/results.json) | Results per requirement and implementation, with libCartoSym from the `cartosym` pip package. [`reports/libcartosym-main/`](reports/libcartosym-main/) has the same against the latest libCartoSym from GitHub. |
 
 Three implementations are involved, and they do different things. The **draft renderer** (this repository) evaluates expressions, resolves the style for each feature and draws the map. **libCartoSym** (Ecere) reads and writes CartoSym-CSS, CartoSym-JSON, SLD/SE and Mapbox styles, and evaluates expressions and styles for a feature (`cs-canif eval`); the test harness compares its results with what the draft says. **pycartosym** (Maxime Collombin) converts between CartoSym-CSS, CartoSym-JSON, SLD/SE and MapLibre styles; the draft renderer uses it to read CartoSym-CSS and CQL2-Text, and the test harness checks its conversion to CQL2-JSON.
@@ -35,7 +35,7 @@ cases/*.yaml ──┬──> libCartoSym     (cs-canif eval)          ──┐
 
 [ 3. GALLERY ]  python -m cartosym_draft.gallery
 draft renderer      ──┬──> gallery/index.html          decision matrix, 23 cards
-+ examples 5–9        ├──> gallery/requirements.html   135 requirements, 16 samples
++ examples 5–9        ├──> gallery/requirements.html   131 requirements, 18 samples
 + sample data         ├──> gallery/kit/, kit.zip       style, data and view per card and sample
 + requirements.json   └──> gallery/playground.html     the draft renderer in the browser (Pyodide)
 + results.json
@@ -73,7 +73,7 @@ Every style in the gallery and the samples is validated against the PR's CartoSy
 
 ## What is covered
 
-PR #133 has 135 requirements: 109 in Part 1's requirements files, 20 in the core class (clause 7) and 6 for Part 2 gradient fills. It also has one recommendation (colorMap interpolation) and one permission (the Image alpha test). Every requirement is checked in at least one way; [`requirements.html`](gallery/requirements.html) lists how. Not implemented: the alpha-test permission, the visualization time and `capabilities` system identifiers, and label `maxSpacing`. CSCSS `.include` and variables are checked through pycartosym's conversion, which since 0.5.0 gives the draft's `$include`, `$variables` and `$ref` form.
+PR #133 (at 6da77bf) has 131 requirements: 105 in Part 1's requirements files, 20 in the core class (clause 7) and 6 for Part 2 gradient fills. It also has four recommendations (opacity applied to the parts together, colorMap interpolation, omitting overlapping labels, reporting NULL values) and two permissions (the Image alpha test, dashPattern units). Every requirement is checked in at least one way; [`requirements.html`](gallery/requirements.html) lists how. Not implemented: the alpha-test permission, the visualization time and `capabilities` system identifiers, label `maxSpacing`, and reporting NULL values (the renderer applies the NULL table but does not report it). CSCSS `.include` and variables are checked through pycartosym's conversion, which since 0.5.0 gives the draft's `$include`, `$variables` and `$ref` form.
 
 - **Rendered:** vector styling (fill, stroke, units, markers, Dot, Text, Image), casing, dashes, hatches, stipples, dot patterns, font outlines, labels, coverage styling, hill shading and Part 2 gradients: judgement calls as gallery cards, the rest as samples.
 - **Tested:** arithmetic, math, text relation and manipulation, array relations, conditionals, right-hand operands, function calls, variables, and core literals, arrays and identifiers, in the test harness.
@@ -86,10 +86,10 @@ The full list, with a proposed resolution for each, is the decision matrix at th
 - **The spec's NDVI example (7) needs real division.** With integer Sentinel-2 bands, integer division makes every NDVI value 0; libCartoSym does this today. Jérôme confirmed that `/` is real-valued and `div` is integer division, as in CQL2.
 - **`hillShading.factor` was undefined in practice.** Examples 8 and 9 (`factor: 56`) gave no usable result under the draft's reading. Jérôme explained it: `factor` multiplies the horizontal components of the terrain normal, and the shade is the dot product with the sun direction (0 to 1). The normal is computed between the DEM samples being rendered, so the `factor` that suits a style depends on the resolution. The PR and the renderer now do this.
 - **Example 6 (`colorChannels: B04 B03 B02`) rendered all white**: nothing defined how band values become 0..1 color components. Jérôme said the example assumed pre-scaled bands; the PR scales them in the style (`B04 / 2500`), as one of Jérôme's own styles does, and #150 is settling which data the example should assume.
-- **The default Marker** (clause 7) puts a white dot on every point, line vertex and polygon centroid of a style that sets no marker. Jérôme confirmed this is intended, so every feature is visible, and a typical base style unsets it for lines and polygons (`marker: null`); the PR now says so. Still open: the JSON schema rejects `marker: null` and `marker: { elements: [] }` (a tested fix is proposed in #143). The Dot defaults gave a size and color the Dot class did not have; as agreed with Jérôme, Dot now has `size` and `color`, the same values as its stroke's width and color (#144).
+- **The default Marker** (clause 7) puts a white dot on every point, line vertex and polygon centroid of a style that sets no marker. Jérôme confirmed this is intended, so every feature is visible, and a typical base style unsets it for lines and polygons (`marker: null`); the PR now says so. The JSON schema on main rejects `marker: null` and `marker: { elements: [] }`; the SWG agreed the tested fix on 6 November, and the PR's schema now accepts both (#143). The Dot defaults gave a size and color the Dot class did not have; as agreed with Jérôme, Dot now has `size` and `color`, the same values as its stroke's width and color (#144).
 - **The JSON schema (on main) rejects colors given as expressions, and empty arrays**, because its `oneOf` branches overlap.
 
-The open points are recorded as TODO(review) notes in PR #133 (the schema issue is outside the PR). In the test harness the draft renderer passes all 104 expression cases and libCartoSym 50 of the 98 it can run. pycartosym converts all 57 expressions that have an expected CQL2-JSON to exactly that JSON.
+The open points are recorded as TODO(review) notes in PR #133 (the schema issue is outside the PR). In the test harness the draft renderer passes all 116 expression cases and libCartoSym (pip package) 46 of the 107 it can run. pycartosym converts all 69 expressions that have an expected CQL2-JSON, and that it is run on, to exactly that JSON.
 
 ## Data
 
@@ -119,7 +119,7 @@ To fetch the Rondane data again: `uv run --with tifffile --with numpy python too
 
 `extract_requirements.py` reads the checked-out branch of `../cartographic-symbology` (the PR branch, `requirements-placeholders`). Run it again after the requirements change.
 
-- **pycartosym** 0.6.1 is installed from PyPI. It converts the CSCSS examples and converts the CQL2-Text test inputs to CQL2-JSON.
+- **pycartosym** 0.6.4 is installed from PyPI. It converts the CSCSS examples and converts the CQL2-Text test inputs to CQL2-JSON.
 - **libCartoSym** comes from the `cartosym` 0.0.1 and `ecrt` 0.0.6 packages (built in November 2025) by default. To test a build from source instead, set `CS_CANIF` to the `cs-canif` executable and `CS_CANIF_LIBDIRS` to the folders with its libraries; `REPORT_DIR` and `LIBCARTOSYM_LABEL` set where the report goes and how libCartoSym is described in it.
 - **Latest libCartoSym:** the [`libcartosym-main`](.github/workflows/libcartosym-main.yml) workflow builds the latest eC and libCartoSym from GitHub on Ubuntu (as their `fetchAndBuild.sh` does), runs the harness against that `cs-canif`, and commits the report to [`reports/libcartosym-main/`](reports/libcartosym-main/). It runs weekly, when the harness or cases change, and on demand.
 - **pycartosym's test suite** runs the expression cases too: `tools/export_pycartosym_cases.py` writes them to `tests/data/cartosym_draft_cases.json` in a pycartosym checkout next to this one, with the CQL2-Text, the expected CQL2-JSON and the `disputed` note of each case, but not the `expect` values. Export them again after the cases change, and open a pull request to pycartosym.

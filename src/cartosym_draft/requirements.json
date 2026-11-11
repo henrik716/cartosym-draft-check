@@ -1,6 +1,6 @@
 {
  "branch": "requirements-placeholders",
- "commit": "39f4da6",
+ "commit": "6da77bf",
  "uncommitted_changes": false,
  "requirements": {
   "/req/arithmetic/add": {
@@ -184,16 +184,16 @@
    "file": "1-core/requirements/rc-cscss.adoc",
    "line": 21,
    "parts": [
-    "A style encoded as CartoSym-CSS SHALL conform to the BNF grammar definition of this requirements class.",
-    "A Renderer SHALL support parsing styles encoded as CartoSym-CSS."
+    "A Producer SHALL generate CartoSym-CSS conforming to the BNF grammar definition of this requirements class.",
+    "A Consumer SHALL support parsing styles encoded as CartoSym-CSS."
    ]
   },
   "/req/cscss/rules": {
    "file": "1-core/requirements/rc-cscss.adoc",
    "line": 32,
    "parts": [
-    "An Encoding SHALL support encoding a style as a sequence of styling rules, each consisting of zero or more selectors, an optional `.name`, symbolizer property assignments and nested rules enclosed within `{` `}`.",
-    "An Encoding SHALL support assigning a value to a member of an object property (using `.`) or to an element of an array property (using `[` `]`), overriding only that portion of the property.",
+    "A Consumer SHALL support parsing a style as a sequence of styling rules, each consisting of zero or more selectors, an optional `.name`, symbolizer property assignments and nested rules enclosed within `{` `}`.",
+    "A Consumer SHALL support parsing the assignment of a value to a member of an object property (using `.`) or to an element of an array property (using `[` `]`), overriding only that portion of the property.",
     "A Renderer SHALL support symbolizer properties set further down in rules overriding those set by rules at the same level appearing earlier, and properties set in nested rules overriding those set in the parent rule."
    ]
   },
@@ -201,41 +201,41 @@
    "file": "1-core/requirements/rc-cscss.adoc",
    "line": 44,
    "parts": [
-    "An Encoding SHALL support defining selectors either as expressions enclosed within `[` `]`, or as a short-hand data layer name.",
-    "A Renderer SHALL support combining multiple expression selectors of a rule with a logical AND, combining multiple data layer name selectors with a logical OR, and combining those two groups with a logical AND."
+    "A Consumer SHALL support parsing selectors defined either as expressions enclosed within `[` `]`, or as a short-hand data layer name.",
+    "A Renderer SHALL support combining multiple expression selectors of a rule with a logical AND, combining multiple short-hand data layer name selectors with a logical OR, and combining those two groups with a logical AND."
    ]
   },
   "/req/cscss/expressions": {
    "file": "1-core/requirements/rc-cscss.adoc",
-   "line": 55,
+   "line": 57,
    "parts": [
-    "An Encoding SHALL encode expressions using CQL2-Text, extended with instance expressions, tuples, units of measure, conditional expressions and enumeration values as specified in this requirements class.",
-    "An Encoding supporting the <<rc-text-relation,Text Relation Operators>> requirements class SHALL encode the `contains`, `startsWith` and `endsWith` operations as function calls (e.g., `contains(name, 'Oslo')`).",
+    "A Producer SHALL encode expressions using CQL2-Text, extended with instance expressions, tuples, units of measure, conditional expressions and enumeration values as specified in this requirements class.",
+    "A Producer supporting the <<rc-text-relation,Text Relation Operators and Functions>> requirements class SHALL encode calls to the `contains`, `startsWith` and `endsWith` functions using the function call syntax (e.g., `contains(name, 'Oslo')`).",
     "A Renderer SHALL support evaluating CQL2-Text expressions (including WKT geometry) used directly as a selector or symbolizer parameter value."
    ]
   },
   "/req/cscss/include": {
    "file": "1-core/requirements/rc-cscss.adoc",
-   "line": 67,
+   "line": 69,
    "parts": [
-    "An Encoding SHALL support including another style sheet using the `.include` directive followed by a relative path enclosed within single quotes.",
+    "A Consumer SHALL support parsing an `.include` directive, followed by a relative path enclosed within single quotes, which includes another style sheet.",
     "A Renderer SHALL support replacing an `.include` directive by the content of the referenced style sheet, recursively, before interpreting the style.",
     "A Renderer SHALL support including style sheets encoded as CartoSym-CSS."
    ]
   },
   "/req/cscss/comments": {
    "file": "1-core/requirements/rc-cscss.adoc",
-   "line": 81,
+   "line": 83,
    "parts": [
-    "An Encoding SHALL support C-style multi-line comments (between `/\\*` and `*/`) and C++-style single-line comments (starting with `//`).",
+    "A Consumer SHALL support parsing C-style multi-line comments (between `/\\*` and `*/`) and C++-style single-line comments (starting with `//`).",
     "A Renderer SHALL support ignoring comments when interpreting a style sheet."
    ]
   },
   "/req/cscss/variables": {
    "file": "1-core/requirements/rc-cscss.adoc",
-   "line": 92,
+   "line": 94,
    "parts": [
-    "An Encoding supporting the <<rc-variables,Variables>> requirements class SHALL define variables before the styling rules using the syntax `@<identifier> = <expression>;`, and reference them as an expression using `@<identifier>`."
+    "A Producer supporting the <<rc-variables,Variables>> requirements class SHALL define variables before the styling rules using the syntax `@<identifier> = <expression>;`, and reference them as an expression using `@<identifier>`."
    ]
   },
   "/req/dashes/dash-pattern": {
@@ -243,12 +243,22 @@
    "line": 41,
    "parts": [
     "An Encoding SHALL support defining a dashPattern property for the stroke symbolizer.",
-    "A Renderer SHALL support dashing vector geometry based on a dashPattern property, whose lengths are in pixels unless qualified with another unit (<<graphical-units-of-measure,Graphical Units of Measure>>)."
+    "A Renderer SHALL support dashing vector geometry based on a dashPattern property, whose lengths are in pixels unless qualified with another unit (<<graphical-units-of-measure,Graphical Units of Measure>>).",
+    "A Renderer SHALL support dashPattern lengths in pixels, points, millimeters, centimeters and inches."
+   ]
+  },
+  "/per/dashes/dash-pattern-units": {
+   "file": "1-core/requirements/rc-dashes.adoc",
+   "line": 54,
+   "parts": [
+    "A Renderer MAY support dashPattern lengths in real-world units (meters and feet).",
+    "A Renderer MAY support dashPattern lengths in percent of the stroke width, for a stroke whose width is in pixels, points, millimeters, centimeters or inches.",
+    "A Renderer MAY support dashPattern lengths in percent of the stroke width, for a stroke whose width is in meters or feet."
    ]
   },
   "/req/dashes/dash-offset": {
    "file": "1-core/requirements/rc-dashes.adoc",
-   "line": 55,
+   "line": 66,
    "parts": [
     "An Encoding SHALL support defining a dashOffset property for the stroke symbolizer.",
     "A Renderer SHALL support dashing vector geometry based on a dashOffset property."
@@ -308,7 +318,7 @@
    "parts": [
     "An Encoding SHALL support defining a FunctionCallExpression identifying the Function to call and an ordered list of zero or more argument Expressions.",
     "A Renderer SHALL support evaluating a FunctionCallExpression by evaluating its arguments and resolving the expression to the value returned by the Function, of the Function's return type.",
-    "A Renderer SHALL treat a FunctionCallExpression whose arguments do not match the parameters of the Function, in number or type, as invalid."
+    "A Renderer SHALL evaluate a FunctionCallExpression whose arguments do not match the parameters of the Function, in number or type, to NULL."
    ]
   },
   "/req/functions/standard-functions": {
@@ -397,22 +407,22 @@
    "file": "1-core/requirements/rc-json.adoc",
    "line": 21,
    "parts": [
-    "A style encoded as CartoSym-JSON SHALL validate against the CartoSym-JSON JSON Schema defined in this requirements class.",
-    "A Renderer SHALL support parsing styles encoded as CartoSym-JSON."
+    "A Producer SHALL generate CartoSym-JSON which validates against the CartoSym-JSON JSON Schema defined in this requirements class.",
+    "A Consumer SHALL support parsing styles encoded as CartoSym-JSON."
    ]
   },
   "/req/json/expressions": {
    "file": "1-core/requirements/rc-json.adoc",
    "line": 32,
    "parts": [
-    "An Encoding SHALL encode Selector and Symbolizer Parameter Value expressions based on the CQL2-JSON encoding, extended as specified by the JSON Schema to cover expressions which do not evaluate to a boolean value."
+    "A Producer SHALL encode Selector and Symbolizer Parameter Value expressions based on the CQL2-JSON encoding, extended as specified by the JSON Schema to cover expressions which do not evaluate to a boolean value."
    ]
   },
   "/req/json/partial-update": {
    "file": "1-core/requirements/rc-json.adoc",
    "line": 42,
    "parts": [
-    "An Encoding SHALL support representing a partial update of an object property by specifying an object containing only the modified properties, with an `alter` property set to `true`.",
+    "A Consumer SHALL support parsing a partial update of an object property, represented by an object containing only the modified properties, with an `alter` property set to `true`.",
     "A Renderer SHALL support preserving the values of the properties not specified in an object whose `alter` property is `true`, as set by earlier rules or by default values."
    ]
   },
@@ -420,7 +430,7 @@
    "file": "1-core/requirements/rc-json.adoc",
    "line": 53,
    "parts": [
-    "An Encoding SHALL support representing an update to a single element of an array property by specifying an object with an `index` property set to the zero-based index of the array element, and a `value` property set to the new value of that element.",
+    "A Consumer SHALL support parsing an update to a single element of an array property, represented by an object with an `index` property set to the zero-based index of the array element, and a `value` property set to the new value of that element.",
     "A Renderer SHALL support updating only the array element identified by `index`, preserving the other elements of the array."
    ]
   },
@@ -428,21 +438,21 @@
    "file": "1-core/requirements/rc-json.adoc",
    "line": 64,
    "parts": [
-    "An Encoding SHALL NOT set both `size` and `stroke.width`, nor both `color` and `stroke.color`, for the same Dot within a single styling rule."
+    "A Producer SHALL NOT set both `size` and `stroke.width`, nor both `color` and `stroke.color`, for the same Dot within a single styling rule."
    ]
   },
   "/req/json/variables": {
    "file": "1-core/requirements/rc-json.adoc",
    "line": 76,
    "parts": [
-    "An Encoding supporting the <<rc-variables,Variables>> requirements class SHALL encode variables as members of a top-level `$variables` object, referenced using a JSON Pointer within a `$ref` property (e.g., `{ \"$ref\": \"#/$variables/myVariable\" }`)."
+    "A Producer supporting the <<rc-variables,Variables>> requirements class SHALL encode variables as members of a top-level `$variables` object, referenced using a JSON Pointer within a `$ref` property (e.g., `{ \"$ref\": \"#/$variables/myVariable\" }`)."
    ]
   },
   "/req/json/include": {
    "file": "1-core/requirements/rc-json.adoc",
    "line": 86,
    "parts": [
-    "An Encoding SHALL support including base style sheets using an `$include` property in the top-level object, specified as either a single relative file path string or an array of relative file path strings.",
+    "A Consumer SHALL support parsing an `$include` property in the top-level object, specified as either a single relative file path string or an array of relative file path strings, which includes base style sheets.",
     "A Renderer SHALL support considering the styling rules of included style sheets before the styling rules defined by the including file.",
     "A Renderer SHALL support including style sheets encoded as CartoSym-JSON."
    ]
@@ -452,13 +462,19 @@
    "line": 21,
    "parts": [
     "An Encoding SHALL support defining a `label` Symbolizer property as a Label, which is a MultiGraphic that can contain multiple graphical elements.",
-    "A Renderer SHALL support drawing the graphical elements of the labels as a separate pass on top of all styled vector features and coverages.",
-    "A Renderer SHALL support omitting labels which cannot be placed without overlapping other labels."
+    "A Renderer SHALL support drawing the graphical elements of the labels as a separate pass on top of all styled vector features and coverages."
+   ]
+  },
+  "/rec/labels/overlap": {
+   "file": "1-core/requirements/rc-labels.adoc",
+   "line": 30,
+   "parts": [
+    "A Renderer SHOULD omit labels which cannot be placed without overlapping other labels, unless a property of the Symbolizer allows the overlap."
    ]
   },
   "/req/labels/placement": {
    "file": "1-core/requirements/rc-labels.adoc",
-   "line": 33,
+   "line": 40,
    "parts": [
     "An Encoding SHALL support defining a `placement` Label property as a LabelPlacement object including a `priority`, a `minSpacing` and a `maxSpacing`.",
     "A Renderer SHALL support placing labels so that a label with a higher `priority` is placed in preference to a conflicting label with a lower `priority`.",
@@ -593,25 +609,17 @@
     "A Renderer SHALL support evaluating `random()` as a pseudo-random real number greater than or equal to 0 and less than 1."
    ]
   },
-  "/req/math/rint": {
+  "/req/math/round": {
    "file": "1-core/requirements/rc-math.adoc",
    "line": 197,
    "parts": [
-    "An Encoding SHALL support defining a call to the `rint` standard function taking one numeric argument.",
-    "A Renderer SHALL support evaluating `rint(x)` as the integral value closest to `x`, rounding halfway cases to the even integral value."
-   ]
-  },
-  "/req/math/round": {
-   "file": "1-core/requirements/rc-math.adoc",
-   "line": 208,
-   "parts": [
     "An Encoding SHALL support defining a call to the `round` standard function taking one numeric argument.",
-    "A Renderer SHALL support evaluating `round(x)` as the integer closest to `x`, rounding halfway cases toward positive infinity."
+    "A Renderer SHALL support evaluating `round(x)` as the integer closest to `x`, rounding halfway cases away from zero."
    ]
   },
   "/req/math/sin": {
    "file": "1-core/requirements/rc-math.adoc",
-   "line": 219,
+   "line": 208,
    "parts": [
     "An Encoding SHALL support defining a call to the `sin` standard function taking one numeric argument.",
     "A Renderer SHALL support evaluating `sin(x)` as the sine of `x` expressed in radians."
@@ -619,7 +627,7 @@
   },
   "/req/math/sinh": {
    "file": "1-core/requirements/rc-math.adoc",
-   "line": 230,
+   "line": 219,
    "parts": [
     "An Encoding SHALL support defining a call to the `sinh` standard function taking one numeric argument.",
     "A Renderer SHALL support evaluating `sinh(x)` as the hyperbolic sine of `x`."
@@ -627,7 +635,7 @@
   },
   "/req/math/sqrt": {
    "file": "1-core/requirements/rc-math.adoc",
-   "line": 241,
+   "line": 230,
    "parts": [
     "An Encoding SHALL support defining a call to the `sqrt` standard function taking one numeric argument.",
     "A Renderer SHALL support evaluating `sqrt(x)` as the positive square root of `x`."
@@ -635,7 +643,7 @@
   },
   "/req/math/tan": {
    "file": "1-core/requirements/rc-math.adoc",
-   "line": 252,
+   "line": 241,
    "parts": [
     "An Encoding SHALL support defining a call to the `tan` standard function taking one numeric argument.",
     "A Renderer SHALL support evaluating `tan(x)` as the tangent of `x` expressed in radians."
@@ -643,7 +651,7 @@
   },
   "/req/math/tanh": {
    "file": "1-core/requirements/rc-math.adoc",
-   "line": 263,
+   "line": 252,
    "parts": [
     "An Encoding SHALL support defining a call to the `tanh` standard function taking one numeric argument.",
     "A Renderer SHALL support evaluating `tanh(x)` as the hyperbolic tangent of `x`."
@@ -655,6 +663,20 @@
    "parts": [
     "An Encoding SHALL support defining the value of any Symbolizer property, including members of object properties, using any type of Expression, not only Literal Expressions.",
     "A Renderer SHALL support evaluating Expressions used as Parameter Values for each feature or coverage cell being portrayed, and resolving the result to the data type expected by the Symbolizer property."
+   ]
+  },
+  "/req/parameter-values/null": {
+   "file": "1-core/requirements/rc-parameter-values.adoc",
+   "line": 45,
+   "parts": [
+    "A Renderer SHALL support resolving a Parameter Value whose Expression evaluates to NULL to the value given for the data type of the Symbolizer property in <<table-parameter-values-null>>."
+   ]
+  },
+  "/rec/parameter-values/report-null": {
+   "file": "1-core/requirements/rc-parameter-values.adoc",
+   "line": 53,
+   "parts": [
+    "A Renderer SHOULD report a Symbolizer property whose Expression evaluates to NULL, unless the property is set to `null` directly."
    ]
   },
   "/req/right-hand/operands": {
@@ -749,48 +771,24 @@
    "file": "1-core/requirements/rc-text-relation.adoc",
    "line": 43,
    "parts": [
-    "An Encoding SHALL support defining a `contains` operation expression taking two text operands.",
-    "A Renderer SHALL support evaluating a `contains` operation expression to true if and only if the second operand occurs as a substring of the first operand."
+    "An Encoding SHALL support defining a call to the `contains` function taking two text arguments.",
+    "A Renderer SHALL support evaluating `contains(a, b)` to true if and only if `b` occurs as a substring of `a`."
    ]
   },
   "/req/text-relation/starts-with": {
    "file": "1-core/requirements/rc-text-relation.adoc",
    "line": 54,
    "parts": [
-    "An Encoding SHALL support defining a `startsWith` operation expression taking two text operands.",
-    "A Renderer SHALL support evaluating a `startsWith` operation expression to true if and only if the first operand begins with the second operand."
+    "An Encoding SHALL support defining a call to the `startsWith` function taking two text arguments.",
+    "A Renderer SHALL support evaluating `startsWith(a, b)` to true if and only if `a` begins with `b`."
    ]
   },
   "/req/text-relation/ends-with": {
    "file": "1-core/requirements/rc-text-relation.adoc",
    "line": 65,
    "parts": [
-    "An Encoding SHALL support defining an `endsWith` operation expression taking two text operands.",
-    "A Renderer SHALL support evaluating an `endsWith` operation expression to true if and only if the first operand ends with the second operand."
-   ]
-  },
-  "/req/text-relation/not-contains": {
-   "file": "1-core/requirements/rc-text-relation.adoc",
-   "line": 76,
-   "parts": [
-    "An Encoding SHALL support defining a `notContains` operation expression taking two text operands.",
-    "A Renderer SHALL support evaluating a `notContains` operation expression to the logical negation of the equivalent `contains` operation expression."
-   ]
-  },
-  "/req/text-relation/not-starts-with": {
-   "file": "1-core/requirements/rc-text-relation.adoc",
-   "line": 87,
-   "parts": [
-    "An Encoding SHALL support defining a `notStartsWith` operation expression taking two text operands.",
-    "A Renderer SHALL support evaluating a `notStartsWith` operation expression to the logical negation of the equivalent `startsWith` operation expression."
-   ]
-  },
-  "/req/text-relation/not-ends-with": {
-   "file": "1-core/requirements/rc-text-relation.adoc",
-   "line": 98,
-   "parts": [
-    "An Encoding SHALL support defining a `notEndsWith` operation expression taking two text operands.",
-    "A Renderer SHALL support evaluating a `notEndsWith` operation expression to the logical negation of the equivalent `endsWith` operation expression."
+    "An Encoding SHALL support defining a call to the `endsWith` function taking two text arguments.",
+    "A Renderer SHALL support evaluating `endsWith(a, b)` to true if and only if `a` ends with `b`."
    ]
   },
   "/req/variables/definition": {
@@ -937,12 +935,19 @@
    "line": 282,
    "parts": [
     "An Encoding SHALL support defining an `opacity` Symbolizer property as a float between 0 (fully transparent) and 1 (fully opaque).",
-    "A Renderer SHALL support portraying a feature or coverage cell with the opacity specified by the resolved `opacity` property, applied to the portrayal as a whole."
+    "A Renderer SHALL support applying the resolved `opacity` property by multiplying it with the opacity of the fill, the stroke, the graphics of markers and the opacity channel of coverage cells."
+   ]
+  },
+  "/rec/core/opacity-together": {
+   "file": "1-core/sections/clause_7_core.adoc",
+   "line": 293,
+   "parts": [
+    "A Renderer SHOULD apply the Symbolizer `opacity` to the fill, the stroke and the graphics of markers together, so that they do not show through each other where they overlap."
    ]
   },
   "/req/core/z-order": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 293,
+   "line": 303,
    "parts": [
     "An Encoding SHALL support defining a `zOrder` Symbolizer property as an integer.",
     "A Renderer SHALL support portraying features and coverage cells of a single rendering pass in increasing order of their resolved `zOrder` property, so that portrayals with a higher `zOrder` are drawn on top of those with a lower `zOrder`."
@@ -950,7 +955,7 @@
   },
   "/req/core/parameters": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 357,
+   "line": 367,
    "parts": [
     "An Encoding SHALL support defining Symbolizer properties as Parameter Values using Literal Expressions compatible with the data type expected by the property.",
     "A Renderer SHALL support resolving Parameter Values to the data type expected by the Symbolizer property."
@@ -958,7 +963,7 @@
   },
   "/req/core/expressions-field-identifiers": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 374,
+   "line": 384,
    "parts": [
     "An Encoding SHALL support defining Identifier Expressions referring to feature properties or coverage range fields by name.",
     "A Renderer SHALL support resolving an Identifier Expression to the value of the named feature property or coverage range field for the feature or coverage cell being portrayed."
@@ -966,7 +971,7 @@
   },
   "/req/core/expressions-system-identifiers": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 716,
+   "line": 726,
    "parts": [
     "An Encoding SHALL support defining System Identifier Expressions referring to the System Identifiers defined in this requirements class, including the `capabilities` System Identifiers.",
     "A Renderer SHALL support resolving System Identifier Expressions to the corresponding state of the system, with each `capabilities` System Identifier resolving to true if and only if the Renderer supports the corresponding requirements class."
@@ -974,7 +979,7 @@
   },
   "/req/core/scale": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 725,
+   "line": 735,
    "parts": [
     "An Encoding SHALL support defining expressions using the `visualization.scaleDenominator` System Identifier.",
     "A Renderer SHALL support resolving the `visualization.scaleDenominator` System Identifier to the scale denominator of the map being rendered."
@@ -982,7 +987,7 @@
   },
   "/req/core/time": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 734,
+   "line": 744,
    "parts": [
     "An Encoding SHALL support defining expressions using the `visualization.dateTime`, `visualization.date`, `visualization.timeOfDay` and `visualization.timeInterval` System Identifiers.",
     "A Renderer SHALL support resolving the visualization time System Identifiers to the time instant or interval of the map being rendered."
@@ -990,7 +995,7 @@
   },
   "/req/core/layers": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 743,
+   "line": 753,
    "parts": [
     "An Encoding SHALL support defining expressions using the `dataLayer.identifier` and `dataLayer.type` System Identifiers.",
     "A Renderer SHALL support resolving the `dataLayer.identifier` System Identifier to the identifier of the data layer being portrayed, and the `dataLayer.type` System Identifier to its type (`map`, `vector` or `coverage`)."
@@ -998,7 +1003,7 @@
   },
   "/req/core/literals": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 805,
+   "line": 815,
    "parts": [
     "An Encoding SHALL support defining integer, real, text, null, enumeration value, boolean, array and instance literals.",
     "A Renderer SHALL support resolving literal expressions to their fixed value."
@@ -1006,7 +1011,7 @@
   },
   "/req/core/operations": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 908,
+   "line": 918,
    "parts": [
     "An Encoding SHALL support defining operation expressions consisting of operands and an operator for unary, binary and ternary operators.",
     "An Encoding SHALL support defining the priority of expressions using multiple operators (e.g., using parentheses: `(` `)`).",
@@ -1016,7 +1021,7 @@
   },
   "/req/core/logical": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 921,
+   "line": 931,
    "parts": [
     "An Encoding SHALL support defining operation expressions using the `and`, `or` and `not` logical operators.",
     "A Renderer SHALL support evaluating the `and`, `or` and `not` logical operators as defined in the Logical Operators table."
@@ -1024,7 +1029,7 @@
   },
   "/req/core/relational": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 930,
+   "line": 940,
    "parts": [
     "An Encoding SHALL support defining operation expressions using the relational operators `equal`, `notEqual`, `is`, `isNot`, `lesser`, `greater`, `lesserEqual`, `greaterEqual`, `in`, `notIn`, `between` and `notBetween`.",
     "A Renderer SHALL support evaluating the relational operators as defined in the Relational Operators table."
@@ -1032,7 +1037,7 @@
   },
   "/req/core/arrays": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 948,
+   "line": 958,
    "parts": [
     "An Encoding SHALL support defining array expressions as an ordered list of zero or more element expressions.",
     "A Renderer SHALL support resolving array expressions to an ordered array of the values of their element expressions."
@@ -1040,7 +1045,7 @@
   },
   "/req/core/instances": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 998,
+   "line": 1008,
    "parts": [
     "An Encoding SHALL support defining instance expressions of a class, optionally specifying values for its members.",
     "An Encoding SHALL support overriding a single member of an object Symbolizer property without replacing the other members.",
@@ -1049,7 +1054,7 @@
   },
   "/req/core/default-values": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 1072,
+   "line": 1082,
    "parts": [
     "An Encoding SHALL support omitting Symbolizer properties and object members for which a default value is defined in this section.",
     "A Renderer SHALL support using the default values defined in this section for Symbolizer properties and object members which are not set by any selected StylingRule."
