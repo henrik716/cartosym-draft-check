@@ -67,7 +67,14 @@
   input: "pow('a', 2)"
   json: {op: pow, args: [a, 2]}
   expect: "null"
-  note: A call whose arguments do not match the function's parameters in type evaluates to NULL (#162). Whether text converts to a number is open in #163.
+  note: A call whose arguments do not match the function's parameters in type evaluates to NULL (#162). `/per/functions/type-casts` lets a Renderer convert other types (#163), but `'a'` names no number.
+- id: fn-int-to-real
+  requirement: /req/functions/call-expressions
+  kind: expression
+  input: "atan2(1, 1)"
+  json: {op: atan2, args: [1, 1]}
+  expect: 0.7853981633974483
+  note: Integer arguments convert to real numbers where the parameter is a real number (#163).
 - {id: fn-standard, requirement: /req/functions/standard-functions, kind: expression, input: "max(1, 5, 3)", json: {op: max, args: [1, 5, 3]}, expect: 5}
 
 # --- Variables (rc-variables.adoc, rc-json.adoc /req/json/variables) --------

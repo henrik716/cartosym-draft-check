@@ -128,7 +128,10 @@ _ARITY = {
 # The standard functions (clause 15, and the text relation functions since #133 at 6da77bf).
 # /req/functions/call-expressions: a call whose arguments do not match the
 # function's parameters, in number or type, evaluates to NULL. An operator
-# with the wrong number of operands is still invalid.
+# with the wrong number of operands is still invalid. Integer arguments convert
+# to real numbers, as Python numbers do (#133 at 69e2c96). Text converts to an
+# enumeration value, but no standard function here takes an enumeration. The
+# draft renderer does not use /per/functions/type-casts.
 _FUNCTIONS = {
     "abs", "acos", "asin", "atan", "atan2", "ceil", "cos", "cosh", "exp", "floor", "log", "log10", "max", "min",
     "pow", "random", "round", "sin", "sinh", "sqrt", "tan", "tanh",
