@@ -746,6 +746,32 @@
    }
   }
  },
+ "fn-int-to-real": {
+  "requirement": "/req/functions/call-expressions",
+  "input": "atan2(1, 1)",
+  "expect": 0.7853981633974483,
+  "json": {
+   "op": "atan2",
+   "args": [
+    1,
+    1
+   ]
+  },
+  "results": {
+   "libCartoSym": {
+    "verdict": "unsupported",
+    "detail": "returned `null` (function or operator not recognised)"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "converts to the case's CQL2-JSON"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "0.7853981633974483"
+   }
+  }
+ },
  "fn-standard": {
   "requirement": "/req/functions/standard-functions",
   "input": "max(1, 5, 3)",
