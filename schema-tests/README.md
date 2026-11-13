@@ -36,7 +36,7 @@ The three validators must also agree with each other on every document; `check.m
 
 ## Results
 
-On the `schema-fixes` branch as of 2026-11-14 (not yet committed), with all three validators:
+On the [`schema-fixes`](https://github.com/henrik716/cartographic-symbology/tree/schema-fixes) branch at 7729a1e (2026-11-14), with all three validators:
 - Part 3: 0 wrong of 663
 - Part 1: 0 wrong of the 453 documents without Part 3 operations
 - The three validators give the same result for every document and both schemas
