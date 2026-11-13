@@ -201,7 +201,7 @@ footer { color:var(--muted); font-size:.85rem; border-top:1px solid var(--rule);
 <main>
 <header class="lede">
 <h1>PR #133 walkthrough</h1>
-<p class="sub">CartoSym 2.0 Part 1 requirements and Part 2 gradient fills. Updated for the OGC CartoSym SWG meeting on 13 November 2026. Branch <code>requirements-placeholders</code> at <code>69e2c96</code>; issues as of 12 November.</p>
+<p class="sub">CartoSym 2.0 Part 1 requirements and Part 2 gradient fills. Updated for the OGC CartoSym SWG meeting on 13 November 2026. Branch <code>requirements-placeholders</code> at <code>ea8732b</code>; issues as of 13 November.</p>
 <p>The PR replaces the placeholder text in Part 1 with normative requirements, puts every requirement on one identifier scheme, and moves gradients to Part 2. This page takes it class by class: what the PR chose, why, where the answer came from, and where the evidence is.</p>
 <div class="short">
 <div><h3>Where it stands</h3><ul>
@@ -215,7 +215,7 @@ footer { color:var(--muted); font-size:.85rem; border-top:1px solid var(--rule);
 <div><b>156</b><span>placeholder lines filled, 0 left</span></div>
 <div><b>131</b><span>requirements, plus 4 recommendations and 3 permissions</span></div>
 <div><b>10</b><span>decisions still open, of 51 on this page</span></div>
-<div><b>20</b><span>commits, 43 files, +985 / −571</span></div>
+<div><b>21</b><span>commits, 44 files, +989 / −580</span></div>
 </div>
 </header>
 
@@ -535,8 +535,8 @@ footer { color:var(--muted); font-size:.85rem; border-top:1px solid var(--rule);
 </article>
 <article class="dec s-open" data-status="open" id="expressions-11">
 <header><h3>Does <code>notLike</code> need its own JSON encoding?</h3><span class="pill">Open</span></header>
-<div class="cols"><div><h4>In the PR</h4><p><code>notLike</code> is a separate operation in the text. The JSON schema does not have it.</p></div><div><h4>Why</h4><p>CQL2 expresses it as <code>not</code> applied to <code>like</code>. The other <code>not*</code> forms are removed (see above).</p></div></div>
-<div class="prop"><h4>Proposal</h4><p>Encode it as <code>not</code> applied to <code>like</code>, with no schema change.</p></div><p class="ev"><a href="https://github.com/opengeospatial/cartographic-symbology/issues/140">#140</a> <a href="https://henrik716.github.io/cartosym-draft-check/gallery/requirements.html#r-req-text-relation-not-like"><code>/req/text-relation/not-like</code></a></p>
+<div class="cols"><div><h4>In the PR</h4><p><code>notLike</code> is a separate operation in the text. The JSON schema does not have it.</p></div><div><h4>Why</h4><p>CQL2 expresses it as <code>not</code> applied to <code>like</code>. The other <code>not*</code> forms are removed (see above). On 13 November Maxime proposed the same, also for <code>isNot</code>, <code>notIn</code> and <code>notBetween</code>, and found that libCartoSym already writes <code>notLike</code> this way in CQL2-JSON. Henrik agreed, for the schema PR.</p></div></div>
+<div class="prop"><h4>Proposal</h4><p>Encode it as <code>not</code> applied to <code>like</code>, with no schema change.</p></div><p class="ev"><a href="https://github.com/opengeospatial/cartographic-symbology/issues/140">#140</a> <a href="https://henrik716.github.io/cartosym-draft-check/gallery/requirements.html#r-req-text-relation-not-like"><code>/req/text-relation/not-like</code></a> <a href="https://github.com/opengeospatial/cartographic-symbology/issues/140#issuecomment-6847848030">#140, Maxime</a> <a href="https://github.com/opengeospatial/cartographic-symbology/issues/140#issuecomment-6850457779">#140, the reply</a></p>
 </article>
 <article class="dec s-open" data-status="open" id="expressions-12">
 <header><h3><code>caseInsensitize</code> and <code>accentInsensitize</code>, or <code>casei</code> and <code>accenti</code>?</h3><span class="pill">Open</span></header>
@@ -570,8 +570,8 @@ footer { color:var(--muted); font-size:.85rem; border-top:1px solid var(--rule);
 </article>
 <article class="dec s-open" data-status="open" id="encodings-5">
 <header><h3>Should the JSON schema check argument types, or only the syntax?</h3><span class="pill">Open</span></header>
-<div class="cols"><div><h4>In the PR</h4><p>Not changed. The schema checks the types of operands, and has its own definitions for CartoSym's named functions such as <code>lowerCase</code>. The schema fixes found in #140 go in a separate PR after #133.</p></div><div><h4>Why</h4><p>Jérôme asked on #140 whether checking types is the schema's job. It makes the schema long, and it causes the overlaps that make <code>oneOf</code> fail, as text and number expressions both include properties and function calls. CQL2 does not check the arguments of custom functions, and a call with wrong arguments now evaluates to NULL (#162). On 12 November Henrik replied preferring syntax only, and asked Maxime and others for their view.</p></div></div>
-<div class="prop"><h4>Proposal</h4><p>Check the syntax only: one expression type, operators checked for their name and number of arguments, and CartoSym's named functions covered by the generic function call. <code>oneOf</code> then works without excluding CartoSym's names. The cost is that <code>x like 3</code> and <code>lowerCase(1, 2)</code> pass the schema.</p></div><p class="ev"><a href="https://github.com/opengeospatial/cartographic-symbology/issues/140#issuecomment-6799242595">#140, Jérôme's question</a> <a href="https://github.com/opengeospatial/cartographic-symbology/issues/140#issuecomment-6828653799">#140, the reply</a></p>
+<div class="cols"><div><h4>In the PR</h4><p>Not changed. The schema checks the types of operands, and has its own definitions for CartoSym's named functions such as <code>lowerCase</code>. The schema fixes found in #140 go in a separate PR after #133.</p></div><div><h4>Why</h4><p>Jérôme asked on #140 whether checking types is the schema's job. It makes the schema long, and it causes the overlaps that make <code>oneOf</code> fail, as text and number expressions both include properties and function calls. CQL2 does not check the arguments of custom functions, and a call with wrong arguments now evaluates to NULL (#162). On 12 November Henrik replied preferring syntax only, and asked Maxime and others for their view. On 13 November Maxime asked whether CartoSym-CSS keywords and function names are case-sensitive, and whether CartoSym-JSON matches <code>op</code> values exactly. The CartoSym-CSS lexer in the repo accepts lower case only, while CQL2 Text keywords are case-insensitive and CQL2-JSON matches exactly. Henrik suggested following CQL2.</p></div></div>
+<div class="prop"><h4>Proposal</h4><p>Check the syntax only: one expression type, operators checked for their name and number of arguments, and CartoSym's named functions covered by the generic function call. <code>oneOf</code> then works without excluding CartoSym's names. The cost is that <code>x like 3</code> and <code>lowerCase(1, 2)</code> pass the schema.</p></div><p class="ev"><a href="https://github.com/opengeospatial/cartographic-symbology/issues/140#issuecomment-6799242595">#140, Jérôme's question</a> <a href="https://github.com/opengeospatial/cartographic-symbology/issues/140#issuecomment-6828653799">#140, the reply</a> <a href="https://github.com/opengeospatial/cartographic-symbology/issues/140#issuecomment-6847848030">#140, Maxime on case</a> <a href="https://github.com/opengeospatial/cartographic-symbology/issues/140#issuecomment-6850457779">#140, the reply on case</a></p>
 </article></section>
 <section class="cls" id="gradients"><div class="clshead"><h2>Part 2: Gradient Fills</h2><p class="meta">6 requirements. Rendered.</p><p class="intro">The only Part 2 content in this PR. Other Part 2 fixes are on a separate branch.</p></div><article class="dec s-agreed" data-status="agreed" id="gradients-1">
 <header><h3>Where do the gradient requirements go?</h3><span class="pill">Answered by Jérôme</span></header>
@@ -619,7 +619,7 @@ footer { color:var(--muted); font-size:.85rem; border-top:1px solid var(--rule);
 <thead><tr><th>Problem</th><th>Fix</th></tr></thead>
 <tbody>
 <tr><td><strong>The document has not been built with Metanorma.</strong> The PR description says so, and nothing later says otherwise. Cross-references were checked by script.</td><td>Run a build.</td></tr>
-<tr><td><strong>One other branch overlaps.</strong> In a test merge on 12 November, the <code>part2-class-names</code> branch for <a href="https://github.com/opengeospatial/cartographic-symbology/issues/134">#134</a> conflicts with #133 in <code>2-shapes/sections/clause_2_conformance.adoc</code>. <a href="https://github.com/opengeospatial/cartographic-symbology/pull/88">#88</a>, #131, #132, #158 and #159 merge cleanly with #133.</td><td>Rebase <code>part2-class-names</code> after #133 is merged.</td></tr>
+<tr><td><strong>One other branch overlaps.</strong> In a test merge on 13 November, at <code>ea8732b</code>, the <code>part2-class-names</code> branch for <a href="https://github.com/opengeospatial/cartographic-symbology/issues/134">#134</a> conflicts with #133 in <code>2-shapes/sections/clause_2_conformance.adoc</code>. <a href="https://github.com/opengeospatial/cartographic-symbology/pull/88">#88</a>, #131, #132, #158 and #159 merge cleanly with #133.</td><td>Rebase <code>part2-class-names</code> after #133 is merged.</td></tr>
 </tbody></table></div>
 </section>
 
@@ -643,7 +643,7 @@ footer { color:var(--muted); font-size:.85rem; border-top:1px solid var(--rule);
 <li><strong>Implementation bugs went upstream.</strong> pycartosym's reports are fixed and released, the selector one (#169) in 0.6.4. libCartoSym issues <a href="https://github.com/ecere/libCartoSym/issues/5">#5</a> to <a href="https://github.com/ecere/libCartoSym/issues/9">#9</a> and <a href="https://github.com/ecere/libCartoSym/issues/11">#11</a> and <a href="https://github.com/ecere/libCartoSym/issues/12">#12</a> are open.</li>
 </ul>
 </section>
-<footer>Drafted with Claude from the PR, its issues, the gallery and the test reports. Status counts are computed from the entries on this page. Prepared for 6 November, then updated on 11 November with the review comment on <code>rc-cscss</code> and the replies on #155, #156, #161 and #162, up to commit 6da77bf, and on 12 November with the replies on #140 and #163, up to commit 69e2c96. Sections 3 and 4 use the libCartoSym main CI run of 12 November.</footer>
+<footer>Drafted with Claude from the PR, its issues, the gallery and the test reports. Status counts are computed from the entries on this page. Prepared for 6 November, then updated on 11 November with the review comment on <code>rc-cscss</code> and the replies on #155, #156, #161 and #162, up to commit 6da77bf, and on 12 November with the replies on #140 and #163, up to commit 69e2c96, and on 13 November with Maxime's comment on #140 and the removal of duplicate rows in Annex B, up to commit ea8732b. Sections 3 and 4 use the libCartoSym main CI run of 12 November.</footer>
 </main>
 </div>
 <div id="tip" role="status"></div>
