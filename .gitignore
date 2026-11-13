@@ -6,3 +6,8 @@ work/
 # Private notes and the PR reply draft; not for publishing
 SUMMARY.md
 drafts/
+
+# schema tests: downloaded examples, npm packages, results
+schema-tests/cql2-examples/
+schema-tests/js/node_modules/
+schema-tests/out/

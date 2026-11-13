@@ -1,0 +1,10 @@
+{
+  "name": "cartosym-schema-tests",
+  "private": true,
+  "description": "Validates the schema test documents with Ajv and Hyperjump",
+  "type": "module",
+  "dependencies": {
+    "@hyperjump/json-schema": "1.11.0",
+    "ajv": "8.17.1"
+  }
+}
