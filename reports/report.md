@@ -1,6 +1,6 @@
 # CartoSym draft requirements vs implementations
 
-Generated 2026-11-12 with libCartoSym (cs-canif from `cartosym` 0.0.1, `ecrt` 0.0.6) and pycartosym 0.6.4.
+Generated 2026-11-14 with libCartoSym (cs-canif from `cartosym` 0.0.1, `ecrt` 0.0.6) and pycartosym 0.6.4.
 
 Expected values are what the **draft requirement** says. `FAIL` means the implementation disagrees with the draft, which may mean the draft or the implementation is wrong. pycartosym does not evaluate expressions, so for expression cases it is checked on converting them to CQL2-JSON (see below). The draft renderer is `cartosym_draft` in this repository, which implements the draft requirements; a FAIL there means it does not do what the draft says.
 
@@ -8,15 +8,16 @@ Expected values are what the **draft requirement** says. `FAIL` means the implem
 
 | Implementation | pass | FAIL | unsupported | CRASH | error |
 |---|---|---|---|---|---|
-| draft renderer | 117 | 0 | 0 | 0 | 0 |
-| libCartoSym | 49 | 12 | 32 | 3 | 15 |
-| pycartosym | 111 | 0 | 0 | 0 | 0 |
+| draft renderer | 120 | 0 | 0 | 0 | 0 |
+| libCartoSym | 49 | 12 | 35 | 3 | 15 |
+| pycartosym | 114 | 0 | 0 | 0 | 0 |
 
 ## How the cases are run
 
 - **libCartoSym:** the Input text is written to `expr.cql2` and evaluated with `cs-canif eval expr.cql2` (cs-canif from `cartosym` 0.0.1, `ecrt` 0.0.6). Where the spec gives no CartoSym-CSS syntax for an operation, a case can give libCartoSym's own (_as …_ in its column).
-- **pycartosym:** pycartosym does not evaluate expressions. Where a case gives its own CQL2-JSON (79 cases), the Input text is converted with `pycartosym.cql2.to_cql2_json(cql2.parse_text(input))` and passes if the result is that CQL2-JSON; otherwise it passes if `pycartosym.cql2.parse_text(input)` parses it.
+- **pycartosym:** pycartosym does not evaluate expressions. Where a case gives its own CQL2-JSON (82 cases), the Input text is converted with `pycartosym.cql2.to_cql2_json(cql2.parse_text(input))` and passes if the result is that CQL2-JSON; otherwise it passes if `pycartosym.cql2.parse_text(input)` parses it.
 - **draft renderer:** `cartosym_draft.evaluate.evaluate(expression, Context(...))`. Where a case gives its own CQL2-JSON, that is what it evaluates, and the result is marked _(CQL2-JSON)_, so it does not depend on pycartosym's parser; otherwise the Input text is converted with pycartosym as above.
+- **Comparing results:** quotes around text are ignored and numbers are compared as numbers, so `3.0` passes for `3`, except in cases marked `exact`, where the printed result must be the expected text (used to check that a result is an integer).
 - **Values:** feature properties, system identifiers, style variables (`@name`) and variables set by the application that a case is evaluated with are listed under its input (_with …_).
 - **Draft renderer only** (9 cases): cases that need such values. The harness does not pass them to `cs-canif` or pycartosym, so those columns show `-`.
 - **Styles** (3 cases): libCartoSym converts them with `cs-canif convert style.cscss style-out.cscss` (valid if it converts); pycartosym checks them with `cartosym validate`.
@@ -216,7 +217,7 @@ The cases are in [`cases/`](../cases/), the calls in [`harness/adapters.py`](../
 | fn-wrong-type | `pow('a', 2)` | `null` | pass: null | pass: converts to the case's CQL2-JSON | pass: null _(CQL2-JSON)_ |
 | | _A call whose arguments do not match the function's parameters in type evaluates to NULL (#162). `/per/functions/type-casts` lets a Renderer convert other types (#163), but `'a'` names no number._ | | | | |
 | fn-int-to-real | `atan2(1, 1)` | `0.7853981633974483` | unsupported: returned `null` (function or operator not recognised) | pass: converts to the case's CQL2-JSON | pass: 0.7853981633974483 _(CQL2-JSON)_ |
-| | _Integer arguments convert to real numbers where the parameter is a real number (#163)._ | | | | |
+| | _An integer argument is accepted where the parameter is a number (#163, #164)._ | | | | |
 
 ### `/req/functions/standard-functions`
 
@@ -260,6 +261,8 @@ The cases are in [`cases/`](../cases/), the calls in [`harness/adapters.py`](../
 | Case | Input | Expected | libCartoSym | pycartosym | draft renderer |
 |---|---|---|---|---|---|
 | math-ceil | `ceil(-2.5)` | `-2` | unsupported: returned `null` (function or operator not recognised) | pass: converts to the case's CQL2-JSON | pass: -2 _(CQL2-JSON)_ |
+| math-ceil-integer | `ceil(2.5)` | `3` | unsupported: returned `null` (function or operator not recognised) | pass: converts to the case's CQL2-JSON | pass: 3 _(CQL2-JSON)_ |
+| | _ceil returns an integer (#164): 3, not 3.0._ | | | | |
 
 ### `/req/math/cos`
 
@@ -283,6 +286,8 @@ The cases are in [`cases/`](../cases/), the calls in [`harness/adapters.py`](../
 
 | Case | Input | Expected | libCartoSym | pycartosym | draft renderer |
 |---|---|---|---|---|---|
+| math-floor-integer | `floor(2.5)` | `2` | unsupported: returned `null` (function or operator not recognised) | pass: converts to the case's CQL2-JSON | pass: 2 _(CQL2-JSON)_ |
+| | _floor returns an integer (#164): 2, not 2.0._ | | | | |
 | math-floor | `floor(-1.5)` | `-2` | unsupported: returned `null` (function or operator not recognised) | pass: parses | pass: -2 |
 
 ### `/req/math/log`
@@ -325,6 +330,8 @@ The cases are in [`cases/`](../cases/), the calls in [`harness/adapters.py`](../
 
 | Case | Input | Expected | libCartoSym | pycartosym | draft renderer |
 |---|---|---|---|---|---|
+| math-round-integer | `round(2.5)` | `3` | unsupported: returned `null` (function or operator not recognised) | pass: converts to the case's CQL2-JSON | pass: 3 _(CQL2-JSON)_ |
+| | _round returns an integer: 3, not 3.0._ | | | | |
 | math-round-half | `round(2.5)` | `3` | unsupported: returned `null` (function or operator not recognised) | pass: parses | pass: 3 |
 | | _Draft says halfway cases round away from zero, as C (#162)._ | | | | |
 | math-round-negative-half | `round(-2.5)` | `-3` | unsupported: returned `null` (function or operator not recognised) | pass: parses | pass: -3 |

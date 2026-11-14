@@ -38,17 +38,22 @@ def _same(actual: str, expected) -> bool:
         return actual == expected
 
 
-def _verdict(outcome: adapters.Outcome, expected) -> tuple[str, str]:
+def _verdict(outcome: adapters.Outcome, expected, exact: bool = False) -> tuple[str, str]:
+    """`exact`: the printed value must be the expected text, so `3.0` does not pass for an expected integer `3`."""
     if outcome.status == "crash":
         return CRASH, outcome.detail
     if outcome.status == "unsupported":
         return UNSUPPORTED, outcome.detail.splitlines()[0] if outcome.detail else ""
     if outcome.status != "ok":
         return ERROR, outcome.detail.splitlines()[0] if outcome.detail else ""
-    if _same(outcome.value, expected):
-        return PASS, outcome.value
     if outcome.value.strip() == "null" and str(expected).strip().lower() != "null":
         return UNSUPPORTED, "returned `null` (function or operator not recognised)"
+    if exact:
+        if outcome.value.strip() == str(expected).strip():
+            return PASS, outcome.value
+        return FAIL, f"got `{outcome.value}`, draft expects exactly `{expected}`"
+    if _same(outcome.value, expected):
+        return PASS, outcome.value
     return FAIL, f"got `{outcome.value}`, draft expects `{expected}`"
 
 
@@ -88,15 +93,17 @@ def _pycartosym_verdict(case: dict) -> tuple[str, str]:
 
 def run_case(case: dict) -> dict[str, tuple[str, str]]:
     kind, expected = case["kind"], case["expect"]
+    exact = bool(case.get("exact"))
     results = {}
     if kind == "expression":
         if not case.get("draft_only"):
-            results["libCartoSym"] = _verdict(adapters.libcartosym_eval(case.get("libcartosym_input", case["input"])), expected)
+            results["libCartoSym"] = _verdict(adapters.libcartosym_eval(case.get("libcartosym_input", case["input"])),
+                                              expected, exact)
             results["pycartosym"] = _pycartosym_verdict(case)
         results["draft renderer"] = _verdict(adapters.draft_eval(
             case["input"], case.get("json"), case.get("properties"), case.get("variables"), case.get("definitions"),
             case.get("system")),
-            expected)
+            expected, exact)
     elif kind == "style":
         fmt = case["format"]
         results["pycartosym"] = _verdict(adapters.pycartosym_validate_style(case["input"], fmt), expected)
@@ -157,6 +164,9 @@ def main(paths: list[str]) -> int:
         "- **draft renderer:** `cartosym_draft.evaluate.evaluate(expression, Context(...))`. Where a case gives its own "
         "CQL2-JSON, that is what it evaluates, and the result is marked _(CQL2-JSON)_, so it does not depend on "
         "pycartosym's parser; otherwise the Input text is converted with pycartosym as above.",
+        "- **Comparing results:** quotes around text are ignored and numbers are compared as numbers, so `3.0` "
+        "passes for `3`, except in cases marked `exact`, where the printed result must be the expected text "
+        "(used to check that a result is an integer).",
         "- **Values:** feature properties, system identifiers, style variables (`@name`) and variables set by the "
         "application that a case is evaluated with are listed under its input (_with …_).",
         f"- **Draft renderer only** ({n_draft_only} cases): cases that need such values. The harness does not pass "

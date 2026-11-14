@@ -10,6 +10,16 @@
 - {id: math-atan2, requirement: /req/math/atan2, kind: expression, input: "atan2(1, -1)", json: {op: atan2, args: [1, -1]}, expect: 2.356194490192345,
    note: "atan2(y, x): the angle of (-1, 1) is 3/4 pi. Swapped arguments would give -pi/4."}
 - {id: math-ceil, requirement: /req/math/ceil, kind: expression, input: "ceil(-2.5)", json: {op: ceil, args: [-2.5]}, expect: -2}
+# ceil, floor and round return an integer (data types PR, #164). `exact` compares the printed result as text,
+# so `3.0` (a number) does not pass for `3`: libCartoSym and the draft renderer both print numbers with a decimal
+# point and integers without. Part 1 has no operation that gives a different result for an integer than for a
+# number, except perhaps `%d` in `format`, which is not specified for numbers, so no case uses it.
+- {id: math-ceil-integer, requirement: /req/math/ceil, kind: expression, input: "ceil(2.5)", json: {op: ceil, args: [2.5]}, expect: "3", exact: true,
+   note: "ceil returns an integer (#164): 3, not 3.0."}
+- {id: math-floor-integer, requirement: /req/math/floor, kind: expression, input: "floor(2.5)", json: {op: floor, args: [2.5]}, expect: "2", exact: true,
+   note: "floor returns an integer (#164): 2, not 2.0."}
+- {id: math-round-integer, requirement: /req/math/round, kind: expression, input: "round(2.5)", json: {op: round, args: [2.5]}, expect: "3", exact: true,
+   note: "round returns an integer: 3, not 3.0."}
 - {id: math-cos, requirement: /req/math/cos, kind: expression, input: "cos(0)", json: {op: cos, args: [0]}, expect: 1}
 - {id: math-cosh, requirement: /req/math/cosh, kind: expression, input: "cosh(0)", json: {op: cosh, args: [0]}, expect: 1}
 - {id: math-exp, requirement: /req/math/exp, kind: expression, input: "exp(1)", json: {op: exp, args: [1]}, expect: 2.718281828459045}
@@ -74,7 +84,7 @@
   input: "atan2(1, 1)"
   json: {op: atan2, args: [1, 1]}
   expect: 0.7853981633974483
-  note: Integer arguments convert to real numbers where the parameter is a real number (#163).
+  note: "An integer argument is accepted where the parameter is a number (#163, #164)."
 - {id: fn-standard, requirement: /req/functions/standard-functions, kind: expression, input: "max(1, 5, 3)", json: {op: max, args: [1, 5, 3]}, expect: 5}
 
 # --- Variables (rc-variables.adoc, rc-json.adoc /req/json/variables) --------
