@@ -125,6 +125,138 @@
    }
   }
  },
+ "math-ceil-integer": {
+  "requirement": "/req/math/ceil",
+  "input": "ceil(2.5)",
+  "expect": "3",
+  "json": {
+   "op": "ceil",
+   "args": [
+    2.5
+   ]
+  },
+  "results": {
+   "libCartoSym": {
+    "verdict": "unsupported",
+    "detail": "returned `null` (function or operator not recognised)"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "converts to the case's CQL2-JSON"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "3"
+   }
+  }
+ },
+ "math-floor-integer": {
+  "requirement": "/req/math/floor",
+  "input": "floor(2.5)",
+  "expect": "2",
+  "json": {
+   "op": "floor",
+   "args": [
+    2.5
+   ]
+  },
+  "results": {
+   "libCartoSym": {
+    "verdict": "unsupported",
+    "detail": "returned `null` (function or operator not recognised)"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "converts to the case's CQL2-JSON"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "2"
+   }
+  }
+ },
+ "math-floor": {
+  "requirement": "/req/math/floor",
+  "input": "floor(-1.5)",
+  "expect": -2,
+  "results": {
+   "libCartoSym": {
+    "verdict": "unsupported",
+    "detail": "returned `null` (function or operator not recognised)"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "-2"
+   }
+  }
+ },
+ "math-round-integer": {
+  "requirement": "/req/math/round",
+  "input": "round(2.5)",
+  "expect": "3",
+  "json": {
+   "op": "round",
+   "args": [
+    2.5
+   ]
+  },
+  "results": {
+   "libCartoSym": {
+    "verdict": "unsupported",
+    "detail": "returned `null` (function or operator not recognised)"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "converts to the case's CQL2-JSON"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "3"
+   }
+  }
+ },
+ "math-round-half": {
+  "requirement": "/req/math/round",
+  "input": "round(2.5)",
+  "expect": 3,
+  "results": {
+   "libCartoSym": {
+    "verdict": "unsupported",
+    "detail": "returned `null` (function or operator not recognised)"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "3"
+   }
+  }
+ },
+ "math-round-negative-half": {
+  "requirement": "/req/math/round",
+  "input": "round(-2.5)",
+  "expect": -3,
+  "results": {
+   "libCartoSym": {
+    "verdict": "unsupported",
+    "detail": "returned `null` (function or operator not recognised)"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "-3"
+   }
+  }
+ },
  "math-cos": {
   "requirement": "/req/math/cos",
   "input": "cos(0)",
@@ -2902,44 +3034,6 @@
    }
   }
  },
- "math-round-half": {
-  "requirement": "/req/math/round",
-  "input": "round(2.5)",
-  "expect": 3,
-  "results": {
-   "libCartoSym": {
-    "verdict": "unsupported",
-    "detail": "returned `null` (function or operator not recognised)"
-   },
-   "pycartosym": {
-    "verdict": "pass",
-    "detail": "parses"
-   },
-   "draft renderer": {
-    "verdict": "pass",
-    "detail": "3"
-   }
-  }
- },
- "math-round-negative-half": {
-  "requirement": "/req/math/round",
-  "input": "round(-2.5)",
-  "expect": -3,
-  "results": {
-   "libCartoSym": {
-    "verdict": "unsupported",
-    "detail": "returned `null` (function or operator not recognised)"
-   },
-   "pycartosym": {
-    "verdict": "pass",
-    "detail": "parses"
-   },
-   "draft renderer": {
-    "verdict": "pass",
-    "detail": "-3"
-   }
-  }
- },
  "math-sqrt": {
   "requirement": "/req/math/sqrt",
   "input": "sqrt(16)",
@@ -2956,25 +3050,6 @@
    "draft renderer": {
     "verdict": "pass",
     "detail": "4.0"
-   }
-  }
- },
- "math-floor": {
-  "requirement": "/req/math/floor",
-  "input": "floor(-1.5)",
-  "expect": -2,
-  "results": {
-   "libCartoSym": {
-    "verdict": "unsupported",
-    "detail": "returned `null` (function or operator not recognised)"
-   },
-   "pycartosym": {
-    "verdict": "pass",
-    "detail": "parses"
-   },
-   "draft renderer": {
-    "verdict": "pass",
-    "detail": "-2"
    }
   }
  }
