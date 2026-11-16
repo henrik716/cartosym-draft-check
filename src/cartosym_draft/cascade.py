@@ -90,6 +90,8 @@ def _evaluate_values(v: Any, ctx: Context, key: str | None = None) -> Any:
         except EvaluationError:
             result = None
         # A property set to `null` directly is not an expression, so it stays null.
+        if result is None and ctx.null_reports is not None:
+            ctx.null_reports.append((key, ctx.properties))  # /rec/parameter-values/report-null
         return _null_value(key) if result is None else result
     if isinstance(v, dict):
         items = {k: _evaluate_values(x, ctx, k) for k, x in v.items()}

@@ -1,6 +1,6 @@
 # CartoSym draft requirements vs implementations
 
-Generated 2026-11-14 with libCartoSym (cs-canif from `cartosym` 0.0.1, `ecrt` 0.0.6) and pycartosym 0.6.4.
+Generated 2026-11-16 with libCartoSym (cs-canif from `cartosym` 0.0.1, `ecrt` 0.0.6) and pycartosym 0.6.4.
 
 Expected values are what the **draft requirement** says. `FAIL` means the implementation disagrees with the draft, which may mean the draft or the implementation is wrong. pycartosym does not evaluate expressions, so for expression cases it is checked on converting them to CQL2-JSON (see below). The draft renderer is `cartosym_draft` in this repository, which implements the draft requirements; a FAIL there means it does not do what the draft says.
 
@@ -8,14 +8,14 @@ Expected values are what the **draft requirement** says. `FAIL` means the implem
 
 | Implementation | pass | FAIL | unsupported | CRASH | error |
 |---|---|---|---|---|---|
-| draft renderer | 120 | 0 | 0 | 0 | 0 |
-| libCartoSym | 49 | 12 | 35 | 3 | 15 |
-| pycartosym | 114 | 0 | 0 | 0 | 0 |
+| draft renderer | 121 | 0 | 0 | 0 | 0 |
+| libCartoSym | 50 | 12 | 35 | 3 | 15 |
+| pycartosym | 115 | 0 | 0 | 0 | 0 |
 
 ## How the cases are run
 
 - **libCartoSym:** the Input text is written to `expr.cql2` and evaluated with `cs-canif eval expr.cql2` (cs-canif from `cartosym` 0.0.1, `ecrt` 0.0.6). Where the spec gives no CartoSym-CSS syntax for an operation, a case can give libCartoSym's own (_as …_ in its column).
-- **pycartosym:** pycartosym does not evaluate expressions. Where a case gives its own CQL2-JSON (82 cases), the Input text is converted with `pycartosym.cql2.to_cql2_json(cql2.parse_text(input))` and passes if the result is that CQL2-JSON; otherwise it passes if `pycartosym.cql2.parse_text(input)` parses it.
+- **pycartosym:** pycartosym does not evaluate expressions. Where a case gives its own CQL2-JSON (83 cases), the Input text is converted with `pycartosym.cql2.to_cql2_json(cql2.parse_text(input))` and passes if the result is that CQL2-JSON; otherwise it passes if `pycartosym.cql2.parse_text(input)` parses it.
 - **draft renderer:** `cartosym_draft.evaluate.evaluate(expression, Context(...))`. Where a case gives its own CQL2-JSON, that is what it evaluates, and the result is marked _(CQL2-JSON)_, so it does not depend on pycartosym's parser; otherwise the Input text is converted with pycartosym as above.
 - **Comparing results:** quotes around text are ignored and numbers are compared as numbers, so `3.0` passes for `3`, except in cases marked `exact`, where the printed result must be the expected text (used to check that a result is an integer).
 - **Values:** feature properties, system identifiers, style variables (`@name`) and variables set by the application that a case is evaluated with are listed under its input (_with …_).
@@ -218,12 +218,14 @@ The cases are in [`cases/`](../cases/), the calls in [`harness/adapters.py`](../
 | | _A call whose arguments do not match the function's parameters in type evaluates to NULL (#162). `/per/functions/type-casts` lets a Renderer convert other types (#163), but `'a'` names no number._ | | | | |
 | fn-int-to-real | `atan2(1, 1)` | `0.7853981633974483` | unsupported: returned `null` (function or operator not recognised) | pass: converts to the case's CQL2-JSON | pass: 0.7853981633974483 _(CQL2-JSON)_ |
 | | _An integer argument is accepted where the parameter is a number (#163, #164)._ | | | | |
+| fn-standard-wrong-arity | `max(1, 5, 3)` | `null` | pass: null | pass: converts to the case's CQL2-JSON | pass: null _(CQL2-JSON)_ |
+| | _/req/math/max takes two arguments, so three do not match the parameters and the call is NULL. The case expected 5 until three independent evaluators written from the text all gave NULL (2026-11-15)._ | | | | |
 
 ### `/req/functions/standard-functions`
 
 | Case | Input | Expected | libCartoSym | pycartosym | draft renderer |
 |---|---|---|---|---|---|
-| fn-standard | `max(1, 5, 3)` | `5` | unsupported: returned `null` (function or operator not recognised) | pass: converts to the case's CQL2-JSON | pass: 5 _(CQL2-JSON)_ |
+| fn-standard | `max(1, 5)` | `5` | unsupported: returned `null` (function or operator not recognised) | pass: converts to the case's CQL2-JSON | pass: 5 _(CQL2-JSON)_ |
 
 ### `/req/math/abs`
 

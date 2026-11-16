@@ -42,9 +42,10 @@ class Options:
     # /req/core/z-order: "higher-on-top" draws higher zOrder later.
     z_order: str = "higher-on-top"
 
-    # Hatch angle direction: "clockwise" from the positive x axis (draft table:
-    # "Hatches orientation clockwise degree"), or "counter-clockwise".
-    hatch_angle: str = "clockwise"
+    # Hatch angle direction from horizontal lines: "counter-clockwise" (the
+    # figure of the default 45 degree hatch, and the tightened table), or
+    # "clockwise" (the table before it was tightened).
+    hatch_angle: str = "counter-clockwise"
 
     # /req/dashes/dash-pattern: unqualified dashPattern lengths in "px"
     # (draft), or as multiples of the stroke width ("stroke-width", as

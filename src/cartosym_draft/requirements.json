@@ -1,7 +1,7 @@
 {
- "branch": "requirements-placeholders",
- "commit": "69e2c96",
- "uncommitted_changes": false,
+ "branch": "example-renders",
+ "commit": "c9808c0",
+ "uncommitted_changes": true,
  "requirements": {
   "/req/arithmetic/add": {
    "file": "1-core/requirements/rc-arithmetic.adoc",
@@ -106,7 +106,8 @@
    "line": 36,
    "parts": [
     "An Encoding SHALL support defining a `center` Stroke property as a StrokeStyling object.",
-    "A Renderer SHALL support drawing the center line of a stroke along the same geometry as the stroke, using the StrokeStyling specified by the `center` property, on top of the main stroke."
+    "A Renderer SHALL support drawing the center line of a stroke along the same geometry as the stroke, using the StrokeStyling specified by the `center` property, on top of the main stroke.",
+    "A Renderer SHALL support drawing, within a single visualization pass, the center lines of all features with the same `zOrder` on top of the main strokes of all those features, so that the main stroke of a joining line does not cut a center line."
    ]
   },
   "/req/conditional/condition": {
@@ -154,12 +155,13 @@
    "line": 43,
    "parts": [
     "An Encoding SHALL support defining a `singleChannel` Symbolizer property as a float.",
-    "A Renderer SHALL support using the value resolved from the `singleChannel` property for each coverage cell as the input value to the `colorMap` and `opacityMap` properties."
+    "A Renderer SHALL support using the value resolved from the `singleChannel` property for each coverage cell as the input value to the `colorMap` and `opacityMap` properties.",
+    "A Renderer SHALL support portraying each coverage cell over the whole area of that cell, so that each pixel of the map whose center lies in a cell takes the color and opacity of that cell."
    ]
   },
   "/req/coverage/color-map": {
    "file": "1-core/requirements/rc-coverage.adoc",
-   "line": 54,
+   "line": 55,
    "parts": [
     "An Encoding SHALL support defining a `colorMap` Symbolizer property as an array of `value` (float) and `color` (Color) pairs which can be tagged with a `name`.",
     "A Renderer SHALL support portraying each coverage cell with the color mapped from its `singleChannel` value by the `colorMap`, using the color of an entry for a value equal to that entry's `value`, interpolating between the colors of the two closest entries for other values within the range of the map, and using the color of the first or last entry for values outside the range of the map."
@@ -167,7 +169,7 @@
   },
   "/req/coverage/opacity-map": {
    "file": "1-core/requirements/rc-coverage.adoc",
-   "line": 65,
+   "line": 66,
    "parts": [
     "An Encoding SHALL support defining a `opacityMap` Symbolizer property as an array of `value` (float) and `opacity` (float) pairs which can be tagged with a `name`.",
     "A Renderer SHALL support portraying each coverage cell with the opacity mapped from its `singleChannel` value by the `opacityMap`, using the opacity of an entry for a value equal to that entry's `value`, interpolating between the opacities of the two closest entries for other values within the range of the map, and using the opacity of the first or last entry for values outside the range of the map."
@@ -175,7 +177,7 @@
   },
   "/rec/coverage/map-interpolation": {
    "file": "1-core/requirements/rc-coverage.adoc",
-   "line": 74,
+   "line": 75,
    "parts": [
     "A Renderer SHOULD interpolate the colors of a `colorMap` and the opacities of an `opacityMap` so that the result lies between those of the two closest entries."
    ]
@@ -261,7 +263,8 @@
    "line": 66,
    "parts": [
     "An Encoding SHALL support defining a dashOffset property for the stroke symbolizer.",
-    "A Renderer SHALL support dashing vector geometry based on a dashOffset property."
+    "A Renderer SHALL support dashing vector geometry based on a dashOffset property, as the distance into the dash pattern at which dashing starts at the beginning of each line (as `stroke-dashoffset` in SVG and SE 1.1), in the units of the dash pattern: with a `dashPattern` of `[ 8, 4 ]` and a `dashOffset` of 4, each line starts with a 4 pixel dash, then a 4 pixel gap.",
+    "A Renderer SHALL support starting the dash pattern again at the beginning of each line of a feature, and continuing it across the vertices of that line."
    ]
   },
   "/req/dot-patterns/dotpattern": {
@@ -269,12 +272,13 @@
    "line": 19,
    "parts": [
     "An Encoding SHALL support defining a `dotpattern` property within the `Fill` class, defined as a `Dotpattern` class.",
-    "A Renderer SHALL support filling vector geometry with a regular grid of points based on a `dotpattern` property."
+    "A Renderer SHALL support filling vector geometry with a regular grid of points based on a `dotpattern` property, each drawn as a filled circle with a diameter of 2 pixels in the `color` and `opacity` of the Fill, without painting the area between the points.",
+    "A Renderer SHALL support placing the points of all features on one grid aligned with the map, with its first point half the horizontal and half the vertical distance from the top left corner of the map."
    ]
   },
   "/req/dot-patterns/distance": {
    "file": "1-core/requirements/rc-dotpatterns.adoc",
-   "line": 30,
+   "line": 31,
    "parts": [
     "An Encoding SHALL support defining a `distance` Dotpattern property as a Distance object including a `horizontal` and a `vertical` float.",
     "A Renderer SHALL support spacing the rendered points of a dot pattern fill horizontally by the `horizontal` distance and vertically by the `vertical` distance."
@@ -293,7 +297,7 @@
    "line": 32,
    "parts": [
     "An Encoding SHALL support defining a `size` FontOutline property as a float.",
-    "A Renderer SHALL support drawing the outline extending outward from the glyph contours by the thickness specified by the `size` property."
+    "A Renderer SHALL support drawing the outline extending outward from the glyph contours by the thickness specified by the `size` property, in pixels."
    ]
   },
   "/req/font-outlines/opacity": {
@@ -343,12 +347,13 @@
    "line": 19,
    "parts": [
     "An Encoding SHALL support defining a `hatch` property within the `Fill` class, defined as a `Hatch` class.",
-    "A Renderer SHALL support filling vector geometry with a pattern of parallel lines based on a `hatch` property."
+    "A Renderer SHALL support filling vector geometry with a pattern of parallel lines based on a `hatch` property, drawn in the `color` and `opacity` of the Fill, without painting the area between the lines.",
+    "A Renderer SHALL support placing the hatch lines of all features on one pattern aligned with the map, with a line through the top left corner of the map, so that the hatches of neighbouring features line up."
    ]
   },
   "/req/hatches/width": {
    "file": "1-core/requirements/rc-hatches.adoc",
-   "line": 54,
+   "line": 55,
    "parts": [
     "An Encoding SHALL support defining a `width` property for the hatch fill symbolizer.",
     "A Renderer SHALL support fill hatching vector geometry based on a width property."
@@ -356,7 +361,7 @@
   },
   "/req/hatches/angle": {
    "file": "1-core/requirements/rc-hatches.adoc",
-   "line": 68,
+   "line": 69,
    "parts": [
     "An Encoding SHALL support defining an `angle` property for the hatch fill symbolizer.",
     "A Renderer SHALL support fill hatching vector geometry based on an angle property."
@@ -364,7 +369,7 @@
   },
   "/req/hatches/distance": {
    "file": "1-core/requirements/rc-hatches.adoc",
-   "line": 82,
+   "line": 83,
    "parts": [
     "An Encoding SHALL support defining a `distance` property for the hatch fill symbolizer.",
     "A Renderer SHALL support fill hatching vector geometry based on a distance property."
@@ -376,13 +381,14 @@
    "parts": [
     "An Encoding SHALL support defining a `hillShading` Symbolizer property as an object including `factor`, `sun`, `colorMap` and `opacityMap` properties.",
     "A Renderer SHALL support computing the terrain surface normal of each cell from the differences in elevation between neighbouring samples of the elevation coverage at the resolution being rendered, over the horizontal distance between those samples, in the same units as the elevation.",
+    "A Renderer SHALL support using as samples the cells of the elevation coverage where a pixel of the map covers no more ground than a cell (for example 75 m pixels over 150 m cells), and the coverage resampled to the map's pixels where a pixel covers more ground than a cell, and taking for each direction the difference between the two samples on either side of the cell over twice the distance between samples (repeating the edge sample at the edge of the coverage).",
     "A Renderer SHALL support portraying an elevation coverage with a shade value computed for each cell as the dot product of the unit normal of the terrain surface and the unit vector pointing towards the sun, clamped to the range 0 to 1, where 0 is full shade (the sun at 90 degrees or more from the normal) and 1 is no shade (the sun in the direction of the normal).",
     "A Renderer SHALL support, where the HillShading has no `colorMap`, multiplying the red, green and blue components of each cell by its shade value."
    ]
   },
   "/req/hill-shading/factor": {
    "file": "1-core/requirements/rc-hillshading.adoc",
-   "line": 32,
+   "line": 33,
    "parts": [
     "An Encoding SHALL support defining a `factor` HillShading property as a float.",
     "A Renderer SHALL support multiplying the horizontal components of the terrain surface normal by the `factor` property before normalizing it, so that a `factor` of 1 shades the terrain as it is and a larger `factor` exaggerates the relief."
@@ -390,15 +396,15 @@
   },
   "/req/hill-shading/sun": {
    "file": "1-core/requirements/rc-hillshading.adoc",
-   "line": 45,
+   "line": 46,
    "parts": [
     "An Encoding SHALL support defining a `sun` HillShading property as an object consisting of `azimuth` and `elevation` angle members representing the orientation of the sun relative to the terrain.",
-    "A Renderer SHALL support computing the shade of each cell for a light source at the `azimuth` angle (in degrees clockwise from North, as a compass bearing) and `elevation` angle (relative to the ground) specified by the `sun` property."
+    "A Renderer SHALL support computing the shade of each cell for a light source at the `azimuth` angle (in degrees clockwise from North, as a compass bearing, where North is up on the map, the grid north of its coordinate reference system) and `elevation` angle (relative to the ground) specified by the `sun` property."
    ]
   },
   "/req/hill-shading/color-map": {
    "file": "1-core/requirements/rc-hillshading.adoc",
-   "line": 56,
+   "line": 57,
    "parts": [
     "An Encoding SHALL support defining a `colorMap` HillShading property as an array of `value` (float) and `color` (Color) pairs.",
     "A Renderer SHALL support portraying each cell with the color mapped from its computed shade value by the `colorMap`, as for the `colorMap` Symbolizer property."
@@ -406,7 +412,7 @@
   },
   "/req/hill-shading/opacity-map": {
    "file": "1-core/requirements/rc-hillshading.adoc",
-   "line": 67,
+   "line": 68,
    "parts": [
     "An Encoding SHALL support defining a `opacityMap` HillShading property as an array of `value` (float) and `opacity` (float) pairs.",
     "A Renderer SHALL support portraying each cell with the opacity mapped from its computed shade value by the `opacityMap`, as for the `opacityMap` Symbolizer property."
@@ -478,16 +484,18 @@
    "file": "1-core/requirements/rc-labels.adoc",
    "line": 30,
    "parts": [
-    "A Renderer SHOULD omit labels which cannot be placed without overlapping other labels, unless a property of the Symbolizer allows the overlap."
+    "A Renderer SHOULD omit labels which cannot be placed without overlapping other labels, unless a property of the Symbolizer allows the overlap.",
+    "A Renderer SHOULD omit labels which would extend beyond the edges of the map, except where the map is drawn in tiles that are put together."
    ]
   },
   "/req/labels/placement": {
    "file": "1-core/requirements/rc-labels.adoc",
-   "line": 40,
+   "line": 41,
    "parts": [
     "An Encoding SHALL support defining a `placement` Label property as a LabelPlacement object including a `priority`, a `minSpacing` and a `maxSpacing`.",
     "A Renderer SHALL support placing labels so that a label with a higher `priority` is placed in preference to a conflicting label with a lower `priority`.",
-    "A Renderer SHALL support repeating a label so that the distance between repetitions of that label is at least `minSpacing` and, where space allows, at most `maxSpacing`, both in pixels unless qualified with another unit (<<graphical-units-of-measure,Graphical Units of Measure>>)."
+    "A Renderer SHALL support repeating a label so that the distance between repetitions of that label is at least `minSpacing` and, where space allows, at most `maxSpacing`, both in pixels unless qualified with another unit (<<graphical-units-of-measure,Graphical Units of Measure>>).",
+    "A Renderer SHALL support treating as repetitions of a label all labels with the same content from the same data layer (so that a road split into several features is labelled as one), and measuring the distance between repetitions on the map between their positions."
    ]
   },
   "/req/math/abs": {
@@ -701,7 +709,7 @@
    "line": 28,
    "parts": [
     "An Encoding SHALL support defining a ratio property for the stipple fill symbolizer.",
-    "A Renderer SHALL support stipple fill vector geometry based on a ratio property."
+    "A Renderer SHALL support stipple fill vector geometry based on a ratio property, with dots in the `color` and `opacity` of the Fill placed at random so that they cover the `ratio` fraction of the area, without painting the area between the dots."
    ]
   },
   "/req/text-manipulation/case-insensitize": {
@@ -765,12 +773,13 @@
    "line": 21,
    "parts": [
     "An Encoding SHALL support defining a `like` operation expression taking a text operand and a text pattern operand, where `%` in the pattern matches any sequence of zero or more characters and `_` matches exactly one character.",
-    "A Renderer SHALL support evaluating a `like` operation expression to true if and only if the first operand matches the pattern specified by the second operand."
+    "A Renderer SHALL support evaluating a `like` operation expression to true if and only if the first operand matches the pattern specified by the second operand.",
+    "A Renderer SHALL support a backslash (`\\`) in the pattern making the character that follows it match only itself, so that the pattern `'50\\%'` matches the text `50%` and the pattern `'\\\\'` matches a single backslash."
    ]
   },
   "/req/text-relation/not-like": {
    "file": "1-core/requirements/rc-text-relation.adoc",
-   "line": 32,
+   "line": 33,
    "parts": [
     "An Encoding SHALL support defining a `notLike` operation expression taking a text operand and a text pattern operand, using the same pattern syntax as the `like` operator.",
     "A Renderer SHALL support evaluating a `notLike` operation expression to the logical negation of the equivalent `like` operation expression."
@@ -778,7 +787,7 @@
   },
   "/req/text-relation/contains": {
    "file": "1-core/requirements/rc-text-relation.adoc",
-   "line": 43,
+   "line": 44,
    "parts": [
     "An Encoding SHALL support defining a call to the `contains` function taking two text arguments.",
     "A Renderer SHALL support evaluating `contains(a, b)` to true if and only if `b` occurs as a substring of `a`."
@@ -786,7 +795,7 @@
   },
   "/req/text-relation/starts-with": {
    "file": "1-core/requirements/rc-text-relation.adoc",
-   "line": 54,
+   "line": 55,
    "parts": [
     "An Encoding SHALL support defining a call to the `startsWith` function taking two text arguments.",
     "A Renderer SHALL support evaluating `startsWith(a, b)` to true if and only if `a` begins with `b`."
@@ -794,7 +803,7 @@
   },
   "/req/text-relation/ends-with": {
    "file": "1-core/requirements/rc-text-relation.adoc",
-   "line": 65,
+   "line": 66,
    "parts": [
     "An Encoding SHALL support defining a call to the `endsWith` function taking two text arguments.",
     "A Renderer SHALL support evaluating `endsWith(a, b)` to true if and only if `a` ends with `b`."
@@ -826,7 +835,7 @@
   },
   "/req/vector/stroke": {
    "file": "1-core/requirements/rc-vector.adoc",
-   "line": 32,
+   "line": 35,
    "parts": [
     "An Encoding SHALL support defining a `stroke` Symbolizer property as an object including a `color` and a units of measure-qualified (\"uom-qualified\") `width`.",
     "A Renderer SHALL support drawing the stroke of vector geometry based on a `stroke` property specifying a `color` and a uom-qualified `width`."
@@ -834,7 +843,7 @@
   },
   "/req/vector/units": {
    "file": "1-core/requirements/rc-vector.adoc",
-   "line": 43,
+   "line": 46,
    "parts": [
     "An Encoding SHALL support qualifying distance properties identified as \"uom-qualified\" with a unit of measure (pixel, millimeter, inch, percentage, meter, foot).",
     "A Renderer SHALL support applying the appropriate unit transformation when rendering elements specifying a uom-qualified distances."
@@ -842,7 +851,7 @@
   },
   "/req/vector/marker": {
    "file": "1-core/requirements/rc-vector.adoc",
-   "line": 54,
+   "line": 57,
    "parts": [
     "An Encoding SHALL support defining a `marker` Symbolizer property as an array of graphical elements (Graphics).",
     "A Renderer SHALL support drawing the graphical elements of a marker at the points of vector geometry (for points and line strings) and at the centroid of polygons."
@@ -850,48 +859,51 @@
   },
   "/req/vector/graphics": {
    "file": "1-core/requirements/rc-vector.adoc",
-   "line": 65,
+   "line": 68,
    "parts": [
     "An Encoding SHALL support defining graphical elements (graphics) specifying a uom-qualified 2D real position offsetting the graphic from its original position.",
-    "A Renderer SHALL support drawing the Graphics at the specified uom-qualified 2D position offset relative to its original position."
+    "A Renderer SHALL support drawing the Graphics at the specified uom-qualified 2D position offset relative to its original position.",
+    "A Renderer SHALL support interpreting a positive `x` of the position as an offset to the right and a positive `y` as an offset upwards on the map, as for `Displacement` in SE 1.1."
    ]
   },
   "/req/vector/dot": {
    "file": "1-core/requirements/rc-vector.adoc",
-   "line": 76,
+   "line": 80,
    "parts": [
     "An Encoding SHALL support defining a Dot Graphic inheriting from a base Shape class specifying a stroke, with a uom-qualified `size` property and a `color` property that are the same values as the `width` and the `color` of its stroke.",
     "A Renderer SHALL support setting the `width` and the `color` of the stroke of a Dot when its `size` and `color` are set, and the reverse, so that the value set last applies to both.",
-    "A Renderer SHALL support drawing a Dot Graphic as a filled circle whose diameter is its `size` (the `width` of its stroke), in its `color` (the `color` of its stroke)."
+    "A Renderer SHALL support drawing a Dot Graphic as a filled circle whose diameter is its `size` (the `width` of its stroke), in its `color` (the `color` of its stroke), and drawing nothing for a Dot whose `size` is 0 or less."
    ]
   },
   "/req/vector/image": {
    "file": "1-core/requirements/rc-vector.adoc",
-   "line": 90,
+   "line": 94,
    "parts": [
     "An Encoding SHALL support defining an Image Graphic with an `image` property referencing an image resource, an optional uom-qualified `hotSpot` position within the image, optional `tint` and `blackTint` Colors, and an optional `alphaThreshold` real number between 0 and 1.",
     "A Renderer SHALL support drawing the referenced image so that its `hotSpot` (by default, its center, `{ 0.5, 0.5 }`) is located at the position of the Graphic.",
+    "A Renderer SHALL support interpreting the `hotSpot` in the coordinates of the image, from its top left corner with `x` to the right and `y` downwards, where a number without a unit is a fraction of the image's width or height, a value in `pc` is a percentage of it, and a value in another unit is a length from that corner.",
     "A Renderer SHALL support recoloring the image so that each red, green and blue component _v_ (between 0 and 1) of each pixel becomes `tint` × _v_ + `blackTint` × (1 − _v_), using the same component of `tint` and `blackTint`."
    ]
   },
   "/per/vector/image-alpha-test": {
    "file": "1-core/requirements/rc-vector.adoc",
-   "line": 104,
+   "line": 111,
    "parts": [
     "A Renderer MAY use `alphaThreshold` as the threshold of an alpha test, by not drawing the pixels of the image whose alpha value is below it."
    ]
   },
   "/req/vector/text": {
    "file": "1-core/requirements/rc-vector.adoc",
-   "line": 114,
+   "line": 121,
    "parts": [
     "An Encoding SHALL support defining a Text Graphic with a `text` unicode string content, a `font`, and an `alignment` with a horizontal (`horzAlignment`: `left`, `right` or `center`) and vertical component (`vertAlignment`: `top`, `middle`, `bottom`).",
-    "A Renderer SHALL support drawing the `text` of a Text Graphic using the `font` and the `alignment` specified."
+    "A Renderer SHALL support drawing the `text` of a Text Graphic using the `font` and the `alignment` specified.",
+    "A Renderer SHALL support aligning the text so that the edge or center of its box named by the `alignment` is at the position of the Graphic: `left` puts the start of the text there, `right` its end, `top` the top of the font's ascent, `bottom` the bottom of its descent, and `middle` the point halfway between them; the default `alignment` is `center` `middle`."
    ]
   },
   "/req/vector/fonts": {
    "file": "1-core/requirements/rc-vector.adoc",
-   "line": 125,
+   "line": 133,
    "parts": [
     "An Encoding SHALL support defining Fonts with a `face` property indicating the face name (also known as the font _family_), a `size` specified in _points_, a `bold` flag indicating to use a bold weight if true, and an `italic` flag indicating to use an italic style if true.",
     "A Renderer SHALL support drawing text using the fonts specified."
@@ -925,15 +937,16 @@
   },
   "/req/core/symbolizer": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 260,
+   "line": 267,
    "parts": [
     "An Encoding SHALL support defining a Symbolizer for a StylingRule, specifying any subset of the Symbolizer properties.",
-    "A Renderer SHALL support portraying data using the Symbolizer properties resulting from all selected StylingRules, using the default values for properties not set by any selected rule."
+    "A Renderer SHALL support portraying data using the Symbolizer properties resulting from all selected StylingRules, using the default values for properties not set by any selected rule.",
+    "A Renderer SHALL support portraying, with the default values, the features and coverage cells that no StylingRule selects, so that a style hides data only by setting `visibility` to false (as example 11 does with `{ visibility: false; }` at its start)."
    ]
   },
   "/req/core/visibility": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 271,
+   "line": 279,
    "parts": [
     "An Encoding SHALL support defining a `visibility` Symbolizer property as a boolean.",
     "A Renderer SHALL support not portraying a feature or coverage cell for which the resolved `visibility` property is false."
@@ -941,7 +954,7 @@
   },
   "/req/core/opacity": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 282,
+   "line": 290,
    "parts": [
     "An Encoding SHALL support defining an `opacity` Symbolizer property as a float between 0 (fully transparent) and 1 (fully opaque).",
     "A Renderer SHALL support applying the resolved `opacity` property by multiplying it with the opacity of the fill, the stroke, the graphics of markers and the opacity channel of coverage cells."
@@ -949,14 +962,14 @@
   },
   "/rec/core/opacity-together": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 293,
+   "line": 308,
    "parts": [
-    "A Renderer SHOULD apply the Symbolizer `opacity` to the fill, the stroke and the graphics of markers together, so that they do not show through each other where they overlap."
+    "A Renderer SHOULD apply the Symbolizer `opacity` to the fill, the stroke and the graphics of markers of each feature together, so that they do not show through each other where they overlap; different features still show through each other."
    ]
   },
   "/req/core/z-order": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 303,
+   "line": 318,
    "parts": [
     "An Encoding SHALL support defining a `zOrder` Symbolizer property as an integer.",
     "A Renderer SHALL support portraying features and coverage cells of a single rendering pass in increasing order of their resolved `zOrder` property, so that portrayals with a higher `zOrder` are drawn on top of those with a lower `zOrder`."
@@ -964,7 +977,7 @@
   },
   "/req/core/parameters": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 367,
+   "line": 389,
    "parts": [
     "An Encoding SHALL support defining Symbolizer properties as Parameter Values using Literal Expressions compatible with the data type expected by the property.",
     "A Renderer SHALL support resolving Parameter Values to the data type expected by the Symbolizer property."
@@ -972,7 +985,7 @@
   },
   "/req/core/expressions-field-identifiers": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 384,
+   "line": 413,
    "parts": [
     "An Encoding SHALL support defining Identifier Expressions referring to feature properties or coverage range fields by name.",
     "A Renderer SHALL support resolving an Identifier Expression to the value of the named feature property or coverage range field for the feature or coverage cell being portrayed."
@@ -980,7 +993,7 @@
   },
   "/req/core/expressions-system-identifiers": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 726,
+   "line": 755,
    "parts": [
     "An Encoding SHALL support defining System Identifier Expressions referring to the System Identifiers defined in this requirements class, including the `capabilities` System Identifiers.",
     "A Renderer SHALL support resolving System Identifier Expressions to the corresponding state of the system, with each `capabilities` System Identifier resolving to true if and only if the Renderer supports the corresponding requirements class."
@@ -988,7 +1001,7 @@
   },
   "/req/core/scale": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 735,
+   "line": 764,
    "parts": [
     "An Encoding SHALL support defining expressions using the `visualization.scaleDenominator` System Identifier.",
     "A Renderer SHALL support resolving the `visualization.scaleDenominator` System Identifier to the scale denominator of the map being rendered."
@@ -996,7 +1009,7 @@
   },
   "/req/core/time": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 744,
+   "line": 773,
    "parts": [
     "An Encoding SHALL support defining expressions using the `visualization.dateTime`, `visualization.date`, `visualization.timeOfDay` and `visualization.timeInterval` System Identifiers.",
     "A Renderer SHALL support resolving the visualization time System Identifiers to the time instant or interval of the map being rendered."
@@ -1004,7 +1017,7 @@
   },
   "/req/core/layers": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 753,
+   "line": 789,
    "parts": [
     "An Encoding SHALL support defining expressions using the `dataLayer.identifier` and `dataLayer.type` System Identifiers.",
     "A Renderer SHALL support resolving the `dataLayer.identifier` System Identifier to the identifier of the data layer being portrayed, and the `dataLayer.type` System Identifier to its type (`map`, `vector` or `coverage`)."
@@ -1012,7 +1025,7 @@
   },
   "/req/core/literals": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 815,
+   "line": 851,
    "parts": [
     "An Encoding SHALL support defining integer, real, text, null, enumeration value, boolean, array and instance literals.",
     "A Renderer SHALL support resolving literal expressions to their fixed value."
@@ -1020,7 +1033,7 @@
   },
   "/req/core/operations": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 918,
+   "line": 954,
    "parts": [
     "An Encoding SHALL support defining operation expressions consisting of operands and an operator for unary, binary and ternary operators.",
     "An Encoding SHALL support defining the priority of expressions using multiple operators (e.g., using parentheses: `(` `)`).",
@@ -1030,7 +1043,7 @@
   },
   "/req/core/logical": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 931,
+   "line": 967,
    "parts": [
     "An Encoding SHALL support defining operation expressions using the `and`, `or` and `not` logical operators.",
     "A Renderer SHALL support evaluating the `and`, `or` and `not` logical operators as defined in the Logical Operators table."
@@ -1038,7 +1051,7 @@
   },
   "/req/core/relational": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 940,
+   "line": 976,
    "parts": [
     "An Encoding SHALL support defining operation expressions using the relational operators `equal`, `notEqual`, `is`, `isNot`, `lesser`, `greater`, `lesserEqual`, `greaterEqual`, `in`, `notIn`, `between` and `notBetween`.",
     "A Renderer SHALL support evaluating the relational operators as defined in the Relational Operators table."
@@ -1046,7 +1059,7 @@
   },
   "/req/core/arrays": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 958,
+   "line": 994,
    "parts": [
     "An Encoding SHALL support defining array expressions as an ordered list of zero or more element expressions.",
     "A Renderer SHALL support resolving array expressions to an ordered array of the values of their element expressions."
@@ -1054,7 +1067,7 @@
   },
   "/req/core/instances": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 1008,
+   "line": 1044,
    "parts": [
     "An Encoding SHALL support defining instance expressions of a class, optionally specifying values for its members.",
     "An Encoding SHALL support overriding a single member of an object Symbolizer property without replacing the other members.",
@@ -1063,7 +1076,7 @@
   },
   "/req/core/default-values": {
    "file": "1-core/sections/clause_7_core.adoc",
-   "line": 1082,
+   "line": 1125,
    "parts": [
     "An Encoding SHALL support omitting Symbolizer properties and object members for which a default value is defined in this section.",
     "A Renderer SHALL support using the default values defined in this section for Symbolizer properties and object members which are not set by any selected StylingRule."

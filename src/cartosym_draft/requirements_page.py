@@ -9,6 +9,7 @@ from collections import defaultdict
 from pathlib import Path
 
 from .gallery import COPY_SCRIPT, CSS, PR_FILES, REQUIREMENTS, _check_styles, _inline_code, decisions, style_pane
+from .doc_examples import REQUIREMENT_EXAMPLES
 from .kit import export
 from .nav import NAV_CSS, NAV_SCRIPT, permalink, toc, topbar
 from .render import render
@@ -32,13 +33,19 @@ ENCODING = {
     "/req/json/variables": "tested (variables cases) and used by the draft renderer",
     "/req/json/dot-size-color": "enforced by the PR's JSON schema (`not` on Dot), which every style is validated against",
 }
-NOT_IMPLEMENTED = {
-    "/req/core/time": "not implemented: the draft renderer has no visualization time",
-    "/req/core/expressions-system-identifiers": "partly: viz.sd and dataLayer identifiers work; `capabilities` identifiers "
-                                                "are not implemented",
-    "/req/labels/placement": "partly: priority and minSpacing are rendered; maxSpacing is not implemented",
-    "/per/vector/image-alpha-test": "not implemented: a permission; the draft renderer has no picking and no alpha test",
-    "/rec/parameter-values/report-null": "not implemented: the draft renderer applies the NULL values but does not report them",
+NOT_IMPLEMENTED: dict[str, str] = {}
+# Implemented in the draft renderer, checked by a direct call rather than a render or a harness case.
+RENDERER_NOTES = {
+    "/req/core/time": "the visualization date and time interval are system identifiers of the view; see the "
+                      "core-time document example",
+    "/req/core/expressions-system-identifiers": "`capabilities.*` are true for the classes the draft renderer "
+                                                "implements (`render.CAPABILITIES`)",
+    "/per/vector/image-alpha-test": "a permission, used: pixels of an Image whose alpha is below `alphaThreshold` are "
+                                    "not drawn",
+    "/rec/parameter-values/report-null": "each render lists the properties whose expression evaluated to NULL in an "
+                                         "SVG comment and in `render.LAST_NULL_REPORTS`",
+    "/per/functions/type-casts": "a permission, not used: the text leaves the conversion unspecified, so the draft "
+                                 "renderer gives NULL for a wrong-type argument, as the harness cases on calls check",
 }
 
 
@@ -69,6 +76,10 @@ def build(out_dir: Path) -> str:
         for r in s.requirements:
             samples_by_req[r].append(s)
     tests_by_req = _results()
+    doc_by_req: dict[str, list] = defaultdict(list)
+    for ex in REQUIREMENT_EXAMPLES:
+        for r in ex.requirements:
+            doc_by_req[r].append(ex)
 
     groups: dict[str, list[str]] = defaultdict(list)
     for rid, r in REQUIREMENTS["requirements"].items():
@@ -99,6 +110,13 @@ def build(out_dir: Path) -> str:
             if tests_by_req.get(rid):
                 evidence.append(_tests(tests_by_req[rid]))
                 status.append("tested")
+            for ex in doc_by_req.get(rid, []):
+                evidence.append(f"document example: `{ex.name}`")
+            if doc_by_req.get(rid):
+                status.append("document example")
+            if rid in RENDERER_NOTES:
+                evidence.append(_inline_code(RENDERER_NOTES[rid]))
+                status.append("implemented")
             if rid in ENCODING:
                 evidence.append(_inline_code(ENCODING[rid]))
                 status.append("encoding")

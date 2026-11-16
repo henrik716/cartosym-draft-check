@@ -904,16 +904,42 @@
    }
   }
  },
- "fn-standard": {
-  "requirement": "/req/functions/standard-functions",
+ "fn-standard-wrong-arity": {
+  "requirement": "/req/functions/call-expressions",
   "input": "max(1, 5, 3)",
-  "expect": 5,
+  "expect": "null",
   "json": {
    "op": "max",
    "args": [
     1,
     5,
     3
+   ]
+  },
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "null"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "converts to the case's CQL2-JSON"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "null"
+   }
+  }
+ },
+ "fn-standard": {
+  "requirement": "/req/functions/standard-functions",
+  "input": "max(1, 5)",
+  "expect": 5,
+  "json": {
+   "op": "max",
+   "args": [
+    1,
+    5
    ]
   },
   "results": {

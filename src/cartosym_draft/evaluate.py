@@ -8,6 +8,7 @@ taken from :class:`~cartosym_draft.options.Options`.
 
 from __future__ import annotations
 
+import datetime
 import math
 import random
 import re
@@ -30,6 +31,8 @@ class Context:
     variables: dict[str, Any] = field(default_factory=dict)
     # The style's `$variables` (set by cascade.resolve).
     definitions: dict[str, Any] = field(default_factory=dict)
+    # /rec/parameter-values/report-null: where to report Symbolizer properties whose expression is NULL.
+    null_reports: list | None = None
 
 
 _VARIABLE_REF = "#/$variables/"
@@ -63,6 +66,10 @@ def evaluate(expr: Any, ctx: Context) -> Any:
         raise EvaluationError(f"undefined variable {name!r}")
     if "op" in expr:
         return _operation(expr["op"], expr.get("args", []), ctx)
+    if set(expr) == {"date"} and isinstance(expr["date"], str):
+        # A CQL2 date literal. Dates are Part 3 (temporal), but the Part 1 examples compare them
+        # (viz.date, validDate), so they are read here as Python dates and compared as such.
+        return datetime.date.fromisoformat(expr["date"])
     return expr  # an object literal, e.g. a color or unit value
 
 
@@ -120,7 +127,7 @@ _ARITY = {
     "lowercase": 1, "lower": 1, "uppercase": 1, "upper": 1, "substitute": 3,
     "abs": 1, "acos": 1, "asin": 1, "atan": 1, "ceil": 1, "cos": 1, "cosh": 1, "exp": 1, "floor": 1,
     "log": 1, "log10": 1, "sin": 1, "sinh": 1, "sqrt": 1, "tan": 1, "tanh": 1, "round": 1,
-    "atan2": 2, "pow": 2, "^": 2, "random": 0, "*": 2, "/": 2, "div": 2, "//": 2, "%": 2, "mod": 2,
+    "atan2": 2, "pow": 2, "max": 2, "min": 2, "^": 2, "random": 0, "*": 2, "/": 2, "div": 2, "//": 2, "%": 2, "mod": 2,
     "+": 2, "=": 2, "eq": 2, "<>": 2, "!=": 2, "ne": 2, "<": 2, ">": 2, "<=": 2, ">=": 2,
     "?:": 3, "if": 3,
 }

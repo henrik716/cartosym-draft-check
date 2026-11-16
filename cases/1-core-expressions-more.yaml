@@ -85,7 +85,14 @@
   json: {op: atan2, args: [1, 1]}
   expect: 0.7853981633974483
   note: "An integer argument is accepted where the parameter is a number (#163, #164)."
-- {id: fn-standard, requirement: /req/functions/standard-functions, kind: expression, input: "max(1, 5, 3)", json: {op: max, args: [1, 5, 3]}, expect: 5}
+- {id: fn-standard, requirement: /req/functions/standard-functions, kind: expression, input: "max(1, 5)", json: {op: max, args: [1, 5]}, expect: 5}
+- id: fn-standard-wrong-arity
+  requirement: /req/functions/call-expressions
+  kind: expression
+  input: "max(1, 5, 3)"
+  json: {op: max, args: [1, 5, 3]}
+  expect: "null"
+  note: /req/math/max takes two arguments, so three do not match the parameters and the call is NULL. The case expected 5 until three independent evaluators written from the text all gave NULL (2026-11-15).
 
 # --- Variables (rc-variables.adoc, rc-json.adoc /req/json/variables) --------
 - id: var-reference

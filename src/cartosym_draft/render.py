@@ -9,6 +9,7 @@ fills, and Symbolizer visibility, opacity and zOrder.
 
 from __future__ import annotations
 
+import functools
 import html
 import itertools
 import math
@@ -86,6 +87,7 @@ class _Svg:
         self.defs: list[str] = []
         self.body: list[str] = []
         self.casings: list[tuple[float, str]] = []  # (zOrder key, casing), with casing_pass == "all-first"
+        self.centers: list[tuple[float, str]] = []  # (zOrder key, center line), drawn after the main strokes
         self.z = 0.0  # zOrder key of the feature being painted
 
     def new_id(self, prefix: str) -> str:
@@ -182,8 +184,11 @@ def _fill_paint(svg: _Svg, fill: dict, path: str, opacity_mul: float, opts: Opti
         pid = svg.new_id("hatch")
         svg.defs.append(
             f'<pattern id="{pid}" width="{d:g}" height="{d:g}" patternUnits="userSpaceOnUse" '
-            f'patternTransform="rotate({rot:g})"><line x1="0" y1="0" x2="{d:g}" y2="0" '
-            f'stroke="{fc}" stroke-width="{2 * w:g}"/></pattern>'
+            # One line centred on the tile edge (half at the top, half at the bottom), so a line passes
+            # through the map's origin: the pattern's phase is not stated, and this is what the three
+            # independent renderers chose.
+            f'patternTransform="rotate({rot:g})"><g stroke="{fc}" stroke-width="{w:g}">'
+            f'<line x1="0" y1="0" x2="{d:g}" y2="0"/><line x1="0" y1="{d:g}" x2="{d:g}" y2="{d:g}"/></g></pattern>'
         )
         out.append(f'<path d="{path}" fill="url(#{pid})" fill-opacity="{fo:g}" fill-rule="evenodd"/>')
 
@@ -204,10 +209,10 @@ def _fill_paint(svg: _Svg, fill: dict, path: str, opacity_mul: float, opts: Opti
                 for _ in range(n)
             )
         else:
-            dots_svg = "".join(
-                f'<rect x="{rng.randrange(view.width)}" y="{rng.randrange(view.height)}" width="1" height="1"/>'
-                for _ in range(n)
-            )
+            # Distinct pixels, so that the dots cover the `ratio` fraction of the area.
+            cells = rng.sample(range(view.width * view.height), min(n, view.width * view.height))
+            dots_svg = "".join(f'<rect x="{i % view.width}" y="{i // view.width}" width="1" height="1"/>'
+                               for i in cells)
         out.append(f'<g clip-path="url(#{clip})" fill="{dot_color}" fill-opacity="{fo:g}">{dots_svg}</g>')
 
     if dots is not None:  # /req/dot-patterns/distance
@@ -217,7 +222,7 @@ def _fill_paint(svg: _Svg, fill: dict, path: str, opacity_mul: float, opts: Opti
         dx = to_px(dist.get("horizontal"), view, 8)
         dy = to_px(dist.get("vertical"), view, 8)
         pid = svg.new_id("dots")
-        r = dot_size / 2 if dot_defaults else 1.2
+        r = dot_size / 2 if dot_defaults else 1.0  # /req/dot-patterns/dotpattern: 2 pixels across
         svg.defs.append(
             f'<pattern id="{pid}" width="{dx:g}" height="{dy:g}" patternUnits="userSpaceOnUse">'
             f'<circle cx="{dx / 2:g}" cy="{dy / 2:g}" r="{r:g}" fill="{dot_color}"/></pattern>'
@@ -309,7 +314,9 @@ def _interp_stop(stops: list[tuple[float, str, float]], t: float) -> str:
 def _stroke_paint(svg: _Svg, stroke: dict, path: str, opacity_mul: float, opts: Options) -> list[str]:
     view = svg.view
     w = to_px(stroke.get("width"), view, 1)
-    attrs = 'fill="none" stroke-linejoin="round" stroke-linecap="round"'
+    # Clause 8, Strokes: "By default the end of open subpaths are butt caped and at the corners of paths are
+    # miter joined" (no miter limit is given; SVG's default of 4 applies).
+    attrs = 'fill="none" stroke-linejoin="miter" stroke-linecap="butt"'
 
     def one(st: dict, width: float, dash: str = "") -> str:
         o = float(st.get("opacity", 1)) * opacity_mul
@@ -318,9 +325,6 @@ def _stroke_paint(svg: _Svg, stroke: dict, path: str, opacity_mul: float, opts: 
 
     dash = ""
     if stroke.get("dashPattern"):
-        # Flat caps: round caps would extend each dash by half the width and
-        # can close short gaps entirely.
-        attrs = 'fill="none" stroke-linejoin="round" stroke-linecap="butt"'
         # /req/dashes/dash-pattern: lengths are UnitValues, in pixels unless
         # qualified. /per/dashes/dash-pattern-units: `pc` is percent of the
         # stroke width. The "stroke-width" option reads plain numbers as
@@ -355,25 +359,35 @@ def _stroke_paint(svg: _Svg, stroke: dict, path: str, opacity_mul: float, opts: 
         out.append(casing_svg)
     center = stroke.get("center") or stroke.get("centerLine")
     if center:
-        out.append(one(center, to_px(center.get("width"), view, max(1, w / 3))))
+        # /req/casing/center: the center lines of all features with the same zOrder go on top of
+        # the main strokes of all those features.
+        svg.centers.append((svg.z, one(center, to_px(center.get("width"), view, max(1, w / 3)))))
     return out
 
 
 # ---------------------------------------------------------------- markers
 
-def _text(el: dict, x: float, y: float, view: View, opacity_mul: float, opts: Options) -> str:
-    font = el.get("font") or {}
-    size = to_px({"pt": font["size"]} if isinstance(font.get("size"), (int, float)) else font.get("size"), view, 16)
+def _text_anchor(el: dict) -> str:
+    """SVG text-anchor for a Text graphic's horizontal alignment (centre by default)."""
     align = el.get("alignment") or {}
     if isinstance(align, list):
         h = align[0] if align else "center"
     else:
         h = align.get("horizontal", "center") if align else "center"
-    anchor = {"left": "start", "right": "end"}.get(h, "middle")
+    return {"left": "start", "right": "end"}.get(h, "middle")
+
+
+def _text(el: dict, x: float, y: float, view: View, opacity_mul: float, opts: Options) -> str:
+    font = el.get("font") or {}
+    size = to_px({"pt": font["size"]} if isinstance(font.get("size"), (int, float)) else font.get("size"), view, 16)
+    anchor = _text_anchor(el)
+    align = el.get("alignment") or {}
+    v = (align[1] if len(align) > 1 else "middle") if isinstance(align, list) else align.get("vertical", "middle")
+    baseline = {"top": "hanging", "bottom": "text-after-edge"}.get(v, "middle")
     style = (f'font-family="{html.escape(str(font.get("face", "sans-serif")))}" font-size="{size:g}" '
              f'font-weight="{"bold" if font.get("bold") else "normal"}" '
              f'font-style="{"italic" if font.get("italic") else "normal"}" text-anchor="{anchor}" '
-             f'dominant-baseline="middle"')
+             f'dominant-baseline="{baseline}"')
     fo = float(font.get("opacity", 1)) * opacity_mul
     outline = font.get("outline")
     paint = ""
@@ -396,6 +410,24 @@ def _offset(el: dict, view: View) -> tuple[float, float]:
     return 0.0, 0.0
 
 
+def _hotspot(value: Any, w: float, h: float, view: View) -> tuple[float, float] | None:
+    """An Image hotSpot as fractions of the image size: `pc` is a percentage, other units are lengths
+    from the top left corner, and plain numbers are fractions (the draft does not say; see the units issue)."""
+    if value is None:
+        return None
+    if isinstance(value, dict):
+        value = [value.get("x", 0), value.get("y", 0)]
+    out = []
+    for v, size in zip(value, (w, h)):
+        if isinstance(v, dict) and set(v) == {"pc"}:
+            out.append(float(v["pc"]) / 100)
+        elif isinstance(v, dict):
+            out.append(to_px(v, view) / size if size else 0.0)
+        else:
+            out.append(float(v))
+    return out[0], out[1]
+
+
 def _marker_paint(marker: dict, x: float, y: float, view: View, opacity_mul: float, opts: Options) -> list[str]:
     out = []
     mo = float(marker.get("opacity", 1))
@@ -408,6 +440,8 @@ def _marker_paint(marker: dict, x: float, y: float, view: View, opacity_mul: flo
         if kind == "Dot":  # /req/vector/dot
             size = to_px(el.get("size", (el.get("stroke") or {}).get("width")), view, 10)
             c = el.get("color", (el.get("stroke") or {}).get("color", "white"))
+            if size <= 0:
+                continue  # /req/vector/dot: nothing for a size of 0 or less
             out.append(f'<circle cx="{px:.2f}" cy="{py:.2f}" r="{size / 2:g}" fill="{color(c)}" '
                        f'fill-opacity="{mo * opacity_mul:g}"/>')
         elif kind == "Text":  # /req/vector/text, /req/font-outlines/*
@@ -415,12 +449,19 @@ def _marker_paint(marker: dict, x: float, y: float, view: View, opacity_mul: flo
         elif kind == "Image":  # /req/vector/image
             w = to_px(el.get("width", {"px": 24}), view, 24)
             h = to_px(el.get("height", {"px": 24}), view, 24)
-            hx, hy = el.get("hotSpot") or opts.image_hotspot
+            hx, hy = _hotspot(el.get("hotSpot"), w, h, view) or opts.image_hotspot
             href = (el.get("image") or {}).get("uri") if isinstance(el.get("image"), dict) else el.get("image")
             # tint × v + blackTint × (1 − v) per channel; the defaults (white, black) leave the image unchanged.
             tint = parse_color(el.get("tint")) or (1.0, 1.0, 1.0)
             black = parse_color(el.get("blackTint")) or (0.0, 0.0, 0.0)
             filt = ""
+            threshold = float(el.get("alphaThreshold") or 0)
+            if threshold > 0:  # /per/vector/image-alpha-test: an alpha test, kept pixels become opaque
+                steps = 100
+                table = " ".join("0" if i / steps < threshold else "1" for i in range(steps + 1))
+                aid = f"alpha{round(threshold * 1000)}"
+                out.append(f'<filter id="{aid}"><feComponentTransfer><feFuncA type="discrete" '
+                           f'tableValues="{table}"/></feComponentTransfer></filter>')
             if (tint, black) != ((1.0, 1.0, 1.0), (0.0, 0.0, 0.0)):
                 # Same colors give the same filter, so a repeated id is harmless.
                 fid = "tint" + "".join(f"{round(c * 255):02x}" for c in (*tint, *black))
@@ -429,8 +470,11 @@ def _marker_paint(marker: dict, x: float, y: float, view: View, opacity_mul: flo
                 out.append(f'<filter id="{fid}" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" '
                            f'values="{" ".join(rows)} 0 0 0 1 0"/></filter>')
                 filt = f' filter="url(#{fid})"'
-            out.append(f'<image href="{html.escape(str(href))}" x="{px - hx * w:.2f}" y="{py - hy * h:.2f}" '
-                       f'width="{w:g}" height="{h:g}" opacity="{mo * opacity_mul:g}"{filt}/>')
+            img = (f'<image href="{html.escape(str(href))}" x="{px - hx * w:.2f}" y="{py - hy * h:.2f}" '
+                   f'width="{w:g}" height="{h:g}" opacity="{mo * opacity_mul:g}"{filt}/>')
+            if threshold > 0:
+                img = f'<g filter="url(#{aid})">{img}</g>'
+            out.append(img)
     return out
 
 
@@ -443,13 +487,45 @@ class _Label:
     item: int  # index of the feature's drawing group
     svg: str
     box: tuple[float, float, float, float]
+    key: tuple = ()  # (layer, content): labels with the same key are repetitions of one label
+    spacing: float = 0.0  # minSpacing in pixels
+
+
+_FONT_FILES = {"arial": "arial", "tahoma": "tahoma", "times new roman": "times", "verdana": "verdana"}
+_FONT_DIRS = ("C:/Windows/Fonts", "/usr/share/fonts/truetype/msttcorefonts", "/Library/Fonts")
+
+
+@functools.lru_cache(maxsize=64)
+def _font(face: str, size: float, bold: bool, italic: bool):
+    """The TrueType font for measuring text, or None where Pillow or the font file is not available."""
+    try:
+        from PIL import ImageFont
+    except ImportError:
+        return None
+    base = _FONT_FILES.get(face.lower(), "arial")
+    suffix = {(False, False): "", (True, False): "bd", (False, True): "i", (True, True): "bi"}[(bold, italic)]
+    if base == "times":
+        suffix = {"": "", "bd": "bd", "i": "i", "bi": "bi"}[suffix]
+    for d in _FONT_DIRS:
+        for name in (f"{base}{suffix}.ttf", f"{base}.ttf"):
+            try:
+                return ImageFont.truetype(f"{d}/{name}", max(1, round(size * 4)))  # 4x for sub-pixel accuracy
+            except OSError:
+                continue
+    return None
 
 
 def _label_size(el: dict, view: View) -> tuple[float, float]:
-    """Rough text extent: no font metrics, so 0.6 em per character."""
+    """Text extent: the advance width and the font's ascent plus descent, measured with the font where
+    Pillow and the font are available (as a browser would draw it), else 0.6 em per character."""
     font = el.get("font") or {}
     size = to_px({"pt": font["size"]} if isinstance(font.get("size"), (int, float)) else font.get("size"), view, 16)
-    return 0.6 * size * len(str(el.get("text", ""))), size
+    text = str(el.get("text", ""))
+    f = _font(str(font.get("face", "Arial")), size, bool(font.get("bold")), bool(font.get("italic")))
+    if f is None:
+        return 0.6 * size * len(text), size
+    ascent, descent = f.getmetrics()
+    return f.getlength(text) / 4, (ascent + descent) / 4
 
 
 def _along(points: list[tuple[float, float]], first: float, step: float) -> list[tuple[float, float, float]]:
@@ -473,6 +549,8 @@ def _label_candidates(label: dict, pts, lines, polys, view: View, mul: float, op
     placement = label.get("placement") or {}
     unit = "m" if opts.label_spacing_units == "m" else "px"
     min_sp = placement.get("minSpacing")
+    if not isinstance(min_sp, (int, float)):
+        min_sp = placement.get("maxSpacing")  # repeat at most every maxSpacing where space allows
     spacing = to_px({unit: min_sp}, view) if isinstance(min_sp, (int, float)) else None
     anchors: list[tuple[float, float, float]] = [(*view.xy(*p[:2]), 0.0) for p in pts]
     anchors += [(*view.xy(*_centroid(poly)), 0.0) for poly in polys]
@@ -484,20 +562,37 @@ def _label_candidates(label: dict, pts, lines, polys, view: View, mul: float, op
         else:
             anchors += _along(screen, length / 2, length + 1)
     out = []
+    elements = [el for el in label.get("elements") or [] if isinstance(el, dict)]
     for x, y, ang in anchors:
-        for el in label.get("elements") or []:
-            if not isinstance(el, dict) or el.get("type", "Text") != "Text":
-                continue
-            w, h = _label_size(el, view)
+        # All of a label's graphics (Text, Dot, Image) are placed together, as one label.
+        frags, boxes = [], []
+        for el in elements:
             ox, oy = _offset(el, view)
             lx, ly = x + ox, y + oy
-            text = _text(el, lx, ly, view, mul, opts)
-            if ang:
-                text = f'<g transform="rotate({ang:.1f} {x:.1f} {y:.1f})">{text}</g>'
-            c, s_ = abs(math.cos(math.radians(ang))), abs(math.sin(math.radians(ang)))
-            bw, bh = w * c + h * s_, w * s_ + h * c
-            out.append((text, (lx - bw / 2, ly - bh / 2, lx + bw / 2, ly + bh / 2)))
+            if el.get("type", "Text") == "Text":
+                w, h = _label_size(el, view)
+                frags.append(_text(el, lx, ly, view, mul, opts))
+                left = {"start": lx, "end": lx - w}.get(_text_anchor(el), lx - w / 2)
+                c, s_ = abs(math.cos(math.radians(ang))), abs(math.sin(math.radians(ang)))
+                bw, bh = w * c + h * s_, w * s_ + h * c
+                boxes.append((left, ly - bh / 2, left + bw, ly + bh / 2))
+            else:
+                frags += _marker_paint({"elements": [el]}, x, y, view, mul, opts)
+                size = to_px(el.get("size", (el.get("stroke") or {}).get("width")), view, 10) \
+                    if el.get("type", "Dot") == "Dot" else to_px(el.get("width", {"px": 24}), view, 24)
+                boxes.append((lx - size / 2, ly - size / 2, lx + size / 2, ly + size / 2))
+        if not frags:
+            continue
+        svg = "".join(frags)
+        if ang:
+            svg = f'<g transform="rotate({ang:.1f} {x:.1f} {y:.1f})">{svg}</g>'
+        out.append((svg, (min(b[0] for b in boxes), min(b[1] for b in boxes),
+                          max(b[2] for b in boxes), max(b[3] for b in boxes))))
     return out
+
+
+def _center(box) -> tuple[float, float]:
+    return ((box[0] + box[2]) / 2, (box[1] + box[3]) / 2)
 
 
 def _overlaps(a, b) -> bool:
@@ -505,6 +600,26 @@ def _overlaps(a, b) -> bool:
 
 
 # ------------------------------------------------------------------ main
+
+# /req/core/expressions-system-identifiers: the requirements classes the draft renderer implements.
+CAPABILITIES = {f"capabilities.{c}": True for c in (
+    "vector", "coverage", "labels", "hillshading", "fontoutlines", "hatches", "stipples", "dashes", "casing",
+    "parametervalues", "functions", "math", "arrayrelations", "textmanipulation", "arithmetic", "textrelation",
+    "righthand", "conditional", "variables", "dotpatterns")}
+
+# The NULL reports of the last call to render() (/rec/parameter-values/report-null).
+LAST_NULL_REPORTS: list = []
+
+_DIMENSIONS = {"Point": 0, "MultiPoint": 0, "LineString": 1, "MultiLineString": 1, "Polygon": 2, "MultiPolygon": 2}
+
+
+def _geometry_dimensions(layer: Layer) -> int | None:
+    """dataLayer.featuresGeometryDimensions: the dimension of the layer's geometries, if they all have the same one."""
+    if layer.type != "vector" or not layer.features:
+        return None
+    dims = {_DIMENSIONS.get((f.get("geometry") or {}).get("type")) for f in layer.features}
+    return dims.pop() if len(dims) == 1 and None not in dims else None
+
 
 def render(style: dict, layers: list[Layer], view: View, opts: Options | None = None,
            anchors: bool = False) -> str:
@@ -515,13 +630,17 @@ def render(style: dict, layers: list[Layer], view: View, opts: Options | None = 
     """
     opts = opts or Options()
     svg = _Svg(view)
+    null_reports: list = []
     items: list[list] = []  # [zOrder, sequence, fragments, group opacity, labels]
     labels: list[_Label] = []
     seq = 0
     for layer in layers:
         system = {"viz.sd": view.scale_denominator, "visualization.scaleDenominator": view.scale_denominator,
                   "dataLayer.id": layer.id, "dataLayer.identifier": layer.id, "dataLayer.type": layer.type,
-                  **view.system}
+                  **CAPABILITIES, **view.system}
+        dims = _geometry_dimensions(layer)
+        if dims is not None:
+            system["dataLayer.featuresGeometryDimensions"] = dims
         if layer.type == "coverage" and layer.grid is not None:
             result = portray(style, layer.grid, system, opts)
             if result:
@@ -534,7 +653,8 @@ def render(style: dict, layers: list[Layer], view: View, opts: Options | None = 
                 seq += 1
             continue
         for feat in layer.features:
-            ctx = Context(properties=feat.get("properties") or {}, system=system, options=opts)
+            ctx = Context(properties=feat.get("properties") or {}, system=system, options=opts,
+                          null_reports=null_reports)
             sym = resolve(style, ctx)
             if sym.get("visibility") is False:
                 continue
@@ -565,10 +685,15 @@ def render(style: dict, layers: list[Layer], view: View, opts: Options | None = 
                                  f'<path d="{cross}" stroke="black" stroke-width="1.5"/>')
             label = sym.get("label")
             if isinstance(label, dict) and label.get("elements"):
-                prio = float((label.get("placement") or {}).get("priority", 0) or 0)
+                placement = label.get("placement") or {}
+                prio = float(placement.get("priority", 0) or 0)
+                min_sp = placement.get("minSpacing")
+                spacing = to_px({"m" if opts.label_spacing_units == "m" else "px": min_sp}, view) \
+                    if isinstance(min_sp, (int, float)) else 0.0
+                content = tuple(str(el.get("text")) for el in label["elements"] if isinstance(el, dict))
                 # The Symbolizer opacity does not apply to labels (NOTE in /req/core/opacity).
                 for text, box in _label_candidates(label, pts, lines, polys, view, 1.0, opts):
-                    labels.append(_Label(prio, seq, len(items), text, box))
+                    labels.append(_Label(prio, seq, len(items), text, box, (layer.id, content), spacing))
             items.append([svg.z, seq, frags, op, []])
             seq += 1
 
@@ -581,6 +706,9 @@ def render(style: dict, layers: list[Layer], view: View, opts: Options | None = 
             continue  # would be cut off at the edge of the map
         if any(_overlaps(lb.box, p.box) for p in placed):
             continue
+        if lb.spacing and any(p.key == lb.key and math.dist(_center(p.box), _center(lb.box)) < lb.spacing
+                              for p in placed):
+            continue  # /req/labels/placement: a repetition closer than minSpacing
         placed.append(lb)
         if opts.label_pass == "with-feature":
             items[lb.item][4].append(lb.svg)
@@ -588,15 +716,21 @@ def render(style: dict, layers: list[Layer], view: View, opts: Options | None = 
     # /req/casing/casing: the casings of all features with the same zOrder go
     # beneath the main strokes of those features, so a bridge's casing covers
     # the roads below it.
-    for z in sorted({it[0] for it in items} | {cz for cz, _ in svg.casings}):
+    for z in sorted({it[0] for it in items} | {cz for cz, _ in svg.casings} | {cz for cz, _ in svg.centers}):
         svg.body.extend(c for cz, c in svg.casings if cz == z)
         for _, _, frags, op, item_labels in sorted((it for it in items if it[0] == z), key=lambda it: it[1]):
             group = "".join(frags)
             if opts.opacity == "whole" and op < 1:
                 group = f'<g opacity="{op:g}">{group}</g>'
             svg.body.append(group + "".join(item_labels))
+        svg.body.extend(c for cz, c in svg.centers if cz == z)
     if opts.label_pass == "on-top":
         svg.body.extend(lb.svg for lb in sorted(placed, key=lambda lb: lb.seq))
+    LAST_NULL_REPORTS[:] = null_reports
+    if null_reports:
+        # /rec/parameter-values/report-null: reported in the SVG, one line per property.
+        keys = sorted({str(k) for k, _ in null_reports})
+        svg.body.append(f"<!-- NULL values: {len(null_reports)} for {', '.join(keys)} -->")
     return svg.text()
 
 

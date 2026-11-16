@@ -98,6 +98,7 @@ The gallery uses small datasets ([`sample_data.py`](src/cartosym_draft/sample_da
 
 - **Rondane:** real elevation of Rondane, Norway, 45 × 30 km with 150 m cells, from about 290 to 2160 m (the Rondane massif and the valleys around it), used by all the elevation cards (examples 5, 8 and 9, and gamma), so they can be compared with renders of real terrain. These cards are drawn 900 px wide, which keeps the scale at 1:178 571, inside the examples' `viz.sd < 200000`, and stretch the examples' color map (0–2500 m) to 500–2000 m, keeping its colors, so the whole ramp shows and the valley floors and summits fall outside it. From Kartverket's national terrain model (NHM DTM, via the Geonorge WCS), averaged from 30 m to 150 m cells by [`tools/fetch_rondane.py`](tools/fetch_rondane.py) and stored in [`rondane_data.py`](src/cartosym_draft/rondane_data.py). Elevation data © Kartverket, [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
 - **Sentinel-2 L2A:** a real scene over the same 45 × 30 km of Rondane, from 2 August 2024 (`S2B_T32VNP_20240802T104620_L2A`), used by examples 6 and 7, with a few clouds that example 6's SCL rules hide. From Element84's Earth Search (`sentinel-2-c1-l2a`, cloud-optimised GeoTIFFs on AWS), reprojected to EPSG:25833 and averaged to 150 m cells (the scene classification takes each cell's most common class) by [`tools/fetch_sentinel2.py`](tools/fetch_sentinel2.py), and stored in [`sentinel2_data.py`](src/cartosym_draft/sentinel2_data.py). Since 2022, L2A digital numbers carry a +1000 offset; the tool removes it, so the bands are reflectance × 10 000, as the examples assume. Contains modified Copernicus Sentinel data 2024.
+- **Figures for the specification** ([`doc_examples.py`](src/cartosym_draft/doc_examples.py), `python -m cartosym_draft.doc_examples`): the same 45 × 30 km of Rondane, with N50 Kartdata vector layers (land cover, rivers, roads, cabins, place names and more) clipped by [`tools/fetch_n50.py`](tools/fetch_n50.py) into [`data/rondane/`](src/cartosym_draft/data/rondane/), with coordinates to 0.1 m and road and river pieces that meet end to end with equal properties joined into one line (N50 splits a road wherever an attribute changes, and the butt caps of the draft would leave a notch at each split). [`tools/fetch_hires.py`](tools/fetch_hires.py) adds the elevation and a cloud-free Sentinel-2 scene of 1 September 2024 (`S2B_T32VNP_20240901T104944_L2A`) at 50 m cells, and, for each panel at 1:100 000 or larger, the elevation at about one cell per screen pixel (2 to 28 m, from the 1 m terrain model) so the relief stays sharp. Map data © Kartverket, CC BY 4.0; contains modified Copernicus Sentinel data 2024.
 - **Pyramids** (synthetic, 15 × 10 km with 100 m cells): three square pyramids, used where the direction of the light must be easy to see.
 
 In the render kits, the data is placed in ETRS89 / UTM zone 33N (EPSG:25833): the Rondane data at its real position, the pyramids near Oslo. Vector layers are GeoJSON, coverage bands ESRI ASCII grids with `.prj` files. Each file is named after its layer, which the styles' `dataLayer.id` selectors match. `view.json` gives the extent, size and scale denominator, and the attribution where a kit contains Kartverket or Copernicus data.
@@ -118,7 +119,7 @@ The playground loads the renderer's Python files over HTTP, so open it from GitH
 
 To fetch the Rondane data again: `uv run --with tifffile --with numpy python tools/fetch_rondane.py` and `uv run --with rasterio --with numpy python tools/fetch_sentinel2.py`.
 
-`extract_requirements.py` reads the checked-out branch of `../cartographic-symbology` (the PR branch, `requirements-placeholders`). Run it again after the requirements change.
+`extract_requirements.py` reads the checked-out branch of `../cartographic-symbology`. The current snapshot is from branch `example-renders` (the renders PR), whose requirement text has the changes in [`reports/wording-decisions.md`](reports/wording-decisions.md); they are not merged yet. Run it again after the requirements change.
 
 - **pycartosym** 0.6.4 is installed from PyPI. It converts the CSCSS examples and converts the CQL2-Text test inputs to CQL2-JSON.
 - **libCartoSym** comes from the `cartosym` 0.0.1 and `ecrt` 0.0.6 packages (built in November 2025) by default. To test a build from source instead, set `CS_CANIF` to the `cs-canif` executable and `CS_CANIF_LIBDIRS` to the folders with its libraries; `REPORT_DIR` and `LIBCARTOSYM_LABEL` set where the report goes and how libCartoSym is described in it.
@@ -128,10 +129,9 @@ To fetch the Rondane data again: `uv run --with tifffile --with numpy python too
 
 ## Limitations
 
-- **Text** is laid out without font metrics, and labels along lines are straight, rotated text.
+- **Text** is measured with Pillow and the system's fonts where they are found (Arial on Windows), and otherwise estimated at 0.6 em per character; labels along lines are straight, rotated text.
 - **Conic gradients** are approximated with wedges.
 - **Part 2 has no JSON schema**, so gradient fills are not validated beyond what the Part 1 schema allows.
-- **The visualization time and `capabilities` system identifiers, and label `maxSpacing`,** are not implemented.
 
 ## About
 
@@ -140,7 +140,7 @@ Made by Henrik Gulliksen Schüller to support the review of PR #133. Developed w
 ## Credits
 
 - The coverage examples in [`src/cartosym_draft/examples/`](src/cartosym_draft/examples/) are the spec's own examples 5 to 9 from [opengeospatial/cartographic-symbology](https://github.com/opengeospatial/cartographic-symbology), converted to CS-JSON where needed.
-- The requirement text and JSON schema snapshots (`requirements.json`, `CartoSym-JSON.schema.json`) come from the same repository, branch `requirements-placeholders`.
+- The requirement text and JSON schema snapshots (`requirements.json`, `CartoSym-JSON.schema.json`) come from the same repository, branch `example-renders` (see Running it).
 - The named-color table in [`colors.py`](src/cartosym_draft/colors.py) was generated from [pycartosym](https://github.com/maxcollombin/pycartosym)'s web color table (MIT License, © Maxime Collombin). The values are the CSS named colors.
 - The Rondane elevation data ([`rondane_data.py`](src/cartosym_draft/rondane_data.py)) is from Kartverket's national terrain model: elevation data © Kartverket, [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
 - The Sentinel-2 scene ([`sentinel2_data.py`](src/cartosym_draft/sentinel2_data.py)) contains modified Copernicus Sentinel data 2024, obtained through Element84's [Earth Search](https://element84.com/earth-search/).
