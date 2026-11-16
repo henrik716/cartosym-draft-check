@@ -2,7 +2,8 @@
 
 Usage: python tools/build_renders_walkthrough.py [--spec ../cartographic-symbology] [--artifact PATH]
 
-Writes gallery/renders-walkthrough.html (a full HTML document, for GitHub Pages) and, with --artifact,
+Writes gallery/pr192-renders-walkthrough.html (a full HTML document, for GitHub Pages; the old name
+gallery/renders-walkthrough.html redirects to it) and, with --artifact,
 the same page without the document wrapper, for publishing as an Artifact. Images are embedded as JPEG.
 The record behind it is reports/wording-decisions.md and reports/independent/.
 """
@@ -361,7 +362,7 @@ def page(spec: Path) -> tuple[str, str]:
     ]
     trows = "".join(f"<tr><td>{esc(a)}</td><td>{esc(b)}</td><td>{esc(c)}</td></tr>" for a, b, c in table_rows)
     body = f"""<div class="wrap">
-<h1>Renders PR walkthrough</h1>
+<h1>Walkthrough of PR #192: renders in the Part 1 document</h1>
 <p class="lede">Part 1 of OGC Cartographic Symbology 2.0 gets rendered examples on Norwegian data, with CartoSym-CSS and CartoSym-JSON next to each render, and the requirements that independent readers rendered differently get tighter wording. Pull request <a href="https://github.com/opengeospatial/cartographic-symbology/pull/192">#192</a> (branch <code>example-renders</code>); nothing here is an SWG decision until the group makes it.</p>
 <nav class="toc"><a href="#examples">1. The examples</a><a href="#method">2. How the wording was checked</a><a href="#changes">3. The changes</a><a href="#asks">4. Asked of the SWG</a><a href="#open">5. Left for issues</a><a href="#links">6. Records</a></nav>
 <div class="facts">
@@ -405,7 +406,7 @@ def page(spec: Path) -> tuple[str, str]:
 <li><a href="{REPO}/tools/fetch_n50.py">tools/fetch_n50.py</a> and <a href="{REPO}/src/cartosym_draft/doc_examples.py">doc_examples.py</a>: the data and the build of the examples.</li>
 </ul>
 </div>"""
-    head = ('<title>Renders PR walkthrough</title>\n<meta name="claude:viewport-fit-sides" content="cover">\n'
+    head = ('<title>PR #192 renders walkthrough</title>\n<meta name="claude:viewport-fit-sides" content="cover">\n'
             '<link rel="preconnect" href="https://fonts.googleapis.com">\n'
             '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n'
             '<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans+'
@@ -423,7 +424,7 @@ def main(argv: list[str]) -> int:
     full = ('<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n'
             '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n'
             f"{head}</head>\n<body>\n{body}\n</body>\n</html>\n")
-    out = ROOT / "gallery" / "renders-walkthrough.html"
+    out = ROOT / "gallery" / "pr192-renders-walkthrough.html"
     out.write_text(full, encoding="utf-8")
     print(out, len(full) // 1024, "KiB")
     if args.artifact:

@@ -12,13 +12,21 @@ from __future__ import annotations
 import html
 
 PAGES = [("index.html", "Gallery"), ("requirements.html", "Requirements"), ("playground.html", "Playground")]
+# (file, label, tooltip). Static pages: the #133 one is a record, the #192 one is built by tools/build_renders_walkthrough.py.
+WALKTHROUGHS = [
+    ("pr133-requirements-walkthrough.html", "#133 requirements",
+     "Walkthrough of PR #133, the Part 1 requirements, for the SWG meeting of 13 November 2026 (merged there)"),
+    ("pr192-renders-walkthrough.html", "#192 renders",
+     "Walkthrough of PR #192: the examples and figures in the Part 1 document, and the wording checked with independent renderers"),
+]
 
 NAV_CSS = """
 [id] { scroll-margin-top: 64px; }
 .topbar { position: sticky; top: 0; z-index: 10; background: var(--card); border-bottom: 1px solid var(--line); }
 .topbar-in { max-width: 1600px; margin: 0 auto; padding: 8px 16px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
 .topbar .brand { font-weight: 600; margin-right: 6px; }
-.topbar nav { display: flex; gap: 4px; }
+.topbar nav { display: flex; gap: 4px; flex-wrap: wrap; align-items: center; }
+.topbar nav .navgroup { margin-left: 10px; padding-left: 12px; border-left: 1px solid var(--line); font-size: 13px; color: var(--muted); }
 .topbar nav a { padding: 4px 10px; border-radius: 6px; text-decoration: none; color: var(--fg); font-size: 14px; }
 .topbar nav a:hover { background: var(--bg); }
 .topbar nav a.active { background: var(--accent-bg); color: var(--fg); font-weight: 600; box-shadow: inset 0 -2px 0 var(--accent); }
@@ -98,6 +106,8 @@ def topbar(active: str, jump: list[tuple[str, str]] | None = None) -> str:
     """The sticky bar. *jump* is a list of (anchor id, label), or (None, label) for a group heading."""
     active_attr = ' class="active"'
     links = "".join(f'<a href="{href}"{active_attr if href == active else ""}>{label}</a>' for href, label in PAGES)
+    links += '<span class="navgroup">Walkthroughs:</span>' + "".join(
+        f'<a href="{href}" title="{html.escape(tip)}">{html.escape(label)}</a>' for href, label, tip in WALKTHROUGHS)
     select = ""
     if jump:
         opts = ['<option value="">Jump to…</option>']
