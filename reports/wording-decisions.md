@@ -193,7 +193,7 @@ Not written into the text here, because they are not about one requirement or ne
 
 ## Found while making the figures, for the SWG
 
-- Caps and joins: Part 1 fixes butt caps and miter joins (clause 8), and its Stroke has no `cap` or `join`; round caps and joins are in Part 2's "Joins and Caps" class. N50 starts a new feature wherever an attribute changes, so the figures show a notch where two pieces of a road meet at a bend. Joining pieces with the same properties (tools/fetch_n50.py) leaves 378 such joints in the Rondane roads, 219 of them differing only in `validDate`. Either move `cap` and `join` into Part 1's Stroke, or say in clause 8 what the defaults do where a line is split.
+- Caps and joins: Part 1 fixes butt caps and miter joins (clause 8), and its Stroke has no `cap` or `join`; round caps and joins are in Part 2's "Joins and Caps" class. N50 starts a new feature wherever an attribute changes, so the figures show a notch where two pieces of a road meet at a bend. Joining pieces with the same properties (tools/fetch_n50.py) leaves 378 such joints in the Rondane roads, 219 of them differing only in `validDate`. Either move `cap` and `join` into Part 1's Stroke, or say in clause 8 what the defaults do where a line is split. Posted as #193; the other open rendering details are #194.
 - Example 8's `factor: 56` draws the Rondane relief almost black with `factor` as vertical exaggeration: lower it, or say which data it was made for.
 - The size of an Image: the draft renderer draws it 24 px wide, the readers at its native pixels (see above). The icons of example 2 are SVG files 24 px wide, so both readings give the same figure.
 
