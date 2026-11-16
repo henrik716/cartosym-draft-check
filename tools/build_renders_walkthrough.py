@@ -244,11 +244,11 @@ def card(d: dict) -> str:
 def examples_grid(spec: Path) -> str:
     fig = spec / "1-core" / "figures" / "examples"
     items = []
-    for p in sorted(fig.glob("*.png"), key=lambda p: (len(p.stem.split("-")[0]), p.stem)):
+    for p in sorted(fig.glob("*.jpg"), key=lambda p: (len(p.stem.split("-")[0]), p.stem)):
         items.append(f'<figure class="thumb"><img loading="lazy" alt="example {esc(p.stem)}" src="{jpeg(p, 520)}">'
                      f'<figcaption>{esc(p.stem)}</figcaption></figure>')
     req = []
-    for p in sorted((fig / "requirements").glob("*.png")):
+    for p in sorted((fig / "requirements").glob("*.jpg")):
         req.append(f'<figure class="thumb"><img loading="lazy" alt="requirement example {esc(p.stem)}" '
                    f'src="{jpeg(p, 520)}"><figcaption>{esc(p.stem)}</figcaption></figure>')
     return ('<h3>The 11 examples of clause 17 and Annex C</h3><div class="grid">' + "".join(items) + "</div>"
