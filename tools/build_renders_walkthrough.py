@@ -13,6 +13,7 @@ import argparse
 import base64
 import html
 import io
+import re
 import sys
 from pathlib import Path
 
@@ -205,6 +206,31 @@ def esc(s) -> str:
     return html.escape(str(s))
 
 
+SPEC_REPO = "https://github.com/opengeospatial/cartographic-symbology"
+SPEC_PRS = {188, 192}
+PYCS = "https://github.com/maxcollombin/pycartosym/issues"
+ISSUE_REF = re.compile(r"(?<![\w&/])#(\d{2,3})\b")
+
+
+def link_issues(body: str) -> str:
+    """Link each bare #NNN in the page text to the spec repo; tags and text already inside <a> are left alone."""
+    out, in_a = [], 0
+    for part in re.split(r"(<[^>]*>)", body):
+        if part.startswith("<"):
+            if re.match(r"<a[\s>]", part):
+                in_a += 1
+            elif re.match(r"</a\s*>", part):
+                in_a -= 1
+            out.append(part)
+        elif in_a:
+            out.append(part)
+        else:
+            out.append(ISSUE_REF.sub(
+                lambda m: f'<a href="{SPEC_REPO}/{"pull" if int(m[1]) in SPEC_PRS else "issues"}/{m[1]}">#{m[1]}</a>',
+                part))
+    return "".join(out)
+
+
 def chips(labels, values, agree) -> str:
     out = []
     for lab, val in zip(labels, values):
@@ -368,7 +394,7 @@ def page(spec: Path) -> tuple[str, str]:
 <li>Schema and text names, all in existing issues: <code>center</code>/<code>centerLine</code> and <code>dashOffset</code> (#120, fixed in #188); <code>dataLayer.identifier</code>/<code>dataLayer.id</code> and <code>visualization.*</code>/<code>viz.*</code> (#168); <code>url</code>/<code>uri</code>, the alignment members and the unit lists (#169); colour ranges 0 to 1 and 0 to 255 (#150).</li>
 <li>Rendering points no reader could settle from the text (#194): the miter limit; a stroke of width 0; the size an Image is drawn at; how a number is written as text; the colour space of colour maps and tints; resampling for maps coarser than the coverage; defaults for fonts, casings, centre lines and outlines. Caps and joins (section 4) are #193.</li>
 <li>Expressions: precedence and associativity exist only in the order of the grammar's alternatives (<code>-2 ^ 2</code> is 4, <code>2 ^ 3 ^ 2</code> is 64): #118, #178, #180. NULL: #155, where a comment points out that the Logical Operators table is still two-valued. Added to #173: <code>random()</code> does not parse, as <code>arguments</code> needs at least one expression; <code>true</code>, <code>false</code> and <code>null</code> are not tokens of the lexer and parse as identifiers.</li>
-<li>pycartosym 0.6.4 (maxcollombin/pycartosym #182 to #185): drops <code>dashOffset</code> and dash lengths with units, turns a bare identifier in label placement into a string, and keeps a hex colour of a Dot as a string while those of Fonts, Fills and Strokes become <code>[r, g, b]</code>. It also drops <code>marker: null</code>, which is fixed on <code>main</code> (#174) but not released, and writes <code>centerLine</code>, the name in <code>main</code>&rsquo;s schema until #188.</li>
+<li>pycartosym 0.6.4 (maxcollombin/pycartosym <a href="{PYCS}/182">#182</a> to <a href="{PYCS}/185">#185</a>): drops <code>dashOffset</code> and dash lengths with units, turns a bare identifier in label placement into a string, and keeps a hex colour of a Dot as a string while those of Fonts, Fills and Strokes become <code>[r, g, b]</code>. It also drops <code>marker: null</code>, which is fixed on <code>main</code> (<a href="{PYCS}/174">#174</a>) but not released, and writes <code>centerLine</code>, the name in <code>main</code>&rsquo;s schema until #188.</li>
 </ul>
 
 <h2 id="links">6. Records</h2>
@@ -385,7 +411,7 @@ def page(spec: Path) -> tuple[str, str]:
             '<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans+'
             'Condensed:wght@600&family=IBM+Plex+Sans:wght@400;600&display=swap" rel="stylesheet">\n'
             f"<style>{CSS}</style>\n")
-    return head, body
+    return head, link_issues(body)
 
 
 def main(argv: list[str]) -> int:
