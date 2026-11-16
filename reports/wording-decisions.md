@@ -149,7 +149,7 @@ All three evaluators agree on the 123 cases partly because the cases stay away f
 
 - Operator precedence and associativity are given only by the order of the alternatives in the ANTLR grammar: unary minus binds tighter than `^` (`-2 ^ 2` = 4), `^` is left-associative (`2 ^ 3 ^ 2` = 64), all relational operators share one level, and `not` binds looser than them (issue drafted on 2026-11-13).
 - The Logical Operators table is two-valued ("True if and only if ..."), while /req/core/operations defers NULL operands to CQL2, which is not in the text; all three used Kleene logic.
-- `random()` cannot be written in CartoSym-CSS: the grammar's call needs at least one argument.
+- `random()` is not a function call in the CartoSym-CSS grammar: `expCall` needs at least one argument, so the parser reads `random()` as an empty instance (`expInstance`, the rule for `Dot { ... }` and `INTERVAL(start: ...)`). (First written here as "cannot be written"; the grammar check showed it parses, as an instance.)
 - `viz.sd` and `visualization.scaleDenominator` (and the other `viz.*` names) are not said to be aliases; the schema allows only `viz.*`, the text names only `visualization.*`.
 - `true`, `false` and `null` are not tokens of the lexer, so the grammar reads them as identifiers.
 - Unary minus has no stated meaning; the unit words (`m`, `px`, `pt`, ...) cannot be property names unless quoted.

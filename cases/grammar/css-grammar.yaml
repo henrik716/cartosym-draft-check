@@ -6,6 +6,9 @@
 # style:    a complete style sheet
 # expect:   "accepted", "rejected", or for a selector the expected parse, with
 #           brackets around each operation
+# rule:     optional; the parse tree must have this rule applied to the input
+#           that follows, e.g. "expCall random" for a call of random (the
+#           expected parse leaves out rule names)
 
 # --- notEqual (issue #119, PR #124) -----------------------------------------
 - {selector: "a <> 1", expect: "(a <> 1)"}
@@ -42,3 +45,18 @@
 - {selector: "not a <> 1 and b <> 2", expect: "((not (a <> 1)) and (b <> 2))"}
 - {selector: "a between 1 and 5 and b <> 2", expect: "((a between 1 and 5) and (b <> 2))",
    note: "PR #123 lists this as a remaining limitation."}
+
+# --- Calls without arguments (issue #173) ------------------------------------
+# On main, random() parses, but as an empty expInstance (like `Dot { }`), not as a call.
+- {selector: "random() < 0.5", expect: "((random ( )) < 0.5)", rule: "expCall random"}
+- {selector: "random ( ) < 0.5", expect: "((random ( )) < 0.5)", rule: "expCall random"}
+- {style: "{ opacity: random(); }\n", expect: accepted, rule: "expCall random"}
+- {style: "@r = random();\n{ opacity: @r; }\n", expect: accepted, rule: "expCall random"}
+- {selector: "random(,) < 1", expect: rejected}
+- {selector: "max(1,) = 1", expect: rejected}
+- {selector: "max(, 1) = 1", expect: rejected}
+# Must keep working: calls with arguments, and instances with named members.
+- {selector: "max(1, 2) = 2", expect: "((max ( (1 , 2) )) = 2)", rule: "expCall max"}
+- {selector: "abs(x) = 1", expect: "((abs ( x )) = 1)", rule: "expCall abs"}
+- {style: "{ opacity: INTERVAL(start: '2021-01-01T00:00:00Z'; end: '2021-12-31T23:59:59Z') = x ? 1 : 0; }\n", expect: accepted, rule: "expInstance INTERVAL"}
+- {style: "{ marker: { elements: [ Dot { size: 5 } ] }; }\n", expect: accepted, rule: "expInstance Dot"}

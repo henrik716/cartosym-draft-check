@@ -106,7 +106,7 @@ def load_parser(out: Path):
             errors.messages.append(f"stopped at {tokens.LT(1).text!r}")
         selector = first_selector(tree)
         expression = selector.expression() if selector is not None and not errors.messages else None
-        return errors.messages, text(expression) if expression is not None else None
+        return errors.messages, text(expression) if expression is not None else None, tree.toStringTree(recog=parser)
 
     return parse
 
@@ -114,12 +114,14 @@ def load_parser(out: Path):
 def check(parse, case: dict) -> str | None:
     """What is wrong with an input's result, or None."""
     source = case.get("style", f"[{case.get('selector')}] {{ opacity: 0.5; }}\n")
-    errors, tree = parse(source)
+    errors, tree, rules = parse(source)
     expected = case["expect"]
     if expected == "rejected":
         return "accepted" if not errors else None
     if errors:
         return f"rejected: {errors[0]}"
+    if "rule" in case and f"({case['rule']}" not in rules:
+        return f"no ({case['rule']} in the parse tree"
     return None if expected == "accepted" or tree == expected else f"parsed as {tree}, expected {expected}"
 
 
@@ -142,7 +144,7 @@ def main() -> int:
                 print(f"FAIL {case.get('selector', case.get('style')).strip()!r}: {problem}{note}")
         files = examples(opts.spec, opts.ref)
         for path in files:
-            errors, _ = parse(read(opts.spec, opts.ref, path))
+            errors, _, _ = parse(read(opts.spec, opts.ref, path))
             if errors:
                 failures += 1
                 print(f"FAIL {path}: {len(errors)} errors, the first at {errors[0]}")
