@@ -47,7 +47,8 @@
    note: "PR #123 lists this as a remaining limitation."}
 
 # --- Calls without arguments (issue #173) ------------------------------------
-# On main, random() parses, but as an empty expInstance (like `Dot { }`), not as a call.
+# On main, random() parses, but as an empty expInstance (like `Dot { }`), not as a call;
+# spec PR #196 (arguments? in expCall) makes it a call.
 - {selector: "random() < 0.5", expect: "((random ( )) < 0.5)", rule: "expCall random"}
 - {selector: "random ( ) < 0.5", expect: "((random ( )) < 0.5)", rule: "expCall random"}
 - {style: "{ opacity: random(); }\n", expect: accepted, rule: "expCall random"}
