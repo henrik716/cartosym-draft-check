@@ -1,6 +1,6 @@
 # CartoSym draft requirements vs implementations
 
-Generated 2026-11-16 with libCartoSym (cs-canif built from ecere/libCartoSym main @ 7ee44d5 and ecere/eC main @ 500a9f8, on Ubuntu) and pycartosym 0.6.4.
+Generated 2026-11-16 with libCartoSym (cs-canif built from ecere/libCartoSym main @ 29a5023 and ecere/eC main @ 2280ffb, on Ubuntu) and pycartosym 0.6.4.
 
 Expected values are what the **draft requirement** says. `FAIL` means the implementation disagrees with the draft, which may mean the draft or the implementation is wrong. pycartosym does not evaluate expressions, so for expression cases it is checked on converting them to CQL2-JSON (see below). The draft renderer is `cartosym_draft` in this repository, which implements the draft requirements; a FAIL there means it does not do what the draft says.
 
@@ -9,12 +9,12 @@ Expected values are what the **draft requirement** says. `FAIL` means the implem
 | Implementation | pass | FAIL | unsupported | CRASH | error |
 |---|---|---|---|---|---|
 | draft renderer | 121 | 0 | 0 | 0 | 0 |
-| libCartoSym | 94 | 5 | 6 | 0 | 10 |
+| libCartoSym | 103 | 5 | 0 | 0 | 7 |
 | pycartosym | 115 | 0 | 0 | 0 | 0 |
 
 ## How the cases are run
 
-- **libCartoSym:** the Input text is written to `expr.cql2` and evaluated with `cs-canif eval expr.cql2` (cs-canif built from ecere/libCartoSym main @ 7ee44d5 and ecere/eC main @ 500a9f8, on Ubuntu). Where the spec gives no CartoSym-CSS syntax for an operation, a case can give libCartoSym's own (_as …_ in its column).
+- **libCartoSym:** the Input text is written to `expr.cql2` and evaluated with `cs-canif eval expr.cql2` (cs-canif built from ecere/libCartoSym main @ 29a5023 and ecere/eC main @ 2280ffb, on Ubuntu). Where the spec gives no CartoSym-CSS syntax for an operation, a case can give libCartoSym's own (_as …_ in its column).
 - **pycartosym:** pycartosym does not evaluate expressions. Where a case gives its own CQL2-JSON (83 cases), the Input text is converted with `pycartosym.cql2.to_cql2_json(cql2.parse_text(input))` and passes if the result is that CQL2-JSON; otherwise it passes if `pycartosym.cql2.parse_text(input)` parses it.
 - **draft renderer:** `cartosym_draft.evaluate.evaluate(expression, Context(...))`. Where a case gives its own CQL2-JSON, that is what it evaluates, and the result is marked _(CQL2-JSON)_, so it does not depend on pycartosym's parser; otherwise the Input text is converted with pycartosym as above.
 - **Comparing results:** quotes around text are ignored and numbers are compared as numbers, so `3.0` passes for `3`, except in cases marked `exact`, where the printed result must be the expected text (used to check that a result is an integer).
@@ -152,8 +152,8 @@ The cases are in [`cases/`](../cases/), the calls in [`harness/adapters.py`](../
 |---|---|---|---|---|---|
 | core-and | `1 < 2 and 3 < 4` | `true` | pass: true | pass: parses | pass: true |
 | core-or | `1 > 2 or 3 < 4` | `true` | pass: true | pass: parses | pass: true |
-| core-not | `not (1 = 2)` | `true` | unsupported: returned `null` (function or operator not recognised) | pass: parses | pass: true |
-| core-not-in-and | `(1 < 2) and not (3 = 4)` | `true` | error: Unresolved expression (flags: ) | pass: parses | pass: true |
+| core-not | `not (1 = 2)` | `true` | pass: true | pass: parses | pass: true |
+| core-not-in-and | `(1 < 2) and not (3 = 4)` | `true` | pass: true | pass: parses | pass: true |
 
 ### `/req/core/operations`
 
@@ -168,8 +168,8 @@ The cases are in [`cases/`](../cases/), the calls in [`harness/adapters.py`](../
 | null-not | `not (null > 1)` | `null` | error: Unresolved expression (flags: ) | pass: converts to the case's CQL2-JSON | pass: null _(CQL2-JSON)_ |
 | | _This is why `not (x > 1)` does not select a feature with no `x`._ | | | | |
 | null-and-true | `(null > 1) and true` | `null` | error: Unresolved expression (flags: ) | pass: converts to the case's CQL2-JSON | pass: null _(CQL2-JSON)_ |
-| null-and-false | `(null > 1) and false` | `false` | error: Unresolved expression (flags: ) | pass: converts to the case's CQL2-JSON | pass: false _(CQL2-JSON)_ |
-| null-or-true | `(null > 1) or true` | `true` | error: Unresolved expression (flags: ) | pass: converts to the case's CQL2-JSON | pass: true _(CQL2-JSON)_ |
+| null-and-false | `(null > 1) and false` | `false` | pass: false | pass: converts to the case's CQL2-JSON | pass: false _(CQL2-JSON)_ |
+| null-or-true | `(null > 1) or true` | `true` | pass: true | pass: converts to the case's CQL2-JSON | pass: true _(CQL2-JSON)_ |
 | null-or-false | `(null > 1) or false` | `null` | error: Unresolved expression (flags: ) | pass: converts to the case's CQL2-JSON | pass: null _(CQL2-JSON)_ |
 | null-is-null | `(null + 1) is null` | `true` | error: Unresolved expression (flags: ) | pass: converts to the case's CQL2-JSON | pass: true _(CQL2-JSON)_ |
 
@@ -183,7 +183,7 @@ The cases are in [`cases/`](../cases/), the calls in [`harness/adapters.py`](../
 | core-between | `5 between 1 and 10` | `true` | pass: true | pass: parses | pass: true |
 | core-not-between | `5 not between 6 and 10` | `true` | pass: true | pass: parses | pass: true |
 | core-in | `2 in (1, 2, 3)` | `true` | pass: true | pass: parses | pass: true |
-| core-not-in | `4 not in (1, 2, 3)` | `true` | unsupported: returned `null` (function or operator not recognised) | pass: parses | pass: true |
+| core-not-in | `4 not in (1, 2, 3)` | `true` | pass: true | pass: parses | pass: true |
 | core-is-null | `null is null` | `true` | pass: true | pass: parses | pass: true |
 | neq-equal-operands | `2 <> 2` | `false` | pass: false | pass: converts to the case's CQL2-JSON | pass: false _(CQL2-JSON)_ |
 | neq-reversed | `3 <> 2` | `true` | pass: true | pass: converts to the case's CQL2-JSON | pass: true _(CQL2-JSON)_ |
@@ -195,7 +195,7 @@ The cases are in [`cases/`](../cases/), the calls in [`harness/adapters.py`](../
 | neq-and | `1 <> 2 and 3 <> 4` | `true` | pass: true | pass: converts to the case's CQL2-JSON | pass: true _(CQL2-JSON)_ |
 | neq-compared-to-true | `(2 <> 3) = true` | `true` | pass: true | pass: converts to the case's CQL2-JSON | pass: true _(CQL2-JSON)_ |
 | | _The result of `<>` is a boolean, so it equals `true` (libCartoSym#7)._ | | | | |
-| neq-not | `not (2 <> 2)` | `true` | unsupported: returned `null` (function or operator not recognised) | pass: converts to the case's CQL2-JSON | pass: true _(CQL2-JSON)_ |
+| neq-not | `not (2 <> 2)` | `true` | pass: true | pass: converts to the case's CQL2-JSON | pass: true _(CQL2-JSON)_ |
 | neq-property | `a <> 1`<br>with `a = 2` | `true` | - | - | pass: true _(CQL2-JSON)_ |
 | neq-selector | `[a <> 1] { opacity: 0.5; }` | `valid` | pass: valid | pass: valid | - |
 | neq-selector-no-spaces | `[a<>1] { opacity: 0.5; }` | `valid` | pass: valid | pass: valid | - |
@@ -439,14 +439,14 @@ The cases are in [`cases/`](../cases/), the calls in [`harness/adapters.py`](../
 | Case | Input | Expected | libCartoSym | pycartosym | draft renderer |
 |---|---|---|---|---|---|
 | text-contains | `contains('Oslo', 'sl')` | `true` | pass: true _(as `'Oslo' ~ 'sl'`)_ | pass: converts to the case's CQL2-JSON | pass: true _(CQL2-JSON)_ |
-| text-not-contains | `not contains('Oslo', 'sl')` | `false` | unsupported: returned `null` (function or operator not recognised) _(as `not ('Oslo' ~ 'sl')`)_ | pass: converts to the case's CQL2-JSON | pass: false _(CQL2-JSON)_ |
+| text-not-contains | `not contains('Oslo', 'sl')` | `false` | pass: false _(as `not ('Oslo' ~ 'sl')`)_ | pass: converts to the case's CQL2-JSON | pass: false _(CQL2-JSON)_ |
 
 ### `/req/text-relation/ends-with`
 
 | Case | Input | Expected | libCartoSym | pycartosym | draft renderer |
 |---|---|---|---|---|---|
 | text-ends-with | `endsWith('Oslo', 'lo')` | `true` | pass: true _(as `'Oslo' $ 'lo'`)_ | pass: converts to the case's CQL2-JSON | pass: true _(CQL2-JSON)_ |
-| text-not-ends-with | `not endsWith('Oslo', 'lo')` | `false` | unsupported: returned `null` (function or operator not recognised) _(as `not ('Oslo' $ 'lo')`)_ | pass: converts to the case's CQL2-JSON | pass: false _(CQL2-JSON)_ |
+| text-not-ends-with | `not endsWith('Oslo', 'lo')` | `false` | pass: false _(as `not ('Oslo' $ 'lo')`)_ | pass: converts to the case's CQL2-JSON | pass: false _(CQL2-JSON)_ |
 
 ### `/req/text-relation/like`
 
@@ -469,7 +469,7 @@ The cases are in [`cases/`](../cases/), the calls in [`harness/adapters.py`](../
 | Case | Input | Expected | libCartoSym | pycartosym | draft renderer |
 |---|---|---|---|---|---|
 | text-starts-with | `startsWith('Oslo', 'Os')` | `true` | pass: true _(as `'Oslo' ^^ 'Os'`)_ | pass: converts to the case's CQL2-JSON | pass: true _(CQL2-JSON)_ |
-| text-not-starts-with | `not startsWith('Oslo', 'sl')` | `true` | unsupported: returned `null` (function or operator not recognised) _(as `not ('Oslo' ^^ 'sl')`)_ | pass: converts to the case's CQL2-JSON | pass: true _(CQL2-JSON)_ |
+| text-not-starts-with | `not startsWith('Oslo', 'sl')` | `true` | pass: true _(as `not ('Oslo' ^^ 'sl')`)_ | pass: converts to the case's CQL2-JSON | pass: true _(CQL2-JSON)_ |
 
 ### `/req/variables/definition`
 

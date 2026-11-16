@@ -547,8 +547,8 @@
   "libcartosym_input": "not ('Oslo' ~ 'sl')",
   "results": {
    "libCartoSym": {
-    "verdict": "unsupported",
-    "detail": "returned `null` (function or operator not recognised)"
+    "verdict": "pass",
+    "detail": "false"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -606,8 +606,8 @@
   "libcartosym_input": "not ('Oslo' ^^ 'sl')",
   "results": {
    "libCartoSym": {
-    "verdict": "unsupported",
-    "detail": "returned `null` (function or operator not recognised)"
+    "verdict": "pass",
+    "detail": "true"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -665,8 +665,8 @@
   "libcartosym_input": "not ('Oslo' $ 'lo')",
   "results": {
    "libCartoSym": {
-    "verdict": "unsupported",
-    "detail": "returned `null` (function or operator not recognised)"
+    "verdict": "pass",
+    "detail": "false"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -1466,8 +1466,8 @@
   "expect": "true",
   "results": {
    "libCartoSym": {
-    "verdict": "unsupported",
-    "detail": "returned `null` (function or operator not recognised)"
+    "verdict": "pass",
+    "detail": "true"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -1485,8 +1485,8 @@
   "expect": "true",
   "results": {
    "libCartoSym": {
-    "verdict": "error",
-    "detail": "Unresolved expression (flags: )"
+    "verdict": "pass",
+    "detail": "true"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -1618,8 +1618,8 @@
   "expect": "true",
   "results": {
    "libCartoSym": {
-    "verdict": "unsupported",
-    "detail": "returned `null` (function or operator not recognised)"
+    "verdict": "pass",
+    "detail": "true"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -1926,8 +1926,8 @@
   },
   "results": {
    "libCartoSym": {
-    "verdict": "unsupported",
-    "detail": "returned `null` (function or operator not recognised)"
+    "verdict": "pass",
+    "detail": "true"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -2239,8 +2239,8 @@
   },
   "results": {
    "libCartoSym": {
-    "verdict": "error",
-    "detail": "Unresolved expression (flags: )"
+    "verdict": "pass",
+    "detail": "false"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -2271,8 +2271,8 @@
   },
   "results": {
    "libCartoSym": {
-    "verdict": "error",
-    "detail": "Unresolved expression (flags: )"
+    "verdict": "pass",
+    "detail": "true"
    },
    "pycartosym": {
     "verdict": "pass",
