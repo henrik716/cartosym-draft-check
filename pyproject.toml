@@ -1,7 +1,7 @@
 [project]
 name = "cartosym-draft-check"
 version = "0.1.0"
-description = "Draft renderer, test harness and render gallery for checking the OGC CartoSym 2.0 draft requirements (opengeospatial/cartographic-symbology PR #133)"
+description = "Draft renderer, test harness, render gallery and document figures for checking the OGC CartoSym 2.0 Part 1 requirements (opengeospatial/cartographic-symbology)"
 requires-python = ">=3.10,<3.14"
 dependencies = [
     "cartosym==0.0.1",  # libCartoSym (Ecere), for the test harness

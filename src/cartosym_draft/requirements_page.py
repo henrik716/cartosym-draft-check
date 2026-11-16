@@ -1,4 +1,4 @@
-"""Build gallery/requirements.html: every requirement in PR #133 and how it is checked."""
+"""Build gallery/requirements.html: every requirement in the snapshot (requirements.json) and how it is checked."""
 
 from __future__ import annotations
 
@@ -192,7 +192,7 @@ def build(out_dir: Path) -> str:
 {NAV_CSS}</style></head><body class="has-toc">
 {topbar("requirements.html", [(a, label) for a, label, _ in contents if a])}
 <div class="layout has-toc">{toc(contents)}<main>
-<h1>CartoSym 2.0 draft: every requirement in PR #133</h1>
+<h1>CartoSym 2.0 Part 1: every requirement and how it is checked</h1>
 <p class="lead">Each requirement with its text, how it is checked, and links to the evidence: a gallery card for judgement calls,
 a sample render (below each class) for straightforward visual requirements, test cases for expressions, or a note for
 encodings. Samples show what the draft renderer draws; "Check" says what to look for. {summary}</p>

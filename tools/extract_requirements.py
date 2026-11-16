@@ -1,8 +1,8 @@
-"""Snapshot the requirement text of PR #133 for the gallery.
+"""Snapshot the Part 1 requirement text (and the Part 2 gradient fills) for the gallery.
 
 Usage: python tools/extract_requirements.py [path to cartographic-symbology]
 
-Reads the requirement files (and the clause files, where the core class is) of the checked-out branch (requirements-placeholders)
+Reads the requirement files (and the clause files, where the core class is) of whichever branch is checked out
 and writes src/cartosym_draft/requirements.json: for each requirement, recommendation and permission identifier,
 the file, line and `part::` sentences. Also copies the branch's CartoSym-JSON
 schema, which the gallery build validates every style against.

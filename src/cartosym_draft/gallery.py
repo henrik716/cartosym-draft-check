@@ -927,18 +927,21 @@ def build(out_dir: Path) -> str:
 {topbar("index.html", [(a, label) for a, label, _ in contents])}
 <div class="layout has-toc">{toc(contents)}<main>
 <h1>CartoSym 2.0 draft: judgement calls, rendered</h1>
-<p class="lead">Where the spec text does not settle how a renderer should behave, the draft requirements in
-<a href="https://github.com/opengeospatial/cartographic-symbology/pull/133">PR #133</a> make a choice. Each card renders the same
+<p class="lead">Where the spec text did not settle how a renderer should behave, the draft requirements in
+<a href="https://github.com/opengeospatial/cartographic-symbology/pull/133">PR #133</a> (merged on 13 November 2026) made a choice. Each card renders the same
 small map with the draft's choice and the alternatives. Because the draft renderer implements the draft itself, it can show
 what each choice looks like, but not whether that choice is the intended one: that is for the SWG to decide. Comparing with an
 independent renderer shows whether others read the requirements the same way, so each card links its style, data and view settings
 (all in <a href="kit.zip">kit.zip</a>), and the <a href="playground.html">playground</a> lets you edit a style and see the result.</p>
-<p class="legend"><strong><a href="requirements.html">All 135 requirements and how each is checked →</a></strong> ·
-<strong><a href="playground.html">Playground: edit a style and see it rendered →</a></strong></p>
+<p class="legend"><strong><a href="requirements.html">All {len(snap["requirements"])} requirements and how each is checked →</a></strong> ·
+<strong><a href="playground.html">Playground: edit a style and see it rendered →</a></strong> ·
+<strong><a href="pr192-renders-walkthrough.html">How the wording was checked with independent renderers (PR #192) →</a></strong></p>
 <p class="legend"><span class="badge">draft</span> the draft's choice. <span class="badge open">open in draft</span> the draft
 does not settle the question; the variant labelled "draft renderer's choice" is the proposed resolution. {snapshot}</p>
 <section class="card" id="matrix"><h2>Decision matrix{permalink("matrix")}</h2>
-<p class="question">Proposed resolutions from the PR author, for discussion at the review.</p>
+<p class="question">Proposed resolutions from the PR author, written for the review of PR #133 and last updated on
+11 November 2026, before it merged, so some rows have been answered or changed since. Later answers are in the
+<a href="pr192-renders-walkthrough.html">renders walkthrough</a>.</p>
 <div class="table-wrap"><table class="matrix"><thead><tr><th>Question</th><th>Draft says</th><th>Proposed resolution</th>
 <th>Status in PR #133</th><th>Question for the SWG</th></tr></thead><tbody>{_matrix_rows(all_decisions)}</tbody></table></div></section>
 {''.join(cards)}
