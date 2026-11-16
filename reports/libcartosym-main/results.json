@@ -11,8 +11,8 @@
   },
   "results": {
    "libCartoSym": {
-    "verdict": "unsupported",
-    "detail": "returned `null` (function or operator not recognised)"
+    "verdict": "pass",
+    "detail": "0.0"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -36,8 +36,8 @@
   },
   "results": {
    "libCartoSym": {
-    "verdict": "unsupported",
-    "detail": "returned `null` (function or operator not recognised)"
+    "verdict": "pass",
+    "detail": "1.5707963267949"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -61,8 +61,8 @@
   },
   "results": {
    "libCartoSym": {
-    "verdict": "unsupported",
-    "detail": "returned `null` (function or operator not recognised)"
+    "verdict": "pass",
+    "detail": "0.785398163397448"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -87,8 +87,8 @@
   },
   "results": {
    "libCartoSym": {
-    "verdict": "unsupported",
-    "detail": "returned `null` (function or operator not recognised)"
+    "verdict": "pass",
+    "detail": "2.35619449019234"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -112,8 +112,8 @@
   },
   "results": {
    "libCartoSym": {
-    "verdict": "unsupported",
-    "detail": "returned `null` (function or operator not recognised)"
+    "verdict": "pass",
+    "detail": "-2"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -137,8 +137,8 @@
   },
   "results": {
    "libCartoSym": {
-    "verdict": "unsupported",
-    "detail": "returned `null` (function or operator not recognised)"
+    "verdict": "pass",
+    "detail": "3"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -162,8 +162,8 @@
   },
   "results": {
    "libCartoSym": {
-    "verdict": "unsupported",
-    "detail": "returned `null` (function or operator not recognised)"
+    "verdict": "pass",
+    "detail": "2"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -181,8 +181,8 @@
   "expect": -2,
   "results": {
    "libCartoSym": {
-    "verdict": "unsupported",
-    "detail": "returned `null` (function or operator not recognised)"
+    "verdict": "pass",
+    "detail": "-2"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -206,8 +206,8 @@
   },
   "results": {
    "libCartoSym": {
-    "verdict": "unsupported",
-    "detail": "returned `null` (function or operator not recognised)"
+    "verdict": "pass",
+    "detail": "3"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -225,8 +225,8 @@
   "expect": 3,
   "results": {
    "libCartoSym": {
-    "verdict": "unsupported",
-    "detail": "returned `null` (function or operator not recognised)"
+    "verdict": "pass",
+    "detail": "3"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -244,8 +244,8 @@
   "expect": -3,
   "results": {
    "libCartoSym": {
-    "verdict": "unsupported",
-    "detail": "returned `null` (function or operator not recognised)"
+    "verdict": "pass",
+    "detail": "-3"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -269,8 +269,8 @@
   },
   "results": {
    "libCartoSym": {
-    "verdict": "unsupported",
-    "detail": "returned `null` (function or operator not recognised)"
+    "verdict": "pass",
+    "detail": "1.0"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -294,8 +294,8 @@
   },
   "results": {
    "libCartoSym": {
-    "verdict": "unsupported",
-    "detail": "returned `null` (function or operator not recognised)"
+    "verdict": "pass",
+    "detail": "1.0"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -319,8 +319,8 @@
   },
   "results": {
    "libCartoSym": {
-    "verdict": "unsupported",
-    "detail": "returned `null` (function or operator not recognised)"
+    "verdict": "pass",
+    "detail": "2.71828182845905"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -344,8 +344,8 @@
   },
   "results": {
    "libCartoSym": {
-    "verdict": "unsupported",
-    "detail": "returned `null` (function or operator not recognised)"
+    "verdict": "pass",
+    "detail": "3.0"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -369,8 +369,8 @@
   },
   "results": {
    "libCartoSym": {
-    "verdict": "unsupported",
-    "detail": "returned `null` (function or operator not recognised)"
+    "verdict": "pass",
+    "detail": "0.0"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -394,8 +394,8 @@
   },
   "results": {
    "libCartoSym": {
-    "verdict": "unsupported",
-    "detail": "returned `null` (function or operator not recognised)"
+    "verdict": "pass",
+    "detail": "0.0"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -419,8 +419,8 @@
   },
   "results": {
    "libCartoSym": {
-    "verdict": "unsupported",
-    "detail": "returned `null` (function or operator not recognised)"
+    "verdict": "pass",
+    "detail": "0.0"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -444,8 +444,8 @@
   },
   "results": {
    "libCartoSym": {
-    "verdict": "unsupported",
-    "detail": "returned `null` (function or operator not recognised)"
+    "verdict": "pass",
+    "detail": "0.0"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -488,8 +488,8 @@
   },
   "results": {
    "libCartoSym": {
-    "verdict": "CRASH",
-    "detail": "exit code -11"
+    "verdict": "pass",
+    "detail": "true"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -762,8 +762,8 @@
   },
   "results": {
    "libCartoSym": {
-    "verdict": "error",
-    "detail": "Unresolved expression (flags: isNotLiteral = True, isNotLiteral = True)"
+    "verdict": "pass",
+    "detail": "true"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -814,8 +814,8 @@
   },
   "results": {
    "libCartoSym": {
-    "verdict": "unsupported",
-    "detail": "returned `null` (function or operator not recognised)"
+    "verdict": "pass",
+    "detail": "2.0"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -891,8 +891,8 @@
   },
   "results": {
    "libCartoSym": {
-    "verdict": "unsupported",
-    "detail": "returned `null` (function or operator not recognised)"
+    "verdict": "pass",
+    "detail": "0.785398163397448"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -904,10 +904,10 @@
    }
   }
  },
- "fn-standard": {
-  "requirement": "/req/functions/standard-functions",
+ "fn-standard-wrong-arity": {
+  "requirement": "/req/functions/call-expressions",
   "input": "max(1, 5, 3)",
-  "expect": 5,
+  "expect": "null",
   "json": {
    "op": "max",
    "args": [
@@ -918,8 +918,34 @@
   },
   "results": {
    "libCartoSym": {
-    "verdict": "unsupported",
-    "detail": "returned `null` (function or operator not recognised)"
+    "verdict": "FAIL",
+    "detail": "got `5.0`, draft expects `null`"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "converts to the case's CQL2-JSON"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "null"
+   }
+  }
+ },
+ "fn-standard": {
+  "requirement": "/req/functions/standard-functions",
+  "input": "max(1, 5)",
+  "expect": 5,
+  "json": {
+   "op": "max",
+   "args": [
+    1,
+    5
+   ]
+  },
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "5.0"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -1281,8 +1307,8 @@
   "expect": 3.5,
   "results": {
    "libCartoSym": {
-    "verdict": "FAIL",
-    "detail": "got `3`, draft expects `3.5`"
+    "verdict": "pass",
+    "detail": "3.5"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -1300,8 +1326,8 @@
   "expect": 3,
   "results": {
    "libCartoSym": {
-    "verdict": "CRASH",
-    "detail": "exit code -11"
+    "verdict": "pass",
+    "detail": "3"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -1319,8 +1345,8 @@
   "expect": -3,
   "results": {
    "libCartoSym": {
-    "verdict": "CRASH",
-    "detail": "exit code -11"
+    "verdict": "pass",
+    "detail": "-3"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -1497,8 +1523,8 @@
   "expect": "true",
   "results": {
    "libCartoSym": {
-    "verdict": "FAIL",
-    "detail": "got `-1`, draft expects `true`"
+    "verdict": "pass",
+    "detail": "true"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -1573,8 +1599,8 @@
   "expect": "true",
   "results": {
    "libCartoSym": {
-    "verdict": "FAIL",
-    "detail": "got `1`, draft expects `true`"
+    "verdict": "pass",
+    "detail": "true"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -1689,8 +1715,8 @@
   },
   "results": {
    "libCartoSym": {
-    "verdict": "FAIL",
-    "detail": "got `-1`, draft expects `true`"
+    "verdict": "pass",
+    "detail": "true"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -1715,8 +1741,8 @@
   },
   "results": {
    "libCartoSym": {
-    "verdict": "FAIL",
-    "detail": "got `-1`, draft expects `true`"
+    "verdict": "pass",
+    "detail": "true"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -1767,8 +1793,8 @@
   },
   "results": {
    "libCartoSym": {
-    "verdict": "FAIL",
-    "detail": "got `-1`, draft expects `true`"
+    "verdict": "pass",
+    "detail": "true"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -1799,8 +1825,8 @@
   },
   "results": {
    "libCartoSym": {
-    "verdict": "FAIL",
-    "detail": "got `-1`, draft expects `true`"
+    "verdict": "pass",
+    "detail": "true"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -1869,8 +1895,8 @@
   },
   "results": {
    "libCartoSym": {
-    "verdict": "FAIL",
-    "detail": "got `false`, draft expects `true`"
+    "verdict": "pass",
+    "detail": "true"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -2829,8 +2855,8 @@
   },
   "results": {
    "libCartoSym": {
-    "verdict": "unsupported",
-    "detail": "returned `null` (function or operator not recognised)"
+    "verdict": "pass",
+    "detail": "'ABC'"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -2854,8 +2880,8 @@
   },
   "results": {
    "libCartoSym": {
-    "verdict": "unsupported",
-    "detail": "returned `null` (function or operator not recognised)"
+    "verdict": "pass",
+    "detail": "'abc'"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -2907,8 +2933,8 @@
   },
   "results": {
    "libCartoSym": {
-    "verdict": "unsupported",
-    "detail": "returned `null` (function or operator not recognised)"
+    "verdict": "pass",
+    "detail": "'a+b+c'"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -2945,8 +2971,8 @@
   "expect": 2,
   "results": {
    "libCartoSym": {
-    "verdict": "unsupported",
-    "detail": "returned `null` (function or operator not recognised)"
+    "verdict": "pass",
+    "detail": "2.0"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -2983,8 +3009,8 @@
   "expect": 2,
   "results": {
    "libCartoSym": {
-    "verdict": "unsupported",
-    "detail": "returned `null` (function or operator not recognised)"
+    "verdict": "pass",
+    "detail": "2.0"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -3002,8 +3028,8 @@
   "expect": 3,
   "results": {
    "libCartoSym": {
-    "verdict": "unsupported",
-    "detail": "returned `null` (function or operator not recognised)"
+    "verdict": "pass",
+    "detail": "3.0"
    },
    "pycartosym": {
     "verdict": "pass",
@@ -3040,8 +3066,8 @@
   "expect": 4,
   "results": {
    "libCartoSym": {
-    "verdict": "unsupported",
-    "detail": "returned `null` (function or operator not recognised)"
+    "verdict": "pass",
+    "detail": "4.0"
    },
    "pycartosym": {
     "verdict": "pass",
