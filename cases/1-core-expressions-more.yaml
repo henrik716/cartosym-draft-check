@@ -89,10 +89,10 @@
 - id: fn-standard-wrong-arity
   requirement: /req/functions/call-expressions
   kind: expression
-  input: "max(1, 5, 3)"
-  json: {op: max, args: [1, 5, 3]}
+  input: "atan2(1, 1, 1)"
+  json: {op: atan2, args: [1, 1, 1]}
   expect: "null"
-  note: /req/math/max takes two arguments, so three do not match the parameters and the call is NULL. The case expected 5 until three independent evaluators written from the text all gave NULL (2026-11-15).
+  note: /req/math/atan2 takes two arguments, so three do not match the parameters and the call is NULL. Until 2026-11-17 this case was max(1, 5, 3); max and min now take one or more arguments (see math-max-several).
 
 # --- Variables (rc-variables.adoc, rc-json.adoc /req/json/variables) --------
 - id: var-reference

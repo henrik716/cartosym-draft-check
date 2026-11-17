@@ -631,7 +631,8 @@ def _coverage_decisions() -> list[Decision]:
                      "style depends on that resolution; and without a hillShading colorMap the cell's color is multiplied "
                      "by the shade, as in a typical shader. The draft renderer does both, and Part 1 says so. "
                      "Jérôme on #192 and #194: `factor: 0` is the default and turns hill shading off; 56 was meant as "
-                     "an extreme example, and the document's figures should show a range of values.",
+                     "an extreme example, and the document's figures should show a range of values. #192 lowers it to "
+                     "`factor: 3` in examples 8 and 9 (this card keeps main's 56).",
             **on_relief,
         ),
         Decision(

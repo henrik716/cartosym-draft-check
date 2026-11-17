@@ -906,14 +906,14 @@
  },
  "fn-standard-wrong-arity": {
   "requirement": "/req/functions/call-expressions",
-  "input": "max(1, 5, 3)",
+  "input": "atan2(1, 1, 1)",
   "expect": "null",
   "json": {
-   "op": "max",
+   "op": "atan2",
    "args": [
     1,
-    5,
-    3
+    1,
+    1
    ]
   },
   "results": {
@@ -3022,6 +3022,25 @@
    }
   }
  },
+ "math-min-one": {
+  "requirement": "/req/math/min",
+  "input": "min(7)",
+  "expect": 7,
+  "results": {
+   "libCartoSym": {
+    "verdict": "unsupported",
+    "detail": "returned `null` (function or operator not recognised)"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "7"
+   }
+  }
+ },
  "math-max": {
   "requirement": "/req/math/max",
   "input": "max(2, 3)",
@@ -3038,6 +3057,25 @@
    "draft renderer": {
     "verdict": "pass",
     "detail": "3"
+   }
+  }
+ },
+ "math-max-several": {
+  "requirement": "/req/math/max",
+  "input": "max(1, 5, 3)",
+  "expect": 5,
+  "results": {
+   "libCartoSym": {
+    "verdict": "unsupported",
+    "detail": "returned `null` (function or operator not recognised)"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "5"
    }
   }
  },

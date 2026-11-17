@@ -296,6 +296,18 @@
   kind: expression
   input: "max(2, 3)"
   expect: 3
+- id: math-max-several
+  requirement: /req/math/max
+  kind: expression
+  input: "max(1, 5, 3)"
+  expect: 5
+  note: min and max take one or more arguments (Jérôme on #192, 16 and 17 November 2026; libCartoSym 8e52cee).
+- id: math-min-one
+  requirement: /req/math/min
+  kind: expression
+  input: "min(7)"
+  expect: 7
+  note: With a single argument, min and max return it (Jérôme on #192, 17 November 2026).
 - id: math-log
   requirement: /req/math/log
   kind: expression

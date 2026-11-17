@@ -127,7 +127,7 @@ _ARITY = {
     "lowercase": 1, "lower": 1, "uppercase": 1, "upper": 1, "substitute": 3,
     "abs": 1, "acos": 1, "asin": 1, "atan": 1, "ceil": 1, "cos": 1, "cosh": 1, "exp": 1, "floor": 1,
     "log": 1, "log10": 1, "sin": 1, "sinh": 1, "sqrt": 1, "tan": 1, "tanh": 1, "round": 1,
-    "atan2": 2, "pow": 2, "max": 2, "min": 2, "^": 2, "random": 0, "*": 2, "/": 2, "div": 2, "//": 2, "%": 2, "mod": 2,
+    "atan2": 2, "pow": 2, "^": 2, "random": 0, "*": 2, "/": 2, "div": 2, "//": 2, "%": 2, "mod": 2,
     "+": 2, "=": 2, "eq": 2, "<>": 2, "!=": 2, "ne": 2, "<": 2, ">": 2, "<=": 2, ">=": 2,
     "?:": 3, "if": 3,
 }
@@ -285,10 +285,11 @@ def _call_function(op_l: str, v: list) -> Any:
         return math.atan2(_num(v[0]), _num(v[1]))
     if op_l == "pow":
         return _num(v[0]) ** _num(v[1])
-    if op_l == "max":
-        return max(v)
-    if op_l == "min":
-        return min(v)
+    if op_l in ("max", "min"):
+        # /req/math/max, /req/math/min: one or more arguments (#192); none is a wrong call, so NULL.
+        if not v:
+            raise EvaluationError(f"{op_l} needs at least one argument")
+        return max(v) if op_l == "max" else min(v)
 
     raise EvaluationError(f"unsupported function {op_l!r}")
 

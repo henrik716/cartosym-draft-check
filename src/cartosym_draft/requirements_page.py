@@ -46,6 +46,12 @@ RENDERER_NOTES = {
                                          "SVG comment and in `render.LAST_NULL_REPORTS`",
     "/per/functions/type-casts": "a permission, not used: the text leaves the conversion unspecified, so the draft "
                                  "renderer gives NULL for a wrong-type argument, as the harness cases on calls check",
+    "/per/coverage/interpolation": "a permission, not used: the draft renderer draws every cell over its area from the "
+                                   "full grid (`image-rendering: pixelated`), without interpolating or overviews",
+    "/per/coverage/linear-light": "a permission, not used: `colorMap` colors are interpolated in sRGB",
+    "/per/vector/dot-outline": "a permission, not used: Dots are drawn without an outline",
+    "/per/vector/image-linear-light": "a permission, not used: the recoloring filter works in sRGB "
+                                      "(`color-interpolation-filters=\"sRGB\"`)",
 }
 
 

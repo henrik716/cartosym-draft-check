@@ -314,9 +314,8 @@ def _interp_stop(stops: list[tuple[float, str, float]], t: float) -> str:
 def _stroke_paint(svg: _Svg, stroke: dict, path: str, opacity_mul: float, opts: Options) -> list[str]:
     view = svg.view
     w = to_px(stroke.get("width"), view, 1)
-    # Clause 8, Strokes: "By default the end of open subpaths are butt caped and at the corners of paths are
-    # miter joined" (no miter limit is given; SVG's default of 4 applies).
-    attrs = 'fill="none" stroke-linejoin="miter" stroke-linecap="butt"'
+    # /req/vector/stroke: round caps and round joins (#192, #193); a width of 0 or less draws nothing.
+    attrs = 'fill="none" stroke-linejoin="round" stroke-linecap="round"'
 
     def one(st: dict, width: float, dash: str = "") -> str:
         o = float(st.get("opacity", 1)) * opacity_mul
@@ -339,41 +338,43 @@ def _stroke_paint(svg: _Svg, stroke: dict, path: str, opacity_mul: float, opts: 
         offset = length(stroke.get("dashOffset") or 0)
         dash = f' stroke-dasharray="{" ".join(f"{length(v):g}" for v in stroke["dashPattern"])}" stroke-dashoffset="{offset:g}"'
 
-    main = one(stroke, w, dash)
+    main = one(stroke, w, dash) if w > 0 else None
     casing = stroke.get("casing")
     out: list[str] = []
     casing_svg = None
-    if casing:
+    # /req/core/default-values: casing and center lines have a width of 0 (none) unless one is set.
+    if casing and to_px(casing.get("width"), view, 0) > 0:
         if opts.casing_width == "extra":
-            cw = w + 2 * to_px(casing.get("width"), view, 1)
+            cw = w + 2 * to_px(casing.get("width"), view, 0)
         else:
-            cw = to_px(casing.get("width"), view, w + 2)
+            cw = to_px(casing.get("width"), view, 0)
         casing_svg = one(casing, cw)
     if casing_svg and opts.casing == "below":
         if opts.casing_pass == "all-first":
             svg.casings.append((svg.z, casing_svg))
         else:
             out.append(casing_svg)
-    out.append(main)
+    if main:
+        out.append(main)
     if casing_svg and opts.casing == "above":
         out.append(casing_svg)
     center = stroke.get("center") or stroke.get("centerLine")
-    if center:
+    if center and to_px(center.get("width"), view, 0) > 0:
         # /req/casing/center: the center lines of all features with the same zOrder go on top of
         # the main strokes of all those features.
-        svg.centers.append((svg.z, one(center, to_px(center.get("width"), view, max(1, w / 3)))))
+        svg.centers.append((svg.z, one(center, to_px(center.get("width"), view, 0))))
     return out
 
 
 # ---------------------------------------------------------------- markers
 
 def _text_anchor(el: dict) -> str:
-    """SVG text-anchor for a Text graphic's horizontal alignment (centre by default)."""
+    """SVG text-anchor for a Text graphic's horizontal alignment (left by default, /req/vector/text)."""
     align = el.get("alignment") or {}
     if isinstance(align, list):
-        h = align[0] if align else "center"
+        h = align[0] if align else "left"
     else:
-        h = align.get("horizontal", "center") if align else "center"
+        h = align.get("horizontal", "left") if align else "left"
     return {"left": "start", "right": "end"}.get(h, "middle")
 
 
@@ -382,7 +383,7 @@ def _text(el: dict, x: float, y: float, view: View, opacity_mul: float, opts: Op
     size = to_px({"pt": font["size"]} if isinstance(font.get("size"), (int, float)) else font.get("size"), view, 16)
     anchor = _text_anchor(el)
     align = el.get("alignment") or {}
-    v = (align[1] if len(align) > 1 else "middle") if isinstance(align, list) else align.get("vertical", "middle")
+    v = (align[1] if len(align) > 1 else "top") if isinstance(align, list) else align.get("vertical", "top")
     baseline = {"top": "hanging", "bottom": "text-after-edge"}.get(v, "middle")
     style = (f'font-family="{html.escape(str(font.get("face", "sans-serif")))}" font-size="{size:g}" '
              f'font-weight="{"bold" if font.get("bold") else "normal"}" '
@@ -403,16 +404,17 @@ def _text(el: dict, x: float, y: float, view: View, opacity_mul: float, opts: Op
 
 def _offset(el: dict, view: View) -> tuple[float, float]:
     pos = el.get("position")
+    # /req/vector/graphics: a positive y is downwards, as screen coordinates (#192).
     if isinstance(pos, list) and len(pos) == 2:
-        return to_px(pos[0], view), -to_px(pos[1], view)
+        return to_px(pos[0], view), to_px(pos[1], view)
     if isinstance(pos, dict):
-        return to_px(pos.get("x"), view), -to_px(pos.get("y"), view)
+        return to_px(pos.get("x"), view), to_px(pos.get("y"), view)
     return 0.0, 0.0
 
 
 def _hotspot(value: Any, w: float, h: float, view: View) -> tuple[float, float] | None:
     """An Image hotSpot as fractions of the image size: `pc` is a percentage, other units are lengths
-    from the top left corner, and plain numbers are fractions (the draft does not say; see the units issue)."""
+    from the top left corner, and plain numbers are pixels of the image (/req/vector/image, #192)."""
     if value is None:
         return None
     if isinstance(value, dict):
@@ -424,7 +426,7 @@ def _hotspot(value: Any, w: float, h: float, view: View) -> tuple[float, float] 
         elif isinstance(v, dict):
             out.append(to_px(v, view) / size if size else 0.0)
         else:
-            out.append(float(v))
+            out.append(float(v) / size if size else 0.0)
     return out[0], out[1]
 
 

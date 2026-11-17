@@ -230,7 +230,7 @@ Points the verification runs still list as open, for issues rather than this PR:
 
 ## Replies on the pull request
 
-Jérôme St-Louis replied to these changes on [#192](https://github.com/opengeospatial/cartographic-symbology/pull/192) on 16 and 17 November 2026, and on #100, #193, #194 and #195 where they bear on a change. These are one member's answers, not SWG decisions, and the branch does not follow them yet. "Differs" means his answer differs from the change proposed above.
+Jérôme St-Louis replied to these changes on [#192](https://github.com/opengeospatial/cartographic-symbology/pull/192) on 16 and 17 November 2026, and on #100, #193, #194 and #195 where they bear on a change. These are one member's answers, not SWG decisions. The changes made to follow them are in the next section. "Differs" means his answer differs from the change proposed above.
 
 | Change | Reply | What he answered |
 |---|---|---|
@@ -254,3 +254,27 @@ Jérôme St-Louis replied to these changes on [#192](https://github.com/opengeos
 | X2 | Agrees | Yes, '50\%' matches the text 50% (also on #181). |
 
 Also on #193 and #194: Part 1 should default to round caps and round joins, which removes the miter limit question; a stroke of width 0 draws nothing; casing and centre line widths default to 0 (off), with black if only a width is set; `hillShading.factor: 0` is the default and turns hill shading off; an Image is drawn at its size in pixels, and an Image `size` property may be needed (#100); colour maps may be interpolated in linear RGB.
+
+## Changes after the replies (17 November 2026)
+
+The branch was changed to follow the replies above. Where a reply left a choice open, the choice made is stated, so that it can be questioned on the pull request. The draft renderer and the test cases were changed to match, and all figures were rendered again.
+
+| Change | What the text says now |
+|---|---|
+| W1 | A positive `y` of a position is downwards, as screen coordinates. Annex B says SE `DisplacementY` is the negated `y`. The four examples that offset upwards (labels-priority, vector-marker-dot, vector-text, 11-rondane-overview) were flipped, so their renders are unchanged. |
+| W2 | A `hotSpot` number without a unit is in pixels of the image; the default is `50 pc 50 pc`, `0 0` is the top left corner. The SE `AnchorPoint` NOTE converts from `pc`. All examples already used `pc`. |
+| W3 | The default `alignment` is `left` `top`, also in a new Text row of the default values. Texts that relied on the earlier `center` `middle` default now set it explicitly, so their renders are unchanged. `baseline` is left to #195. |
+| W7 | The recommendation to omit labels crossing the edge of the map is gone; a NOTE leaves it to the Renderer, for example as a configuration option, for static maps, dynamic maps or tiles. |
+| W10 | Stipple dots are no longer "placed at random"; their size and arrangement stay with the Renderer, and the TODO for #84 mentions the 8 × 8 bitmap idea. W9 is unchanged. |
+| W11 | Unchanged: the outline `size` is in pixels. Other units would need the schema to accept a unit there (it takes a number), which belongs with the schema PR (#188). The unit of a font `size` without one (points, as written, or pixels) is still to decide. |
+| W12 | Each cell is portrayed over its area, without a prescribed method. A variable that is not continuous (a classification) is not interpolated. A permission allows interpolating continuous variables and portraying from overviews, levels of detail, tiles or DGGS zones. A NOTE says where the kind of variable can come from (`x-ogc-variableType`, `x-ogc-definition`, `x-ogc-unit`) and that nothing is required where nothing says. |
+| W13 | The samples are taken "at about the resolution being rendered"; the central difference is a NOTE, as one way to do it. |
+| W14 | The recommendation allows applying the opacity per feature or to all features of a data layer and `zOrder` at once. A NOTE gives the trade-off and says the choice is still under consideration (choice made here; Jérôme suggested leaving it open). |
+| W15 | A new permission, `/per/vector/dot-outline`: a Renderer MAY draw a hairline outline (at most 1 pixel) around a Dot. Limited to Dots, the case raised. |
+| W16 | The azimuth is measured from north as shown on the map at the shaded point; a NOTE covers projected maps, globes and textures in WGS 84, and gives the default sun (315, 45). |
+| X1 | `min` and `max` take one or more arguments, so `max(x)` is `x` (one argument, as Jérôme suggested on 17 November). The harness case `fn-standard-wrong-arity` now uses `atan2(1, 1, 1)`; new cases `math-max-several` and `math-min-one`. |
+| #193, #194 | Round caps and round joins by default (clause 8 and `/req/vector/stroke`), so there is no miter limit. A stroke of width 0 or less draws nothing. Casing and centre line default to width 0 and black. `factor: 0` is the default and means no hill shading; the default sun is azimuth 315, elevation 45. An Image is drawn at its own size in pixels (a TODO points to #100 for a `size`). Permissions for linear light in Image recoloring and `colorMap` interpolation. Coverages may be portrayed from overviews (W12). |
+| Example 8 and 9 | `factor: 56` lowered to 3, which suits the 50 m Rondane terrain. Showing several values is planned for the requirement figures. |
+| #185 | The Natural Earth styles and figures are back in the examples and figures directories, not included in the document. |
+
+The draft renderer now draws round caps and joins, reads `y` downwards, reads unitless `hotSpot` values as pixels, aligns Text `left` `top` by default, draws no casing or centre line of width 0, treats `factor: 0` as no hill shading, and evaluates `min` and `max` with one or more arguments. The figures change only where caps and joins show and in examples 8 and 9. pycartosym 0.6.5 converts every example except casing (`center`, until #188) without fix-ups.

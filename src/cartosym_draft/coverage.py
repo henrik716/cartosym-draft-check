@@ -92,7 +92,7 @@ def _shade(elev: list[list[float | None]], r: int, c: int, cell: float, hs: dict
         v = elev[min(max(rr, 0), rows - 1)][min(max(cc, 0), cols - 1)]
         return elev[r][c] if v is None else v
 
-    factor = float(hs.get("factor", 1) or 1)
+    factor = float(hs.get("factor", 0) or 0)
     k = factor if opts.hillshade_factor == "exaggeration" else 1.0
     dzdx = (z(r, c + 1) - z(r, c - 1)) / (2 * cell)  # east
     dzdy = (z(r - 1, c) - z(r + 1, c)) / (2 * cell)  # north (row 0 is north)
@@ -162,7 +162,8 @@ def portray(style: dict, grid: Grid, system: dict, opts: Options) -> tuple[float
                 o = map_value(sym["opacityMap"], v, opts, float)
                 alpha *= 0.0 if o is None else o
             hs = sym.get("hillShading")
-            if isinstance(hs, dict) and v is not None:
+            # /req/hill-shading/factor: a factor of 0, the default, is no hill shading (#194).
+            if isinstance(hs, dict) and v is not None and float(hs.get("factor", 0) or 0) != 0:
                 s = _shade(single, r, c, grid.cell_size, hs, opts)
                 if hs.get("colorMap"):
                     color = map_value(hs["colorMap"], s, opts, parse_color)

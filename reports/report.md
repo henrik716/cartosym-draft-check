@@ -1,6 +1,6 @@
 # CartoSym draft requirements vs implementations
 
-Generated 2026-11-16 with libCartoSym (cs-canif from `cartosym` 0.0.1, `ecrt` 0.0.6) and pycartosym 0.6.4.
+Generated 2026-11-17 with libCartoSym (cs-canif from `cartosym` 0.0.1, `ecrt` 0.0.6) and pycartosym 0.6.5.
 
 Expected values are what the **draft requirement** says. `FAIL` means the implementation disagrees with the draft, which may mean the draft or the implementation is wrong. pycartosym does not evaluate expressions, so for expression cases it is checked on converting them to CQL2-JSON (see below). The draft renderer is `cartosym_draft` in this repository, which implements the draft requirements; a FAIL there means it does not do what the draft says.
 
@@ -8,9 +8,9 @@ Expected values are what the **draft requirement** says. `FAIL` means the implem
 
 | Implementation | pass | FAIL | unsupported | CRASH | error |
 |---|---|---|---|---|---|
-| draft renderer | 121 | 0 | 0 | 0 | 0 |
-| libCartoSym | 50 | 12 | 35 | 3 | 15 |
-| pycartosym | 115 | 0 | 0 | 0 | 0 |
+| draft renderer | 123 | 0 | 0 | 0 | 0 |
+| libCartoSym | 50 | 12 | 37 | 3 | 15 |
+| pycartosym | 117 | 0 | 0 | 0 | 0 |
 
 ## How the cases are run
 
@@ -218,8 +218,8 @@ The cases are in [`cases/`](../cases/), the calls in [`harness/adapters.py`](../
 | | _A call whose arguments do not match the function's parameters in type evaluates to NULL (#162). `/per/functions/type-casts` lets a Renderer convert other types (#163), but `'a'` names no number._ | | | | |
 | fn-int-to-real | `atan2(1, 1)` | `0.7853981633974483` | unsupported: returned `null` (function or operator not recognised) | pass: converts to the case's CQL2-JSON | pass: 0.7853981633974483 _(CQL2-JSON)_ |
 | | _An integer argument is accepted where the parameter is a number (#163, #164)._ | | | | |
-| fn-standard-wrong-arity | `max(1, 5, 3)` | `null` | pass: null | pass: converts to the case's CQL2-JSON | pass: null _(CQL2-JSON)_ |
-| | _/req/math/max takes two arguments, so three do not match the parameters and the call is NULL. The case expected 5 until three independent evaluators written from the text all gave NULL (2026-11-15)._ | | | | |
+| fn-standard-wrong-arity | `atan2(1, 1, 1)` | `null` | pass: null | pass: converts to the case's CQL2-JSON | pass: null _(CQL2-JSON)_ |
+| | _/req/math/atan2 takes two arguments, so three do not match the parameters and the call is NULL. Until 2026-11-17 this case was max(1, 5, 3); max and min now take one or more arguments (see math-max-several)._ | | | | |
 
 ### `/req/functions/standard-functions`
 
@@ -309,12 +309,16 @@ The cases are in [`cases/`](../cases/), the calls in [`harness/adapters.py`](../
 | Case | Input | Expected | libCartoSym | pycartosym | draft renderer |
 |---|---|---|---|---|---|
 | math-max | `max(2, 3)` | `3` | unsupported: returned `null` (function or operator not recognised) | pass: parses | pass: 3 |
+| math-max-several | `max(1, 5, 3)` | `5` | unsupported: returned `null` (function or operator not recognised) | pass: parses | pass: 5 |
+| | _min and max take one or more arguments (Jérôme on_ | | | | |
 
 ### `/req/math/min`
 
 | Case | Input | Expected | libCartoSym | pycartosym | draft renderer |
 |---|---|---|---|---|---|
 | math-min | `min(2, 3)` | `2` | unsupported: returned `null` (function or operator not recognised) | pass: parses | pass: 2 |
+| math-min-one | `min(7)` | `7` | unsupported: returned `null` (function or operator not recognised) | pass: parses | pass: 7 |
+| | _With a single argument, min and max return it (Jérôme on_ | | | | |
 
 ### `/req/math/pow`
 

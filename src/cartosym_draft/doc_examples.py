@@ -3,8 +3,8 @@
 Usage: python -m cartosym_draft.doc_examples [--spec ../cartographic-symbology] [name ...]
 
 For each example below, reads ``1-core/examples/<name>.cscss`` from the spec
-repository, converts it to CartoSym-JSON with pycartosym (plus the fix-ups in
-:func:`to_json` for what pycartosym 0.6.4 loses), validates the JSON against the
+repository, converts it to CartoSym-JSON with pycartosym 0.6.5 (except where the
+JSON is written by hand, see PYCARTOSYM_GAPS), validates the JSON against the
 spec's schema, renders it with the draft renderer on the Rondane data (Kartverket
 N50, the elevation model and a Sentinel-2 scene) and writes:
 
@@ -174,7 +174,7 @@ REQUIREMENT_EXAMPLES = [
     _req("casing", "Casing and center line of the roads at Selsverket, Sel", ["/req/casing/casing", "/req/casing/center"],
          ["Roads"], [Panel(25000, SELSVERKET_CASING, 600, 400)], manual_json=True),
     _req("dashes", "Dashed paths around Rondvassbu", ["/req/dashes/dash-pattern", "/req/dashes/dash-offset"],
-         ["Roads"], [Panel(30000, RONDVASSBU, 600, 400)], manual_json=True),
+         ["Roads"], [Panel(30000, RONDVASSBU, 600, 400)]),
     _req("hatches", "Hatch fills on the land cover around Myrtjørna", ["/req/hatches/hatch", "/req/hatches/width",
          "/req/hatches/angle", "/req/hatches/distance"], ["Landcover"], [Panel(20000, MYRTJORNA, 600, 400)]),
     _req("stipples-dot-patterns", "Stipple and dot pattern fills on the land cover around Myrtjørna",
@@ -185,7 +185,7 @@ REQUIREMENT_EXAMPLES = [
          [Panel(100000, RONDSLOTTET, 600, 400)], context=False),
     _req("labels-priority", "Peak labels placed by priority (elevation), overlapping labels left out",
          ["/req/labels/label", "/req/labels/placement", "/rec/labels/overlap"], ["Places"],
-         [Panel(150000, RONDSLOTTET, 600, 400)], manual_json=True),
+         [Panel(150000, RONDSLOTTET, 600, 400)]),
     _req("labels-spacing", "Road numbers repeated along the roads near Otta", ["/req/labels/placement"], ["Roads"],
          [Panel(50000, OTTA_ROADS, 600, 400)]),
     _req("coverage-opacity-map", "An opacity map on the elevation of Rondane", ["/req/coverage/opacity-map",
@@ -195,34 +195,22 @@ REQUIREMENT_EXAMPLES = [
          [Panel(WHOLE_SD_600, WHOLE, 600, 400)], context=False),
 ]
 
-# What pycartosym 0.6.4 loses in CSS → JSON, for the examples whose JSON is written by hand.
+# What pycartosym 0.6.5 writes differently in CSS → JSON, for the examples whose JSON is written by hand.
+# (0.6.5 fixed the other gaps the figures found: pycartosym #174, #182 to #185.)
 PYCARTOSYM_GAPS = [
-    "`center` is written as `centerLine`, the name before the SWG's decision on #120",
-    "`dashPattern` lengths with a unit are dropped (only unitless lengths are kept)",
-    "`dashOffset` is dropped",
-    "a bare identifier in `placement` (e.g. `priority: elevation`) is written as a string, not a property reference",
+    "`center` is written as `centerLine`, the name before the SWG's decision on #120 (the schema follows in #188)",
 ]
 
 
 def _pycartosym_view(style):
-    """The hand-written JSON as pycartosym 0.6.4 would write it (see PYCARTOSYM_GAPS)."""
+    """The hand-written JSON as pycartosym 0.6.5 would write it (see PYCARTOSYM_GAPS)."""
     style = copy.deepcopy(style)
 
     def walk(obj):
         if isinstance(obj, dict):
-            placement = obj.get("placement")
-            if isinstance(placement, dict):
-                for k, v in placement.items():
-                    if isinstance(v, dict) and set(v) == {"property"}:
-                        placement[k] = v["property"]
             stroke = obj.get("stroke")
-            if isinstance(stroke, dict):
-                if "center" in stroke:
-                    stroke["centerLine"] = stroke.pop("center")
-                stroke.pop("dashOffset", None)
-                dp = stroke.get("dashPattern")
-                if isinstance(dp, list) and any(isinstance(v, dict) for v in dp):
-                    del stroke["dashPattern"]
+            if isinstance(stroke, dict) and "center" in stroke:
+                stroke["centerLine"] = stroke.pop("center")
             for v in obj.values():
                 walk(v)
         elif isinstance(obj, list):
@@ -303,15 +291,12 @@ def _context_styles(own: list[str]) -> tuple[dict, dict, dict | None]:
                          "symbolizer": {"stroke": {"color": [160, 192, 216], "width": {"px": 1.2}}}}]}]}
     return land, relief, rivers
 
-# pycartosym 0.6.4 drops `marker: null`: the CSS is converted with this marker in its place, and then it is set back.
-_NULL_MARKER_CSS = "marker: { elements: [ Dot { size: 987.25 } ] }"
-_NULL_MARKER_JSON = {"elements": [{"type": "Dot", "size": 987.25}]}
-
-
 def to_json(css: str) -> tuple[dict, list[str]]:
-    """Convert CartoSym-CSS to CartoSym-JSON with pycartosym, putting back what it loses."""
+    """Convert CartoSym-CSS to CartoSym-JSON with pycartosym; the second value lists its warnings.
+
+    pycartosym 0.6.4 needed fix-ups here (`marker: null` and hex colors of Dots); 0.6.5 needs none.
+    """
     fixups = []
-    marked = re.sub(r"(?<![\w.])marker\s*:\s*null\b", _NULL_MARKER_CSS, css)
     warnings: list[str] = []
 
     class _Collect(logging.Handler):
@@ -322,31 +307,10 @@ def to_json(css: str) -> tuple[dict, list[str]]:
     handler = _Collect()
     logging.getLogger().addHandler(handler)
     try:
-        style = pycartosym.Converter().cscss_to_csjson(marked)
+        style = pycartosym.Converter().cscss_to_csjson(css)
     finally:
         logging.getLogger().removeHandler(handler)
     fixups += [f"pycartosym warning: {w}" for w in warnings]
-
-    def restore(obj):
-        if isinstance(obj, dict):
-            for k, v in obj.items():
-                if k == "marker" and v == _NULL_MARKER_JSON:
-                    obj[k] = None
-                    fixups.append("marker: null")
-                elif k in ("color", "tint", "blackTint") and isinstance(v, str) and re.fullmatch(r"#[0-9a-fA-F]{6}", v):
-                    # pycartosym writes hex colors of Fill and Stroke as [r, g, b] but keeps those of Dots and
-                    # Fonts as strings, which main's schema does not accept as a color: write them all as arrays.
-                    obj[k] = [int(v[i:i + 2], 16) for i in (1, 3, 5)]
-                    fixups.append("hex color as [r, g, b]")
-                else:
-                    restore(v)
-        elif isinstance(obj, list):
-            for v in obj:
-                restore(v)
-
-    restore(style)
-    if json.dumps(style).find("987.25") >= 0:
-        raise ValueError("a marker: null placeholder was not restored")
     return style, fixups
 
 
@@ -580,7 +544,6 @@ def build(spec: Path, names: list[str] | None = None, extra_schema: Path | None 
             if _pycartosym_view(hand) != style:
                 problems.append("the hand-written JSON differs from pycartosym's output beyond the known gaps")
             style = hand
-            fixups = [f for f in fixups if "stroke.dashPattern: cannot parse" not in f]
         else:
             json_path.write_text(json.dumps(style, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
         problems += [f for f in fixups if f.startswith("pycartosym warning")]
