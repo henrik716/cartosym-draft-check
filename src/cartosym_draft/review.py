@@ -1,7 +1,10 @@
 """Review annotations for the gallery: sources and the decision matrix.
 
-Edit this file to change what the matrix says. `view` is the proposed resolution
-(from the PR author); `status` is what PR #133 currently does about it.
+Edit this file to change what the matrix says. `draft_says` is what the requirement
+text says (the snapshot in requirements.json), `view` the proposed resolution (from
+the Part 1 editor), and `status` where the question stands on GitHub as of
+MATRIX_AS_OF: what Part 1 says since #133 merged, what open pull requests change,
+and answers given since. Update MATRIX_AS_OF with the rows.
 """
 
 from __future__ import annotations
@@ -48,118 +51,153 @@ SOURCES: dict[str, list[tuple[str, str]]] = {
 class Row:
     draft_says: str
     view: str  # our proposal
-    status: str  # in PR #133 now
-    ask: str = ""  # question for Jérôme / the SWG
+    status: str  # where it stands, as of MATRIX_AS_OF
+    ask: str = ""  # question for the SWG
 
+
+MATRIX_AS_OF = "17 November 2026"
 
 MATRIX: dict[str, Row] = {
     "opacity": Row("multiplies fill, stroke, marker graphics and coverage cells; not labels",
-                   "In the PR, as Jérôme answered, with a recommendation to apply it to the parts together (group "
-                   "opacity). Jérôme asked about the cost of compositing; the draft renderer uses SVG group opacity, "
-                   "with no performance data.", "answered, #162"),
-    "casing-order": Row("casing beneath the stroke", "Keep as drafted.", "no objection, #162"),
-    "casing-crossing": Row("all casings with the same zOrder beneath the strokes", "In the PR, as Jérôme answered and as "
-                           "the painter's algorithm in clause 7 loops (casing passes inside each zOrder).", "answered, #147"),
-    "casing-width": Row("extends beyond each side of the stroke", "In the PR, as Jérôme answered (total = stroke + 2 × casing).",
-                        "answered, #147"),
-    "font-outline": Row("outline beneath the glyphs", "Keep as drafted (as SE Halo).", "no objection, #162"),
-    "z-order": Row("higher zOrder on top", "Keep as drafted.", "no objection, #162"),
-    "hatch-angle": Row("clockwise (table)", "Probably counter-clockwise from 0 pointing right, as other angles drawn on "
-                       "the map (Jérôme); check graphics toolkits first.", "TODO(review), #146",
-                       "What do Win32 GDI, X and newer toolkits do? (@ebocher, @oertz, @maxcollombin)"),
-    "dash-units": Row("UnitValues, pixels unless qualified",
-                      "In the PR, as Jérôme answered: a Renderer supports px, pt, mm, cm and inches, and a permission in "
-                      "three parts covers meters and feet, and percent of the stroke width.", "answered, #161"),
-    "image-hotspot": Row("centre (0.5, 0.5)", "Keep as drafted (Jérôme confirmed; same as libCartoSym).",
-                         "answered; tint and blackTint added, alphaThreshold for picking (permission for the alpha "
-                         "test), #145"),
+                   "Keep, with the recommendation to apply it to the parts together (group opacity).",
+                   "In Part 1 (#133), as Jérôme answered on #162. #192 says the recommendation applies per feature "
+                   "(W14); Jérôme questioned the cost for many features and suggested leaving it open for now.",
+                   "Per feature, or leave the recommendation open?"),
+    "casing-order": Row("casing beneath the stroke", "Keep.", "In Part 1 (#133); no comment on #162."),
+    "casing-crossing": Row("all casings with the same zOrder beneath the strokes",
+                           "Keep, as the painter's algorithm in clause 7 loops (casing passes inside each zOrder).",
+                           "In Part 1 (#133), as Jérôme answered on #147 (closed). #192 draws centre lines after all "
+                           "main strokes of the zOrder (W6), which Jérôme confirmed."),
+    "casing-width": Row("extends beyond each side of the stroke",
+                        "Keep (total = stroke + 2 × casing).",
+                        "In Part 1 (#133), as Jérôme answered on #147 (closed). Jérôme on #194: casing and centre line "
+                        "widths default to 0, which turns them off, with black as the colour if only a width is set."),
+    "font-outline": Row("outline beneath the glyphs", "Keep (as SE Halo).",
+                        "In Part 1 (#133); no comment on #162. #192 gives the outline size in pixels (W11); Jérôme: "
+                        "pixels unless another unit is given, but whether a bare `font.size` is in points is still to "
+                        "decide."),
+    "z-order": Row("higher zOrder on top", "Keep.", "In Part 1 (#133); no comment on #162."),
+    "hatch-angle": Row("clockwise in the table on `main`; counter-clockwise in #192",
+                       "Counter-clockwise from 0 pointing right, as the document's figure of the default hatch shows "
+                       "and as gradient angles turn.",
+                       "#192 proposes counter-clockwise (W8); Jérôme on #192: \"sounds right\". #146 (one convention "
+                       "for all angles) is still open.",
+                       "Confirm counter-clockwise for every angle drawn on the map (#146)."),
+    "dash-units": Row("UnitValues, pixels unless qualified", "Keep.",
+                      "In Part 1 (#133), as Jérôme answered on #161: px, pt, mm, cm and inches, and a permission for "
+                      "meters, feet and percent of the stroke width. #192 defines `dashOffset` (W5), as Jérôme "
+                      "confirmed; #188 adds it to the schema."),
+    "image-hotspot": Row("the centre by default", "Keep the centre as the default.",
+                         "In Part 1 (#133, #145 closed). For a `hotSpot` that is set, #192 reads a number without a "
+                         "unit as a fraction (W2); Jérôme on #192 and #100: pixels of the image file unless "
+                         "qualified, with `50 pc 50 pc` for the centre and `0 0` the top left corner.",
+                         "A number without a unit: pixels, as Jérôme answered, or a fraction, as #192 proposes?"),
     "default-marker": Row("a single default Dot (white, 10 px)",
-                          "Keep, as intended (Jérôme); clearing it (`marker: null`) is now in the NOTE. Fix the schema "
-                          "(`anyOf` in graphicArray plus a `marker` change, and test `label`, #143), as the SWG agreed on 6 November. In the PR: Dot has `size` and `color`, the same "
-                          "values as its stroke's width and color, always a filled circle; CS-JSON forbids setting both within "
-                          "a single styling rule (#144).", "NOTE, #143 agreed by the SWG and in the PR; answered, #144"),
-    "dots": Row("not stated", "Add dot size and color properties; until then, small dots in the fill color.",
-                "TODO(review), #84", "Should stipple/dot-pattern dots have their own size and color?"),
-    "label-priority": Row("higher value wins", "Keep as drafted (as QGIS and GeoServer, and as zOrder); libCartoSym's "
-                          "engine currently places lower values first.", "TODO(review), #148",
-                          "Higher wins, or rename the property if lower should come first?"),
-    "label-spacing": Row("pixels unless uom-qualified", "In the PR, as Jérôme answered.", "answered"),
-    "label-pass": Row("separate pass on top; omitting overlaps is recommended",
-                      "In the PR: the separate pass as drafted, and omitting labels that overlap is now a "
-                      "recommendation, unless a property of the Symbolizer allows the overlap (Jérôme).",
-                      "answered, #162"),
-    "ndvi-division": Row("real quotient", "Keep as drafted (confirmed by Jérôme, as CQL2); libCartoSym should change "
-                         "(it returns 0 for example 7; Jérôme agrees).", "unchanged, ecere/libCartoSym#11"),
-    "color-channels": Row("0..1; example 6 scales the bands", "Example 6 scales the bands in the style (÷ 2500), as one of "
-                          "Jérôme's own styles does, though Jérôme said the example assumed pre-scaled bands. Proposed on "
-                          "#150: examples 6 and 7 assume reflectance, with a second version for digital numbers.",
-                          "TODO(review), #150", "Which data should examples 6 and 7 assume, and is the unscaled default OK?"),
+                          "Keep, as intended (Jérôme); a style clears it with `marker: null`.",
+                          "In Part 1 (#133): the NOTE, a schema that accepts `marker: null` and `marker: { elements: [] }` "
+                          "(#143, closed), and Dot `size` and `color` (#144, closed). Jérôme on #192 and #194 suggests a "
+                          "permission to draw a hairline outline, so that the white Dot shows on a white background.",
+                          "A permission for a hairline outline on the default Dot?"),
+    "dots": Row("not stated on `main` (#84)",
+                "#192: dot patterns as 2 px dots in the fill colour on a grid (W9); stipples as dots at random "
+                "covering the `ratio`, their size and placement left to the Renderer (W10).",
+                "Open, #84. Jérôme on #192 expects a stipple to be a regular bitmap pattern (for example 8 × 8) and "
+                "a dot pattern perhaps more random, and asks whether both are needed.",
+                "What should stipples and dot patterns look like, and are both needed?"),
+    "label-priority": Row("higher value wins (TODO)", "Keep the name `priority` with higher winning, or rename it if "
+                          "lower should come first. libCartoSym's placement engine places lower values first.",
+                          "Open, #148; no answer yet.", "Higher wins, or rename the property if lower should come first?"),
+    "label-spacing": Row("pixels unless uom-qualified", "Keep.", "In Part 1 (#133), as Jérôme answered."),
+    "label-pass": Row("separate pass on top; omitting overlaps is recommended", "Keep.",
+                      "In Part 1 (#133), as Jérôme answered on #162. Labels that cross the edge of the map: #192 "
+                      "omits them (W7); Jérôme: up to the Renderer (static maps, dynamic maps, tiles), with a NOTE."),
+    "ndvi-division": Row("real quotient", "Keep (as CQL2).",
+                         "In Part 1 (#133). libCartoSym `main` divides integers as reals since ecere/libCartoSym#11 "
+                         "was closed on 16 November; the `cartosym` 0.0.1 pip package still truncates."),
+    "color-channels": Row("0..1; example 6 scales the bands",
+                          "Examples 6 and 7 assume reflectance, with a second version for digital numbers (proposed "
+                          "on #150).",
+                          "TODO(review) in Part 1, #150 open.",
+                          "Which data should examples 6 and 7 assume, and is the unscaled default OK?"),
     "color-map": Row("interpolate (method open), exact at entries, clamp outside",
-                     "In the PR, as Jérôme answered (clamp, exact at entries, method open); libCartoSym interpolates "
-                     "quadratically. Stepped classes via conditional expressions (Jérôme). Added by the PR: a "
-                     "recommendation that the result stays between the two closest entries.",
-                     "recommendation + NOTE, #149", "Recommendation OK?"),
-    "gamma": Row("c ^ gamma (darkens above 1)", "Take out of Part 1, as the SWG agreed on 6 November. The ^ operator in colorChannels does the same.",
-                 "agreed by the SWG and removed in the PR, #86"),
-    "hillshade-factor": Row("multiplies the horizontal components of the normal", "In the PR, as Jérôme's renderer, "
-                            "including the sample distance and the shade without a colorMap.", "answered"),
-    "hillshade-overlay": Row("dot product, 0 (full shade) to 1 (no shade)", "In the PR, as Jérôme described.", "answered"),
-    "sun-azimuth": Row("clockwise from north, a compass bearing", "In the PR, as Jérôme answered (as GDAL).", "answered"),
-    "gradient-angle": Row("degrees, 0 pointing right, turning counter-clockwise", "In the PR, as Jérôme answered.", "answered"),
+                     "Keep, with the recommendation that the result stays between the two closest entries.",
+                     "In Part 1 (#133, #149 closed). #192 gives each map pixel the cell that contains its centre "
+                     "(W12); Jérôme: do not prescribe one method, and permit interpolation for continuous variables "
+                     "only, as the logical schema says."),
+    "gamma": Row("removed from Part 1", "Use `^` in colorChannels instead.",
+                 "Removed by #133 (#86 closed), as the SWG agreed on 6 November."),
+    "hillshade-factor": Row("multiplies the horizontal components of the normal", "Keep.",
+                            "In Part 1 (#133). Jérôme on #194: `factor: 0` is the default and turns hill shading off; "
+                            "example 8's 56 is extreme, and the figures should show a range of values."),
+    "hillshade-overlay": Row("dot product, 0 (full shade) to 1 (no shade)", "Keep.",
+                             "In Part 1 (#133). #192 says which samples are differenced (W13); Jérôme: essentially "
+                             "yes, but the wording should leave room."),
+    "sun-azimuth": Row("clockwise from north, a compass bearing", "Keep.",
+                       "In Part 1 (#133). #192 measures it from grid north (W16); Jérôme: it needs to work for "
+                       "global data and globes, and \"north as shown on the map at the shaded point\" might do. "
+                       "Defaults suggested on #194: azimuth 315, elevation 45."),
+    "gradient-angle": Row("degrees, 0 pointing right, turning counter-clockwise", "Keep.",
+                          "In the Part 2 gradient fills (#133). #192 turns hatch angles the same way (W8); #146 is "
+                          "open."),
     "gradient-frame": Row("pixels unless uom-qualified; frame not stated (Part 2)",
-                          "Wait until two or three renderers can be compared (Jérôme).", "TODO(review), #153"),
+                          "Wait until two or three renderers can be compared (Jérôme).", "TODO(review), #153 open."),
 }
 
 # Findings without a gallery card (from the test harness and the schema).
 EXTRA_ROWS: list[tuple[str, Row]] = [
     ("notLike in CartoSym-JSON",
-     Row("a separate operation; the schema has none", "Encode as `not` applied to `like` (as CQL2); no schema change. "
-         "notContains, notStartsWith and notEndsWith are removed: their negations use `not` (#156).",
-         "TODO(review), #140")),
+     Row("a separate operation; the schema has none",
+         "Keep `notLike` in the model, encoded in CartoSym-JSON as `not` applied to `like`, as CQL2 does.",
+         "Jérôme on #140 (13 November): the same, and written back to CartoSym-CSS as `NOT LIKE`. Now tracked in "
+         "#167.")),
     ("caseInsensitize / accentInsensitize vs casei / accenti",
-     Row("long names (model); short in the schema", "Use the CQL2 names casei and accenti.", "TODO(review), #140")),
+     Row("long names (model); short in the schema", "Use the CQL2 names casei and accenti.", "Open, #167.")),
     ("What counts as an accent (`Ø`)",
-     Row("accent stripping and diacritic folding (CQL2 Requirement 9)", "In the PR, as Jérôme answered: folds Ø → O as "
-         "libCartoSym does, with a NOTE pointing to Unicode Technical Report 30.", "answered, #152")),
+     Row("accent stripping and diacritic folding (CQL2 Requirement 9)", "Fold Ø → O, as libCartoSym does.",
+         "In Part 1 (#133), with a NOTE pointing to Unicode Technical Report 30; #152 open.")),
     ("Right-hand identifiers vs the CSCSS examples",
-     Row("any expression on the right-hand side", "In the PR: where an enumeration is expected, a bare word is an "
-         "enumeration value (clause 17); a NOTE now points there.", "answered, #151")),
+     Row("any expression on the right-hand side", "Where an enumeration is expected, a bare word is an "
+         "enumeration value (clause 17).", "In Part 1 (#133, #151 closed).")),
     ("center vs centerLine",
-     Row("center (UML)", "Use center, as the UML and libCartoSym do, and change the schema.", "TODO(review), #120",
-         "Which name is intended?")),
+     Row("center (UML and text); centerLine in the schema on `main`", "Use center.",
+         "The SWG decided `center` on 13 November. #188 changes the schema; #120 stays open until then.")),
     ("a_equals and element order",
-     Row("compares in order, as libCartoSym does", "Jérôme would rather keep arrays ordered, but keep CQL2's meaning as far as possible, "
-         "and suggests raising it with OGC API - Features.", "partly answered, #154", "Ordered, or sets as in CQL2?")),
+     Row("compares in order, as libCartoSym does", "Jérôme would rather keep arrays ordered, but keep CQL2's "
+         "meaning as far as possible.", "Open, #154; raised as opengeospatial/ogcapi-features#1099.",
+         "Ordered, or sets as in CQL2?")),
     ("NULL in expressions",
      Row("operations follow CQL2; a Symbolizer property takes a value per data type",
-         "In the PR, as Jérôme answered: 0, false, black, the empty string, the default for an enumeration, and "
-         "null for a Marker or Label, with a recommendation to report it.", "answered, #155")),
+         "0, false, black, the empty string, the default for an enumeration, and null for a Marker or Label, with "
+         "a recommendation to report it.",
+         "In Part 1 (#133). #155 open: Jérôme fixed several of the harness's NULL cases in libCartoSym (17 "
+         "November) and would rather have recommendations than strict tests for malformed styles.")),
     ("contains, startsWith, endsWith: functions or operators",
-     Row("functions, no prefix; not* removed", "In the PR as a preliminary approach, as Jérôme agreed (no prefix, "
-         "not* removed, class renamed, clauses 14 and 15 merged). libCartoSym has operators (`~`, `^^`, `$`), "
-         "left over from GNOSIS CMSS.", "preliminary, SWG decides 13 November, #156",
-         "Functions or operators?")),
+     Row("functions, no prefix; not* removed", "Keep.",
+         "In Part 1 (#133). libCartoSym made them functions (ecere/libCartoSym#12, closed 16 November). #156 is "
+         "still open.")),
     ("intDiv and mod",
-     Row("truncate toward zero; sign of the first operand", "Keep, as C-style languages do (Jérôme); worth "
-         "raising with OGC API - Features for CQL2.", "answered, #162")),
+     Row("truncate toward zero; sign of the first operand", "Keep, as C-style languages do (Jérôme).",
+         "In Part 1 (#133), as Jérôme answered on #162.")),
     ("round and rint",
-     Row("round: halves away from zero; rint removed", "In the PR, as Jérôme answered (the C rule).",
-         "answered, #162")),
+     Row("round: halves away from zero; rint removed", "Keep (the C rule).",
+         "In Part 1 (#133), as Jérôme answered on #162.")),
     ("Function call with wrong arguments",
-     Row("evaluates to NULL", "In the PR, as Jérôme answered. Which conversions apply (integer to real, text to "
-         "an enumeration) is open.", "answered, #162; conversions in #163",
-         "Which argument conversions are required?")),
+     Row("evaluates to NULL", "Keep, with integer → real and text → enumeration conversions.",
+         "In Part 1 (#133), as Jérôme answered on #162 and #163.")),
+    ("min and max with more than two arguments",
+     Row("two arguments (the table)", "Any number of arguments, as Jérôme answered on #192.",
+         "Jérôme added it to libCartoSym on 16 November. Part 1 still says two arguments, so this repository's "
+         "harness expects NULL for `max(1, 5, 3)` (X1) until the text changes.")),
     ("CartoSym-CSS selectors",
-     Row("expressions ANDed; only short-hand data layer names ORed",
-         "In the PR, with a NOTE and Jérôme's example in clause 17. pycartosym ANDed several names until "
-         "0.6.4 (maxcollombin/pycartosym#169).", "answered, #162")),
+     Row("expressions ANDed; only short-hand data layer names ORed", "Keep.",
+         "In Part 1 (#133), with a NOTE and Jérôme's example in clause 17. pycartosym follows it since 0.6.4.")),
     ("Schema: colors from expressions, empty arrays, and clearing the marker",
-     Row("(schema on main)", "Make the oneOf branches exclusive (e.g., require r, g, b in the color object). For the "
-         "marker: `anyOf` in graphicArray, and `marker` accepting null and an object without elements (tested; the SWG agreed the marker part on 6 November).",
-         "marker in the PR, #143; the rest not in the PR, #140")),
+     Row("(schema on `main`)", "Make the branches exclusive (2020-12, the fixes from #140).",
+         "The marker part in Part 1 (#133, #143 closed). The rest is #188 (open), from #140, #165 and #166; the "
+         "schema tests give 0 wrong outcomes on its branch.")),
     ("format string syntax",
-     Row("C printf conversion specifiers (ANSI C)", "In the PR, as Jérôme answered.", "answered")),
-    ("intDiv in libCartoSym 0.0.1",
-     Row("truncating integer division", "Fix in libCartoSym: cs-canif crashes on `7 div 2`.",
-         "n/a (implementation), ecere/libCartoSym#5")),
+     Row("C printf conversion specifiers (ANSI C)", "Keep.", "In Part 1 (#133), as Jérôme answered.")),
+    ("intDiv in libCartoSym",
+     Row("truncating integer division", "Fix in libCartoSym: cs-canif 0.0.1 crashes on `7 div 2`.",
+         "Fixed in libCartoSym `main` (ecere/libCartoSym#5, closed 16 November); the pip package still crashes.")),
 ]

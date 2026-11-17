@@ -19,7 +19,7 @@ RESULTS = Path(__file__).resolve().parents[2] / "reports" / "results.json"
 
 # Requirements checked without rendering or expression tests.
 ENCODING = {
-    "/req/json/schema": "every gallery and sample style is validated against the PR's JSON schema on each build",
+    "/req/json/schema": "every gallery and sample style is validated against the snapshot's JSON schema on each build",
     "/req/json/expressions": "every style in the gallery uses CQL2-JSON expressions",
     "/req/json/include": "read by the draft renderer (`$include`, included rules first)",
     "/req/cscss/grammar": "the spec's examples 5 to 9 converted with pycartosym and parsed by libCartoSym",
@@ -31,7 +31,7 @@ ENCODING = {
     "/req/cscss/variables": "pycartosym converts `@variables` to `$variables` and `$ref`, including variables defined by "
                             "expressions; the draft renderer resolves them",
     "/req/json/variables": "tested (variables cases) and used by the draft renderer",
-    "/req/json/dot-size-color": "enforced by the PR's JSON schema (`not` on Dot), which every style is validated against",
+    "/req/json/dot-size-color": "enforced by the snapshot's JSON schema (`not` on Dot), which every style is validated against",
 }
 NOT_IMPLEMENTED: dict[str, str] = {}
 # Implemented in the draft renderer, checked by a direct call rather than a render or a harness case.

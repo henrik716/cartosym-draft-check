@@ -227,3 +227,30 @@ What the check still found, and what was done:
 - **Draft renderer.** The comparison showed our label placement differing from both verify 1 and verify 2 in two maps. The cause was our estimate of text width (0.6 em per character); the draft renderer now measures text with the font where it can, and then places the same labels as both runs.
 
 Points the verification runs still list as open, for issues rather than this PR: the miter limit; a stroke of width 0; the default Dot colour (white) against the default Stroke colour (black) when a Dot's colour is its stroke's; the size at which an Image is drawn (it has no size property); how a number is written as text; the colour space for colour-map interpolation; the resampling for maps coarser than the coverage; a pixel centre on the edge between two cells; and defaults for fonts, casings, centre lines and font outlines.
+
+## Replies on the pull request
+
+Jérôme St-Louis replied to these changes on [#192](https://github.com/opengeospatial/cartographic-symbology/pull/192) on 16 and 17 November 2026, and on #100, #193, #194 and #195 where they bear on a change. These are one member's answers, not SWG decisions, and the branch does not follow them yet. "Differs" means his answer differs from the change proposed above.
+
+| Change | Reply | What he answered |
+|---|---|---|
+| W1 | Differs | In screen space, a positive y was intended to point down. |
+| W2 | Differs | Origin top left, as proposed, but a number without a unit is in pixels, as for everything else: 50 pc 50 pc is the centre and 0 0 the top left corner. The pixels are those of the image file (#100). |
+| W3 | Differs | The meaning is right (top is the top of the font's ascent), but the default was meant to be top left; a baseline alignment may be added (#195). |
+| W4 | Agrees | A Dot of size 0 draws nothing. |
+| W5 | Agrees | Yes, restarting at each line; [5, 2] is a 5 pixel dash and a 2 pixel gap from the start of the line. |
+| W6 | Agrees | Centre lines after all main strokes of the same zOrder: correct. |
+| W7 | Differs | Whether labels that cross the edge of the map are placed should be a Renderer option, not required either way (static maps, dynamic maps, tiles), perhaps with a NOTE saying so. |
+| W11 | Agrees | Pixels unless another unit is given. Still to decide: whether a font size without a unit is in points or pixels. |
+| W8 | Agrees | Counter-clockwise sounds right. |
+| W9 | Open | Not settled: he would expect dot patterns to be perhaps more random, and asks whether both stipples and dot patterns are needed (#84). |
+| W10 | Open | Not settled: he would expect a stipple to be a regular bitmap pattern, for example 8 × 8 (#84). |
+| W12 | Differs | Do not prescribe one mechanism (coverages may be draped on 3D terrain, or drawn from several levels of detail). Interpolation is allowed, but only for continuous variables, as the logical schema says; where nothing says, CartoSym need not require a behaviour. |
+| W13 | Agrees | Essentially yes, but the wording should leave room. |
+| W16 | Open | It needs room for global data and globes; "north as shown on the map at the shaded point" might work. Defaults suggested on #194: azimuth 315, elevation 45. |
+| W14 | Open | Per-feature group opacity may be very costly for many features; the recommendation might be left open, or noted as still under consideration. |
+| W15 | Agrees | Correct. He suggests a permission in Part 1 to draw a hairline outline, so that the white default Dot shows on white. |
+| X1 | Differs | min and max should take any number of arguments (added to libCartoSym); even one may make sense. |
+| X2 | Agrees | Yes, '50\%' matches the text 50% (also on #181). |
+
+Also on #193 and #194: Part 1 should default to round caps and round joins, which removes the miter limit question; a stroke of width 0 draws nothing; casing and centre line widths default to 0 (off), with black if only a width is set; `hillShading.factor: 0` is the default and turns hill shading off; an Image is drawn at its size in pixels, and an Image `size` property may be needed (#100); colour maps may be interpolated in linear RGB.

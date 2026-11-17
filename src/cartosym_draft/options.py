@@ -1,7 +1,8 @@
 """Switchable behaviors for judgement calls in the draft requirements.
 
-Each field corresponds to a decision the draft makes where the spec text
-does not settle it. The defaults are what the draft (PR #133) proposes.
+Each field corresponds to a decision the requirements make where the spec text
+did not settle it. The defaults follow the requirement text of the snapshot
+(main, which has #133, plus the wording changes of #192).
 """
 
 from __future__ import annotations

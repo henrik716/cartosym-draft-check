@@ -1,7 +1,7 @@
 {
  "branch": "example-renders",
- "commit": "c9808c0",
- "uncommitted_changes": true,
+ "commit": "0c514db",
+ "uncommitted_changes": false,
  "requirements": {
   "/req/arithmetic/add": {
    "file": "1-core/requirements/rc-arithmetic.adoc",

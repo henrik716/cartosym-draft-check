@@ -193,6 +193,45 @@ DECISIONS = [
 
 STATUS = {"proposal": "Proposal for the SWG", "fix": "Fix, to check", "ours": "Our tools, no text change"}
 
+# Jérôme's replies on #192 (16 and 17 November 2026), and on #100, #193, #194 and #195 where they bear on a change.
+# kind: "agrees" (the change stands), "differs" (his answer differs from the change), "open" (neither, yet).
+# These are one member's answers, not SWG decisions.
+ANSWERS_ON = "16–17 November 2026"
+ANSWERS = {
+    "W1": ("differs", ("In screen space, a positive y was intended to point down.")),
+    "W2": ("differs", ("Origin top left, as proposed, but a number without a unit is in pixels, as for everything "
+                      "else: 50 pc 50 pc is the centre and 0 0 the top left corner. The pixels are those of the "
+                      "image file (#100).")),
+    "W3": ("differs", ("The meaning is right (top is the top of the font's ascent), but the default was meant to be "
+                      "top left; a baseline alignment may be added (#195).")),
+    "W4": ("agrees", ("A Dot of size 0 draws nothing.")),
+    "W5": ("agrees", ("Yes, restarting at each line; [5, 2] is a 5 pixel dash and a 2 pixel gap from the start of "
+                     "the line.")),
+    "W6": ("agrees", ("Centre lines after all main strokes of the same zOrder: correct.")),
+    "W7": ("differs", ("Whether labels that cross the edge of the map are placed should be a Renderer option, not "
+                      "required either way (static maps, dynamic maps, tiles), perhaps with a NOTE saying so.")),
+    "W8": ("agrees", ("Counter-clockwise sounds right.")),
+    "W9": ("open", ("Not settled: he would expect dot patterns to be perhaps more random, and asks whether both "
+                   "stipples and dot patterns are needed (#84).")),
+    "W10": ("open", ("Not settled: he would expect a stipple to be a regular bitmap pattern, for example 8 × 8 (#84).")),
+    "W11": ("agrees", ("Pixels unless another unit is given. Still to decide: whether a font size without a unit is "
+                      "in points or pixels.")),
+    "W12": ("differs", ("Do not prescribe one mechanism (coverages may be draped on 3D terrain, or drawn from several "
+                       "levels of detail). Interpolation is allowed, but only for continuous variables, as the "
+                       "logical schema says; where nothing says, CartoSym need not require a behaviour.")),
+    "W13": ("agrees", ("Essentially yes, but the wording should leave room.")),
+    "W14": ("open", ("Per-feature group opacity may be very costly for many features; the recommendation might be "
+                    "left open, or noted as still under consideration.")),
+    "W15": ("agrees", ("Correct. He suggests a permission in Part 1 to draw a hairline outline, so that the white "
+                      "default Dot shows on white.")),
+    "W16": ("open", ("It needs room for global data and globes; \"north as shown on the map at the shaded point\" "
+                    "might work. Defaults suggested on #194: azimuth 315, elevation 45.")),
+    "X1": ("differs", ("min and max should take any number of arguments (added to libCartoSym); even one may make "
+                      "sense.")),
+    "X2": ("agrees", "Yes, '50\\%' matches the text 50% (also on #181)."),
+}
+ANSWER_LABEL = {"agrees": "Agrees", "differs": "Differs", "open": "Open"}
+
 
 def jpeg(path: Path, width: int) -> str:
     im = Image.open(path).convert("RGB")
@@ -257,6 +296,10 @@ def card(d: dict) -> str:
                     f'<div class="strip"><img loading="lazy" alt="{esc(p)} rendered on the new text" '
                     f'src="{jpeg(a, 1216)}"></div></figure>')
     ask = f'<p class="ask"><b>Asked:</b> {esc(d["ask"])}</p>' if d.get("ask") else ""
+    if d["id"] in ANSWERS:
+        kind, text = ANSWERS[d["id"]]
+        ask += (f'<p class="answer {kind}"><b>Jérôme on #192, {ANSWERS_ON}</b> '
+                f'<span class="akind">{ANSWER_LABEL[kind]}</span> {esc(text)}</p>')
     return f"""<article class="card {d['status']}" id="{d['id']}">
 <header><span class="cid">{d['id']}</span><h3>{esc(d['title'])}</h3><span class="status">{STATUS[d['status']]}</span></header>
 <p class="req">{esc(d['req'])}</p>
@@ -331,6 +374,11 @@ th { font-family:var(--display); font-weight:600; } td.n { font-variant-numeric:
 .chip { font-size:.8rem; padding:2px 7px; border-radius:3px; white-space:nowrap; }
 .chip b { font-weight:600; } .chip.ok { background:var(--ok); color:var(--ok-ink); } .chip.off { background:var(--off); color:var(--off-ink); }
 .ev { margin:12px 0 4px; } .ask { margin:4px 0 8px; }
+.answer { margin:6px 0 10px; padding:8px 12px; border-left:3px solid var(--rule); background:var(--paper); }
+.answer .akind { font:600 .72rem var(--body); text-transform:uppercase; letter-spacing:.06em; margin:0 6px; }
+.answer.agrees { border-left-color:var(--ok-ink); } .answer.agrees .akind { color:var(--ok-ink); }
+.answer.differs { border-left-color:var(--off-ink); } .answer.differs .akind { color:var(--off-ink); }
+.answer.open .akind { color:var(--muted); }
 figure { margin:12px 0 0; } figcaption { font-size:.8rem; color:var(--muted); margin-bottom:4px; }
 .strip { overflow-x:auto; border:1px solid var(--rule); } .strip img { max-width:none; width:auto; display:block; }
 .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(230px, 1fr)); gap:12px; }
@@ -363,7 +411,10 @@ def page(spec: Path) -> tuple[str, str]:
     trows = "".join(f"<tr><td>{esc(a)}</td><td>{esc(b)}</td><td>{esc(c)}</td></tr>" for a, b, c in table_rows)
     body = f"""<div class="wrap">
 <h1>Walkthrough of PR #192: renders in the Part 1 document</h1>
-<p class="lede">Part 1 of OGC Cartographic Symbology 2.0 gets rendered examples on Norwegian data, with CartoSym-CSS and CartoSym-JSON next to each render, and the requirements that independent readers rendered differently get tighter wording. Pull request <a href="https://github.com/opengeospatial/cartographic-symbology/pull/192">#192</a> (branch <code>example-renders</code>); nothing here is an SWG decision until the group makes it.</p>
+<p class="lede">Part 1 of OGC Cartographic Symbology 2.0 gets rendered examples on Norwegian data, with CartoSym-CSS and CartoSym-JSON next to each render, and the requirements that independent readers rendered differently get tighter wording. Pull request <a href="https://github.com/opengeospatial/cartographic-symbology/pull/192">#192</a> (branch <code>example-renders</code>); nothing here is an SWG decision until the group makes it.
+Jérôme's replies on #192 ({ANSWERS_ON}) are shown under each change: he agrees with {sum(k == "agrees" for k, _ in ANSWERS.values())},
+answered {sum(k == "differs" for k, _ in ANSWERS.values())} differently, and left {sum(k == "open" for k, _ in ANSWERS.values())} open.
+The branch does not follow his answers yet.</p>
 <nav class="toc"><a href="#examples">1. The examples</a><a href="#method">2. How the wording was checked</a><a href="#changes">3. The changes</a><a href="#asks">4. Asked of the SWG</a><a href="#open">5. Left for issues</a><a href="#links">6. Records</a></nav>
 <div class="facts">
 <div class="fact"><b>31</b><span>examples: 11 whole styles, 20 under requirements</span></div>

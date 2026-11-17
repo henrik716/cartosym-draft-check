@@ -17,7 +17,7 @@ from urllib.parse import quote
 from . import sample_data
 from .kit import export, zip_all
 from .nav import NAV_CSS, NAV_SCRIPT, permalink, toc, topbar
-from .review import EXTRA_ROWS, ISSUES, MATRIX, SOURCES
+from .review import EXTRA_ROWS, ISSUES, MATRIX, MATRIX_AS_OF, SOURCES
 from .options import Options
 from .render import Layer, View, render
 
@@ -115,7 +115,7 @@ def _vector_decisions() -> list[Decision]:
                 Variant("Casing above", DRAFT.with_(casing="above"),
                         note="The casing lies over the stroke: the yellow shows through only as orange."),
             ],
-            evidence="The draft says the casing is drawn beneath the main stroke. libCartoSym models `casing` and `center` as StrokeStyling, like the draft.",
+            evidence="Part 1 says the casing is drawn beneath the main stroke. libCartoSym models `casing` and `center` as StrokeStyling, like the draft.",
         ),
         Decision(
             key="casing-crossing",
@@ -136,7 +136,7 @@ def _vector_decisions() -> list[Decision]:
                 Variant("Each road with its own casing", DRAFT.with_(casing_pass="with-feature"),
                         note="The second road's casing cuts across the first road."),
             ],
-            evidence="The draft now says that within a visualization pass, the casings of all features with the same zOrder are drawn "
+            evidence="Part 1 says that within a visualization pass, the casings of all features with the same zOrder are drawn "
                      "beneath their main strokes (Jérôme, #147; also the painter's algorithm in clause 7, which loops over casing "
                      "passes inside each zOrder). A feature with a higher zOrder, such as a bridge, has its casing drawn over the "
                      "roads below it. Drawing each feature in turn is possible with visualization or feature passes.",
@@ -154,7 +154,7 @@ def _vector_decisions() -> list[Decision]:
                 Variant("Extra on each side (12 + 2 × 3 px)", DRAFT, is_draft=True),
                 Variant("Total width: 3 px, hidden under the stroke", DRAFT.with_(casing_width="total")),
             ],
-            evidence="The draft now says the casing extends its width beyond each side of the main stroke, for a total of "
+            evidence="Part 1 says the casing extends its width beyond each side of the main stroke, for a total of "
                      "stroke width + 2 × casing width (Jérôme, #147). Annex C's road example agrees: its casings of 0.25 to 1 px "
                      "under strokes of 2.5 to 6 px would be hidden under the total-width reading.",
         ),
@@ -195,7 +195,7 @@ def _vector_decisions() -> list[Decision]:
                 Variant("Higher zOrder on top", DRAFT, is_draft=True),
                 Variant("Lower zOrder on top", DRAFT.with_(z_order="lower-on-top")),
             ],
-            evidence="The draft says portrayals with a higher zOrder are drawn on top. The earlier clause 7 text only said that zOrder modifies the default order, not in which direction.",
+            evidence="Part 1 says portrayals with a higher zOrder are drawn on top. The earlier clause 7 text only said that zOrder modifies the default order, not in which direction.",
         ),
         Decision(
             key="hatch-angle",
@@ -207,10 +207,16 @@ def _vector_decisions() -> list[Decision]:
                 "stroke": {"color": [74, 35, 90], "width": {"px": 2}}}}]},
             layers=[Layer("Zones", [_feature("Polygon", _square(70, 25, 150))])],
             variants=[
-                Variant("Clockwise (draft table: \"clockwise degree\")", DRAFT, is_draft=True),
-                Variant("Counter-clockwise (mathematical convention)", DRAFT.with_(hatch_angle="counter-clockwise")),
+                Variant("Counter-clockwise (#192, as the figure of the default hatch shows)",
+                        DRAFT.with_(hatch_angle="counter-clockwise"), is_draft=True),
+                Variant("Clockwise (the table on main: \"clockwise degree\")", DRAFT.with_(hatch_angle="clockwise")),
             ],
-            evidence="The Part 1 Hatch table says \"Hatches orientation clockwise degree\". libCartoSym still uses the older forward/backward/cross hatch model.",
+            evidence="The Hatch table on main says \"Hatches orientation clockwise degree\", with a TODO that it should "
+                     "probably be counter-clockwise (#146). All six independent readers followed the table, but the "
+                     "document's figure of the default 45° hatch shows lines rising to the right, which is "
+                     "counter-clockwise, as gradient angles turn. #192 changes the table to counter-clockwise (W8), "
+                     "and Jérôme answered on #192 that this sounds right. libCartoSym still uses the older "
+                     "forward/backward/cross hatch model.",
         ),
         Decision(
             key="dash-units",
@@ -244,9 +250,12 @@ def _vector_decisions() -> list[Decision]:
                 Variant("Top left (0, 0)", DRAFT.with_(image_hotspot=(0.0, 0.0))),
                 Variant("Bottom centre (0.5, 1)", DRAFT.with_(image_hotspot=(0.5, 1.0))),
             ],
-            evidence="Jérôme: the default hot spot is the centre `{ 0.5, 0.5 }`, since centred icons are by far the most "
-                     "common case (after first saying top-left). This is what the draft says and what libCartoSym does "
-                     "(GraphicalElement.ec). Pin-shaped icons need the bottom centre, so styles would set it explicitly.",
+            evidence="Jérôme: the default hot spot is the centre, since centred icons are by far the most "
+                     "common case (after first saying top-left). This is what Part 1 says and what libCartoSym does "
+                     "(GraphicalElement.ec). Pin-shaped icons need the bottom centre, so styles would set it explicitly. "
+                     "For a hot spot that is set, #192 reads a number without a unit as a fraction of the image (W2); "
+                     "Jérôme answered on #192 and #100 that it is in pixels of the image file unless qualified, with "
+                     "`50 pc 50 pc` for the centre and `0 0` the top left corner.",
             anchors=True,
         ),
     ]
@@ -365,10 +374,11 @@ def _more_vector_decisions() -> list[Decision]:
             evidence="Jérôme: intended, so that every feature type is visible by default, and a single default Symbolizer "
                      "is intended; a typical base style unsets the marker for lines and polygons, e.g. "
                      "`[dataLayer.featuresGeometryDimensions > 0] { marker: null; }`. `marker: { elements: [] }` is "
-                     "equivalent, while `marker: { }` still yields the default Dot; the draft renderer does the same, "
-                     "and the PR's NOTE now says so. Open: the JSON schema rejects all three forms, and the Dot defaults "
-                     "(size 10 px, color white) set properties the Dot class does not have: clause 8 and the schema draw "
-                     "a Dot with its stroke's width and color. The other cards leave the default marker off, so they "
+                     "equivalent, while `marker: { }` still yields the default Dot; the draft renderer does the same. "
+                     "Since #133, a NOTE in Part 1 says so, the schema accepts `marker: null` and "
+                     "`marker: { elements: [] }` (#143), and Dot has `size` and `color` (#144). A white Dot does not "
+                     "show on a white background or the default white fill; Jérôme suggested on #192 and #194 a "
+                     "permission to draw a hairline outline. The other cards leave the default marker off, so they "
                      "stay readable."
         ),
         Decision(
@@ -391,8 +401,12 @@ def _more_vector_decisions() -> list[Decision]:
                 Variant("Small dots in the fill color (draft renderer's choice)", DRAFT),
                 Variant("Dot class defaults (white, 10 px)", DRAFT.with_(dots="dot-defaults")),
             ],
-            evidence="The draft leaves this open; #84 asks whether the Dot class defaults apply. Rendered, white 10 px dots read as a different symbol, "
-                     "and the fill color no longer shows.",
+            evidence="The text on main leaves this open; #84 asks whether the Dot class defaults apply. Rendered, white "
+                     "10 px dots read as a different symbol, and the fill color no longer shows. #192 proposes dots in "
+                     "the fill color: 2 px dots on a grid for dot patterns (W9), and dots at random covering the "
+                     "`ratio` for stipples, their size and placement left to the Renderer (W10). Jérôme answered on "
+                     "#192 that he would expect a stipple to be a regular bitmap pattern (for example 8 × 8) and a dot "
+                     "pattern perhaps more random, and that whether both are needed is still to discuss.",
         ),
         Decision(
             key="label-priority",
@@ -434,8 +448,8 @@ def _more_vector_decisions() -> list[Decision]:
                 Variant("Pixels", DRAFT, is_draft=True, note="At least 60 px between repeated labels."),
                 Variant("Metres (map units)", DRAFT.with_(label_spacing_units="m"), note="60 m is 12 px here, so labels repeat as closely as they fit."),
             ],
-            evidence="Jérôme: units are as in Graphical Units of Measure, pixels unless qualified with another unit. The PR "
-                     "now says so for minSpacing and maxSpacing; a style that wants metres qualifies the value.",
+            evidence="Jérôme: units are as in Graphical Units of Measure, pixels unless qualified with another unit. Part 1 "
+                     "says so for minSpacing and maxSpacing (#133); a style that wants metres qualifies the value.",
         ),
         Decision(
             key="label-pass",
@@ -518,12 +532,14 @@ def _coverage_decisions() -> list[Decision]:
                         note="The valley floors below 500 m are left out. So are the summits above 2000 m, but next to the "
                              "map's near-white last color they hardly show."),
             ],
-            evidence="Clamping is confirmed (Jérôme, #149). The draft now says that colors are interpolated between "
+            evidence="Clamping is confirmed (Jérôme, #149). Part 1 says that colors are interpolated between "
                      "entries without fixing the method (libCartoSym interpolates quadratically; this renderer linearly), and "
-                     "that a value equal to an entry takes exactly that entry's color (Jérôme, #149). The PR adds a recommendation that the result should stay "
+                     "that a value equal to an entry takes exactly that entry's color (Jérôme, #149). A recommendation says the result should stay "
                      "between the two closest entries (a parabola through three entries can overshoot). Stepped classes for "
                      "continuous values are written with conditional expressions (Jérôme: OK for Part 1). SE 1.1 makes the choice explicit with Interpolate and Categorize functions (its own DEM "
-                     "example uses Categorize); GeoServer's ColorMap defaults to an interpolated ramp.",
+                     "example uses Categorize); GeoServer's ColorMap defaults to an interpolated ramp. Jérôme on #192 and "
+                     "#194: interpolation between cells is allowed for continuous variables only (a land cover "
+                     "classification would break the color map), and colors may be interpolated in linear RGB.",
             **on_relief,
         ),
         Decision(
@@ -538,8 +554,9 @@ def _coverage_decisions() -> list[Decision]:
                 Variant("c ^ (1 / gamma): brightens, as SE", DRAFT.with_(gamma="inverse")),
             ],
             evidence="SE 1.1 GammaValue brightens for values above 1. The draft's exponent does the opposite. gamma is also "
-                     "absent from the coverage UML, tables and schema, and the SWG agreed on 6 November to take it out of Part 1 (#86). "
-                     "`colorChannels.r: (B04 / 2500) ^ 0.5` gives the same image as `gamma: 0.5`.",
+                     "absent from the coverage UML, tables and schema, and the SWG agreed on 6 November to take it out of Part 1 (#86); "
+                     "#133 removed it. `colorChannels.r: (B04 / 2500) ^ 0.5` gives the same image as `gamma: 0.5`. "
+                     "This card stays as a record.",
             **on_relief,
         ),
         Decision(
@@ -547,7 +564,7 @@ def _coverage_decisions() -> list[Decision]:
             title="Example 6: scaling colorChannels",
             requirements=["/req/coverage/color-channels", "/req/coverage/alpha-channel"],
             question="Example 6 set `colorChannels: B04 B03 B02`, Sentinel-2 digital numbers (reflectance × 10 000), "
-                     "while the schema types colorChannels as 0..1. The PR now scales the bands in the style: "
+                     "while the schema types colorChannels as 0..1. Since #133 the example scales the bands in the style: "
                      "`colorChannels.r: B04 / 2500` and so on. Here on a real Sentinel-2 L2A scene of Rondane "
                      "(2 August 2024).",
             style=ex6, layers=sentinel,
@@ -560,7 +577,7 @@ def _coverage_decisions() -> list[Decision]:
                              "shapes are the clouds, which the SCL rules make transparent or half transparent."),
             ],
             evidence="Jérôme: the example assumed pre-scaled bands, and one of Jérôme's working examples divides each band by "
-                     "2500. The 0..1 range comes from the schema. The PR states it and scales example 6 that way, and #150 "
+                     "2500. The 0..1 range comes from the schema. Part 1 states it and scales example 6 that way, and #150 "
                      "proposes that examples 6 and 7 assume reflectance instead, with a second version for digital numbers. "
                      "The defaults table also gives colorChannels as fields[0], fields[1], fields[2], unscaled (#150).",
             **on_relief,
@@ -581,8 +598,9 @@ def _coverage_decisions() -> list[Decision]:
                         note="Every cell evaluates to 0, so the whole scene gets the color for NDVI 0.0."),
             ],
             evidence="Jérôme confirmed: `/` is real-valued division and `div` is integer division, as in CQL2 arithmetic "
-                     "expressions. libCartoSym's cs-canif (0.0.1 and main) evaluates (3000 - 1000) / (3000 + 1000) to 0, "
-                     "and to 0.5 only when an operand is real; with integer division every NDVI value truncates to 0, so "
+                     "expressions. libCartoSym's cs-canif 0.0.1 (the pip package) evaluates (3000 - 1000) / (3000 + 1000) to 0, "
+                     "and to 0.5 only when an operand is real; libCartoSym main divides as reals since ecere/libCartoSym#11 "
+                     "was fixed (16 November). With integer division every NDVI value truncates to 0, so "
                      "the example's color map collapses to one color. Cloud cells are hidden by the example's SCL rules "
                      "(alphaChannel 0 and 0.5).",
             **on_relief,
@@ -603,7 +621,7 @@ def _coverage_decisions() -> list[Decision]:
                 32: "41 % of the cells are in full or near-full shade."},
                 ("For reference: no hill shading", _without_hillshading(ex8_rondane), "The stretched color map alone.")),
             evidence="Jérôme: factor multiplies the horizontal components of the terrain normal before normalization, so "
-                     "factor 1 is the plain dot product of the sun direction and the normal. The PR now says so, and the "
+                     "factor 1 is the plain dot product of the sun direction and the normal. Part 1 says so (#133), and the "
                      "draft renderer uses the same formula. His renders of the Tibetan Plateau, with pixels of several km, "
                      "show faint relief at 1, clear relief at 8 and strong relief at 32 and 64. On Rondane at 150 m cells "
                      "the slopes per cell are steeper than at the pixel size of those renders, so the same factor gives stronger relief: "
@@ -611,7 +629,9 @@ def _coverage_decisions() -> list[Decision]:
                      "normal is computed between the samples of the DEM at the resolution being rendered, over the "
                      "horizontal distance between them, in the same units as the heights, so the factor that suits a "
                      "style depends on that resolution; and without a hillShading colorMap the cell's color is multiplied "
-                     "by the shade, as in a typical shader. The draft renderer does both, and the PR now says so.",
+                     "by the shade, as in a typical shader. The draft renderer does both, and Part 1 says so. "
+                     "Jérôme on #192 and #194: `factor: 0` is the default and turns hill shading off; 56 was meant as "
+                     "an extreme example, and the document's figures should show a range of values.",
             **on_relief,
         ),
         Decision(
@@ -632,7 +652,7 @@ def _coverage_decisions() -> list[Decision]:
             evidence="Jérôme: the shade is the dot product of the sun direction and the terrain normal, from 0 (the sun at "
                      "90° from the normal, full shade) to 1 (no shade), and is the key for the hillShading colorMap and "
                      "opacityMap. His example uses a grayscale colorMap with an opacityMap that is more opaque in the shade, "
-                     "so imagery shows through on flat ground, as example 9 does. The PR now states this. How much is "
+                     "so imagery shows through on flat ground, as example 9 does. Part 1 states this (#133). How much is "
                      "darkened depends on the factor and the distance the normal is computed over (see example 8).",
             **on_relief,
         ),
@@ -652,8 +672,10 @@ def _coverage_decisions() -> list[Decision]:
             ],
             evidence="Jérôme: directions on the ground, such as the sun azimuth, are compass bearings, clockwise from "
                      "north. Angles drawn on the map, such as a gradient's, start at 0 pointing right and turn "
-                     "counter-clockwise. The PR now says so for the azimuth. Both examples use 45°, which is north-east as a bearing. GDAL and most GIS software use "
-                     "compass bearings too.",
+                     "counter-clockwise. Part 1 says so for the azimuth (#133). Both examples use 45°, which is north-east as a bearing. GDAL and most GIS software use "
+                     "compass bearings too. #192 says north is grid north, up on the map (W16); Jérôme answered that "
+                     "this needs room for global data and globes, and that \"north as shown on the map at the shaded "
+                     "point\" might work. He suggested defaults of azimuth 315 and elevation 45 on #194.",
             **common,
         ),
     ]
@@ -677,9 +699,10 @@ def _gradient_decisions() -> list[Decision]:
                 Variant("Mathematical: 0° right, counter-clockwise", DRAFT, is_draft=True),
                 Variant("CSS: 0° up, clockwise", DRAFT.with_(gradient_angle="css")),
             ],
-            evidence="Jérôme: angles drawn on the map are in degrees, start at 0 pointing right and turn counter-clockwise. The PR now says "
-                     "so for the gradient angle. The Part 1 hatch table, however, says \"clockwise degree\", and the sun "
-                     "azimuth is relative to north, so whether this applies to every angle is still to confirm.",
+            evidence="Jérôme: angles drawn on the map are in degrees, start at 0 pointing right and turn counter-clockwise. The "
+                     "Part 2 gradient fills say so for the gradient angle (#133). The hatch table on main says "
+                     "\"clockwise degree\"; #192 changes it to counter-clockwise, which Jérôme answered sounds right. "
+                     "The sun azimuth is a compass bearing. #146 asks for one convention for all angles.",
             **common,
         ),
         Decision(
@@ -701,7 +724,7 @@ def _gradient_decisions() -> list[Decision]:
             ],
             evidence="position and size have no reference frame in Part 2. Per feature, every polygon gets its own centred "
                      "gradient; per map, one gradient runs across all features. Jérôme: units are pixels unless "
-                     "qualified, which the PR now says; this card's unqualified 0.5 and 1 are read as fractions of the "
+                     "qualified, which Part 2 now says (#133); this card's unqualified 0.5 and 1 are read as fractions of the "
                      "frame, which under the draft needs a percent unit. The `repeating` type also needs a definition "
                      "(repeating what, and how often). Jérôme (#153): decide once two or three renderers can be compared.",
             **common,
@@ -811,7 +834,7 @@ SCHEMA = json.loads((Path(__file__).parent / "CartoSym-JSON.schema.json").read_t
 
 
 def _check_styles(styles: dict[str, dict], key: str) -> list[str]:
-    """Validate a card's styles against the PR's CartoSym-JSON schema."""
+    """Validate a card's styles against the snapshot's CartoSym-JSON schema."""
     import jsonschema
 
     validator = jsonschema.validators.validator_for(SCHEMA)(SCHEMA)
@@ -920,7 +943,7 @@ def build(out_dir: Path) -> str:
     snap = REQUIREMENTS
     snapshot = (f"Requirement text from branch <code>{html.escape(snap['branch'])}</code> at "
                 f"<code>{html.escape(snap['commit'])}</code>"
-                + (" with uncommitted TODO(review) notes" if snap["uncommitted_changes"] else "") + ".")
+                + (" with uncommitted changes" if snap["uncommitted_changes"] else "") + ".")
     return f"""<!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1"><title>CartoSym Draft Decisions</title>
 <style>{CSS}{NAV_CSS}</style></head><body class="has-toc">
@@ -939,11 +962,12 @@ independent renderer shows whether others read the requirements the same way, so
 <p class="legend"><span class="badge">draft</span> the draft's choice. <span class="badge open">open in draft</span> the draft
 does not settle the question; the variant labelled "draft renderer's choice" is the proposed resolution. {snapshot}</p>
 <section class="card" id="matrix"><h2>Decision matrix{permalink("matrix")}</h2>
-<p class="question">Proposed resolutions from the PR author, written for the review of PR #133 and last updated on
-11 November 2026, before it merged, so some rows have been answered or changed since. Later answers are in the
-<a href="pr192-renders-walkthrough.html">renders walkthrough</a>.</p>
-<div class="table-wrap"><table class="matrix"><thead><tr><th>Question</th><th>Draft says</th><th>Proposed resolution</th>
-<th>Status in PR #133</th><th>Question for the SWG</th></tr></thead><tbody>{_matrix_rows(all_decisions)}</tbody></table></div></section>
+<p class="question">Written for the review of PR #133, which merged on 13 November 2026, and kept up to date since:
+what the text says, the proposed resolution from the Part 1 editor, and where each question stands on GitHub as of
+{MATRIX_AS_OF}, including the answers on PR #192 (W1 to W17 are its wording changes, see the
+<a href="pr192-renders-walkthrough.html">renders walkthrough</a>). "Answered by Jérôme" is one member's answer, not an SWG decision.</p>
+<div class="table-wrap"><table class="matrix"><thead><tr><th>Question</th><th>Text says</th><th>Proposed resolution</th>
+<th>Where it stands ({MATRIX_AS_OF})</th><th>Question for the SWG</th></tr></thead><tbody>{_matrix_rows(all_decisions)}</tbody></table></div></section>
 {''.join(cards)}
 </main></div>{COPY_SCRIPT}{NAV_SCRIPT}</body></html>"""
 
