@@ -317,12 +317,24 @@ def examples_grid(spec: Path) -> str:
     for p in sorted(fig.glob("*.jpg"), key=lambda p: (len(p.stem.split("-")[0]), p.stem)):
         items.append(f'<figure class="thumb"><img loading="lazy" alt="example {esc(p.stem)}" src="{jpeg(p, 520)}">'
                      f'<figcaption>{esc(p.stem)}</figcaption></figure>')
+    # The requirement figures are vignettes (a row of small panels): one per row, at full width.
     req = []
     for p in sorted((fig / "requirements").glob("*.jpg")):
-        req.append(f'<figure class="thumb"><img loading="lazy" alt="requirement example {esc(p.stem)}" '
-                   f'src="{jpeg(p, 520)}"><figcaption>{esc(p.stem)}</figcaption></figure>')
-    return ('<h3>The 11 examples of clause 17 and Annex C</h3><div class="grid">' + "".join(items) + "</div>"
-            '<h3>The 20 examples under the requirements</h3><div class="grid">' + "".join(req) + "</div>")
+        req.append(f'<figure class="thumb"><img loading="lazy" alt="requirement figure {esc(p.stem)}" '
+                   f'src="{jpeg(p, 1040)}"><figcaption>{esc(p.stem)}</figcaption></figure>')
+    gallery = []
+    for p in sorted((fig / "gallery").glob("*.jpg")):
+        gallery.append(f'<figure class="thumb"><img loading="lazy" alt="gallery map {esc(p.stem)}" '
+                       f'src="{jpeg(p, 520)}"><figcaption>{esc(p.stem)}</figcaption></figure>')
+    return (f'<h3>The {len(items)} examples of clause 17 and Annex C</h3><div class="grid">' + "".join(items) + "</div>"
+            f'<h3>The {len(req)} figures under the requirements</h3>'
+            '<p>Each is a row of small panels of one place that differ in one value; the bold label marks the panel '
+            'whose style is printed under the figure. Pale lakes are the only context.</p>'
+            '<div class="rows">' + "".join(req) + "</div>"
+            f'<h3>The {len(gallery)} gallery maps (not in the document)</h3>'
+            '<p>The earlier requirement figures, with land cover, relief and rivers as context. They are kept in '
+            '<code>1-core/examples/gallery</code> for a later gallery or use case annex, as Jérôme suggested on #185.</p>'
+            '<div class="grid">' + "".join(gallery) + "</div>")
 
 
 CSS = """
@@ -382,6 +394,7 @@ th { font-family:var(--display); font-weight:600; } td.n { font-variant-numeric:
 figure { margin:12px 0 0; } figcaption { font-size:.8rem; color:var(--muted); margin-bottom:4px; }
 .strip { overflow-x:auto; border:1px solid var(--rule); } .strip img { max-width:none; width:auto; display:block; }
 .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(230px, 1fr)); gap:12px; }
+.rows { display:grid; gap:12px; }
 .thumb { margin:0; background:var(--panel); border:1px solid var(--rule); padding:6px; }
 .thumb img { width:100%; display:block; } .thumb figcaption { font-family:var(--mono); margin:4px 0 0; }
 ul.plain { padding-left:18px; } ul.plain li { margin:3px 0; }
@@ -424,7 +437,7 @@ Since 17 November the branch follows these answers; the changes, and the choices
 </div>
 
 <h2 id="examples">1. The examples</h2>
-<p>All examples use one area, Rondane in Norway: Kartverket N50 Kartdata (land cover, rivers, roads, cabins, protected areas, place names), the national terrain model and a Sentinel-2 scene, all CC BY 4.0 or Copernicus. In the document each figure sits above a two-column table with the style in CartoSym-CSS and CartoSym-JSON. The JSON is converted from the CSS with pycartosym and validated against the schema of <code>main</code> and of #188; three examples have JSON written by hand where pycartosym 0.6.4 loses something (centre lines, dash units and offsets, a property in label placement). The elevation model is fetched for each panel at about one cell per screen pixel (2 m at 1:4 000, 50 m for the whole area), and the Sentinel-2 scene of 1 September 2024 is cloud-free. Vector examples are drawn over a pale map (forest, farmland, water, rivers and the grey shadows of the relief, leaving out any layer the example styles itself), with a scale bar and a credit; the caption says these are context, not part of the style. Coverage examples 5 and 7, which are 80 % opaque, show the relief shadows through them. The 20 examples under the requirements share one palette. Examples 1 to 4, 10 and 11 were rewritten for Rondane; 2, 3 and 4 also differ from the SWG's originals beyond the data: colours and stroke widths from the shared palette, road classes in 3, a Dot at every scale in 4 (the default white Dot disappeared on the map), and SVG icons in 2 (the draft renderer draws every Image 24 px wide, so 24 px PNGs were blurred in the 2&times; figures). The structure of each style, and what it shows, is the SWG's. In the N50 data, coordinates are kept to 0.1 m, and road and river pieces that meet end to end with the same properties are joined into one line.</p>
+<p>All examples use one area, Rondane in Norway: Kartverket N50 Kartdata (land cover, rivers, roads, cabins, protected areas, place names), the national terrain model and a Sentinel-2 scene, all CC BY 4.0 or Copernicus. In the document each figure sits above a two-column table with the style in CartoSym-CSS and CartoSym-JSON. The JSON is converted from the CSS with pycartosym and validated against the schema of <code>main</code> and of #188; pycartosym 0.6.5 needs one fix-up, renaming <code>centerLine</code> to <code>center</code> (until #188). The elevation model is fetched for each panel at about one cell per screen pixel (2 m at 1:4 000, 50 m for the whole area), and the Sentinel-2 scene of 1 September 2024 is cloud-free. The numbered vector examples are drawn over a pale map (forest, farmland, water, rivers and the grey shadows of the relief, leaving out any layer the example styles itself), with a scale bar and a credit; the caption says these are context, not part of the style. Coverage examples 5 and 7, which are 80 % opaque, show the relief shadows through them. The 21 figures under the requirements are vignettes: rows of small panels of one place that each change one value, with pale lakes as the only context (Jérôme on #185 and #192); the earlier requirement maps are kept as a gallery outside the document. Examples 1 to 4, 10 and 11 were rewritten for Rondane; 2, 3 and 4 also differ from the SWG's originals beyond the data: colours and stroke widths from the shared palette, road classes in 3, a Dot at every scale in 4 (the default white Dot disappeared on the map), and SVG icons in 2 (the draft renderer draws every Image 24 px wide, so 24 px PNGs were blurred in the 2&times; figures). The structure of each style, and what it shows, is the SWG's. In the N50 data, coordinates are kept to 0.1 m, and road and river pieces that meet end to end with the same properties are joined into one line.</p>
 {examples_grid(spec)}
 
 <h2 id="method">2. How the wording was checked</h2>

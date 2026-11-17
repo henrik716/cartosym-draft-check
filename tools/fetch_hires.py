@@ -100,8 +100,10 @@ def detail() -> int:
     out = OUT / "detail"
     out.mkdir(exist_ok=True)
     wanted = {}
-    for ex in d.EXAMPLES + d.REQUIREMENT_EXAMPLES:
-        for p in ex.panels:
+    for ex in d.EXAMPLES + d.REQUIREMENT_EXAMPLES + d.GALLERY_EXAMPLES:
+        if "Elevation" not in ex.layers and ex.context not in (True, "relief"):
+            continue  # draws no elevation (e.g. vignettes with only the pale lakes)
+        for p, _ in ex.views():
             box, cell = d.detail_box(p)
             if cell is not None:
                 wanted[_detail_key(box, cell)] = (box, cell)
