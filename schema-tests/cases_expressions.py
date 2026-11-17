@@ -6,7 +6,7 @@ counting only arity and structure; type-conversion questions (#163) are left out
 The spatial and temporal cases are judged against Part 3, which defines those operations.
 
 Written on 2026-11-10 for the schema discussion on opengeospatial/cartographic-symbology#140,
-and used unchanged for the schema PR.
+and used unchanged for the schema PR; the cases at the end were added on 2026-11-17 (see there).
 """
 P = lambda n: {"property": n}
 S = lambda n: {"sysId": n}
@@ -263,3 +263,34 @@ add("identifiers", "unknown sysId", "invalid", op("=", S("viz.nothing"), 1))
 add("identifiers", "property not a string", "invalid", op("=", {"property": 1}, 1))
 add("literals", "date literal", "valid", op("t_after", P("t"), DATE))
 add("literals", "bare date string as instant", "invalid", op("t_after", P("t"), "2020-01-01"), "CQL2-JSON instants are objects")
+
+# --- added 2026-11-17, when the schema was changed to select each operation by its op (kraftto on #188)
+# Array elements: CQL2 allows properties and function calls in an array; the earlier oneOf rejected them,
+# since such an element matched more than one type.
+add("array elements", "[b, 1]", "valid", arr([P("b"), 1]))
+add("array elements", "[viz.sd]", "valid", arr([S("viz.sd")]))
+add("array elements", "[myFn(x)]", "valid", arr([op("myFn", P("x"))]))
+add("array elements", "[?:]", "valid", arr([COND]))
+add("array elements", "[x + 1, 'a', true]", "valid", arr([op("+", P("x"), 1), "a", True]))
+add("array elements", "[[1, b]]", "valid", arr([[1, P("b")]]))
+add("array elements", "myFn([b])", "valid", num(op("myFn", [P("b")])))
+add("array elements", "[junk]", "invalid", arr([JUNK]))
+add("array elements", "[myFn(junk)]", "invalid", arr([op("myFn", JUNK)]))
+add("array elements", "[x < 1 with 3 args]", "invalid", arr([op("<", P("x"), 1, 2)]))
+# An object with an op is an operation, also when it has other members.
+add("operation members", "property with an op member", "invalid", num({"property": "x", "op": "y"}))
+# An operator of the wrong type is rejected wherever it appears, not only at the top.
+add("operator types", "(x + 1) as selector", "invalid", op("+", P("x"), 1))
+add("operator types", "concatenate(a, x + 1)", "invalid", chr_(op("concatenate", P("a"), op("+", P("x"), 1))))
+add("operator types", "lowerCase(a) + 1", "invalid", num(op("+", op("lowerCase", P("a")), 1)))
+add("operator types", "not(x + 1)", "invalid", op("not", op("+", P("x"), 1)))
+add("operator types", "bitAnd(x, a = b)", "invalid", num(op("bitAnd", P("x"), op("=", P("a"), P("b")))))
+# Deep nesting: these took minutes or ran out of memory with the earlier anyOf/oneOf.
+deep = B
+for _ in range(16):
+    deep = op("and", deep, op("not", op("<", op("+", op("?:", B, P("x"), 1), op("myFn", 2)), 3)))
+add("depth", "16 levels of and / not / < / + / ?: / myFn", "valid", deep)
+deep_bad = op("<", P("x"), JUNK)
+for _ in range(16):
+    deep_bad = op("and", deep_bad, B)
+add("depth", "16 levels of and, invalid leaf", "invalid", deep_bad)

@@ -11,20 +11,27 @@ cd schema-tests/js && npm install && cd ../..
 node schema-tests/js/check.mjs ../cartographic-symbology  # Ajv and Hyperjump; needs run.py's output
 ```
 
+Validation time for deeply nested expressions (see [Depth](#depth)):
+
+```sh
+python schema-tests/depth.py ../cartographic-symbology --write   # python-jsonschema; writes out/depth-docs.json
+node schema-tests/js/depth.mjs ../cartographic-symbology          # Ajv and Hyperjump (ALL_ERRORS=1: Ajv with allErrors)
+```
+
 `run.py` needs `jsonschema` (in this repository's environment). Each command prints the number of wrong results and exits with 1 if there are any. The schemas have no `$id`, so the runners give them a test base URI (`https://cartosym.test/`) to resolve the relative `$ref` from Part 3 to Part 1.
 
 ## Test documents
 
 | Set | Documents | Where from | Expected |
 |---|---|---|---|
-| Expressions | 494 | [`cases_expressions.py`](cases_expressions.py): for each operator and function, valid uses and invalid ones (wrong number of arguments, an argument of the wrong kind, a malformed object), each put in a selector | As written per case |
+| Expressions | 512 | [`cases_expressions.py`](cases_expressions.py): for each operator and function, valid uses and invalid ones (wrong number of arguments, an argument of the wrong kind, a malformed object), each put in a selector; since 2026-11-17 also array elements, operators of the wrong type inside other operations, and two expressions 16 levels deep | As written per case |
 | CartoSym-JSON examples | 11 | `1-core/examples/*.cs.json` of the checkout being tested | Valid |
 | CQL2-JSON examples | 109 | The examples of OGC API - Features Part 3 (CQL2), fetched by [`fetch_cql2_examples.py`](fetch_cql2_examples.py) at commit `66faf8c`, each put in a selector | Valid |
 | Other changes | 49 | [`cases_other.py`](cases_other.py): the schema changes outside expressions (dot patterns, colours, value ranges, units, stroke, system identifiers) and the examples of clause 16 | As written per case |
 
 The expected outcome of each expression case was judged from the Part 1 requirements and from CQL2, counting the structure and the number of arguments. Argument types are counted only where the schema checks them, as the schema in the PR still does (whether to check the syntax only is open on #140). Questions of type conversion (#163) are left out.
 
-The expected outcomes are those of the Part 3 schema, which includes Part 1. Part 1 does not define the spatial and temporal relations or the geometry functions, and accepts them as generic function calls, as it does any function it does not define. So for Part 1, the runners compare only the documents without an `s_*` or `t_*` operation (453 of 663).
+The expected outcomes are those of the Part 3 schema, which includes Part 1. Part 1 does not define the spatial and temporal relations or the geometry functions, and accepts them as generic function calls, as it does any function it does not define. So for Part 1, the runners compare only the documents without an `s_*` or `t_*` operation (471 of 681).
 
 ## Validators
 
@@ -36,21 +43,41 @@ The three validators must also agree with each other on every document; `check.m
 
 ## Results
 
-On the [`schema-fixes`](https://github.com/henrik716/cartographic-symbology/tree/schema-fixes) branch at 7729a1e (2026-11-14), with all three validators:
-- Part 3: 0 wrong of 663
-- Part 1: 0 wrong of the 453 documents without Part 3 operations
+On the [`schema-fixes`](https://github.com/henrik716/cartographic-symbology/tree/schema-fixes) branch at a709fde (2026-11-17, expressions checked by their `op`), with all three validators:
+- Part 3: 0 wrong of 681
+- Part 1: 0 wrong of the 471 documents without Part 3 operations
 - The three validators give the same result for every document and both schemas
+
+At 7729a1e (2026-11-14) the result was 0 wrong of the 663 documents there were then. Of the 18 added on 2026-11-17, the six valid array elements were rejected at 7729a1e, as was the property with an `op` member, and the two documents 16 levels deep were not checked there (see [Depth](#depth)).
+
+## Depth
+
+[`depth.py`](depth.py) and [`js/depth.mjs`](js/depth.mjs) time three selectors at depths from 1 to 16: nested `and`s with every leaf `x < 2` (valid); the same with one leaf `x < {"foo": 1}` (invalid); and a valid expression that passes through boolean, comparison, arithmetic, conditional and text operations at every level (its size grows about four times every four levels). Each validation runs in its own process with a time limit of 20 s, on one Windows PC:
+
+| Schema | python-jsonschema | Hyperjump | Ajv |
+|---|---|---|---|
+| 7729a1e, nested `and` | 0.06 s at depth 1, 0.75 s at 2, 8.4 s at 3, over 20 s at 4 | 0.02 s at 1, 1.3 s at 3, 17 s at 4 | 3 ms at every depth to 8 |
+| 7729a1e, invalid leaf | 2.9 s at depth 2, over 20 s at 3 | 17 s at depth 4 | 3 ms |
+| 7729a1e, mixed | 10 s at depth 1, over 20 s at 2 | 12 s at depth 1 | 7–10 ms |
+| By `op`, nested `and` | 13 ms at depth 16 | 9 ms at 16 | 3 ms |
+| By `op`, invalid leaf | 2 ms at depth 16 | 10 ms at 16 | 2 ms |
+| By `op`, mixed | 0.9 s at depth 16 (76 kB of JSON), growing with the size | 0.12 s at 16 | 17 ms |
+
+The Part 3 schema takes about 1.5 times as long as Part 1. Listing all errors of the invalid leaf at depth 16 takes 18 ms in python-jsonschema (one error, at the path of the leaf) and under 1 ms in jsonschema-rs 0.61; Ajv with `allErrors` stays under 20 ms. Ajv is fast with either schema because it stops at the first alternative that matches; the others try each alternative, and at 7729a1e each alternative validated the arguments again, so the time grew exponentially with the depth.
+
+The schema now checks an object with an `op` against one definition, selected by the `op` (`operation` in the Part 1 schema), and each expression type limits which operators it accepts (`booleanOperation`, `numericOperation`, `characterOperation`, `conditionalOrFunctionCall`). An object without an `op` is checked against the values that are not operations (`numericPrimary` and so on). This was proposed by kraftto on [#188](https://github.com/opengeospatial/cartographic-symbology/pull/188), who measured the exponential time on a style of 1584 rules.
 
 On `main` (c9808c0), the Part 3 schema is not a valid schema (its `$ref` to Part 1 is inside `$defs`). Read as 2020-12, the Part 1 schema fails 10 of the 11 CartoSym-JSON examples in python-jsonschema ([#165](https://github.com/opengeospatial/cartographic-symbology/issues/165)).
 
 ## How the tests were developed
 
-The tests were written and run by Claude Code (Anthropic), working with Henrik Schuller, between 2026-11-07 and 2026-11-14. In order:
+The tests were written and run by Claude Code (Anthropic), working with Henrik Schuller, between 2026-11-07 and 2026-11-17. In order:
 
 
 1. Nov 7 to 12, on #140: the 11 examples, then 27 valid and 7 invalid documents, then the 494 expression cases and the 109 CQL2-JSON examples. The fixes were tested on modified copies of the schema built by a script, not on the schema files: the proposals posted on #140 were compared this way, and the last variant (J7) had 0 wrong of 614.
 2. Nov 13: the J7 changes were written into the schema files on the `schema-fixes` branch, with the other changes of the PR, and the 49 cases for the other changes were added. All 663 documents were run with python-jsonschema.
 3. Nov 14, a second check: Hyperjump and Ajv were added. Hyperjump agreed with python-jsonschema on every document. Ajv rejected all 11 examples, because the first version extended Part 1 through `$dynamicRef` / `$dynamicAnchor`, and Ajv falls back to the root schema when a `$dynamicRef` is reached before its `$dynamicAnchor` (which suits meta-schemas, where the anchor is at the root, but not an anchor in `$defs`). The schemas were changed to use `$ref` only (the Part 3 schema checks its operations with a walk over the whole style), which gives the same Part 1 results and 0 wrong with all three validators. The same check found `fuschia` in the CartoSym-CSS colour table as well as in the schema.
+4. Nov 17, after kraftto's comment on #188: his timings were reproduced with `depth.py` and `js/depth.mjs`, the expression definitions were changed to select by `op` as he proposed, and 18 expression cases were added (array elements, operators of the wrong type inside other operations, depth). With the earlier oneOf, a property, system identifier, function call or conditional in an array literal matched more than one type and was rejected; this is now accepted, as in CQL2.
 
 ## Limits
 
