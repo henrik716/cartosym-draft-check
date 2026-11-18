@@ -1,6 +1,6 @@
 # CartoSym draft requirements vs implementations
 
-Generated 2026-11-17 with libCartoSym (cs-canif built from ecere/libCartoSym main @ 32d4590 and ecere/eC main @ 2280ffb, on Ubuntu) and pycartosym 0.6.5.
+Generated 2026-11-18 with libCartoSym (cs-canif built from ecere/libCartoSym main @ bec9a85 and ecere/eC main @ 2280ffb, on Ubuntu) and pycartosym 0.6.5.
 
 Expected values are what the **draft requirement** says. `FAIL` means the implementation disagrees with the draft, which may mean the draft or the implementation is wrong. pycartosym does not evaluate expressions, so for expression cases it is checked on converting them to CQL2-JSON (see below). The draft renderer is `cartosym_draft` in this repository, which implements the draft requirements; a FAIL there means it does not do what the draft says.
 
@@ -9,12 +9,12 @@ Expected values are what the **draft requirement** says. `FAIL` means the implem
 | Implementation | pass | FAIL | unsupported | CRASH | error |
 |---|---|---|---|---|---|
 | draft renderer | 123 | 0 | 0 | 0 | 0 |
-| libCartoSym | 114 | 0 | 3 | 0 | 0 |
+| libCartoSym | 115 | 0 | 2 | 0 | 0 |
 | pycartosym | 117 | 0 | 0 | 0 | 0 |
 
 ## How the cases are run
 
-- **libCartoSym:** the Input text is written to `expr.cql2` and evaluated with `cs-canif eval expr.cql2` (cs-canif built from ecere/libCartoSym main @ 32d4590 and ecere/eC main @ 2280ffb, on Ubuntu). Where the spec gives no CartoSym-CSS syntax for an operation, a case can give libCartoSym's own (_as …_ in its column).
+- **libCartoSym:** the Input text is written to `expr.cql2` and evaluated with `cs-canif eval expr.cql2` (cs-canif built from ecere/libCartoSym main @ bec9a85 and ecere/eC main @ 2280ffb, on Ubuntu). Where the spec gives no CartoSym-CSS syntax for an operation, a case can give libCartoSym's own (_as …_ in its column).
 - **pycartosym:** pycartosym does not evaluate expressions. Where a case gives its own CQL2-JSON (83 cases), the Input text is converted with `pycartosym.cql2.to_cql2_json(cql2.parse_text(input))` and passes if the result is that CQL2-JSON; otherwise it passes if `pycartosym.cql2.parse_text(input)` parses it.
 - **draft renderer:** `cartosym_draft.evaluate.evaluate(expression, Context(...))`. Where a case gives its own CQL2-JSON, that is what it evaluates, and the result is marked _(CQL2-JSON)_, so it does not depend on pycartosym's parser; otherwise the Input text is converted with pycartosym as above.
 - **Comparing results:** quotes around text are ignored and numbers are compared as numbers, so `3.0` passes for `3`, except in cases marked `exact`, where the printed result must be the expected text (used to check that a result is an integer).
@@ -225,7 +225,7 @@ The cases are in [`cases/`](../cases/), the calls in [`harness/adapters.py`](../
 
 | Case | Input | Expected | libCartoSym | pycartosym | draft renderer |
 |---|---|---|---|---|---|
-| fn-standard | `max(1, 5)` | `5` | pass: 5.0 | pass: converts to the case's CQL2-JSON | pass: 5 _(CQL2-JSON)_ |
+| fn-standard | `max(1, 5)` | `5` | pass: 5 | pass: converts to the case's CQL2-JSON | pass: 5 _(CQL2-JSON)_ |
 
 ### `/req/math/abs`
 
@@ -308,16 +308,16 @@ The cases are in [`cases/`](../cases/), the calls in [`harness/adapters.py`](../
 
 | Case | Input | Expected | libCartoSym | pycartosym | draft renderer |
 |---|---|---|---|---|---|
-| math-max | `max(2, 3)` | `3` | pass: 3.0 | pass: parses | pass: 3 |
-| math-max-several | `max(1, 5, 3)` | `5` | pass: 5.0 | pass: parses | pass: 5 |
+| math-max | `max(2, 3)` | `3` | pass: 3 | pass: parses | pass: 3 |
+| math-max-several | `max(1, 5, 3)` | `5` | pass: 5 | pass: parses | pass: 5 |
 | | _min and max take one or more arguments (Jérôme on_ | | | | |
 
 ### `/req/math/min`
 
 | Case | Input | Expected | libCartoSym | pycartosym | draft renderer |
 |---|---|---|---|---|---|
-| math-min | `min(2, 3)` | `2` | pass: 2.0 | pass: parses | pass: 2 |
-| math-min-one | `min(7)` | `7` | unsupported: returned `null` (function or operator not recognised) | pass: parses | pass: 7 |
+| math-min | `min(2, 3)` | `2` | pass: 2 | pass: parses | pass: 2 |
+| math-min-one | `min(7)` | `7` | pass: 7 | pass: parses | pass: 7 |
 | | _With a single argument, min and max return it (Jérôme on_ | | | | |
 
 ### `/req/math/pow`
