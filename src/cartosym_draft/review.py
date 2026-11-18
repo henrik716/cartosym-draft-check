@@ -55,14 +55,15 @@ class Row:
     ask: str = ""  # question for the SWG
 
 
-MATRIX_AS_OF = "17 November 2026"
+MATRIX_AS_OF = "18 November 2026"
 
 MATRIX: dict[str, Row] = {
     "opacity": Row("multiplies fill, stroke, marker graphics and coverage cells; not labels",
                    "Keep, with the recommendation to apply it to the parts together (group opacity).",
                    "In Part 1 (#133), as Jérôme answered on #162. Jérôme on #192 questioned the cost of applying it "
                    "per feature (W14); #192 now allows either per feature or per data layer and zOrder, with a NOTE "
-                   "that the choice is still under consideration.",
+                   "that the choice is still under consideration. Since 18 November the draft renderer applies it "
+                   "per data layer and zOrder, so that all fills are drawn before the casings (#198).",
                    "Per feature, or per data layer and zOrder?"),
     "casing-order": Row("casing beneath the stroke", "Keep.", "In Part 1 (#133); no comment on #162."),
     "casing-crossing": Row("all casings with the same zOrder beneath the strokes",
