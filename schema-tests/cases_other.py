@@ -7,6 +7,9 @@ sel = lambda x: {"stylingRules": [{"selector": x}]}
 S = lambda n: {"sysId": n}
 P = lambda n: {"property": n}
 op = lambda o, *a: {"op": o, "args": list(a)}
+T = lambda t: {"type": "Text", "text": t}
+V = lambda n: {"$ref": "#/$variables/" + n}
+BAD_COND = op("?:", 5, "a", "b")  # a conditional whose condition is not boolean
 
 cases = [
     # dotpattern (#166)
@@ -63,4 +66,34 @@ cases = [
     ("hex number with junk", False, sym({"zOrder": op("bitAnd", "ffzz", 1)})),
     ("clause 16 alter example", True, sym({"fill": {"alter": True, "color": {"alter": True, "r": 100}}})),
     ("clause 16 elements index example", True, sym({"marker": {"alter": True, "elements": {"index": 1, "value": {"type": "Text", "text": "Marker"}}}})),
+    # graphics selected by type, markers by elements (kraftto on #188, 2026-11-17)
+    ("graphic Text", True, sym({"marker": {"elements": [T("a")]}})),
+    ("graphic Text with invalid conditional", False, sym({"marker": {"elements": [T(BAD_COND)]}})),
+    ("graphic property", True, sym({"marker": {"elements": [P("g")]}})),
+    ("graphic property and Text", True, sym({"marker": {"elements": [P("g"), T("a")]}})),
+    ("graphic nested array", False, sym({"marker": {"elements": [[T("a")]]}})),
+    ("graphic unknown type", False, sym({"marker": {"elements": [{"type": "Bogus"}]}})),
+    ("graphic without type", False, sym({"marker": {"elements": [{"opacity": 0.5}]}})),
+    ("graphic Dot", True, sym({"marker": {"elements": [{"type": "Dot", "size": 4, "color": "red"}]}})),
+    ("graphic Image", True, sym({"marker": {"elements": [{"type": "Image", "image": {"uri": "a.png"}}]}})),
+    ("graphic MultiGraphic", True, sym({"marker": {"elements": [{"elements": [T("a")]}]}})),
+    ("elements index with invalid Text", False, sym({"marker": {"alter": True, "elements": {"index": 0, "value": T(BAD_COND)}}})),
+    ("marker null", True, sym({"marker": None})),
+    ("marker overriding properties only", True, sym({"marker": {"alter": True, "opacity": 0.5}})),
+    ("marker property", True, sym({"marker": P("m")})),
+    ("marker invalid operation", False, sym({"marker": op("and", 1)})),
+    ("label Text with invalid conditional", False, sym({"label": {"elements": [T(BAD_COND)]}})),
+    ("fill pattern Text", True, sym({"fill": {"pattern": T("x")}})),
+    ("fill pattern property", True, sym({"fill": {"pattern": P("p")}})),
+    # variables (clause 16, /req/variables/expression)
+    ("variable in comparison", True, sel(op("=", V("v"), 5))),
+    ("variable as selector", True, sel(V("flag"))),
+    ("variable as width", True, sym({"stroke": {"width": V("w")}})),
+    ("variable as color", True, sym({"fill": {"color": V("c")}})),
+    ("variable in arithmetic", True, sym({"zOrder": op("+", V("z"), 1)})),
+    ("variable as text", True, sym({"label": {"elements": [T(V("t"))]}})),
+    ("variable as graphic", True, sym({"marker": {"elements": [V("g")]}})),
+    ("variable in an included file", True, sym({"stroke": {"width": {"$ref": "base.cs.json#/$variables/w"}}})),
+    ("variable pointer outside $variables", False, sym({"stroke": {"width": {"$ref": "#/foo/w"}}})),
+    ("variable pointer not a string", False, sym({"stroke": {"width": {"$ref": 5}}})),
 ]

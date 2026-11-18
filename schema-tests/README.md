@@ -27,11 +27,11 @@ node schema-tests/js/depth.mjs ../cartographic-symbology          # Ajv and Hype
 | Expressions | 512 | [`cases_expressions.py`](cases_expressions.py): for each operator and function, valid uses and invalid ones (wrong number of arguments, an argument of the wrong kind, a malformed object), each put in a selector; since 2026-11-17 also array elements, operators of the wrong type inside other operations, and two expressions 16 levels deep | As written per case |
 | CartoSym-JSON examples | 11 | `1-core/examples/*.cs.json` of the checkout being tested | Valid |
 | CQL2-JSON examples | 109 | The examples of OGC API - Features Part 3 (CQL2), fetched by [`fetch_cql2_examples.py`](fetch_cql2_examples.py) at commit `66faf8c`, each put in a selector | Valid |
-| Other changes | 49 | [`cases_other.py`](cases_other.py): the schema changes outside expressions (dot patterns, colours, value ranges, units, stroke, system identifiers) and the examples of clause 16 | As written per case |
+| Other changes | 77 | [`cases_other.py`](cases_other.py): the schema changes outside expressions (dot patterns, colours, value ranges, units, stroke, system identifiers), the examples of clause 16, and since 2026-11-18 graphics, markers and variable references | As written per case |
 
 The expected outcome of each expression case was judged from the Part 1 requirements and from CQL2, counting the structure and the number of arguments. Argument types are counted only where the schema checks them, as the schema in the PR still does (whether to check the syntax only is open on #140). Questions of type conversion (#163) are left out.
 
-The expected outcomes are those of the Part 3 schema, which includes Part 1. Part 1 does not define the spatial and temporal relations or the geometry functions, and accepts them as generic function calls, as it does any function it does not define. So for Part 1, the runners compare only the documents without an `s_*` or `t_*` operation (471 of 681).
+The expected outcomes are those of the Part 3 schema, which includes Part 1. Part 1 does not define the spatial and temporal relations or the geometry functions, and accepts them as generic function calls, as it does any function it does not define. So for Part 1, the runners compare only the documents without an `s_*` or `t_*` operation (499 of 709).
 
 ## Validators
 
@@ -43,10 +43,12 @@ The three validators must also agree with each other on every document; `check.m
 
 ## Results
 
-On the [`schema-fixes`](https://github.com/henrik716/cartographic-symbology/tree/schema-fixes) branch at a709fde (2026-11-17, expressions checked by their `op`), with all three validators:
-- Part 3: 0 wrong of 681
-- Part 1: 0 wrong of the 471 documents without Part 3 operations
+On the [`schema-fixes`](https://github.com/henrik716/cartographic-symbology/tree/schema-fixes) branch at 6810d14 (2026-11-18, graphics checked by their `type`, variable references), with all three validators:
+- Part 3: 0 wrong of 709
+- Part 1: 0 wrong of the 499 documents without Part 3 operations
 - The three validators give the same result for every document and both schemas
+
+At a709fde (2026-11-17) the result was 0 wrong of the 681 documents there were then. Of the 28 added on 2026-11-18, a709fde gets 11 wrong: it rejects the 8 valid variable references, a property as a fill pattern and an `elements` array mixing a property and a Text (both because an expression matched two alternatives of a `oneOf`), and it accepts a marker that is an invalid operation.
 
 At 7729a1e (2026-11-14) the result was 0 wrong of the 663 documents there were then. Of the 18 added on 2026-11-17, the six valid array elements were rejected at 7729a1e, as was the property with an `op` member, and the two documents 16 levels deep were not checked there (see [Depth](#depth)).
 
@@ -71,13 +73,14 @@ On `main` (c9808c0), the Part 3 schema is not a valid schema (its `$ref` to Part
 
 ## How the tests were developed
 
-The tests were written and run by Claude Code (Anthropic), working with Henrik Schuller, between 2026-11-07 and 2026-11-17. In order:
+The tests were written and run by Claude Code (Anthropic), working with Henrik Schuller, between 2026-11-07 and 2026-11-18. In order:
 
 
 1. Nov 7 to 12, on #140: the 11 examples, then 27 valid and 7 invalid documents, then the 494 expression cases and the 109 CQL2-JSON examples. The fixes were tested on modified copies of the schema built by a script, not on the schema files: the proposals posted on #140 were compared this way, and the last variant (J7) had 0 wrong of 614.
 2. Nov 13: the J7 changes were written into the schema files on the `schema-fixes` branch, with the other changes of the PR, and the 49 cases for the other changes were added. All 663 documents were run with python-jsonschema.
 3. Nov 14, a second check: Hyperjump and Ajv were added. Hyperjump agreed with python-jsonschema on every document. Ajv rejected all 11 examples, because the first version extended Part 1 through `$dynamicRef` / `$dynamicAnchor`, and Ajv falls back to the root schema when a `$dynamicRef` is reached before its `$dynamicAnchor` (which suits meta-schemas, where the anchor is at the root, but not an anchor in `$defs`). The schemas were changed to use `$ref` only (the Part 3 schema checks its operations with a walk over the whole style), which gives the same Part 1 results and 0 wrong with all three validators. The same check found `fuschia` in the CartoSym-CSS colour table as well as in the schema.
 4. Nov 17, after kraftto's comment on #188: his timings were reproduced with `depth.py` and `js/depth.mjs`, the expression definitions were changed to select by `op` as he proposed, and 18 expression cases were added (array elements, operators of the wrong type inside other operations, depth). With the earlier oneOf, a property, system identifier, function call or conditional in an array literal matched more than one type and was rejected; this is now accepted, as in CQL2.
+5. Nov 18, after kraftto's second comment on #188 (errors inside a graphic reported at the marker, and variable references not accepted): graphics are now checked against one definition, selected by their `type` (or by `elements` for a MultiGraphic, or as an expression), markers by whether they have `elements`, and a variable reference (`{ "$ref": "#/$variables/…" }`, clause 16) is accepted wherever an expression is, as `/req/variables/expression` says. 28 cases were added. An error inside a Text in a marker is now reported at its own path (`marker/elements/0/text/args/0`) instead of at `marker/elements`. The 95 styles of the document figures in #192 stay valid, and the depth timings do not change.
 
 ## Limits
 
