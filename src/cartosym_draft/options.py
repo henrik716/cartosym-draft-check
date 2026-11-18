@@ -28,7 +28,9 @@ class Options:
     # Casing at crossings: "all-first" draws the casings of all features with
     # the same zOrder before their strokes, so crossings and junctions merge
     # (draft, per Jérôme and the painter's algorithm in clause 7);
-    # "with-feature" draws each line's casing with its own stroke.
+    # "with-feature" draws each line's casing with its own stroke. Either way,
+    # the fills of all features with the same zOrder are drawn first (Jérôme's
+    # order on #198: fill, casing, main stroke, center line).
     casing_pass: str = "all-first"
 
     # /req/font-outlines/outline: "below" draws the outline beneath the glyphs.

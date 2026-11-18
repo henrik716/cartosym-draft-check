@@ -86,9 +86,10 @@ class _Svg:
         self.view = view
         self.defs: list[str] = []
         self.body: list[str] = []
-        self.casings: list[tuple[float, str]] = []  # (zOrder key, casing), with casing_pass == "all-first"
-        self.centers: list[tuple[float, str]] = []  # (zOrder key, center line), drawn after the main strokes
-        self.z = 0.0  # zOrder key of the feature being painted
+        # The casings (with casing_pass == "all-first") and center lines of the feature being painted;
+        # render() draws them for all features of a zOrder at once.
+        self.casings: list[str] = []
+        self.centers: list[str] = []
 
     def new_id(self, prefix: str) -> str:
         return f"{prefix}{next(self._ids)}"
@@ -351,7 +352,7 @@ def _stroke_paint(svg: _Svg, stroke: dict, path: str, opacity_mul: float, opts: 
         casing_svg = one(casing, cw)
     if casing_svg and opts.casing == "below":
         if opts.casing_pass == "all-first":
-            svg.casings.append((svg.z, casing_svg))
+            svg.casings.append(casing_svg)
         else:
             out.append(casing_svg)
     if main:
@@ -362,7 +363,7 @@ def _stroke_paint(svg: _Svg, stroke: dict, path: str, opacity_mul: float, opts: 
     if center and to_px(center.get("width"), view, 0) > 0:
         # /req/casing/center: the center lines of all features with the same zOrder go on top of
         # the main strokes of all those features.
-        svg.centers.append((svg.z, one(center, to_px(center.get("width"), view, 0))))
+        svg.centers.append(one(center, to_px(center.get("width"), view, 0)))
     return out
 
 
@@ -480,13 +481,27 @@ def _marker_paint(marker: dict, x: float, y: float, view: View, opacity_mul: flo
     return out
 
 
+@dataclass
+class _Item:
+    """What one feature (or coverage) draws, by drawing step; render() composes these per zOrder."""
+    z: float  # zOrder key (negated with z_order == "lower-on-top")
+    seq: int  # feature order
+    layer: str
+    opacity: float  # the resolved Symbolizer opacity
+    fills: list[str] = field(default_factory=list)
+    casings: list[str] = field(default_factory=list)
+    strokes: list[str] = field(default_factory=list)  # main strokes and markers
+    centers: list[str] = field(default_factory=list)
+    labels: list[str] = field(default_factory=list)  # with label_pass == "with-feature"
+
+
 # ----------------------------------------------------------------- labels
 
 @dataclass
 class _Label:
     priority: float
     seq: int  # feature order, to break ties
-    item: int  # index of the feature's drawing group
+    item: int  # index of the feature's _Item
     svg: str
     box: tuple[float, float, float, float]
     key: tuple = ()  # (layer, content): labels with the same key are repetitions of one label
@@ -633,7 +648,7 @@ def render(style: dict, layers: list[Layer], view: View, opts: Options | None = 
     opts = opts or Options()
     svg = _Svg(view)
     null_reports: list = []
-    items: list[list] = []  # [zOrder, sequence, fragments, group opacity, labels]
+    items: list[_Item] = []
     labels: list[_Label] = []
     seq = 0
     for layer in layers:
@@ -651,7 +666,7 @@ def render(style: dict, layers: list[Layer], view: View, opts: Options | None = 
                 gx1, gy0 = view.xy(layer.grid.bbox[2], layer.grid.bbox[3])
                 frag = (f'<image href="{uri}" x="{gx0:.2f}" y="{gy0:.2f}" width="{gx1 - gx0:.2f}" '
                         f'height="{gy1 - gy0:.2f}" preserveAspectRatio="none" style="image-rendering:pixelated"/>')
-                items.append([z if opts.z_order == "higher-on-top" else -z, seq, [frag], 1.0, []])
+                items.append(_Item(z if opts.z_order == "higher-on-top" else -z, seq, layer.id, 1.0, fills=[frag]))
                 seq += 1
             continue
         for feat in layer.features:
@@ -663,12 +678,13 @@ def render(style: dict, layers: list[Layer], view: View, opts: Options | None = 
             op = float(sym.get("opacity", 1))
             mul = op if opts.opacity == "per-element" else 1.0
             z = float(sym.get("zOrder", 1))
-            svg.z = z if opts.z_order == "higher-on-top" else -z
-            frags: list[str] = []
+            svg.casings, svg.centers = [], []
+            fills: list[str] = []
+            frags: list[str] = []  # main strokes and markers
             pts, lines, polys = _parts(feat["geometry"])
             for poly in polys:
                 path = _rings_path(poly, view)
-                frags += _fill_paint(svg, sym.get("fill") or {}, path, mul, opts)
+                fills += _fill_paint(svg, sym.get("fill") or {}, path, mul, opts)
                 frags += _stroke_paint(svg, sym.get("stroke") or {}, path, mul, opts)
             for line in lines:
                 frags += _stroke_paint(svg, sym.get("stroke") or {}, _line_path(line, view), mul, opts)
@@ -696,7 +712,8 @@ def render(style: dict, layers: list[Layer], view: View, opts: Options | None = 
                 # The Symbolizer opacity does not apply to labels (NOTE in /req/core/opacity).
                 for text, box in _label_candidates(label, pts, lines, polys, view, 1.0, opts):
                     labels.append(_Label(prio, seq, len(items), text, box, (layer.id, content), spacing))
-            items.append([svg.z, seq, frags, op, []])
+            items.append(_Item(z if opts.z_order == "higher-on-top" else -z, seq, layer.id, op,
+                               fills, svg.casings, frags, svg.centers))
             seq += 1
 
     # /req/labels/*: place in priority order, dropping labels that would overlap.
@@ -713,19 +730,34 @@ def render(style: dict, layers: list[Layer], view: View, opts: Options | None = 
             continue  # /req/labels/placement: a repetition closer than minSpacing
         placed.append(lb)
         if opts.label_pass == "with-feature":
-            items[lb.item][4].append(lb.svg)
+            items[lb.item].labels.append(lb.svg)
 
-    # /req/casing/casing: the casings of all features with the same zOrder go
-    # beneath the main strokes of those features, so a bridge's casing covers
-    # the roads below it.
-    for z in sorted({it[0] for it in items} | {cz for cz, _ in svg.casings} | {cz for cz, _ in svg.centers}):
-        svg.body.extend(c for cz, c in svg.casings if cz == z)
-        for _, _, frags, op, item_labels in sorted((it for it in items if it[0] == z), key=lambda it: it[1]):
-            group = "".join(frags)
-            if opts.opacity == "whole" and op < 1:
-                group = f'<g opacity="{op:g}">{group}</g>'
-            svg.body.append(group + "".join(item_labels))
-        svg.body.extend(c for cz, c in svg.centers if cz == z)
+    # Within a zOrder: the fills of all features, then their casings, main strokes (with markers)
+    # and center lines (/req/casing/casing, /req/casing/center; the order is Jérôme's on #198). So a
+    # bridge's casing covers the roads below it, and the casings of joining lines merge.
+    # /rec/core/opacity-together: with "whole", translucent features are made transparent as one
+    # group per data layer, zOrder and opacity, drawn in the same order inside the group; labels
+    # stay outside it (NOTE in /req/core/opacity).
+    for z in sorted({it.z for it in items}):
+        groups: dict[tuple | None, list[_Item]] = {}
+        for it in sorted((it for it in items if it.z == z), key=lambda it: it.seq):
+            key = (it.layer, it.opacity) if opts.opacity == "whole" and it.opacity < 1 else None
+            groups.setdefault(key, []).append(it)
+        for key, group in groups.items():
+            body = ("".join(f for it in group for f in it.fills)
+                    + "".join(c for it in group for c in it.casings)
+                    + "".join("".join(it.strokes) + ("" if key else "".join(it.labels)) for it in group)
+                    + "".join(c for it in group for c in it.centers))
+            if key:
+                # The same as opacity="…" on the group, but as a filter whose region is the map: resvg
+                # (0.5.0) drops the tinted images of an opacity group reaching far beyond a nested
+                # <svg>, as each panel of the document figures is.
+                fid = svg.new_id("op")
+                svg.defs.append(f'<filter id="{fid}" filterUnits="userSpaceOnUse" x="0" y="0" width="{view.width}" '
+                                f'height="{view.height}" color-interpolation-filters="sRGB"><feComponentTransfer>'
+                                f'<feFuncA type="linear" slope="{key[1]:g}"/></feComponentTransfer></filter>')
+                body = f'<g filter="url(#{fid})">{body}</g>' + "".join(lb for it in group for lb in it.labels)
+            svg.body.append(body)
     if opts.label_pass == "on-top":
         svg.body.extend(lb.svg for lb in sorted(placed, key=lambda lb: lb.seq))
     LAST_NULL_REPORTS[:] = null_reports
