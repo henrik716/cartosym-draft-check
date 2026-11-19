@@ -12,15 +12,15 @@ This checks conversion only: whether each implementation writes the same JSON as
 | Same CQL2-JSON as the case (of the 74 cases that give one) | 54 | 74 |
 | Text → JSON → text → JSON gives the same JSON (of 114) | 103 | 102 |
 | Examples converted from CartoSym-CSS to CartoSym-JSON (of 11) | 11 | 11 |
-| Same CartoSym-JSON as the example (of 11) | 3 | 11 |
+| Same CartoSym-JSON as the example (of 11) | 6 | 11 |
 | CSS → JSON → CSS → JSON gives the same JSON (of 11) | 11 | 11 |
-| The example's JSON → CSS → JSON gives it back (of 11) | 3 | 11 |
+| The example's JSON → CSS → JSON gives it back (of 11) | 6 | 11 |
 
 ## How they are run
 
 - **libCartoSym:** `cs-canif convert in.<ext> out.<ext>`, with `.cql2` (CQL2-Text), `.cql2json`, `.cscss` and `.csjson` (`.cs.json` is read by cs-canif as a Mapbox GL style).
 - **pycartosym:** expressions with `cql2.to_cql2_json(cql2.parse_text(text))` and `cql2.to_cql2_text(json)`; styles with `cartosym in.cscss -o out.cs.json` and back.
-- JSON is compared as data: member order and the spelling of numbers (`2` and `2.0`) do not matter, but `true` is not `1`. A difference is shown as the path of the first one, with the expected value (the case's or the example's, or the first conversion's for the round trip) first.
+- JSON is compared as data: member order and the spelling of numbers (`2` and `2.0`) do not matter, but `true` is not `1`. `$comment` members, which keep CSS comments in the JSON, are left out. [`roundtrip.json`](roundtrip.json) has each conversion's output. A difference is shown as the path of the first one, with the expected value (the case's or the example's, or the first conversion's for the round trip) first.
 
 ## Expressions
 
@@ -269,14 +269,14 @@ This checks conversion only: whether each implementation writes the same JSON as
 | Example | CSS to JSON | Same as the example's JSON | CSS → JSON → CSS → JSON stable | Example's JSON → CSS → JSON |
 |---|---|---|---|---|
 | 1-core | ok | same | yes | yes |
-| 2-vector-polygon | ok | /stylingRules/0/nestedRules/0/$comment: missing | yes | /stylingRules/0/nestedRules/0/$comment: missing |
-| 3-vector-line | ok | /stylingRules/0/nestedRules/0/nestedRules/0/$comment: missing | yes | /stylingRules/0/nestedRules/0/nestedRules/0/$comment: missing |
-| 4-vector-point | ok | /stylingRules/0/nestedRules/0/nestedRules/0/$comment: missing | yes | /stylingRules/0/nestedRules/0/nestedRules/0/$comment: missing |
+| 2-vector-polygon | ok | /stylingRules/0/nestedRules/0/nestedRules/3/symbolizer/marker/elements/0/position: `{"x": 20.0, "y": 0.0}` vs `[20, 0]` | yes | /stylingRules/0/nestedRules/0/nestedRules/3/symbolizer/marker/elements/0/position: `{"x": 20.0, "y": 0.0}` vs `[20.0, 0.0]` |
+| 3-vector-line | ok | same | yes | yes |
+| 4-vector-point | ok | /stylingRules/0/nestedRules/0/nestedRules/0/nestedRules/0/symbolizer/marker/elements/value/position: `{"x": 20.0, "y": 0.0}` vs `[20, 0]` | yes | /stylingRules/0/nestedRules/0/nestedRules/0/nestedRules/0/symbolizer/marker/elements/value/position: `{"x": 20.0, "y": 0.0}` vs `[20.0, 0.0]` |
 | 5-coverage-dem | ok | same | yes | yes |
 | 6-coverage-sentinel2 | ok | /stylingRules/0/nestedRules/0/symbolizer/colorChannels: missing | yes | /stylingRules/0/nestedRules/0/symbolizer/colorChannels: missing |
 | 7-coverage-ndvi | ok | same | yes | yes |
-| 8-coverage-hillshading | ok | /stylingRules/0/nestedRules/0/symbolizer/$comment: missing | yes | /stylingRules/0/nestedRules/0/symbolizer/$comment: missing |
-| 9-coverage-hillshading-opacity | ok | /stylingRules/0/$comment: missing | yes | /stylingRules/0/$comment: missing |
+| 8-coverage-hillshading | ok | same | yes | yes |
+| 9-coverage-hillshading-opacity | ok | same | yes | yes |
 | 10-natural_earth_economies | ok | /metadata/abstract: `"This style is used to draw the economic status...` vs `"This style is used to draw the economic status...` | yes | to CartoSym-CSS: error: Warning: Value type mismatch (1:306) |
 | 11-natural_earth_continents | ok | /stylingRules/5/nestedRules/0/symbolizer/label/elements/2/position/args: added (`[10, 4]`) | yes | /stylingRules/5/nestedRules/0/symbolizer/label/elements/2/position: `{"x": 10.0, "y": -4.0}` vs `[10.0, -4.0]` |
 
