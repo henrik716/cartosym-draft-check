@@ -11,8 +11,9 @@ Styles (each 1-core/examples/<name>.cscss with its <name>.cs.json in the checkou
   2. that CartoSym-JSON -> CartoSym-CSS -> CartoSym-JSON; stable if it is the CartoSym-JSON of step 1
   3. the example's CartoSym-JSON -> CartoSym-CSS -> CartoSym-JSON; compared with the example's CartoSym-JSON
 
-JSON is compared as data (member order and the spelling of numbers do not matter; true is not 1); a
-difference is reported as the path of the first one. libCartoSym is cs-canif from the pip package, or the
+JSON is compared as data (member order and the spelling of numbers do not matter; true is not 1), and
+`$comment` members (CSS comments kept in the JSON) are left out; a difference is reported as the path of
+the first one. roundtrip.json also keeps each conversion's output, to see a difference in full. libCartoSym is cs-canif from the pip package, or the
 build given by CS_CANIF (see adapters.py); REPORT_DIR chooses where the report goes, as for run.py.
 """
 
@@ -93,7 +94,7 @@ def diff(a, b, path: str = "") -> str | None:
         if type(a) is not type(b):
             return f"{path or '/'}: `{show(a)}` vs `{show(b)}`"
     if isinstance(a, dict):
-        for k in sorted(set(a) | set(b)):
+        for k in sorted((set(a) | set(b)) - {"$comment"}):
             if k not in b:
                 return f"{path}/{k}: missing"
             if k not in a:
@@ -138,7 +139,7 @@ def expression_trip(convert, text: str, case_json) -> dict:
     if err:
         r["to_json"] = err
         return r
-    r["to_json"] = "ok"
+    r["to_json"], r["json"] = "ok", j1
     if case_json is not None:
         r["vs_case"] = diff(case_json, j1) or "same"
     o = convert(json.dumps(j1), "cql2json", "cql2")
@@ -163,6 +164,7 @@ def style_trip(convert, css: str, spec_json) -> dict:
     else:
         j1, err = _load(o.value)
         r["css_to_json"] = err or "ok"
+        r["json"] = j1 if not err else o.value
         if not err:
             r["vs_spec"] = diff(spec_json, j1) or "same"
             r["stable"] = _json_css_json(convert, j1, j1)
@@ -250,7 +252,8 @@ def main(spec: Path) -> int:
               "- **pycartosym:** expressions with `cql2.to_cql2_json(cql2.parse_text(text))` and "
               "`cql2.to_cql2_text(json)`; styles with `cartosym in.cscss -o out.cs.json` and back.",
               "- JSON is compared as data: member order and the spelling of numbers (`2` and `2.0`) do not matter, "
-              "but `true` is not `1`. A difference is shown as the path of the first one, with the expected value "
+              "but `true` is not `1`. `$comment` members, which keep CSS comments in the JSON, are left out. "
+              "[`roundtrip.json`](roundtrip.json) has each conversion's output. A difference is shown as the path of the first one, with the expected value "
               "(the case's or the example's, or the first conversion's for the round trip) first.",
               ""]
 

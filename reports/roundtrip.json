@@ -5,139 +5,318 @@
     "to_json": "ok",
     "vs_case": "same",
     "text": "ACOS(1)",
-    "stable": "/op: `\"acos\"` vs `\"ACOS\"`"
+    "stable": "/op: `\"acos\"` vs `\"ACOS\"`",
+    "json": {
+     "args": [
+      1
+     ],
+     "op": "acos"
+    }
    },
    "math-asin": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "ASIN(1)",
-    "stable": "/op: `\"asin\"` vs `\"ASIN\"`"
+    "stable": "/op: `\"asin\"` vs `\"ASIN\"`",
+    "json": {
+     "args": [
+      1
+     ],
+     "op": "asin"
+    }
    },
    "math-atan": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "ATAN(1)",
-    "stable": "/op: `\"atan\"` vs `\"ATAN\"`"
+    "stable": "/op: `\"atan\"` vs `\"ATAN\"`",
+    "json": {
+     "args": [
+      1
+     ],
+     "op": "atan"
+    }
    },
    "math-atan2": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "ATAN2(1, -1)",
-    "stable": "/op: `\"atan2\"` vs `\"ATAN2\"`"
+    "stable": "/op: `\"atan2\"` vs `\"ATAN2\"`",
+    "json": {
+     "args": [
+      1,
+      -1
+     ],
+     "op": "atan2"
+    }
    },
    "math-ceil": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "CEIL(-2.5)",
-    "stable": "/op: `\"ceil\"` vs `\"CEIL\"`"
+    "stable": "/op: `\"ceil\"` vs `\"CEIL\"`",
+    "json": {
+     "args": [
+      -2.5
+     ],
+     "op": "ceil"
+    }
    },
    "math-ceil-integer": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "CEIL(2.5)",
-    "stable": "/op: `\"ceil\"` vs `\"CEIL\"`"
+    "stable": "/op: `\"ceil\"` vs `\"CEIL\"`",
+    "json": {
+     "args": [
+      2.5
+     ],
+     "op": "ceil"
+    }
    },
    "math-floor-integer": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "FLOOR(2.5)",
-    "stable": "/op: `\"floor\"` vs `\"FLOOR\"`"
+    "stable": "/op: `\"floor\"` vs `\"FLOOR\"`",
+    "json": {
+     "args": [
+      2.5
+     ],
+     "op": "floor"
+    }
    },
    "math-round-integer": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "ROUND(2.5)",
-    "stable": "/op: `\"round\"` vs `\"ROUND\"`"
+    "stable": "/op: `\"round\"` vs `\"ROUND\"`",
+    "json": {
+     "args": [
+      2.5
+     ],
+     "op": "round"
+    }
    },
    "math-cos": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "COS(0)",
-    "stable": "/op: `\"cos\"` vs `\"COS\"`"
+    "stable": "/op: `\"cos\"` vs `\"COS\"`",
+    "json": {
+     "args": [
+      0
+     ],
+     "op": "cos"
+    }
    },
    "math-cosh": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "COSH(0)",
-    "stable": "/op: `\"cosh\"` vs `\"COSH\"`"
+    "stable": "/op: `\"cosh\"` vs `\"COSH\"`",
+    "json": {
+     "args": [
+      0
+     ],
+     "op": "cosh"
+    }
    },
    "math-exp": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "EXP(1)",
-    "stable": "/op: `\"exp\"` vs `\"EXP\"`"
+    "stable": "/op: `\"exp\"` vs `\"EXP\"`",
+    "json": {
+     "args": [
+      1
+     ],
+     "op": "exp"
+    }
    },
    "math-log10": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "LOG10(1000)",
-    "stable": "/op: `\"log10\"` vs `\"LOG10\"`"
+    "stable": "/op: `\"log10\"` vs `\"LOG10\"`",
+    "json": {
+     "args": [
+      1000
+     ],
+     "op": "log10"
+    }
    },
    "math-sin": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "SIN(0)",
-    "stable": "/op: `\"sin\"` vs `\"SIN\"`"
+    "stable": "/op: `\"sin\"` vs `\"SIN\"`",
+    "json": {
+     "args": [
+      0
+     ],
+     "op": "sin"
+    }
    },
    "math-sinh": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "SINH(0)",
-    "stable": "/op: `\"sinh\"` vs `\"SINH\"`"
+    "stable": "/op: `\"sinh\"` vs `\"SINH\"`",
+    "json": {
+     "args": [
+      0
+     ],
+     "op": "sinh"
+    }
    },
    "math-tan": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "TAN(0)",
-    "stable": "/op: `\"tan\"` vs `\"TAN\"`"
+    "stable": "/op: `\"tan\"` vs `\"TAN\"`",
+    "json": {
+     "args": [
+      0
+     ],
+     "op": "tan"
+    }
    },
    "math-tanh": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "TANH(0)",
-    "stable": "/op: `\"tanh\"` vs `\"TANH\"`"
+    "stable": "/op: `\"tanh\"` vs `\"TANH\"`",
+    "json": {
+     "args": [
+      0
+     ],
+     "op": "tanh"
+    }
    },
    "math-random": {
     "to_json": "ok",
     "vs_case": "same",
     "text": ">=0 AND <1",
-    "stable": "text does not parse: error: Failed to parse in.cql2 as a CQL2-Text expression"
+    "stable": "text does not parse: error: Failed to parse in.cql2 as a CQL2-Text expression",
+    "json": {
+     "args": [
+      {
+       "args": [
+        {
+         "args": [],
+         "op": "random"
+        },
+        0
+       ],
+       "op": ">="
+      },
+      {
+       "args": [
+        {
+         "args": [],
+         "op": "random"
+        },
+        1
+       ],
+       "op": "<"
+      }
+     ],
+     "op": "and"
+    }
    },
    "text-contains": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "CONTAINS('Oslo', 'sl')",
-    "stable": "/op: `\"contains\"` vs `\"CONTAINS\"`"
+    "stable": "/op: `\"contains\"` vs `\"CONTAINS\"`",
+    "json": {
+     "args": [
+      "Oslo",
+      "sl"
+     ],
+     "op": "contains"
+    }
    },
    "text-starts-with": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "STARTSWITH('Oslo', 'Os')",
-    "stable": "/op: `\"startsWith\"` vs `\"STARTSWITH\"`"
+    "stable": "/op: `\"startsWith\"` vs `\"STARTSWITH\"`",
+    "json": {
+     "args": [
+      "Oslo",
+      "Os"
+     ],
+     "op": "startsWith"
+    }
    },
    "text-ends-with": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "ENDSWITH('Oslo', 'lo')",
-    "stable": "/op: `\"endsWith\"` vs `\"ENDSWITH\"`"
+    "stable": "/op: `\"endsWith\"` vs `\"ENDSWITH\"`",
+    "json": {
+     "args": [
+      "Oslo",
+      "lo"
+     ],
+     "op": "endsWith"
+    }
    },
    "text-not-contains": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "NOT CONTAINS('Oslo', 'sl')",
-    "stable": "/args/0/op: `\"contains\"` vs `\"CONTAINS\"`"
+    "stable": "/args/0/op: `\"contains\"` vs `\"CONTAINS\"`",
+    "json": {
+     "args": [
+      {
+       "args": [
+        "Oslo",
+        "sl"
+       ],
+       "op": "contains"
+      }
+     ],
+     "op": "not"
+    }
    },
    "text-not-starts-with": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "NOT STARTSWITH('Oslo', 'sl')",
-    "stable": "/args/0/op: `\"startsWith\"` vs `\"STARTSWITH\"`"
+    "stable": "/args/0/op: `\"startsWith\"` vs `\"STARTSWITH\"`",
+    "json": {
+     "args": [
+      {
+       "args": [
+        "Oslo",
+        "sl"
+       ],
+       "op": "startsWith"
+      }
+     ],
+     "op": "not"
+    }
    },
    "text-not-ends-with": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "NOT ENDSWITH('Oslo', 'lo')",
-    "stable": "/args/0/op: `\"endsWith\"` vs `\"ENDSWITH\"`"
+    "stable": "/args/0/op: `\"endsWith\"` vs `\"ENDSWITH\"`",
+    "json": {
+     "args": [
+      {
+       "args": [
+        "Oslo",
+        "lo"
+       ],
+       "op": "endsWith"
+      }
+     ],
+     "op": "not"
+    }
    },
    "cond-string-then": {
     "to_json": "error: Failed to parse in.cql2 as a CQL2-Text expression",
@@ -155,43 +334,96 @@
     "to_json": "ok",
     "vs_case": "same",
     "text": "3 < ABS(-5)",
-    "stable": "/args/1/op: `\"abs\"` vs `\"ABS\"`"
+    "stable": "/args/1/op: `\"abs\"` vs `\"ABS\"`",
+    "json": {
+     "args": [
+      3,
+      {
+       "args": [
+        -5
+       ],
+       "op": "abs"
+      }
+     ],
+     "op": "<"
+    }
    },
    "fn-call": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "ABS(-2)",
-    "stable": "/op: `\"abs\"` vs `\"ABS\"`"
+    "stable": "/op: `\"abs\"` vs `\"ABS\"`",
+    "json": {
+     "args": [
+      -2
+     ],
+     "op": "abs"
+    }
    },
    "fn-wrong-arity": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "POW(2)",
-    "stable": "/op: `\"pow\"` vs `\"POW\"`"
+    "stable": "/op: `\"pow\"` vs `\"POW\"`",
+    "json": {
+     "args": [
+      2
+     ],
+     "op": "pow"
+    }
    },
    "fn-wrong-type": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "'a' ^ 2",
-    "stable": "/op: `\"pow\"` vs `\"^\"`"
+    "stable": "/op: `\"pow\"` vs `\"^\"`",
+    "json": {
+     "args": [
+      "a",
+      2
+     ],
+     "op": "pow"
+    }
    },
    "fn-int-to-real": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "ATAN2(1, 1)",
-    "stable": "/op: `\"atan2\"` vs `\"ATAN2\"`"
+    "stable": "/op: `\"atan2\"` vs `\"ATAN2\"`",
+    "json": {
+     "args": [
+      1,
+      1
+     ],
+     "op": "atan2"
+    }
    },
    "fn-standard": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "MAX(1, 5)",
-    "stable": "/op: `\"max\"` vs `\"MAX\"`"
+    "stable": "/op: `\"max\"` vs `\"MAX\"`",
+    "json": {
+     "args": [
+      1,
+      5
+     ],
+     "op": "max"
+    }
    },
    "fn-standard-wrong-arity": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "ATAN2(1, 1, 1)",
-    "stable": "/op: `\"atan2\"` vs `\"ATAN2\"`"
+    "stable": "/op: `\"atan2\"` vs `\"ATAN2\"`",
+    "json": {
+     "args": [
+      1,
+      1,
+      1
+     ],
+     "op": "atan2"
+    }
    },
    "core-literal-string": {
     "to_json": "error: timeout",
@@ -203,187 +435,485 @@
     "to_json": "ok",
     "vs_case": "same",
     "text": "3.25",
-    "stable": "yes"
+    "stable": "yes",
+    "json": 3.25
    },
    "core-literal-boolean": {
     "to_json": "ok",
     "vs_case": "/: `true` vs `{\"property\": \"true\"}`",
     "text": "true",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "property": "true"
+    }
    },
    "core-array": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "A_EQUALS((1, 2, 3), (1, 2, 3))",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      [
+       1,
+       2,
+       3
+      ],
+      [
+       1,
+       2,
+       3
+      ]
+     ],
+     "op": "a_equals"
+    }
    },
    "arith-add": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "1 + 2",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      1,
+      2
+     ],
+     "op": "+"
+    }
    },
    "arith-sub": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "5 - 7",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      5,
+      7
+     ],
+     "op": "-"
+    }
    },
    "arith-mul": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "3 * 4",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      3,
+      4
+     ],
+     "op": "*"
+    }
    },
    "arith-div-reals": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "7.0 / 2",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      7.0,
+      2
+     ],
+     "op": "/"
+    }
    },
    "arith-div-integers": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "7 / 2",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      7,
+      2
+     ],
+     "op": "/"
+    }
    },
    "arith-int-div": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "7 DIV 2",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      7,
+      2
+     ],
+     "op": "div"
+    }
    },
    "arith-int-div-negative": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "-7 DIV 2",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      -7,
+      2
+     ],
+     "op": "div"
+    }
    },
    "arith-mod": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "7  3",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      7,
+      3
+     ],
+     "op": null
+    }
    },
    "arith-mod-negative": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "-7  3",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      -7,
+      3
+     ],
+     "op": null
+    }
    },
    "arith-pow": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "2 ^ 10",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      2,
+      10
+     ],
+     "op": "^"
+    }
    },
    "core-and": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "1 < 2 AND 3 < 4",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      {
+       "args": [
+        1,
+        2
+       ],
+       "op": "<"
+      },
+      {
+       "args": [
+        3,
+        4
+       ],
+       "op": "<"
+      }
+     ],
+     "op": "and"
+    }
    },
    "core-or": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "1 > 2 OR 3 < 4",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      {
+       "args": [
+        1,
+        2
+       ],
+       "op": ">"
+      },
+      {
+       "args": [
+        3,
+        4
+       ],
+       "op": "<"
+      }
+     ],
+     "op": "or"
+    }
    },
    "core-not": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "NOT(1 = 2)",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      {
+       "args": [
+        1,
+        2
+       ],
+       "op": "="
+      }
+     ],
+     "op": "not"
+    }
    },
    "core-not-in-and": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "1 < 2 AND NOT(3 = 4)",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      {
+       "args": [
+        1,
+        2
+       ],
+       "op": "<"
+      },
+      {
+       "args": [
+        {
+         "args": [
+          3,
+          4
+         ],
+         "op": "="
+        }
+       ],
+       "op": "not"
+      }
+     ],
+     "op": "and"
+    }
    },
    "core-equal": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "2 = 2",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      2,
+      2
+     ],
+     "op": "="
+    }
    },
    "core-not-equal": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "2 <> 3",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      2,
+      3
+     ],
+     "op": "<>"
+    }
    },
    "core-lesser-equal": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "2 <= 2",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      2,
+      2
+     ],
+     "op": "<="
+    }
    },
    "core-between": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "5 BETWEEN 1 AND 10",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      5,
+      {
+       "args": [
+        1,
+        10
+       ],
+       "op": "and"
+      }
+     ],
+     "op": "between"
+    }
    },
    "core-not-between": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "5 NOT BETWEEN 6 AND 10",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      {
+       "args": [
+        5,
+        {
+         "args": [
+          6,
+          10
+         ],
+         "op": "and"
+        }
+       ],
+       "op": "between"
+      }
+     ],
+     "op": "not"
+    }
    },
    "core-in": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "2 IN (1, 2, 3)",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      2,
+      [
+       1,
+       2,
+       3
+      ]
+     ],
+     "op": "in"
+    }
    },
    "core-not-in": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "4  (1, 2, 3)",
-    "stable": "/args: 2 items vs 3"
+    "stable": "/args: 2 items vs 3",
+    "json": {
+     "args": [
+      4,
+      [
+       1,
+       2,
+       3
+      ]
+     ],
+     "op": null
+    }
    },
    "core-is-null": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "null IS null",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      {
+       "property": "null"
+      }
+     ],
+     "op": "isNull"
+    }
    },
    "core-priority": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "1 + 2 * 3",
-    "stable": "/args/0: `{\"args\": [1, 2], \"op\": \"+\"}` vs `1`"
+    "stable": "/args/0: `{\"args\": [1, 2], \"op\": \"+\"}` vs `1`",
+    "json": {
+     "args": [
+      {
+       "args": [
+        1,
+        2
+       ],
+       "op": "+"
+      },
+      3
+     ],
+     "op": "*"
+    }
    },
    "text-like-percent": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "'Oslo' LIKE 'O%'",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      "Oslo",
+      "O%"
+     ],
+     "op": "like"
+    }
    },
    "text-like-underscore": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "'Oslo' LIKE 'O_lo'",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      "Oslo",
+      "O_lo"
+     ],
+     "op": "like"
+    }
    },
    "text-like-no-match": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "'Oslo' LIKE 'B%'",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      "Oslo",
+      "B%"
+     ],
+     "op": "like"
+    }
    },
    "text-not-like": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "'Oslo' NOT LIKE 'B%'",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      {
+       "args": [
+        "Oslo",
+        "B%"
+       ],
+       "op": "like"
+      }
+     ],
+     "op": "not"
+    }
    },
    "text-like-escape": {
     "to_json": "ok",
     "vs_case": "/args/1: `\"50\\\\%\"` vs `\"50%\"`",
     "text": "'50%' LIKE '50%'",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      "50%",
+      "50%"
+     ],
+     "op": "like"
+    }
    },
    "cond-true": {
     "to_json": "error: Failed to parse in.cql2 as a CQL2-Text expression",
@@ -401,289 +931,801 @@
     "to_json": "ok",
     "vs_case": "-",
     "text": "A_CONTAINS((1, 2, 3), (1, 2))",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      [
+       1,
+       2,
+       3
+      ],
+      [
+       1,
+       2
+      ]
+     ],
+     "op": "a_contains"
+    }
    },
    "array-contained-by": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "A_CONTAINEDBY((1, 2), (1, 2, 3))",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      [
+       1,
+       2
+      ],
+      [
+       1,
+       2,
+       3
+      ]
+     ],
+     "op": "a_containedby"
+    }
    },
    "array-equals": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "A_EQUALS((1, 2), (1, 2))",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      [
+       1,
+       2
+      ],
+      [
+       1,
+       2
+      ]
+     ],
+     "op": "a_equals"
+    }
    },
    "array-equals-order": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "A_EQUALS((1, 2), (2, 1))",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      [
+       1,
+       2
+      ],
+      [
+       2,
+       1
+      ]
+     ],
+     "op": "a_equals"
+    }
    },
    "array-overlaps": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "A_OVERLAPS((1, 2), (2, 3))",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      [
+       1,
+       2
+      ],
+      [
+       2,
+       3
+      ]
+     ],
+     "op": "a_overlaps"
+    }
    },
    "array-overlaps-none": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "A_OVERLAPS((1, 2), (3, 4))",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      [
+       1,
+       2
+      ],
+      [
+       3,
+       4
+      ]
+     ],
+     "op": "a_overlaps"
+    }
    },
    "textfn-case-insensitize": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "CASEINSENSITIZE('ABC') = CASEINSENSITIZE('abc')",
-    "stable": "/args/0/op: `\"caseInsensitize\"` vs `\"CASEINSENSITIZE\"`"
+    "stable": "/args/0/op: `\"caseInsensitize\"` vs `\"CASEINSENSITIZE\"`",
+    "json": {
+     "args": [
+      {
+       "args": [
+        "ABC"
+       ],
+       "op": "caseInsensitize"
+      },
+      {
+       "args": [
+        "abc"
+       ],
+       "op": "caseInsensitize"
+      }
+     ],
+     "op": "="
+    }
    },
    "textfn-casei": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "CASEI('ABC') = CASEI('abc')",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      {
+       "args": [
+        "ABC"
+       ],
+       "op": "casei"
+      },
+      {
+       "args": [
+        "abc"
+       ],
+       "op": "casei"
+      }
+     ],
+     "op": "="
+    }
    },
    "textfn-accent-insensitize": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "ACCENTINSENSITIZE('cafu00e9') = ACCENTINSENSITIZE('cafe')",
-    "stable": "/args/0/args/0: `\"café\"` vs `\"cafu00e9\"`"
+    "stable": "/args/0/args/0: `\"café\"` vs `\"cafu00e9\"`",
+    "json": {
+     "args": [
+      {
+       "args": [
+        "café"
+       ],
+       "op": "accentInsensitize"
+      },
+      {
+       "args": [
+        "cafe"
+       ],
+       "op": "accentInsensitize"
+      }
+     ],
+     "op": "="
+    }
    },
    "textfn-accenti-o-stroke": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "ACCENTI('u00d8re') = ACCENTI('Ore')",
-    "stable": "/args/0/args/0: `\"Øre\"` vs `\"u00d8re\"`"
+    "stable": "/args/0/args/0: `\"Øre\"` vs `\"u00d8re\"`",
+    "json": {
+     "args": [
+      {
+       "args": [
+        "Øre"
+       ],
+       "op": "accenti"
+      },
+      {
+       "args": [
+        "Ore"
+       ],
+       "op": "accenti"
+      }
+     ],
+     "op": "="
+    }
    },
    "textfn-accenti": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "ACCENTI('cafu00e9') = ACCENTI('cafe')",
-    "stable": "/args/0/args/0: `\"café\"` vs `\"cafu00e9\"`"
+    "stable": "/args/0/args/0: `\"café\"` vs `\"cafu00e9\"`",
+    "json": {
+     "args": [
+      {
+       "args": [
+        "café"
+       ],
+       "op": "accenti"
+      },
+      {
+       "args": [
+        "cafe"
+       ],
+       "op": "accenti"
+      }
+     ],
+     "op": "="
+    }
    },
    "textfn-upper-case": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "UPPERCASE('abc')",
-    "stable": "/op: `\"upperCase\"` vs `\"UPPERCASE\"`"
+    "stable": "/op: `\"upperCase\"` vs `\"UPPERCASE\"`",
+    "json": {
+     "args": [
+      "abc"
+     ],
+     "op": "upperCase"
+    }
    },
    "textfn-lower-case": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "LOWERCASE('ABC')",
-    "stable": "/op: `\"lowerCase\"` vs `\"LOWERCASE\"`"
+    "stable": "/op: `\"lowerCase\"` vs `\"LOWERCASE\"`",
+    "json": {
+     "args": [
+      "ABC"
+     ],
+     "op": "lowerCase"
+    }
    },
    "textfn-concatenate": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "CONCATENATE('ab', 'cd')",
-    "stable": "/op: `\"concatenate\"` vs `\"CONCATENATE\"`"
+    "stable": "/op: `\"concatenate\"` vs `\"CONCATENATE\"`",
+    "json": {
+     "args": [
+      "ab",
+      "cd"
+     ],
+     "op": "concatenate"
+    }
    },
    "textfn-substitute": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "SUBSTITUTE('a-b-c', '-', '+')",
-    "stable": "/op: `\"substitute\"` vs `\"SUBSTITUTE\"`"
+    "stable": "/op: `\"substitute\"` vs `\"SUBSTITUTE\"`",
+    "json": {
+     "args": [
+      "a-b-c",
+      "-",
+      "+"
+     ],
+     "op": "substitute"
+    }
    },
    "textfn-format": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "FORMAT('%d items', 3)",
-    "stable": "/op: `\"format\"` vs `\"FORMAT\"`"
+    "stable": "/op: `\"format\"` vs `\"FORMAT\"`",
+    "json": {
+     "args": [
+      "%d items",
+      3
+     ],
+     "op": "format"
+    }
    },
    "math-abs": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "ABS(-2)",
-    "stable": "/op: `\"abs\"` vs `\"ABS\"`"
+    "stable": "/op: `\"abs\"` vs `\"ABS\"`",
+    "json": {
+     "args": [
+      -2
+     ],
+     "op": "abs"
+    }
    },
    "math-pow": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "2 ^ 3",
-    "stable": "/op: `\"pow\"` vs `\"^\"`"
+    "stable": "/op: `\"pow\"` vs `\"^\"`",
+    "json": {
+     "args": [
+      2,
+      3
+     ],
+     "op": "pow"
+    }
    },
    "math-min": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "MIN(2, 3)",
-    "stable": "/op: `\"min\"` vs `\"MIN\"`"
+    "stable": "/op: `\"min\"` vs `\"MIN\"`",
+    "json": {
+     "args": [
+      2,
+      3
+     ],
+     "op": "min"
+    }
    },
    "math-max": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "MAX(2, 3)",
-    "stable": "/op: `\"max\"` vs `\"MAX\"`"
+    "stable": "/op: `\"max\"` vs `\"MAX\"`",
+    "json": {
+     "args": [
+      2,
+      3
+     ],
+     "op": "max"
+    }
    },
    "math-max-several": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "MAX(1, 5, 3)",
-    "stable": "/op: `\"max\"` vs `\"MAX\"`"
+    "stable": "/op: `\"max\"` vs `\"MAX\"`",
+    "json": {
+     "args": [
+      1,
+      5,
+      3
+     ],
+     "op": "max"
+    }
    },
    "math-min-one": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "MIN(7)",
-    "stable": "/op: `\"min\"` vs `\"MIN\"`"
+    "stable": "/op: `\"min\"` vs `\"MIN\"`",
+    "json": {
+     "args": [
+      7
+     ],
+     "op": "min"
+    }
    },
    "math-log": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "LOG(1)",
-    "stable": "/op: `\"log\"` vs `\"LOG\"`"
+    "stable": "/op: `\"log\"` vs `\"LOG\"`",
+    "json": {
+     "args": [
+      1
+     ],
+     "op": "log"
+    }
    },
    "math-round-half": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "ROUND(2.5)",
-    "stable": "/op: `\"round\"` vs `\"ROUND\"`"
+    "stable": "/op: `\"round\"` vs `\"ROUND\"`",
+    "json": {
+     "args": [
+      2.5
+     ],
+     "op": "round"
+    }
    },
    "math-round-negative-half": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "ROUND(-2.5)",
-    "stable": "/op: `\"round\"` vs `\"ROUND\"`"
+    "stable": "/op: `\"round\"` vs `\"ROUND\"`",
+    "json": {
+     "args": [
+      -2.5
+     ],
+     "op": "round"
+    }
    },
    "math-sqrt": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "SQRT(16)",
-    "stable": "/op: `\"sqrt\"` vs `\"SQRT\"`"
+    "stable": "/op: `\"sqrt\"` vs `\"SQRT\"`",
+    "json": {
+     "args": [
+      16
+     ],
+     "op": "sqrt"
+    }
    },
    "math-floor": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "FLOOR(-1.5)",
-    "stable": "/op: `\"floor\"` vs `\"FLOOR\"`"
+    "stable": "/op: `\"floor\"` vs `\"FLOOR\"`",
+    "json": {
+     "args": [
+      -1.5
+     ],
+     "op": "floor"
+    }
    },
    "neq-equal-operands": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "2 <> 2",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      2,
+      2
+     ],
+     "op": "<>"
+    }
    },
    "neq-reversed": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "3 <> 2",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      3,
+      2
+     ],
+     "op": "<>"
+    }
    },
    "neq-larger-first": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "10 <> 2",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      10,
+      2
+     ],
+     "op": "<>"
+    }
    },
    "neq-text": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "'a' <> 'b'",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      "a",
+      "b"
+     ],
+     "op": "<>"
+    }
    },
    "neq-text-equal": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "'a' <> 'a'",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      "a",
+      "a"
+     ],
+     "op": "<>"
+    }
    },
    "neq-no-spaces": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "2 <> 3",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      2,
+      3
+     ],
+     "op": "<>"
+    }
    },
    "neq-arithmetic": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "1 + 1 <> 3",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      {
+       "args": [
+        1,
+        1
+       ],
+       "op": "+"
+      },
+      3
+     ],
+     "op": "<>"
+    }
    },
    "neq-and": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "1 <> 2 AND 3 <> 4",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      {
+       "args": [
+        1,
+        2
+       ],
+       "op": "<>"
+      },
+      {
+       "args": [
+        3,
+        4
+       ],
+       "op": "<>"
+      }
+     ],
+     "op": "and"
+    }
    },
    "neq-compared-to-true": {
     "to_json": "ok",
     "vs_case": "/args/1: `true` vs `{\"property\": \"true\"}`",
     "text": "2 <> 3 = true",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      {
+       "args": [
+        2,
+        3
+       ],
+       "op": "<>"
+      },
+      {
+       "property": "true"
+      }
+     ],
+     "op": "="
+    }
    },
    "neq-not": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "NOT(2 <> 2)",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      {
+       "args": [
+        2,
+        2
+       ],
+       "op": "<>"
+      }
+     ],
+     "op": "not"
+    }
    },
    "null-arithmetic": {
     "to_json": "ok",
     "vs_case": "/args/0: `null` vs `{\"property\": \"null\"}`",
     "text": "null + 1",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      {
+       "property": "null"
+      },
+      1
+     ],
+     "op": "+"
+    }
    },
    "null-equal": {
     "to_json": "ok",
     "vs_case": "/args/0: `null` vs `{\"property\": \"null\"}`",
     "text": "null = 1",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      {
+       "property": "null"
+      },
+      1
+     ],
+     "op": "="
+    }
    },
    "null-not-equal": {
     "to_json": "ok",
     "vs_case": "/args/0: `null` vs `{\"property\": \"null\"}`",
     "text": "null <> 1",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      {
+       "property": "null"
+      },
+      1
+     ],
+     "op": "<>"
+    }
    },
    "null-compare": {
     "to_json": "ok",
     "vs_case": "/args/0: `null` vs `{\"property\": \"null\"}`",
     "text": "null > 1",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      {
+       "property": "null"
+      },
+      1
+     ],
+     "op": ">"
+    }
    },
    "null-like": {
     "to_json": "ok",
     "vs_case": "/args/0: `null` vs `{\"property\": \"null\"}`",
     "text": "null LIKE 'a%'",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      {
+       "property": "null"
+      },
+      "a%"
+     ],
+     "op": "like"
+    }
    },
    "null-not": {
     "to_json": "ok",
     "vs_case": "/args/0/args/0: `null` vs `{\"property\": \"null\"}`",
     "text": "NOT(null > 1)",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      {
+       "args": [
+        {
+         "property": "null"
+        },
+        1
+       ],
+       "op": ">"
+      }
+     ],
+     "op": "not"
+    }
    },
    "null-and-true": {
     "to_json": "ok",
     "vs_case": "/args/0/args/0: `null` vs `{\"property\": \"null\"}`",
     "text": "null > 1 AND true",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      {
+       "args": [
+        {
+         "property": "null"
+        },
+        1
+       ],
+       "op": ">"
+      },
+      {
+       "property": "true"
+      }
+     ],
+     "op": "and"
+    }
    },
    "null-and-false": {
     "to_json": "ok",
     "vs_case": "/args/0/args/0: `null` vs `{\"property\": \"null\"}`",
     "text": "null > 1 AND false",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      {
+       "args": [
+        {
+         "property": "null"
+        },
+        1
+       ],
+       "op": ">"
+      },
+      {
+       "property": "false"
+      }
+     ],
+     "op": "and"
+    }
    },
    "null-or-true": {
     "to_json": "ok",
     "vs_case": "/args/0/args/0: `null` vs `{\"property\": \"null\"}`",
     "text": "null > 1 OR true",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      {
+       "args": [
+        {
+         "property": "null"
+        },
+        1
+       ],
+       "op": ">"
+      },
+      {
+       "property": "true"
+      }
+     ],
+     "op": "or"
+    }
    },
    "null-or-false": {
     "to_json": "ok",
     "vs_case": "/args/0/args/0: `null` vs `{\"property\": \"null\"}`",
     "text": "null > 1 OR false",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      {
+       "args": [
+        {
+         "property": "null"
+        },
+        1
+       ],
+       "op": ">"
+      },
+      {
+       "property": "false"
+      }
+     ],
+     "op": "or"
+    }
    },
    "null-is-null": {
     "to_json": "ok",
     "vs_case": "/args/0/args/0: `null` vs `{\"property\": \"null\"}`",
     "text": "null + 1 IS null",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "args": [
+      {
+       "args": [
+        {
+         "property": "null"
+        },
+        1
+       ],
+       "op": "+"
+      }
+     ],
+     "op": "isNull"
+    }
    }
   },
   "pycartosym": {
@@ -691,685 +1733,1743 @@
     "to_json": "ok",
     "vs_case": "same",
     "text": "acos(1)",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "acos",
+     "args": [
+      1
+     ]
+    }
    },
    "math-asin": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "asin(1)",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "asin",
+     "args": [
+      1
+     ]
+    }
    },
    "math-atan": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "atan(1)",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "atan",
+     "args": [
+      1
+     ]
+    }
    },
    "math-atan2": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "atan2(1, -1)",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "atan2",
+     "args": [
+      1,
+      -1
+     ]
+    }
    },
    "math-ceil": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "ceil(-2.5)",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "ceil",
+     "args": [
+      -2.5
+     ]
+    }
    },
    "math-ceil-integer": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "ceil(2.5)",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "ceil",
+     "args": [
+      2.5
+     ]
+    }
    },
    "math-floor-integer": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "floor(2.5)",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "floor",
+     "args": [
+      2.5
+     ]
+    }
    },
    "math-round-integer": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "round(2.5)",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "round",
+     "args": [
+      2.5
+     ]
+    }
    },
    "math-cos": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "cos(0)",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "cos",
+     "args": [
+      0
+     ]
+    }
    },
    "math-cosh": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "cosh(0)",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "cosh",
+     "args": [
+      0
+     ]
+    }
    },
    "math-exp": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "exp(1)",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "exp",
+     "args": [
+      1
+     ]
+    }
    },
    "math-log10": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "log10(1000)",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "log10",
+     "args": [
+      1000
+     ]
+    }
    },
    "math-sin": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "sin(0)",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "sin",
+     "args": [
+      0
+     ]
+    }
    },
    "math-sinh": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "sinh(0)",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "sinh",
+     "args": [
+      0
+     ]
+    }
    },
    "math-tan": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "tan(0)",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "tan",
+     "args": [
+      0
+     ]
+    }
    },
    "math-tanh": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "tanh(0)",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "tanh",
+     "args": [
+      0
+     ]
+    }
    },
    "math-random": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "random() >= 0 and random() < 1",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "and",
+     "args": [
+      {
+       "op": ">=",
+       "args": [
+        {
+         "op": "random",
+         "args": []
+        },
+        0
+       ]
+      },
+      {
+       "op": "<",
+       "args": [
+        {
+         "op": "random",
+         "args": []
+        },
+        1
+       ]
+      }
+     ]
+    }
    },
    "text-contains": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "contains('Oslo', 'sl')",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "contains",
+     "args": [
+      "Oslo",
+      "sl"
+     ]
+    }
    },
    "text-starts-with": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "startsWith('Oslo', 'Os')",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "startsWith",
+     "args": [
+      "Oslo",
+      "Os"
+     ]
+    }
    },
    "text-ends-with": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "endsWith('Oslo', 'lo')",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "endsWith",
+     "args": [
+      "Oslo",
+      "lo"
+     ]
+    }
    },
    "text-not-contains": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "not contains('Oslo', 'sl')",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "not",
+     "args": [
+      {
+       "op": "contains",
+       "args": [
+        "Oslo",
+        "sl"
+       ]
+      }
+     ]
+    }
    },
    "text-not-starts-with": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "not startsWith('Oslo', 'sl')",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "not",
+     "args": [
+      {
+       "op": "startsWith",
+       "args": [
+        "Oslo",
+        "sl"
+       ]
+      }
+     ]
+    }
    },
    "text-not-ends-with": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "not endsWith('Oslo', 'lo')",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "not",
+     "args": [
+      {
+       "op": "endsWith",
+       "args": [
+        "Oslo",
+        "lo"
+       ]
+      }
+     ]
+    }
    },
    "cond-string-then": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "2 > 1 ? 'yes' : 'no'",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "?:",
+     "args": [
+      {
+       "op": ">",
+       "args": [
+        2,
+        1
+       ]
+      },
+      "yes",
+      "no"
+     ]
+    }
    },
    "cond-string-else": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "2 < 1 ? 'yes' : 'no'",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "?:",
+     "args": [
+      {
+       "op": "<",
+       "args": [
+        2,
+        1
+       ]
+      },
+      "yes",
+      "no"
+     ]
+    }
    },
    "rhs-function": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "3 < abs(-5)",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "<",
+     "args": [
+      3,
+      {
+       "op": "abs",
+       "args": [
+        -5
+       ]
+      }
+     ]
+    }
    },
    "fn-call": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "abs(-2)",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "abs",
+     "args": [
+      -2
+     ]
+    }
    },
    "fn-wrong-arity": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "pow(2)",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "pow",
+     "args": [
+      2
+     ]
+    }
    },
    "fn-wrong-type": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "pow('a', 2)",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "pow",
+     "args": [
+      "a",
+      2
+     ]
+    }
    },
    "fn-int-to-real": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "atan2(1, 1)",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "atan2",
+     "args": [
+      1,
+      1
+     ]
+    }
    },
    "fn-standard": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "max(1, 5)",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "max",
+     "args": [
+      1,
+      5
+     ]
+    }
    },
    "fn-standard-wrong-arity": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "atan2(1, 1, 1)",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "atan2",
+     "args": [
+      1,
+      1,
+      1
+     ]
+    }
    },
    "core-literal-string": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "'abc'",
-    "stable": "yes"
+    "stable": "yes",
+    "json": "abc"
    },
    "core-literal-real": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "3.25",
-    "stable": "yes"
+    "stable": "yes",
+    "json": 3.25
    },
    "core-literal-boolean": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "true",
-    "stable": "yes"
+    "stable": "yes",
+    "json": true
    },
    "core-array": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "A_EQUALS([1, 2, 3], [1, 2, 3])",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "a_equals",
+     "args": [
+      [
+       1,
+       2,
+       3
+      ],
+      [
+       1,
+       2,
+       3
+      ]
+     ]
+    }
    },
    "arith-add": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "1 + 2",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "+",
+     "args": [
+      1,
+      2
+     ]
+    }
    },
    "arith-sub": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "5 - 7",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "-",
+     "args": [
+      5,
+      7
+     ]
+    }
    },
    "arith-mul": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "3 * 4",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "*",
+     "args": [
+      3,
+      4
+     ]
+    }
    },
    "arith-div-reals": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "7.0 / 2",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "/",
+     "args": [
+      7.0,
+      2
+     ]
+    }
    },
    "arith-div-integers": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "7 / 2",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "/",
+     "args": [
+      7,
+      2
+     ]
+    }
    },
    "arith-int-div": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "//(7, 2)",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "//",
+     "args": [
+      7,
+      2
+     ]
+    }
    },
    "arith-int-div-negative": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "//(-7, 2)",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "//",
+     "args": [
+      -7,
+      2
+     ]
+    }
    },
    "arith-mod": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "%(7, 3)",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "%",
+     "args": [
+      7,
+      3
+     ]
+    }
    },
    "arith-mod-negative": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "%(-7, 3)",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "%",
+     "args": [
+      -7,
+      3
+     ]
+    }
    },
    "arith-pow": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "2 ^ 10",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "^",
+     "args": [
+      2,
+      10
+     ]
+    }
    },
    "core-and": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "1 < 2 and 3 < 4",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "and",
+     "args": [
+      {
+       "op": "<",
+       "args": [
+        1,
+        2
+       ]
+      },
+      {
+       "op": "<",
+       "args": [
+        3,
+        4
+       ]
+      }
+     ]
+    }
    },
    "core-or": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "1 > 2 or 3 < 4",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "or",
+     "args": [
+      {
+       "op": ">",
+       "args": [
+        1,
+        2
+       ]
+      },
+      {
+       "op": "<",
+       "args": [
+        3,
+        4
+       ]
+      }
+     ]
+    }
    },
    "core-not": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "not 1 = 2",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "not",
+     "args": [
+      {
+       "op": "=",
+       "args": [
+        1,
+        2
+       ]
+      }
+     ]
+    }
    },
    "core-not-in-and": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "1 < 2 and not 3 = 4",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "and",
+     "args": [
+      {
+       "op": "<",
+       "args": [
+        1,
+        2
+       ]
+      },
+      {
+       "op": "not",
+       "args": [
+        {
+         "op": "=",
+         "args": [
+          3,
+          4
+         ]
+        }
+       ]
+      }
+     ]
+    }
    },
    "core-equal": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "2 = 2",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "=",
+     "args": [
+      2,
+      2
+     ]
+    }
    },
    "core-not-equal": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "2 <> 3",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "<>",
+     "args": [
+      2,
+      3
+     ]
+    }
    },
    "core-lesser-equal": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "2 <= 2",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "<=",
+     "args": [
+      2,
+      2
+     ]
+    }
    },
    "core-between": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "5 between 1 and 10",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "between",
+     "args": [
+      5,
+      1,
+      10
+     ]
+    }
    },
    "core-not-between": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "5 not between 6 and 10",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "not",
+     "args": [
+      {
+       "op": "between",
+       "args": [
+        5,
+        6,
+        10
+       ]
+      }
+     ]
+    }
    },
    "core-in": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "2 in (1, 2, 3)",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "in",
+     "args": [
+      2,
+      [
+       1,
+       2,
+       3
+      ]
+     ]
+    }
    },
    "core-not-in": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "4 not in (1, 2, 3)",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "not",
+     "args": [
+      {
+       "op": "in",
+       "args": [
+        4,
+        [
+         1,
+         2,
+         3
+        ]
+       ]
+      }
+     ]
+    }
    },
    "core-is-null": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "'None' is null",
-    "stable": "/args/0: `null` vs `\"None\"`"
+    "stable": "/args/0: `null` vs `\"None\"`",
+    "json": {
+     "op": "isNull",
+     "args": [
+      null
+     ]
+    }
    },
    "core-priority": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "(1 + 2) * 3",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "*",
+     "args": [
+      {
+       "op": "+",
+       "args": [
+        1,
+        2
+       ]
+      },
+      3
+     ]
+    }
    },
    "text-like-percent": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "'Oslo' like 'O%'",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "like",
+     "args": [
+      "Oslo",
+      "O%"
+     ]
+    }
    },
    "text-like-underscore": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "'Oslo' like 'O_lo'",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "like",
+     "args": [
+      "Oslo",
+      "O_lo"
+     ]
+    }
    },
    "text-like-no-match": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "'Oslo' like 'B%'",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "like",
+     "args": [
+      "Oslo",
+      "B%"
+     ]
+    }
    },
    "text-not-like": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "'Oslo' not like 'B%'",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "not",
+     "args": [
+      {
+       "op": "like",
+       "args": [
+        "Oslo",
+        "B%"
+       ]
+      }
+     ]
+    }
    },
    "text-like-escape": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "'50%' like '50\\%'",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "like",
+     "args": [
+      "50%",
+      "50\\%"
+     ]
+    }
    },
    "cond-true": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "1 < 2 ? 10 : 20",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "?:",
+     "args": [
+      {
+       "op": "<",
+       "args": [
+        1,
+        2
+       ]
+      },
+      10,
+      20
+     ]
+    }
    },
    "cond-false": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "1 > 2 ? 10 : 20",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "?:",
+     "args": [
+      {
+       "op": ">",
+       "args": [
+        1,
+        2
+       ]
+      },
+      10,
+      20
+     ]
+    }
    },
    "array-contains": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "A_CONTAINS([1, 2, 3], [1, 2])",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "a_contains",
+     "args": [
+      [
+       1,
+       2,
+       3
+      ],
+      [
+       1,
+       2
+      ]
+     ]
+    }
    },
    "array-contained-by": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "A_CONTAINEDBY([1, 2], [1, 2, 3])",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "a_containedby",
+     "args": [
+      [
+       1,
+       2
+      ],
+      [
+       1,
+       2,
+       3
+      ]
+     ]
+    }
    },
    "array-equals": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "A_EQUALS([1, 2], [1, 2])",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "a_equals",
+     "args": [
+      [
+       1,
+       2
+      ],
+      [
+       1,
+       2
+      ]
+     ]
+    }
    },
    "array-equals-order": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "A_EQUALS([1, 2], [2, 1])",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "a_equals",
+     "args": [
+      [
+       1,
+       2
+      ],
+      [
+       2,
+       1
+      ]
+     ]
+    }
    },
    "array-overlaps": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "A_OVERLAPS([1, 2], [2, 3])",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "a_overlaps",
+     "args": [
+      [
+       1,
+       2
+      ],
+      [
+       2,
+       3
+      ]
+     ]
+    }
    },
    "array-overlaps-none": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "A_OVERLAPS([1, 2], [3, 4])",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "a_overlaps",
+     "args": [
+      [
+       1,
+       2
+      ],
+      [
+       3,
+       4
+      ]
+     ]
+    }
    },
    "textfn-case-insensitize": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "caseInsensitize('ABC') = caseInsensitize('abc')",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "=",
+     "args": [
+      {
+       "op": "caseInsensitize",
+       "args": [
+        "ABC"
+       ]
+      },
+      {
+       "op": "caseInsensitize",
+       "args": [
+        "abc"
+       ]
+      }
+     ]
+    }
    },
    "textfn-casei": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "CASEI('ABC') = CASEI('abc')",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "=",
+     "args": [
+      {
+       "op": "casei",
+       "args": [
+        "ABC"
+       ]
+      },
+      {
+       "op": "casei",
+       "args": [
+        "abc"
+       ]
+      }
+     ]
+    }
    },
    "textfn-accent-insensitize": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "accentInsensitize('café') = accentInsensitize('cafe')",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "=",
+     "args": [
+      {
+       "op": "accentInsensitize",
+       "args": [
+        "café"
+       ]
+      },
+      {
+       "op": "accentInsensitize",
+       "args": [
+        "cafe"
+       ]
+      }
+     ]
+    }
    },
    "textfn-accenti-o-stroke": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "ACCENTI('Øre') = ACCENTI('Ore')",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "=",
+     "args": [
+      {
+       "op": "accenti",
+       "args": [
+        "Øre"
+       ]
+      },
+      {
+       "op": "accenti",
+       "args": [
+        "Ore"
+       ]
+      }
+     ]
+    }
    },
    "textfn-accenti": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "ACCENTI('café') = ACCENTI('cafe')",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "=",
+     "args": [
+      {
+       "op": "accenti",
+       "args": [
+        "café"
+       ]
+      },
+      {
+       "op": "accenti",
+       "args": [
+        "cafe"
+       ]
+      }
+     ]
+    }
    },
    "textfn-upper-case": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "UPPERCASE('abc')",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "upperCase",
+     "args": [
+      "abc"
+     ]
+    }
    },
    "textfn-lower-case": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "LOWERCASE('ABC')",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "lowerCase",
+     "args": [
+      "ABC"
+     ]
+    }
    },
    "textfn-concatenate": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "CONCATENATE('ab', 'cd')",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "concatenate",
+     "args": [
+      "ab",
+      "cd"
+     ]
+    }
    },
    "textfn-substitute": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "SUBSTITUTE('a-b-c', '-', '+')",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "substitute",
+     "args": [
+      "a-b-c",
+      "-",
+      "+"
+     ]
+    }
    },
    "textfn-format": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "FORMAT('%d items', 3)",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "format",
+     "args": [
+      "%d items",
+      3
+     ]
+    }
    },
    "math-abs": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "abs(-2)",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "abs",
+     "args": [
+      -2
+     ]
+    }
    },
    "math-pow": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "pow(2, 3)",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "pow",
+     "args": [
+      2,
+      3
+     ]
+    }
    },
    "math-min": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "min(2, 3)",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "min",
+     "args": [
+      2,
+      3
+     ]
+    }
    },
    "math-max": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "max(2, 3)",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "max",
+     "args": [
+      2,
+      3
+     ]
+    }
    },
    "math-max-several": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "max(1, 5, 3)",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "max",
+     "args": [
+      1,
+      5,
+      3
+     ]
+    }
    },
    "math-min-one": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "min(7)",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "min",
+     "args": [
+      7
+     ]
+    }
    },
    "math-log": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "log(1)",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "log",
+     "args": [
+      1
+     ]
+    }
    },
    "math-round-half": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "round(2.5)",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "round",
+     "args": [
+      2.5
+     ]
+    }
    },
    "math-round-negative-half": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "round(-2.5)",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "round",
+     "args": [
+      -2.5
+     ]
+    }
    },
    "math-sqrt": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "sqrt(16)",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "sqrt",
+     "args": [
+      16
+     ]
+    }
    },
    "math-floor": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "floor(-1.5)",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "floor",
+     "args": [
+      -1.5
+     ]
+    }
    },
    "neq-equal-operands": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "2 <> 2",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "<>",
+     "args": [
+      2,
+      2
+     ]
+    }
    },
    "neq-reversed": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "3 <> 2",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "<>",
+     "args": [
+      3,
+      2
+     ]
+    }
    },
    "neq-larger-first": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "10 <> 2",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "<>",
+     "args": [
+      10,
+      2
+     ]
+    }
    },
    "neq-text": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "'a' <> 'b'",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "<>",
+     "args": [
+      "a",
+      "b"
+     ]
+    }
    },
    "neq-text-equal": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "'a' <> 'a'",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "<>",
+     "args": [
+      "a",
+      "a"
+     ]
+    }
    },
    "neq-no-spaces": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "2 <> 3",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "<>",
+     "args": [
+      2,
+      3
+     ]
+    }
    },
    "neq-arithmetic": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "1 + 1 <> 3",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "<>",
+     "args": [
+      {
+       "op": "+",
+       "args": [
+        1,
+        1
+       ]
+      },
+      3
+     ]
+    }
    },
    "neq-and": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "1 <> 2 and 3 <> 4",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "and",
+     "args": [
+      {
+       "op": "<>",
+       "args": [
+        1,
+        2
+       ]
+      },
+      {
+       "op": "<>",
+       "args": [
+        3,
+        4
+       ]
+      }
+     ]
+    }
    },
    "neq-compared-to-true": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "2 <> 3 = true",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "=",
+     "args": [
+      {
+       "op": "<>",
+       "args": [
+        2,
+        3
+       ]
+      },
+      true
+     ]
+    }
    },
    "neq-not": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "not 2 <> 2",
-    "stable": "yes"
+    "stable": "yes",
+    "json": {
+     "op": "not",
+     "args": [
+      {
+       "op": "<>",
+       "args": [
+        2,
+        2
+       ]
+      }
+     ]
+    }
    },
    "null-arithmetic": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "'None' + 1",
-    "stable": "/args/0: `null` vs `\"None\"`"
+    "stable": "/args/0: `null` vs `\"None\"`",
+    "json": {
+     "op": "+",
+     "args": [
+      null,
+      1
+     ]
+    }
    },
    "null-equal": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "'None' = 1",
-    "stable": "/args/0: `null` vs `\"None\"`"
+    "stable": "/args/0: `null` vs `\"None\"`",
+    "json": {
+     "op": "=",
+     "args": [
+      null,
+      1
+     ]
+    }
    },
    "null-not-equal": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "'None' <> 1",
-    "stable": "/args/0: `null` vs `\"None\"`"
+    "stable": "/args/0: `null` vs `\"None\"`",
+    "json": {
+     "op": "<>",
+     "args": [
+      null,
+      1
+     ]
+    }
    },
    "null-compare": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "'None' > 1",
-    "stable": "/args/0: `null` vs `\"None\"`"
+    "stable": "/args/0: `null` vs `\"None\"`",
+    "json": {
+     "op": ">",
+     "args": [
+      null,
+      1
+     ]
+    }
    },
    "null-like": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "'None' like 'a%'",
-    "stable": "/args/0: `null` vs `\"None\"`"
+    "stable": "/args/0: `null` vs `\"None\"`",
+    "json": {
+     "op": "like",
+     "args": [
+      null,
+      "a%"
+     ]
+    }
    },
    "null-not": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "not 'None' > 1",
-    "stable": "/args/0/args/0: `null` vs `\"None\"`"
+    "stable": "/args/0/args/0: `null` vs `\"None\"`",
+    "json": {
+     "op": "not",
+     "args": [
+      {
+       "op": ">",
+       "args": [
+        null,
+        1
+       ]
+      }
+     ]
+    }
    },
    "null-and-true": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "'None' > 1 and true",
-    "stable": "/args/0/args/0: `null` vs `\"None\"`"
+    "stable": "/args/0/args/0: `null` vs `\"None\"`",
+    "json": {
+     "op": "and",
+     "args": [
+      {
+       "op": ">",
+       "args": [
+        null,
+        1
+       ]
+      },
+      true
+     ]
+    }
    },
    "null-and-false": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "'None' > 1 and false",
-    "stable": "/args/0/args/0: `null` vs `\"None\"`"
+    "stable": "/args/0/args/0: `null` vs `\"None\"`",
+    "json": {
+     "op": "and",
+     "args": [
+      {
+       "op": ">",
+       "args": [
+        null,
+        1
+       ]
+      },
+      false
+     ]
+    }
    },
    "null-or-true": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "'None' > 1 or true",
-    "stable": "/args/0/args/0: `null` vs `\"None\"`"
+    "stable": "/args/0/args/0: `null` vs `\"None\"`",
+    "json": {
+     "op": "or",
+     "args": [
+      {
+       "op": ">",
+       "args": [
+        null,
+        1
+       ]
+      },
+      true
+     ]
+    }
    },
    "null-or-false": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "'None' > 1 or false",
-    "stable": "/args/0/args/0: `null` vs `\"None\"`"
+    "stable": "/args/0/args/0: `null` vs `\"None\"`",
+    "json": {
+     "op": "or",
+     "args": [
+      {
+       "op": ">",
+       "args": [
+        null,
+        1
+       ]
+      },
+      false
+     ]
+    }
    },
    "null-is-null": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "'None' + 1 is null",
-    "stable": "/args/0/args/0: `null` vs `\"None\"`"
+    "stable": "/args/0/args/0: `null` vs `\"None\"`",
+    "json": {
+     "op": "isNull",
+     "args": [
+      {
+       "op": "+",
+       "args": [
+        null,
+        1
+       ]
+      }
+     ]
+    }
    }
   }
  },
@@ -1459,79 +3559,3698 @@
     "css_to_json": "ok",
     "vs_spec": "same",
     "stable": "yes",
-    "json_trip": "yes"
+    "json_trip": "yes",
+    "json": {
+     "metadata": {
+      "title": "Styling a land cover layer",
+      "abstract": "Styling land cover data with Style & Symbology Core",
+      "description": "This is a simple example of how to style a land cover layer using Style & Symbology Core."
+     },
+     "stylingRules": [
+      {
+       "selector": {
+        "op": "and",
+        "args": [
+         {
+          "op": "=",
+          "args": [
+           {
+            "sysId": "dataLayer.id"
+           },
+           "Landcover"
+          ]
+         },
+         {
+          "op": "=",
+          "args": [
+           {
+            "sysId": "dataLayer.type"
+           },
+           "vector"
+          ]
+         }
+        ]
+       },
+       "symbolizer": {
+        "visibility": false
+       },
+       "nestedRules": [
+        {
+         "selector": {
+          "op": "and",
+          "args": [
+           {
+            "op": "<",
+            "args": [
+             {
+              "sysId": "viz.sd"
+             },
+             200000
+            ]
+           },
+           {
+            "op": ">",
+            "args": [
+             {
+              "sysId": "viz.date"
+             },
+             {
+              "date": "2020-01-01"
+             }
+            ]
+           }
+          ]
+         },
+         "symbolizer": {
+          "visibility": true,
+          "opacity": 0.5,
+          "zOrder": 1
+         }
+        }
+       ]
+      }
+     ]
+    }
    },
    "2-vector-polygon": {
     "css_to_json": "ok",
     "vs_spec": "same",
     "stable": "/stylingRules/0/nestedRules/0/nestedRules/3/nestedRules/0/symbolizer/marker/elements/value/blackTint: `[107, 95, 42]` vs `\"[107, 95, 42]\"`",
-    "json_trip": "/stylingRules/0/nestedRules/0/nestedRules/3/nestedRules/0/symbolizer/marker/elements/value/blackTint: `[107, 95, 42]` vs `\"[107, 95, 42]\"`"
+    "json_trip": "/stylingRules/0/nestedRules/0/nestedRules/3/nestedRules/0/symbolizer/marker/elements/value/blackTint: `[107, 95, 42]` vs `\"[107, 95, 42]\"`",
+    "json": {
+     "metadata": {
+      "title": "Styling polygon vector features",
+      "abstract": "Basic vector features styling (polygons): land cover in Rondane, Norway (N50 Kartdata)"
+     },
+     "stylingRules": [
+      {
+       "selector": {
+        "op": "and",
+        "args": [
+         {
+          "op": "=",
+          "args": [
+           {
+            "sysId": "dataLayer.id"
+           },
+           "Landcover"
+          ]
+         },
+         {
+          "op": "and",
+          "args": [
+           {
+            "op": "=",
+            "args": [
+             {
+              "sysId": "dataLayer.type"
+             },
+             "vector"
+            ]
+           },
+           {
+            "op": "=",
+            "args": [
+             {
+              "sysId": "dataLayer.featuresGeometryDimensions"
+             },
+             2
+            ]
+           }
+          ]
+         }
+        ]
+       },
+       "symbolizer": {
+        "$comment": "Do not show Landcover layer by default\nNo default Dot at each polygon's centroid",
+        "visibility": false,
+        "marker": null
+       },
+       "nestedRules": [
+        {
+         "$comment": "Show land cover if zoomed in more than 1:200,000 for data valid within visualization's selected time range",
+         "selector": {
+          "op": "and",
+          "args": [
+           {
+            "op": "and",
+            "args": [
+             {
+              "op": "<",
+              "args": [
+               {
+                "sysId": "viz.sd"
+               },
+               200000
+              ]
+             },
+             {
+              "op": ">=",
+              "args": [
+               {
+                "property": "validDate"
+               },
+               {
+                "sysId": "viz.timeInterval.start.date"
+               }
+              ]
+             }
+            ]
+           },
+           {
+            "op": "<=",
+            "args": [
+             {
+              "property": "validDate"
+             },
+             {
+              "sysId": "viz.timeInterval.end.date"
+             }
+            ]
+           }
+          ]
+         },
+         "symbolizer": {
+          "$comment": "Open land and the other classes: a light neutral fill through which the relief below shows",
+          "visibility": true,
+          "opacity": 0.8,
+          "zOrder": 1,
+          "fill": {
+           "color": [
+            214,
+            207,
+            189
+           ],
+           "opacity": 0.5
+          },
+          "stroke": {
+           "color": [
+            168,
+            160,
+            140
+           ],
+           "opacity": 1.0,
+           "width": {
+            "px": 0.75
+           }
+          }
+         },
+         "nestedRules": [
+          {
+           "$comment": "Select different fill and stroke color based on class property",
+           "selector": {
+            "op": "=",
+            "args": [
+             {
+              "property": "class"
+             },
+             "bog"
+            ]
+           },
+           "symbolizer": {
+            "fill": {
+             "alter": true,
+             "color": [
+              203,
+              184,
+              103
+             ]
+            },
+            "stroke": {
+             "alter": true,
+             "color": [
+              143,
+              132,
+              72
+             ]
+            }
+           }
+          },
+          {
+           "selector": {
+            "op": "=",
+            "args": [
+             {
+              "property": "class"
+             },
+             "forest"
+            ]
+           },
+           "symbolizer": {
+            "fill": {
+             "alter": true,
+             "color": [
+              79,
+              138,
+              69
+             ]
+            },
+            "stroke": {
+             "alter": true,
+             "color": [
+              61,
+              107,
+              53
+             ]
+            }
+           }
+          },
+          {
+           "selector": {
+            "op": "=",
+            "args": [
+             {
+              "property": "class"
+             },
+             "lake"
+            ]
+           },
+           "symbolizer": {
+            "fill": {
+             "alter": true,
+             "color": [
+              111,
+              163,
+              204
+             ]
+            },
+            "stroke": {
+             "alter": true,
+             "color": [
+              47,
+              109,
+              158
+             ]
+            }
+           }
+          },
+          {
+           "$comment": "If zoomed in more than 1:10,000",
+           "selector": {
+            "op": "<",
+            "args": [
+             {
+              "sysId": "viz.sd"
+             },
+             10000
+            ]
+           },
+           "symbolizer": {
+            "$comment": "Change stroke width to 2 pixels\nAdd a text marker (positioned at centroid + horizontal offset) showing name property",
+            "stroke": {
+             "alter": true,
+             "width": {
+              "px": 2.0
+             }
+            },
+            "marker": {
+             "elements": [
+              {
+               "type": "Text",
+               "position": {
+                "x": 20.0,
+                "y": 0.0
+               },
+               "text": {
+                "property": "name"
+               },
+               "alignment": [
+                "left",
+                "top"
+               ],
+               "font": {
+                "face": "Arial",
+                "size": 14,
+                "bold": false,
+                "italic": true,
+                "opacity": 1.0,
+                "color": [
+                 31,
+                 78,
+                 121
+                ]
+               }
+              }
+             ]
+            }
+           },
+           "nestedRules": [
+            {
+             "$comment": "Add icons at centroid based on land cover class property",
+             "selector": {
+              "op": "=",
+              "args": [
+               {
+                "property": "class"
+               },
+               "bog"
+              ]
+             },
+             "symbolizer": {
+              "marker": {
+               "alter": true,
+               "elements": {
+                "index": 1,
+                "value": {
+                 "type": "Image",
+                 "image": {
+                  "uri": "http://example.com/icons/bog.svg",
+                  "path": "icons/bog.svg",
+                  "id": "bog",
+                  "type": "image/svg+xml",
+                  "ext": "svg"
+                 },
+                 "hotSpot": [
+                  {
+                   "pc": 50
+                  },
+                  {
+                   "pc": 50
+                  }
+                 ],
+                 "tint": "white",
+                 "blackTint": [
+                  107,
+                  95,
+                  42
+                 ],
+                 "alphaThreshold": 0.1
+                }
+               }
+              }
+             }
+            },
+            {
+             "selector": {
+              "op": "=",
+              "args": [
+               {
+                "property": "class"
+               },
+               "forest"
+              ]
+             },
+             "symbolizer": {
+              "marker": {
+               "alter": true,
+               "elements": {
+                "index": 1,
+                "value": {
+                 "type": "Image",
+                 "image": {
+                  "uri": "http://example.com/icons/forest.svg",
+                  "path": "icons/forest.svg",
+                  "id": "forest",
+                  "type": "image/svg+xml",
+                  "ext": "svg"
+                 },
+                 "hotSpot": [
+                  {
+                   "pc": 50
+                  },
+                  {
+                   "pc": 50
+                  }
+                 ],
+                 "tint": "white",
+                 "blackTint": [
+                  47,
+                  93,
+                  42
+                 ],
+                 "alphaThreshold": 0.1
+                }
+               }
+              }
+             }
+            },
+            {
+             "selector": {
+              "op": "=",
+              "args": [
+               {
+                "property": "class"
+               },
+               "lake"
+              ]
+             },
+             "symbolizer": {
+              "marker": {
+               "alter": true,
+               "elements": {
+                "index": 1,
+                "value": {
+                 "type": "Image",
+                 "image": {
+                  "uri": "http://example.com/icons/lake.svg",
+                  "path": "icons/lake.svg",
+                  "id": "lake",
+                  "type": "image/svg+xml",
+                  "ext": "svg"
+                 },
+                 "hotSpot": [
+                  {
+                   "pc": 50
+                  },
+                  {
+                   "pc": 50
+                  }
+                 ],
+                 "tint": "white",
+                 "blackTint": [
+                  31,
+                  78,
+                  121
+                 ],
+                 "alphaThreshold": 0.1
+                }
+               }
+              }
+             }
+            }
+           ]
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    }
    },
    "3-vector-line": {
     "css_to_json": "ok",
     "vs_spec": "same",
     "stable": "yes",
-    "json_trip": "yes"
+    "json_trip": "yes",
+    "json": {
+     "metadata": {
+      "title": "Styling line vector features",
+      "abstract": "Basic vector features styling (lines): roads in Sel, Norway (N50 Kartdata), colored by road class"
+     },
+     "stylingRules": [
+      {
+       "selector": {
+        "op": "and",
+        "args": [
+         {
+          "op": "=",
+          "args": [
+           {
+            "sysId": "dataLayer.id"
+           },
+           "Roads"
+          ]
+         },
+         {
+          "op": "and",
+          "args": [
+           {
+            "op": "=",
+            "args": [
+             {
+              "sysId": "dataLayer.type"
+             },
+             "vector"
+            ]
+           },
+           {
+            "op": "=",
+            "args": [
+             {
+              "sysId": "dataLayer.featuresGeometryDimensions"
+             },
+             1
+            ]
+           }
+          ]
+         }
+        ]
+       },
+       "symbolizer": {
+        "$comment": "No default Dot at each vertex",
+        "visibility": false,
+        "marker": null
+       },
+       "nestedRules": [
+        {
+         "selector": {
+          "op": "and",
+          "args": [
+           {
+            "op": "and",
+            "args": [
+             {
+              "op": "and",
+              "args": [
+               {
+                "op": "<",
+                "args": [
+                 {
+                  "sysId": "viz.sd"
+                 },
+                 200000
+                ]
+               },
+               {
+                "op": "<>",
+                "args": [
+                 {
+                  "property": "class"
+                 },
+                 "path"
+                ]
+               }
+              ]
+             },
+             {
+              "op": ">=",
+              "args": [
+               {
+                "property": "validDate"
+               },
+               {
+                "sysId": "viz.timeInterval.start.date"
+               }
+              ]
+             }
+            ]
+           },
+           {
+            "op": "<=",
+            "args": [
+             {
+              "property": "validDate"
+             },
+             {
+              "sysId": "viz.timeInterval.end.date"
+             }
+            ]
+           }
+          ]
+         },
+         "symbolizer": {
+          "$comment": "Private and tractor roads",
+          "visibility": true,
+          "zOrder": 2,
+          "stroke": {
+           "color": [
+            140,
+            129,
+            114
+           ],
+           "opacity": 1.0,
+           "width": {
+            "px": 1.0
+           }
+          }
+         },
+         "nestedRules": [
+          {
+           "$comment": "Select stroke color, width and drawing order based on the class property",
+           "selector": {
+            "op": "=",
+            "args": [
+             {
+              "property": "class"
+             },
+             "municipal"
+            ]
+           },
+           "symbolizer": {
+            "zOrder": 3,
+            "stroke": {
+             "color": [
+              242,
+              184,
+              75
+             ],
+             "width": {
+              "px": 2.5
+             }
+            }
+           }
+          },
+          {
+           "selector": {
+            "op": "=",
+            "args": [
+             {
+              "property": "class"
+             },
+             "county"
+            ]
+           },
+           "symbolizer": {
+            "zOrder": 4,
+            "stroke": {
+             "color": [
+              242,
+              184,
+              75
+             ],
+             "width": {
+              "px": 3.5
+             }
+            }
+           }
+          },
+          {
+           "selector": {
+            "op": "=",
+            "args": [
+             {
+              "property": "class"
+             },
+             "national"
+            ]
+           },
+           "symbolizer": {
+            "zOrder": 5,
+            "stroke": {
+             "color": [
+              232,
+              131,
+              58
+             ],
+             "width": {
+              "px": 4.5
+             }
+            }
+           }
+          },
+          {
+           "selector": {
+            "op": "=",
+            "args": [
+             {
+              "property": "class"
+             },
+             "european"
+            ]
+           },
+           "symbolizer": {
+            "zOrder": 6,
+            "stroke": {
+             "color": [
+              208,
+              72,
+              58
+             ],
+             "width": {
+              "px": 5.5
+             }
+            }
+           }
+          },
+          {
+           "$comment": "If zoomed in more than 1:10,000",
+           "selector": {
+            "op": "<",
+            "args": [
+             {
+              "sysId": "viz.sd"
+             },
+             10000
+            ]
+           },
+           "symbolizer": {
+            "$comment": "Change stroke width to 8 meters (12 meters for the main roads)\nAdd Dot at each segment end-point",
+            "stroke": {
+             "alter": true,
+             "width": {
+              "m": 8.0
+             }
+            },
+            "marker": {
+             "elements": [
+              {
+               "type": "Dot",
+               "size": {
+                "m": 4
+               },
+               "color": "white"
+              }
+             ]
+            }
+           },
+           "nestedRules": [
+            {
+             "selector": {
+              "op": "or",
+              "args": [
+               {
+                "op": "=",
+                "args": [
+                 {
+                  "property": "class"
+                 },
+                 "national"
+                ]
+               },
+               {
+                "op": "=",
+                "args": [
+                 {
+                  "property": "class"
+                 },
+                 "european"
+                ]
+               }
+              ]
+             },
+             "symbolizer": {
+              "stroke": {
+               "alter": true,
+               "width": {
+                "m": 12.0
+               }
+              }
+             }
+            }
+           ]
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    }
    },
    "4-vector-point": {
     "css_to_json": "ok",
     "vs_spec": "same",
     "stable": "yes",
-    "json_trip": "yes"
+    "json_trip": "yes",
+    "json": {
+     "metadata": {
+      "title": "Styling point vector features",
+      "abstract": "Basic vector features styling (points): tourist cabins in Dørålen, Rondane, Norway (N50 Kartdata)"
+     },
+     "stylingRules": [
+      {
+       "selector": {
+        "op": "and",
+        "args": [
+         {
+          "op": "=",
+          "args": [
+           {
+            "sysId": "dataLayer.id"
+           },
+           "Huts"
+          ]
+         },
+         {
+          "op": "and",
+          "args": [
+           {
+            "op": "=",
+            "args": [
+             {
+              "sysId": "dataLayer.type"
+             },
+             "vector"
+            ]
+           },
+           {
+            "op": "=",
+            "args": [
+             {
+              "sysId": "dataLayer.featuresGeometryDimensions"
+             },
+             0
+            ]
+           }
+          ]
+         }
+        ]
+       },
+       "symbolizer": {
+        "visibility": false
+       },
+       "nestedRules": [
+        {
+         "selector": {
+          "op": "and",
+          "args": [
+           {
+            "op": "and",
+            "args": [
+             {
+              "op": "<",
+              "args": [
+               {
+                "sysId": "viz.sd"
+               },
+               200000
+              ]
+             },
+             {
+              "op": ">=",
+              "args": [
+               {
+                "property": "validDate"
+               },
+               {
+                "sysId": "viz.timeInterval.start.date"
+               }
+              ]
+             }
+            ]
+           },
+           {
+            "op": "<=",
+            "args": [
+             {
+              "property": "validDate"
+             },
+             {
+              "sysId": "viz.timeInterval.end.date"
+             }
+            ]
+           }
+          ]
+         },
+         "symbolizer": {
+          "$comment": "A small Dot (positioned at the point)",
+          "visibility": true,
+          "opacity": 0.9,
+          "zOrder": 3,
+          "marker": {
+           "elements": [
+            {
+             "type": "Dot",
+             "size": {
+              "px": 7
+             },
+             "color": [
+              184,
+              50,
+              42
+             ]
+            }
+           ]
+          }
+         },
+         "nestedRules": [
+          {
+           "$comment": "If zoomed in more than 1:10,000",
+           "selector": {
+            "op": "<",
+            "args": [
+             {
+              "sysId": "viz.sd"
+             },
+             10000
+            ]
+           },
+           "symbolizer": {
+            "$comment": "Replace it with a double-Dot marker (positioned at centroid)",
+            "marker": {
+             "elements": [
+              {
+               "type": "Dot",
+               "size": {
+                "px": 14
+               },
+               "position": {
+                "x": 0.0,
+                "y": 0.0
+               },
+               "color": "white"
+              },
+              {
+               "type": "Dot",
+               "size": {
+                "px": 10
+               },
+               "position": {
+                "x": 0.0,
+                "y": 0.0
+               },
+               "color": [
+                184,
+                50,
+                42
+               ]
+              }
+             ]
+            }
+           },
+           "nestedRules": [
+            {
+             "selector": {
+              "op": "<",
+              "args": [
+               {
+                "sysId": "viz.sd"
+               },
+               5000
+              ]
+             },
+             "symbolizer": {
+              "$comment": "Add a Text graphic to Marker at 1:5000",
+              "marker": {
+               "alter": true,
+               "elements": {
+                "index": 2,
+                "value": {
+                 "type": "Text",
+                 "position": {
+                  "x": 12.0,
+                  "y": 0.0
+                 },
+                 "text": {
+                  "property": "name"
+                 },
+                 "alignment": [
+                  "left",
+                  "middle"
+                 ],
+                 "font": {
+                  "face": "Arial",
+                  "size": 12,
+                  "bold": true,
+                  "italic": false,
+                  "opacity": 1.0,
+                  "color": [
+                   43,
+                   43,
+                   43
+                  ]
+                 }
+                }
+               }
+              }
+             }
+            }
+           ]
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    }
    },
    "5-coverage-dem": {
     "css_to_json": "ok",
     "vs_spec": "same",
     "stable": "yes",
-    "json_trip": "yes"
+    "json_trip": "yes",
+    "json": {
+     "metadata": {
+      "title": "DEM with color map",
+      "abstract": "Applying a color map to a Digital Elevation Model with Style & Symbology Basic Coverage Styling"
+     },
+     "stylingRules": [
+      {
+       "selector": {
+        "op": "and",
+        "args": [
+         {
+          "op": "=",
+          "args": [
+           {
+            "sysId": "dataLayer.id"
+           },
+           "Elevation"
+          ]
+         },
+         {
+          "op": "=",
+          "args": [
+           {
+            "sysId": "dataLayer.type"
+           },
+           "coverage"
+          ]
+         }
+        ]
+       },
+       "symbolizer": {
+        "visibility": false
+       },
+       "nestedRules": [
+        {
+         "selector": {
+          "op": "<",
+          "args": [
+           {
+            "sysId": "viz.sd"
+           },
+           200000
+          ]
+         },
+         "symbolizer": {
+          "visibility": true,
+          "opacity": 0.8,
+          "zOrder": 1,
+          "singleChannel": {
+           "property": "elevation"
+          },
+          "colorMap": [
+           [
+            0.0,
+            [
+             96,
+             136,
+             73
+            ]
+           ],
+           [
+            900.0,
+            [
+             226,
+             219,
+             167
+            ]
+           ],
+           [
+            1300.0,
+            [
+             252,
+             197,
+             117
+            ]
+           ],
+           [
+            1900.0,
+            [
+             254,
+             168,
+             134
+            ]
+           ],
+           [
+            2500.0,
+            [
+             250,
+             250,
+             250
+            ]
+           ]
+          ]
+         }
+        }
+       ]
+      }
+     ]
+    }
    },
    "6-coverage-sentinel2": {
     "css_to_json": "ok",
     "vs_spec": "same",
     "stable": "yes",
-    "json_trip": "yes"
+    "json_trip": "yes",
+    "json": {
+     "metadata": {
+      "title": "sentinel-2 natural color",
+      "abstract": "Styling a Sentinel-2 L2A coverage with Style & Symbology Basic Coverage Styling"
+     },
+     "stylingRules": [
+      {
+       "selector": {
+        "op": "and",
+        "args": [
+         {
+          "op": "=",
+          "args": [
+           {
+            "sysId": "dataLayer.id"
+           },
+           "sentinel2-l2a"
+          ]
+         },
+         {
+          "op": "=",
+          "args": [
+           {
+            "sysId": "dataLayer.type"
+           },
+           "coverage"
+          ]
+         }
+        ]
+       },
+       "symbolizer": {
+        "visibility": false
+       },
+       "nestedRules": [
+        {
+         "selector": {
+          "op": "<",
+          "args": [
+           {
+            "sysId": "viz.sd"
+           },
+           200000
+          ]
+         },
+         "symbolizer": {
+          "visibility": true,
+          "opacity": 0.8,
+          "zOrder": 1,
+          "colorChannels": {
+           "alter": true,
+           "r": {
+            "op": "/",
+            "args": [
+             {
+              "property": "B04"
+             },
+             2500
+            ]
+           },
+           "g": {
+            "op": "/",
+            "args": [
+             {
+              "property": "B03"
+             },
+             2500
+            ]
+           },
+           "b": {
+            "op": "/",
+            "args": [
+             {
+              "property": "B02"
+             },
+             2500
+            ]
+           }
+          },
+          "alphaChannel": 1.0
+         },
+         "nestedRules": [
+          {
+           "selector": {
+            "op": "=",
+            "args": [
+             {
+              "property": "SCL"
+             },
+             8
+            ]
+           },
+           "symbolizer": {
+            "alphaChannel": 0.5
+           }
+          },
+          {
+           "selector": {
+            "op": "=",
+            "args": [
+             {
+              "property": "SCL"
+             },
+             9
+            ]
+           },
+           "symbolizer": {
+            "alphaChannel": 0.0
+           }
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    }
    },
    "7-coverage-ndvi": {
     "css_to_json": "ok",
     "vs_spec": "same",
     "stable": "yes",
-    "json_trip": "yes"
+    "json_trip": "yes",
+    "json": {
+     "metadata": {
+      "title": "sentinel-2 NDVI",
+      "abstract": "Styling a Sentinel-2 L2A coverage for NDVI with Style & Symbology Basic Coverage Styling"
+     },
+     "stylingRules": [
+      {
+       "selector": {
+        "op": "and",
+        "args": [
+         {
+          "op": "=",
+          "args": [
+           {
+            "sysId": "dataLayer.id"
+           },
+           "sentinel2-l2a"
+          ]
+         },
+         {
+          "op": "=",
+          "args": [
+           {
+            "sysId": "dataLayer.type"
+           },
+           "coverage"
+          ]
+         }
+        ]
+       },
+       "symbolizer": {
+        "visibility": false
+       },
+       "nestedRules": [
+        {
+         "selector": {
+          "op": "<",
+          "args": [
+           {
+            "sysId": "viz.sd"
+           },
+           200000
+          ]
+         },
+         "symbolizer": {
+          "visibility": true,
+          "opacity": 0.8,
+          "zOrder": 1,
+          "alphaChannel": 1.0,
+          "singleChannel": {
+           "op": "/",
+           "args": [
+            {
+             "op": "-",
+             "args": [
+              {
+               "property": "B08"
+              },
+              {
+               "property": "B04"
+              }
+             ]
+            },
+            {
+             "op": "+",
+             "args": [
+              {
+               "property": "B08"
+              },
+              {
+               "property": "B04"
+              }
+             ]
+            }
+           ]
+          },
+          "colorMap": [
+           [
+            -1.0,
+            "saddleBrown"
+           ],
+           [
+            0.0,
+            "peru"
+           ],
+           [
+            0.2,
+            "goldenrod"
+           ],
+           [
+            0.5,
+            "olive"
+           ],
+           [
+            0.6,
+            "yellowGreen"
+           ],
+           [
+            0.8,
+            "greenYellow"
+           ],
+           [
+            1.0,
+            "lime"
+           ]
+          ]
+         },
+         "nestedRules": [
+          {
+           "selector": {
+            "op": "=",
+            "args": [
+             {
+              "property": "SCL"
+             },
+             8
+            ]
+           },
+           "symbolizer": {
+            "alphaChannel": 0.5
+           }
+          },
+          {
+           "selector": {
+            "op": "=",
+            "args": [
+             {
+              "property": "SCL"
+             },
+             9
+            ]
+           },
+           "symbolizer": {
+            "alphaChannel": 0.0
+           }
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    }
    },
    "8-coverage-hillshading": {
     "css_to_json": "ok",
     "vs_spec": "same",
     "stable": "yes",
-    "json_trip": "yes"
+    "json_trip": "yes",
+    "json": {
+     "metadata": {
+      "title": "hill-shaded DEM with color map",
+      "abstract": "Applying hill-shading and a color map to a Digital Elevation Model with Style & Symbology Basic Coverage Styling"
+     },
+     "stylingRules": [
+      {
+       "selector": {
+        "op": "and",
+        "args": [
+         {
+          "op": "=",
+          "args": [
+           {
+            "sysId": "dataLayer.id"
+           },
+           "Elevation"
+          ]
+         },
+         {
+          "op": "=",
+          "args": [
+           {
+            "sysId": "dataLayer.type"
+           },
+           "coverage"
+          ]
+         }
+        ]
+       },
+       "symbolizer": {
+        "visibility": false
+       },
+       "nestedRules": [
+        {
+         "selector": {
+          "op": "<",
+          "args": [
+           {
+            "sysId": "viz.sd"
+           },
+           200000
+          ]
+         },
+         "symbolizer": {
+          "$comment": "This color map is mapped from elevation values",
+          "visibility": true,
+          "opacity": 0.8,
+          "zOrder": 1,
+          "singleChannel": {
+           "property": "elevation"
+          },
+          "colorMap": [
+           [
+            0.0,
+            [
+             96,
+             136,
+             73
+            ]
+           ],
+           [
+            900.0,
+            [
+             226,
+             219,
+             167
+            ]
+           ],
+           [
+            1300.0,
+            [
+             252,
+             197,
+             117
+            ]
+           ],
+           [
+            1900.0,
+            [
+             254,
+             168,
+             134
+            ]
+           ],
+           [
+            2500.0,
+            [
+             250,
+             250,
+             250
+            ]
+           ]
+          ],
+          "hillShading": {
+           "factor": 3,
+           "sun": {
+            "azimuth": 45.0,
+            "elevation": 60.0
+           }
+          }
+         }
+        }
+       ]
+      }
+     ]
+    }
    },
    "9-coverage-hillshading-opacity": {
     "css_to_json": "ok",
     "vs_spec": "same",
     "stable": "yes",
-    "json_trip": "yes"
+    "json_trip": "yes",
+    "json": {
+     "metadata": {
+      "title": "hill-shaded DEM with opacity and color map for shading intensity",
+      "abstract": "Applying hill-shading a color map to a Digital Elevation Model with Style & Symbology Basic Coverage Styling"
+     },
+     "stylingRules": [
+      {
+       "$comment": "This type of intensity-based hill shading can be overlaid on top of imagery or vector maps",
+       "selector": {
+        "op": "and",
+        "args": [
+         {
+          "op": "=",
+          "args": [
+           {
+            "sysId": "dataLayer.id"
+           },
+           "Elevation"
+          ]
+         },
+         {
+          "op": "=",
+          "args": [
+           {
+            "sysId": "dataLayer.type"
+           },
+           "coverage"
+          ]
+         }
+        ]
+       },
+       "symbolizer": {
+        "visibility": false
+       },
+       "nestedRules": [
+        {
+         "selector": {
+          "op": "<",
+          "args": [
+           {
+            "sysId": "viz.sd"
+           },
+           200000
+          ]
+         },
+         "symbolizer": {
+          "visibility": true,
+          "opacity": 0.8,
+          "zOrder": 1,
+          "singleChannel": {
+           "property": "elevation"
+          },
+          "hillShading": {
+           "factor": 3,
+           "sun": {
+            "azimuth": 45.0,
+            "elevation": 60.0
+           },
+           "colorMap": [
+            [
+             0.0,
+             "black"
+            ],
+            [
+             0.15,
+             "gray"
+            ],
+            [
+             0.35,
+             "silver"
+            ],
+            [
+             0.55,
+             "white"
+            ]
+           ],
+           "opacityMap": [
+            [
+             0.0,
+             0.75
+            ],
+            [
+             0.15,
+             0.5
+            ],
+            [
+             0.35,
+             0.25
+            ],
+            [
+             0.55,
+             0.0
+            ]
+           ]
+          }
+         }
+        }
+       ]
+      }
+     ]
+    }
    },
    "10-natural_earth_economies": {
     "css_to_json": "ok",
     "vs_spec": "same",
     "stable": "yes",
-    "json_trip": "yes"
+    "json_trip": "yes",
+    "json": {
+     "metadata": {
+      "title": "Economy status by country",
+      "abstract": "This style is used to draw the economic status of the natural earth countries.\n This style uses the natural earth shapefile available at https://www.naturalearthdata.com/downloads/10m-cultural-vectors/10m-admin-0-countries/",
+      "keywords": [
+       "Economy",
+       "Country",
+       "World"
+      ]
+     },
+     "stylingRules": [
+      {
+       "selector": {
+        "op": "and",
+        "args": [
+         {
+          "op": "=",
+          "args": [
+           {
+            "sysId": "dataLayer.id"
+           },
+           "ne_10m_admin_0_countries"
+          ]
+         },
+         {
+          "op": "=",
+          "args": [
+           {
+            "sysId": "dataLayer.type"
+           },
+           "vector"
+          ]
+         }
+        ]
+       },
+       "symbolizer": {
+        "visibility": true,
+        "zOrder": 1,
+        "stroke": {
+         "color": "gray",
+         "opacity": 1.0,
+         "width": {
+          "px": 2.0
+         }
+        },
+        "label": {
+         "elements": [
+          {
+           "type": "Text",
+           "text": {
+            "property": "NAME"
+           },
+           "font": {
+            "face": "Arial",
+            "size": 8,
+            "color": "black"
+           }
+          }
+         ]
+        }
+       },
+       "nestedRules": [
+        {
+         "selector": {
+          "op": "=",
+          "args": [
+           {
+            "property": "ECONOMY"
+           },
+           "1. Developed region: G7"
+          ]
+         },
+         "symbolizer": {
+          "fill": {
+           "alter": true,
+           "color": [
+            112,
+            126,
+            112
+           ]
+          }
+         }
+        },
+        {
+         "selector": {
+          "op": "=",
+          "args": [
+           {
+            "property": "ECONOMY"
+           },
+           "2. Developed region: nonG7"
+          ]
+         },
+         "symbolizer": {
+          "fill": {
+           "alter": true,
+           "color": [
+            151,
+            170,
+            151
+           ]
+          }
+         }
+        },
+        {
+         "selector": {
+          "op": "=",
+          "args": [
+           {
+            "property": "ECONOMY"
+           },
+           "3. Emerging region: BRIC"
+          ]
+         },
+         "symbolizer": {
+          "fill": {
+           "alter": true,
+           "color": [
+            173,
+            170,
+            7
+           ]
+          }
+         }
+        },
+        {
+         "selector": {
+          "op": "=",
+          "args": [
+           {
+            "property": "ECONOMY"
+           },
+           "4. Emerging region: MIKT"
+          ]
+         },
+         "symbolizer": {
+          "fill": {
+           "alter": true,
+           "color": [
+            208,
+            205,
+            8
+           ]
+          }
+         }
+        },
+        {
+         "selector": {
+          "op": "=",
+          "args": [
+           {
+            "property": "ECONOMY"
+           },
+           "5. Emerging region: G20"
+          ]
+         },
+         "symbolizer": {
+          "fill": {
+           "alter": true,
+           "color": [
+            233,
+            229,
+            9
+           ]
+          }
+         }
+        },
+        {
+         "selector": {
+          "op": "=",
+          "args": [
+           {
+            "property": "ECONOMY"
+           },
+           "6. Developing region"
+          ]
+         },
+         "symbolizer": {
+          "fill": {
+           "alter": true,
+           "color": [
+            230,
+            125,
+            60
+           ]
+          }
+         }
+        },
+        {
+         "selector": {
+          "op": "=",
+          "args": [
+           {
+            "property": "ECONOMY"
+           },
+           "7. Least developed region"
+          ]
+         },
+         "symbolizer": {
+          "fill": {
+           "alter": true,
+           "color": [
+            131,
+            71,
+            34
+           ]
+          }
+         }
+        }
+       ]
+      }
+     ]
+    }
    },
    "10-protected-areas": {
     "css_to_json": "ok",
     "vs_spec": "same",
     "stable": "yes",
-    "json_trip": "yes"
+    "json_trip": "yes",
+    "json": {
+     "metadata": {
+      "title": "Protected areas by class",
+      "abstract": "This style is used to draw the protected areas around Rondane, Norway, colored by the kind of protection.\n This style uses the protected areas of N50 Kartdata from the Norwegian Mapping Authority (Kartverket), available at https://kartkatalog.geonorge.no/metadata/n50-kartdata/ea192681-d039-42ec-b1bc-f3ce04c189ac",
+      "keywords": [
+       "Protected area",
+       "National park",
+       "Norway"
+      ]
+     },
+     "stylingRules": [
+      {
+       "selector": {
+        "op": "and",
+        "args": [
+         {
+          "op": "=",
+          "args": [
+           {
+            "sysId": "dataLayer.id"
+           },
+           "ProtectedAreas"
+          ]
+         },
+         {
+          "op": "=",
+          "args": [
+           {
+            "sysId": "dataLayer.type"
+           },
+           "vector"
+          ]
+         }
+        ]
+       },
+       "symbolizer": {
+        "visibility": true,
+        "zOrder": 1,
+        "stroke": {
+         "color": [
+          93,
+          107,
+          85
+         ],
+         "opacity": 1.0,
+         "width": {
+          "px": 1.0
+         }
+        },
+        "marker": null,
+        "label": {
+         "elements": [
+          {
+           "type": "Text",
+           "text": {
+            "property": "name"
+           },
+           "alignment": [
+            "center",
+            "middle"
+           ],
+           "font": {
+            "face": "Arial",
+            "size": 8,
+            "color": [
+             43,
+             43,
+             43
+            ]
+           }
+          }
+         ]
+        }
+       },
+       "nestedRules": [
+        {
+         "selector": {
+          "op": "=",
+          "args": [
+           {
+            "property": "class"
+           },
+           "nationalPark"
+          ]
+         },
+         "symbolizer": {
+          "fill": {
+           "alter": true,
+           "color": [
+            169,
+            207,
+            152
+           ]
+          }
+         }
+        },
+        {
+         "selector": {
+          "op": "=",
+          "args": [
+           {
+            "property": "class"
+           },
+           "landscapeProtection"
+          ]
+         },
+         "symbolizer": {
+          "fill": {
+           "alter": true,
+           "color": [
+            227,
+            212,
+            142
+           ]
+          }
+         }
+        },
+        {
+         "selector": {
+          "op": "=",
+          "args": [
+           {
+            "property": "class"
+           },
+           "natureReserve"
+          ]
+         },
+         "symbolizer": {
+          "fill": {
+           "alter": true,
+           "color": [
+            235,
+            165,
+            127
+           ]
+          }
+         }
+        }
+       ]
+      }
+     ]
+    }
    },
    "11-natural_earth_continents": {
     "css_to_json": "ok",
     "vs_spec": "same",
     "stable": "yes",
-    "json_trip": "yes"
+    "json_trip": "yes",
+    "json": {
+     "stylingRules": [
+      {
+       "symbolizer": {
+        "visibility": false
+       }
+      },
+      {
+       "selector": {
+        "op": "=",
+        "args": [
+         {
+          "sysId": "dataLayer.id"
+         },
+         "ne_10m_admin_0_countries"
+        ]
+       },
+       "symbolizer": {
+        "visibility": true,
+        "opacity": 0.3686275,
+        "zOrder": 1,
+        "label": {
+         "elements": [
+          {
+           "type": "Text",
+           "text": {
+            "property": "name"
+           },
+           "font": {
+            "face": "Tahoma",
+            "size": 14,
+            "outline": {
+             "size": 3,
+             "opacity": 0.75,
+             "color": "white"
+            }
+           }
+          }
+         ]
+        }
+       },
+       "nestedRules": [
+        {
+         "selector": {
+          "op": "=",
+          "args": [
+           {
+            "property": "CONTINENT"
+           },
+           "Africa"
+          ]
+         },
+         "symbolizer": {
+          "fill": {
+           "alter": true,
+           "color": [
+            226,
+            145,
+            118
+           ]
+          }
+         }
+        },
+        {
+         "selector": {
+          "op": "=",
+          "args": [
+           {
+            "property": "CONTINENT"
+           },
+           "Antarctica"
+          ]
+         },
+         "symbolizer": {
+          "fill": {
+           "alter": true,
+           "color": [
+            220,
+            236,
+            245
+           ]
+          }
+         }
+        },
+        {
+         "selector": {
+          "op": "=",
+          "args": [
+           {
+            "property": "CONTINENT"
+           },
+           "Asia"
+          ]
+         },
+         "symbolizer": {
+          "fill": {
+           "alter": true,
+           "color": [
+            58,
+            15,
+            200
+           ]
+          }
+         }
+        },
+        {
+         "selector": {
+          "op": "=",
+          "args": [
+           {
+            "property": "CONTINENT"
+           },
+           "Europe"
+          ]
+         },
+         "symbolizer": {
+          "fill": {
+           "alter": true,
+           "color": [
+            210,
+            200,
+            92
+           ]
+          }
+         }
+        },
+        {
+         "selector": {
+          "op": "=",
+          "args": [
+           {
+            "property": "CONTINENT"
+           },
+           "North America"
+          ]
+         },
+         "symbolizer": {
+          "fill": {
+           "alter": true,
+           "color": [
+            21,
+            237,
+            75
+           ]
+          }
+         }
+        },
+        {
+         "selector": {
+          "op": "=",
+          "args": [
+           {
+            "property": "CONTINENT"
+           },
+           "Oceania"
+          ]
+         },
+         "symbolizer": {
+          "fill": {
+           "alter": true,
+           "color": [
+            58,
+            211,
+            198
+           ]
+          }
+         }
+        },
+        {
+         "selector": {
+          "op": "=",
+          "args": [
+           {
+            "property": "CONTINENT"
+           },
+           "South America"
+          ]
+         },
+         "symbolizer": {
+          "fill": {
+           "alter": true,
+           "color": [
+            239,
+            75,
+            143
+           ]
+          }
+         }
+        }
+       ]
+      },
+      {
+       "selector": {
+        "op": "=",
+        "args": [
+         {
+          "sysId": "dataLayer.id"
+         },
+         "ne_10m_urban_areas"
+        ]
+       },
+       "symbolizer": {
+        "visibility": true,
+        "zOrder": 31,
+        "fill": {
+         "color": [
+          255,
+          228,
+          105
+         ],
+         "opacity": 0.8
+        },
+        "stroke": {
+         "color": "yellow",
+         "width": 0.0
+        }
+       }
+      },
+      {
+       "selector": {
+        "op": "=",
+        "args": [
+         {
+          "sysId": "dataLayer.id"
+         },
+         "ne_10m_graticules_10"
+        ]
+       },
+       "symbolizer": {
+        "visibility": true,
+        "zOrder": 3,
+        "stroke": {
+         "color": "gainsboro",
+         "width": 0.1
+        }
+       }
+      },
+      {
+       "selector": {
+        "op": "=",
+        "args": [
+         {
+          "sysId": "dataLayer.id"
+         },
+         "ne_10m_graticules_30"
+        ]
+       },
+       "symbolizer": {
+        "visibility": true,
+        "zOrder": 4,
+        "stroke": {
+         "color": "gray",
+         "width": 0.1
+        }
+       }
+      },
+      {
+       "selector": {
+        "op": "=",
+        "args": [
+         {
+          "sysId": "dataLayer.id"
+         },
+         "ne_10m_populated_places"
+        ]
+       },
+       "symbolizer": {
+        "visibility": true,
+        "zOrder": 24
+       },
+       "nestedRules": [
+        {
+         "selector": {
+          "op": "=",
+          "args": [
+           {
+            "property": "SCALERANK"
+           },
+           0
+          ]
+         },
+         "symbolizer": {
+          "label": {
+           "elements": [
+            {
+             "type": "Dot",
+             "color": "white",
+             "size": 10
+            },
+            {
+             "type": "Dot",
+             "color": "darkOrange",
+             "size": 6
+            },
+            {
+             "position": {
+              "x": 10.0,
+              "y": -4.0
+             },
+             "type": "Text",
+             "text": {
+              "property": "NAME"
+             },
+             "font": {
+              "face": "Tahoma",
+              "size": 12,
+              "outline": {
+               "color": "white",
+               "size": 3.5,
+               "opacity": 0.75
+              }
+             },
+             "alignment": [
+              "left",
+              "middle"
+             ]
+            }
+           ]
+          }
+         }
+        }
+       ]
+      },
+      {
+       "selector": {
+        "op": "=",
+        "args": [
+         {
+          "sysId": "dataLayer.id"
+         },
+         "ne_10m_geography_regions_polys"
+        ]
+       },
+       "symbolizer": {
+        "visibility": true,
+        "zOrder": 64,
+        "fill": {
+         "opacity": 0.0
+        },
+        "stroke": {
+         "width": 0.0
+        },
+        "label": {
+         "elements": [
+          {
+           "type": "Text",
+           "text": {
+            "property": "name"
+           },
+           "font": {
+            "face": "Times New Roman",
+            "size": 12,
+            "italic": true,
+            "color": "papayaWhip",
+            "outline": {
+             "size": 3,
+             "color": "black",
+             "opacity": 0.35
+            }
+           },
+           "alignment": [
+            "center",
+            "middle"
+           ]
+          }
+         ]
+        }
+       }
+      },
+      {
+       "selector": {
+        "op": "=",
+        "args": [
+         {
+          "sysId": "dataLayer.id"
+         },
+         "ne_10m_bathymetry_I_2000"
+        ]
+       },
+       "symbolizer": {
+        "visibility": true,
+        "zOrder": 3,
+        "fill": {
+         "color": [
+          149,
+          188,
+          230
+         ]
+        },
+        "stroke": {
+         "opacity": 0.0,
+         "width": 0.0
+        }
+       }
+      },
+      {
+       "selector": {
+        "op": "=",
+        "args": [
+         {
+          "sysId": "dataLayer.id"
+         },
+         "ne_10m_bathymetry_L_0"
+        ]
+       },
+       "symbolizer": {
+        "visibility": true,
+        "zOrder": 0,
+        "fill": {
+         "color": [
+          209,
+          233,
+          255
+         ]
+        },
+        "stroke": {
+         "opacity": 0.0,
+         "width": 0.0
+        }
+       }
+      },
+      {
+       "selector": {
+        "op": "=",
+        "args": [
+         {
+          "sysId": "dataLayer.id"
+         },
+         "ne_10m_bathymetry_K_200"
+        ]
+       },
+       "symbolizer": {
+        "visibility": true,
+        "zOrder": 1,
+        "fill": {
+         "color": [
+          191,
+          224,
+          255
+         ]
+        },
+        "stroke": {
+         "opacity": 0.0,
+         "width": 0.0
+        }
+       }
+      },
+      {
+       "selector": {
+        "op": "=",
+        "args": [
+         {
+          "sysId": "dataLayer.id"
+         },
+         "ne_10m_bathymetry_J_1000"
+        ]
+       },
+       "symbolizer": {
+        "visibility": true,
+        "zOrder": 2,
+        "fill": {
+         "color": [
+          170,
+          207,
+          242
+         ]
+        },
+        "stroke": {
+         "opacity": 0.0,
+         "width": 0.0
+        }
+       }
+      },
+      {
+       "selector": {
+        "op": "=",
+        "args": [
+         {
+          "sysId": "dataLayer.id"
+         },
+         "ne_10m_bathymetry_H_3000"
+        ]
+       },
+       "symbolizer": {
+        "visibility": true,
+        "zOrder": 4,
+        "fill": {
+         "color": [
+          134,
+          179,
+          235
+         ]
+        },
+        "stroke": {
+         "opacity": 0.0,
+         "width": 0.0
+        }
+       }
+      },
+      {
+       "selector": {
+        "op": "=",
+        "args": [
+         {
+          "sysId": "dataLayer.id"
+         },
+         "ne_10m_bathymetry_G_4000"
+        ]
+       },
+       "symbolizer": {
+        "visibility": true,
+        "zOrder": 5,
+        "fill": {
+         "color": [
+          98,
+          159,
+          217
+         ]
+        },
+        "stroke": {
+         "opacity": 0.0,
+         "width": 0.0
+        }
+       }
+      },
+      {
+       "selector": {
+        "op": "=",
+        "args": [
+         {
+          "sysId": "dataLayer.id"
+         },
+         "ne_10m_bathymetry_F_5000"
+        ]
+       },
+       "symbolizer": {
+        "visibility": true,
+        "zOrder": 6,
+        "fill": {
+         "color": [
+          82,
+          143,
+          204
+         ]
+        },
+        "stroke": {
+         "opacity": 0.0,
+         "width": 0.0
+        }
+       }
+      },
+      {
+       "selector": {
+        "op": "=",
+        "args": [
+         {
+          "sysId": "dataLayer.id"
+         },
+         "ne_10m_bathymetry_E_6000"
+        ]
+       },
+       "symbolizer": {
+        "visibility": true,
+        "zOrder": 7,
+        "fill": {
+         "color": [
+          66,
+          124,
+          179
+         ]
+        },
+        "stroke": {
+         "opacity": 0.0,
+         "width": 0.0
+        }
+       }
+      },
+      {
+       "selector": {
+        "op": "=",
+        "args": [
+         {
+          "sysId": "dataLayer.id"
+         },
+         "ne_10m_bathymetry_D_7000"
+        ]
+       },
+       "symbolizer": {
+        "visibility": true,
+        "zOrder": 8,
+        "fill": {
+         "color": [
+          43,
+          102,
+          166
+         ]
+        },
+        "stroke": {
+         "opacity": 0.0,
+         "width": 0.0
+        }
+       }
+      },
+      {
+       "selector": {
+        "op": "=",
+        "args": [
+         {
+          "sysId": "dataLayer.id"
+         },
+         "ne_10m_bathymetry_C_8000"
+        ]
+       },
+       "symbolizer": {
+        "visibility": true,
+        "zOrder": 9,
+        "fill": {
+         "color": [
+          56,
+          91,
+          140
+         ]
+        },
+        "stroke": {
+         "opacity": 0.0,
+         "width": 0.0
+        }
+       }
+      },
+      {
+       "selector": {
+        "op": "=",
+        "args": [
+         {
+          "sysId": "dataLayer.id"
+         },
+         "ne_10m_bathymetry_B_9000"
+        ]
+       },
+       "symbolizer": {
+        "visibility": true,
+        "zOrder": 10,
+        "fill": {
+         "color": [
+          42,
+          50,
+          104
+         ]
+        },
+        "stroke": {
+         "opacity": 0.0,
+         "width": 0.0
+        }
+       }
+      },
+      {
+       "selector": {
+        "op": "=",
+        "args": [
+         {
+          "sysId": "dataLayer.id"
+         },
+         "ne_10m_bathymetry_A_10000"
+        ]
+       },
+       "symbolizer": {
+        "visibility": true,
+        "zOrder": 11,
+        "fill": {
+         "color": [
+          30,
+          28,
+          71
+         ]
+        },
+        "stroke": {
+         "opacity": 0.0,
+         "width": 0.0
+        }
+       }
+      },
+      {
+       "selector": {
+        "op": "=",
+        "args": [
+         {
+          "sysId": "dataLayer.id"
+         },
+         "ne_10m_playas"
+        ]
+       },
+       "symbolizer": {
+        "visibility": true,
+        "opacity": 0.4235294,
+        "zOrder": 75,
+        "fill": {
+         "color": "burlyWood"
+        },
+        "stroke": {
+         "width": 0.0
+        }
+       }
+      },
+      {
+       "selector": {
+        "op": "=",
+        "args": [
+         {
+          "sysId": "dataLayer.id"
+         },
+         "ne_10m_ocean"
+        ]
+       },
+       "symbolizer": {
+        "visibility": true,
+        "zOrder": 4,
+        "fill": {
+         "color": [
+          228,
+          244,
+          247
+         ]
+        },
+        "stroke": {
+         "width": 0.0
+        }
+       }
+      },
+      {
+       "selector": {
+        "op": "=",
+        "args": [
+         {
+          "sysId": "dataLayer.id"
+         },
+         "ne_10m_admin_1_states_provinces"
+        ]
+       },
+       "symbolizer": {
+        "visibility": true,
+        "zOrder": 3,
+        "fill": {
+         "opacity": 0.0
+        },
+        "stroke": {
+         "color": "silver",
+         "width": 0.5
+        }
+       }
+      },
+      {
+       "selector": {
+        "op": "=",
+        "args": [
+         {
+          "sysId": "dataLayer.id"
+         },
+         "ne_10m_rivers_lake_centerlines"
+        ]
+       },
+       "symbolizer": {
+        "visibility": true,
+        "zOrder": 36,
+        "stroke": {
+         "color": "dodgerBlue",
+         "width": 0.5
+        }
+       }
+      },
+      {
+       "selector": {
+        "op": "=",
+        "args": [
+         {
+          "sysId": "dataLayer.id"
+         },
+         "ne_10m_rivers_europe"
+        ]
+       },
+       "symbolizer": {
+        "visibility": true,
+        "zOrder": 25,
+        "stroke": {
+         "color": "dodgerBlue",
+         "width": 0.5
+        }
+       }
+      },
+      {
+       "selector": {
+        "op": "=",
+        "args": [
+         {
+          "sysId": "dataLayer.id"
+         },
+         "ne_10m_reefs"
+        ]
+       },
+       "symbolizer": {
+        "visibility": true,
+        "zOrder": 35,
+        "stroke": {
+         "color": [
+          0,
+          175,
+          122
+         ]
+        }
+       }
+      },
+      {
+       "selector": {
+        "op": "=",
+        "args": [
+         {
+          "sysId": "dataLayer.id"
+         },
+         "ne_10m_lakes_pluvial"
+        ]
+       },
+       "symbolizer": {
+        "visibility": true,
+        "zOrder": 22,
+        "fill": {
+         "color": "dodgerBlue"
+        },
+        "stroke": {
+         "width": 0.0
+        }
+       }
+      },
+      {
+       "selector": {
+        "op": "=",
+        "args": [
+         {
+          "sysId": "dataLayer.id"
+         },
+         "ne_10m_lakes_north_america"
+        ]
+       },
+       "symbolizer": {
+        "visibility": true,
+        "zOrder": 70,
+        "fill": {
+         "color": "dodgerBlue"
+        },
+        "stroke": {
+         "width": 0.0
+        }
+       }
+      },
+      {
+       "selector": {
+        "op": "=",
+        "args": [
+         {
+          "sysId": "dataLayer.id"
+         },
+         "ne_10m_lakes_europe"
+        ]
+       },
+       "symbolizer": {
+        "visibility": true,
+        "zOrder": 68,
+        "fill": {
+         "color": "dodgerBlue"
+        },
+        "stroke": {
+         "width": 0.0
+        }
+       }
+      },
+      {
+       "selector": {
+        "op": "=",
+        "args": [
+         {
+          "sysId": "dataLayer.id"
+         },
+         "ne_10m_lakes"
+        ]
+       },
+       "symbolizer": {
+        "visibility": true,
+        "zOrder": 67,
+        "fill": {
+         "color": "dodgerBlue"
+        },
+        "stroke": {
+         "width": 0.0
+        }
+       }
+      },
+      {
+       "selector": {
+        "op": "=",
+        "args": [
+         {
+          "sysId": "dataLayer.id"
+         },
+         "ne_10m_glaciated_areas"
+        ]
+       },
+       "symbolizer": {
+        "visibility": true,
+        "zOrder": 65,
+        "fill": {
+         "color": "aqua",
+         "opacity": 0.16
+        },
+        "stroke": {
+         "width": 0.0
+        }
+       }
+      },
+      {
+       "selector": {
+        "op": "=",
+        "args": [
+         {
+          "sysId": "dataLayer.id"
+         },
+         "ne_10m_geography_marine_polys"
+        ]
+       },
+       "symbolizer": {
+        "visibility": true,
+        "zOrder": 87,
+        "fill": {
+         "opacity": 0.0
+        },
+        "stroke": {
+         "width": 0.0
+        }
+       },
+       "nestedRules": [
+        {
+         "selector": {
+          "op": "=",
+          "args": [
+           {
+            "property": "SCALERANK"
+           },
+           0
+          ]
+         },
+         "symbolizer": {
+          "label": {
+           "elements": [
+            {
+             "type": "Text",
+             "text": {
+              "property": "name"
+             },
+             "font": {
+              "face": "Tahoma",
+              "size": 12,
+              "color": "dodgerBlue",
+              "italic": true,
+              "outline": {
+               "size": 3,
+               "opacity": 0.75,
+               "color": [
+                16,
+                80,
+                139
+               ]
+              }
+             }
+            }
+           ]
+          }
+         }
+        }
+       ]
+      },
+      {
+       "selector": {
+        "op": "=",
+        "args": [
+         {
+          "sysId": "dataLayer.id"
+         },
+         "ne_10m_roads"
+        ]
+       },
+       "symbolizer": {
+        "visibility": true,
+        "zOrder": 86
+       },
+       "nestedRules": [
+        {
+         "selector": {
+          "op": "<=",
+          "args": [
+           {
+            "property": "SCALERANK"
+           },
+           3
+          ]
+         },
+         "symbolizer": {
+          "stroke": {
+           "color": [
+            196,
+            46,
+            49
+           ],
+           "width": 0.66
+          }
+         }
+        }
+       ]
+      }
+     ]
+    }
    },
    "11-rondane-overview": {
     "css_to_json": "ok",
     "vs_spec": "same",
     "stable": "yes",
-    "json_trip": "yes"
+    "json_trip": "yes",
+    "json": {
+     "metadata": {
+      "title": "Rondane overview map",
+      "abstract": "A map of the area around Rondane, Norway, from several N50 Kartdata layers and the elevation model"
+     },
+     "stylingRules": [
+      {
+       "symbolizer": {
+        "visibility": false
+       }
+      },
+      {
+       "selector": {
+        "op": "=",
+        "args": [
+         {
+          "sysId": "dataLayer.id"
+         },
+         "Municipalities"
+        ]
+       },
+       "symbolizer": {
+        "visibility": true,
+        "opacity": 0.3686275,
+        "zOrder": 1,
+        "marker": null,
+        "label": {
+         "elements": [
+          {
+           "type": "Text",
+           "text": {
+            "property": "name"
+           },
+           "alignment": [
+            "center",
+            "middle"
+           ],
+           "font": {
+            "face": "Tahoma",
+            "size": 14,
+            "outline": {
+             "size": 3,
+             "opacity": 0.75,
+             "color": "white"
+            }
+           }
+          }
+         ]
+        }
+       },
+       "nestedRules": [
+        {
+         "selector": {
+          "op": "=",
+          "args": [
+           {
+            "property": "name"
+           },
+           "Alvdal"
+          ]
+         },
+         "symbolizer": {
+          "fill": {
+           "alter": true,
+           "color": [
+            232,
+            201,
+            160
+           ]
+          }
+         }
+        },
+        {
+         "selector": {
+          "op": "=",
+          "args": [
+           {
+            "property": "name"
+           },
+           "Dovre"
+          ]
+         },
+         "symbolizer": {
+          "fill": {
+           "alter": true,
+           "color": [
+            201,
+            219,
+            178
+           ]
+          }
+         }
+        },
+        {
+         "selector": {
+          "op": "=",
+          "args": [
+           {
+            "property": "name"
+           },
+           "Folldal"
+          ]
+         },
+         "symbolizer": {
+          "fill": {
+           "alter": true,
+           "color": [
+            185,
+            207,
+            224
+           ]
+          }
+         }
+        },
+        {
+         "selector": {
+          "op": "=",
+          "args": [
+           {
+            "property": "name"
+           },
+           "Nord-Fron"
+          ]
+         },
+         "symbolizer": {
+          "fill": {
+           "alter": true,
+           "color": [
+            230,
+            195,
+            207
+           ]
+          }
+         }
+        },
+        {
+         "selector": {
+          "op": "=",
+          "args": [
+           {
+            "property": "name"
+           },
+           "Sel"
+          ]
+         },
+         "symbolizer": {
+          "fill": {
+           "alter": true,
+           "color": [
+            217,
+            208,
+            166
+           ]
+          }
+         }
+        },
+        {
+         "selector": {
+          "op": "=",
+          "args": [
+           {
+            "property": "name"
+           },
+           "Stor-Elvdal"
+          ]
+         },
+         "symbolizer": {
+          "fill": {
+           "alter": true,
+           "color": [
+            205,
+            196,
+            226
+           ]
+          }
+         }
+        }
+       ]
+      },
+      {
+       "selector": {
+        "op": "=",
+        "args": [
+         {
+          "sysId": "dataLayer.id"
+         },
+         "Elevation"
+        ]
+       },
+       "symbolizer": {
+        "visibility": true,
+        "zOrder": 0,
+        "singleChannel": {
+         "property": "elevation"
+        },
+        "colorMap": [
+         [
+          300.0,
+          "#e4f4f7"
+         ],
+         [
+          900.0,
+          "#f2f0e6"
+         ],
+         [
+          1300.0,
+          "#e8dcc4"
+         ],
+         [
+          1700.0,
+          "#d6c8b8"
+         ],
+         [
+          2200.0,
+          "#ffffff"
+         ]
+        ],
+        "hillShading": {
+         "factor": 1.5,
+         "sun": {
+          "azimuth": 315.0,
+          "elevation": 60.0
+         }
+        }
+       }
+      },
+      {
+       "selector": {
+        "op": "=",
+        "args": [
+         {
+          "sysId": "dataLayer.id"
+         },
+         "Landcover"
+        ]
+       },
+       "symbolizer": {
+        "visibility": true,
+        "stroke": {
+         "width": 0.0
+        },
+        "marker": null
+       },
+       "nestedRules": [
+        {
+         "selector": {
+          "op": "or",
+          "args": [
+           {
+            "op": "=",
+            "args": [
+             {
+              "property": "class"
+             },
+             "lake"
+            ]
+           },
+           {
+            "op": "=",
+            "args": [
+             {
+              "property": "class"
+             },
+             "river"
+            ]
+           }
+          ]
+         },
+         "symbolizer": {
+          "zOrder": 67,
+          "fill": {
+           "color": [
+            127,
+            178,
+            216
+           ]
+          }
+         }
+        },
+        {
+         "selector": {
+          "op": "=",
+          "args": [
+           {
+            "property": "class"
+           },
+           "bog"
+          ]
+         },
+         "symbolizer": {
+          "opacity": 0.4235294,
+          "zOrder": 65,
+          "fill": {
+           "color": "burlyWood"
+          }
+         }
+        },
+        {
+         "selector": {
+          "op": "and",
+          "args": [
+           {
+            "op": "and",
+            "args": [
+             {
+              "op": "<>",
+              "args": [
+               {
+                "property": "class"
+               },
+               "lake"
+              ]
+             },
+             {
+              "op": "<>",
+              "args": [
+               {
+                "property": "class"
+               },
+               "river"
+              ]
+             }
+            ]
+           },
+           {
+            "op": "<>",
+            "args": [
+             {
+              "property": "class"
+             },
+             "bog"
+            ]
+           }
+          ]
+         },
+         "symbolizer": {
+          "visibility": false
+         }
+        }
+       ]
+      },
+      {
+       "selector": {
+        "op": "=",
+        "args": [
+         {
+          "sysId": "dataLayer.id"
+         },
+         "Rivers"
+        ]
+       },
+       "symbolizer": {
+        "visibility": true,
+        "zOrder": 36,
+        "stroke": {
+         "color": [
+          95,
+          156,
+          204
+         ],
+         "width": 0.5
+        },
+        "marker": null
+       }
+      },
+      {
+       "selector": {
+        "op": "=",
+        "args": [
+         {
+          "sysId": "dataLayer.id"
+         },
+         "Roads"
+        ]
+       },
+       "symbolizer": {
+        "visibility": true,
+        "zOrder": 86,
+        "marker": null
+       },
+       "nestedRules": [
+        {
+         "selector": {
+          "op": "or",
+          "args": [
+           {
+            "op": "or",
+            "args": [
+             {
+              "op": "=",
+              "args": [
+               {
+                "property": "class"
+               },
+               "european"
+              ]
+             },
+             {
+              "op": "=",
+              "args": [
+               {
+                "property": "class"
+               },
+               "national"
+              ]
+             }
+            ]
+           },
+           {
+            "op": "=",
+            "args": [
+             {
+              "property": "class"
+             },
+             "county"
+            ]
+           }
+          ]
+         },
+         "symbolizer": {
+          "stroke": {
+           "color": [
+            196,
+            46,
+            49
+           ],
+           "width": 0.66
+          }
+         }
+        },
+        {
+         "selector": {
+          "op": "or",
+          "args": [
+           {
+            "op": "=",
+            "args": [
+             {
+              "property": "class"
+             },
+             "municipal"
+            ]
+           },
+           {
+            "op": "=",
+            "args": [
+             {
+              "property": "class"
+             },
+             "private"
+            ]
+           }
+          ]
+         },
+         "symbolizer": {
+          "stroke": {
+           "color": "gray",
+           "width": 0.5
+          }
+         }
+        },
+        {
+         "selector": {
+          "op": "and",
+          "args": [
+           {
+            "op": "=",
+            "args": [
+             {
+              "property": "class"
+             },
+             "path"
+            ]
+           },
+           {
+            "op": "=",
+            "args": [
+             {
+              "property": "marked"
+             },
+             true
+            ]
+           }
+          ]
+         },
+         "symbolizer": {
+          "stroke": {
+           "color": [
+            196,
+            46,
+            49
+           ],
+           "width": 0.5,
+           "dashPattern": [
+            3,
+            2
+           ]
+          }
+         }
+        },
+        {
+         "selector": {
+          "op": "or",
+          "args": [
+           {
+            "op": "=",
+            "args": [
+             {
+              "property": "class"
+             },
+             "tractor"
+            ]
+           },
+           {
+            "op": "=",
+            "args": [
+             {
+              "property": "class"
+             },
+             "cycleway"
+            ]
+           }
+          ]
+         },
+         "symbolizer": {
+          "visibility": false
+         }
+        },
+        {
+         "selector": {
+          "op": "and",
+          "args": [
+           {
+            "op": "=",
+            "args": [
+             {
+              "property": "class"
+             },
+             "path"
+            ]
+           },
+           {
+            "op": "=",
+            "args": [
+             {
+              "property": "marked"
+             },
+             false
+            ]
+           }
+          ]
+         },
+         "symbolizer": {
+          "visibility": false
+         }
+        }
+       ]
+      },
+      {
+       "selector": {
+        "op": "=",
+        "args": [
+         {
+          "sysId": "dataLayer.id"
+         },
+         "ProtectedAreas"
+        ]
+       },
+       "symbolizer": {
+        "visibility": true,
+        "zOrder": 87,
+        "fill": {
+         "opacity": 0.0
+        },
+        "stroke": {
+         "color": [
+          0,
+          175,
+          122
+         ],
+         "width": 1.5
+        },
+        "marker": null
+       },
+       "nestedRules": [
+        {
+         "selector": {
+          "op": "=",
+          "args": [
+           {
+            "property": "class"
+           },
+           "nationalPark"
+          ]
+         },
+         "symbolizer": {
+          "label": {
+           "elements": [
+            {
+             "type": "Text",
+             "text": {
+              "property": "name"
+             },
+             "font": {
+              "face": "Times New Roman",
+              "size": 12,
+              "italic": true,
+              "color": "papayaWhip",
+              "outline": {
+               "size": 3,
+               "color": "black",
+               "opacity": 0.35
+              }
+             },
+             "alignment": [
+              "center",
+              "middle"
+             ]
+            }
+           ]
+          }
+         }
+        }
+       ]
+      },
+      {
+       "selector": {
+        "op": "=",
+        "args": [
+         {
+          "sysId": "dataLayer.id"
+         },
+         "Places"
+        ]
+       },
+       "symbolizer": {
+        "visibility": true,
+        "zOrder": 24,
+        "marker": null
+       },
+       "nestedRules": [
+        {
+         "selector": {
+          "op": "and",
+          "args": [
+           {
+            "op": "=",
+            "args": [
+             {
+              "property": "type"
+             },
+             "mountain"
+            ]
+           },
+           {
+            "op": ">=",
+            "args": [
+             {
+              "property": "elevation"
+             },
+             2100
+            ]
+           }
+          ]
+         },
+         "symbolizer": {
+          "label": {
+           "elements": [
+            {
+             "type": "Dot",
+             "color": "white",
+             "size": 10
+            },
+            {
+             "type": "Dot",
+             "color": "darkOrange",
+             "size": 6
+            },
+            {
+             "position": {
+              "x": 10.0,
+              "y": 4.0
+             },
+             "type": "Text",
+             "text": {
+              "property": "name"
+             },
+             "font": {
+              "face": "Tahoma",
+              "size": 12,
+              "outline": {
+               "color": "white",
+               "size": 3.5,
+               "opacity": 0.75
+              }
+             },
+             "alignment": [
+              "left",
+              "middle"
+             ]
+            }
+           ]
+          }
+         }
+        }
+       ]
+      }
+     ]
+    }
    }
   }
  }

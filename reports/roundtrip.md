@@ -20,7 +20,7 @@ This checks conversion only: whether each implementation writes the same JSON as
 
 - **libCartoSym:** `cs-canif convert in.<ext> out.<ext>`, with `.cql2` (CQL2-Text), `.cql2json`, `.cscss` and `.csjson` (`.cs.json` is read by cs-canif as a Mapbox GL style).
 - **pycartosym:** expressions with `cql2.to_cql2_json(cql2.parse_text(text))` and `cql2.to_cql2_text(json)`; styles with `cartosym in.cscss -o out.cs.json` and back.
-- JSON is compared as data: member order and the spelling of numbers (`2` and `2.0`) do not matter, but `true` is not `1`. A difference is shown as the path of the first one, with the expected value (the case's or the example's, or the first conversion's for the round trip) first.
+- JSON is compared as data: member order and the spelling of numbers (`2` and `2.0`) do not matter, but `true` is not `1`. `$comment` members, which keep CSS comments in the JSON, are left out. [`roundtrip.json`](roundtrip.json) has each conversion's output. A difference is shown as the path of the first one, with the expected value (the case's or the example's, or the first conversion's for the round trip) first.
 
 ## Expressions
 
