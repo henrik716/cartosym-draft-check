@@ -44,6 +44,7 @@ The walkthroughs used to be `walkthrough.html` and `renders-walkthrough.html`; t
 | **Draft renderer** | [`src/cartosym_draft/`](src/cartosym_draft/) | A CQL2 expression evaluator and SVG renderer that does what the requirements say. Each behavior that was open in the draft is a switchable option ([`options.py`](src/cartosym_draft/options.py)). |
 | **Test harness** | [`harness/`](harness/), [`cases/`](cases/) | 124 test cases whose expected values come from the requirement text, run through libCartoSym, pycartosym and the draft renderer. |
 | **Test report** | [`reports/report.md`](reports/report.md), [`reports/results.json`](reports/results.json) | Results per requirement and implementation, with libCartoSym from the `cartosym` pip package. [`reports/libcartosym-main/`](reports/libcartosym-main/) has the same against the latest libCartoSym from GitHub, written by CI. |
+| **Round trips** | [`harness/roundtrip.py`](harness/roundtrip.py), [`reports/roundtrip.md`](reports/roundtrip.md) | Converts the expression cases CQL2-Text → CQL2-JSON → CQL2-Text → CQL2-JSON, and the spec's examples CartoSym-CSS → CartoSym-JSON → CartoSym-CSS → CartoSym-JSON, with libCartoSym and pycartosym; compares the JSON with the case's or the example's, and checks that the round trip gives it back. CI does the same with the latest libCartoSym. |
 | **Grammar check** | [`tools/check_grammar.py`](tools/check_grammar.py), [`cases/grammar/`](cases/grammar/) | Generates a parser from the spec's CartoSym-CSS grammar with ANTLR and runs 38 cases and every `.cscss` example through it. |
 | **Schema tests** | [`schema-tests/`](schema-tests/) | 709 CartoSym-JSON documents with expected outcomes, validated against the Part 1 and Part 3 schemas with python-jsonschema, Hyperjump and Ajv. They run against the #188 branch; the Part 2 to 4 schemas on `main` break them. The 589 built by code are also in [`schema-tests/cases.json`](schema-tests/cases.json), as plain JSON. |
 
@@ -94,7 +95,7 @@ spec's .g4 files    ──> tools/check_grammar.py (ANTLR) ──> cases/grammar
 spec's JSON schemas ──> schema-tests/run.py, js/check.mjs  ──> schema-tests/out/
 
 [ 6. CI ]  .github/workflows/libcartosym-main.yml (weekly, and when the harness or cases change)
-latest eC + libCartoSym (Ubuntu) ──> harness/run.py ──> reports/libcartosym-main/
+latest eC + libCartoSym (Ubuntu) ──> harness/run.py, harness/roundtrip.py ──> reports/libcartosym-main/
 ```
 
 The independent renders and the wording log (`reports/independent/`, `reports/wording-decisions.md`) were made by hand, not by a script in this repository; `tools/build_renders_walkthrough.py` turns them into the renders walkthrough.
@@ -173,6 +174,7 @@ The tools read a checkout of the spec repository next to this one (`../cartograp
 uv sync
 uv run python tools/extract_requirements.py                  # requirement text and JSON schema from the spec checkout
 uv run python harness/run.py                                 # test report; the requirements page reads its results
+uv run python harness/roundtrip.py                           # round trips through CQL2-JSON and CartoSym-JSON (reports/roundtrip.md)
 uv run python -m cartosym_draft.gallery gallery/index.html   # gallery, requirements page and render kits
 uv run python -m cartosym_draft.doc_examples                 # document figures, JSON and AsciiDoc, written into the spec checkout (about 11 minutes)
 uv run python tools/build_renders_walkthrough.py             # gallery/pr192-renders-walkthrough.html

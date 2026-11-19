@@ -62,6 +62,19 @@ jobs:
           uv run python harness/run.py
           sed -n '/## Summary/,/## Results/p' reports/libcartosym-main/report.md | sed '$d' >> "$GITHUB_STEP_SUMMARY"
 
+      # The style round trips use the examples of the spec's main branch.
+      - uses: actions/checkout@v4
+        with:
+          repository: opengeospatial/cartographic-symbology
+          path: spec
+
+      - name: Run the round trips
+        env:
+          REPORT_DIR: reports/libcartosym-main
+        run: |
+          uv run python harness/roundtrip.py spec
+          sed -n '/## Summary/,/## How/p' reports/libcartosym-main/roundtrip.md | sed '$d' >> "$GITHUB_STEP_SUMMARY"
+
       - uses: actions/upload-artifact@v4
         with:
           name: report-libcartosym-main
