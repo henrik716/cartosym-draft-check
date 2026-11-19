@@ -11,7 +11,7 @@ It started on 15 October 2026 as a check of the draft requirements in [#133](htt
 | Pull request | What this repository adds |
 |---|---|
 | [#133](https://github.com/opengeospatial/cartographic-symbology/pull/133) Part 1 requirements (merged) | The draft renderer, the gallery with its decision matrix, the requirements page, the test harness, and the [walkthrough](gallery/pr133-requirements-walkthrough.html) for the SWG meeting of 13 November. |
-| [#188](https://github.com/opengeospatial/cartographic-symbology/pull/188) CartoSym-JSON schema fixes | The [schema tests](schema-tests/): 663 documents with expected outcomes, run with three validators. |
+| [#188](https://github.com/opengeospatial/cartographic-symbology/pull/188) CartoSym-JSON schema fixes | The [schema tests](schema-tests/): 709 documents with expected outcomes, run with three validators. |
 | [#190](https://github.com/opengeospatial/cartographic-symbology/pull/190) data types | Harness cases that check that `ceil`, `floor` and `round` return an integer. |
 | [#192](https://github.com/opengeospatial/cartographic-symbology/pull/192) renders in the Part 1 document | The figures, CartoSym-JSON and AsciiDoc of the document's 11 examples, 21 requirement vignettes and 20 gallery maps kept outside the document; the independent renders and the [log of wording decisions](reports/wording-decisions.md); the [renders walkthrough](gallery/pr192-renders-walkthrough.html). |
 | [#196](https://github.com/opengeospatial/cartographic-symbology/pull/196) `random()` in the CartoSym-CSS grammar | Grammar cases for empty function calls in [`cases/grammar/`](cases/grammar/). |
@@ -45,7 +45,7 @@ The walkthroughs used to be `walkthrough.html` and `renders-walkthrough.html`; t
 | **Test harness** | [`harness/`](harness/), [`cases/`](cases/) | 124 test cases whose expected values come from the requirement text, run through libCartoSym, pycartosym and the draft renderer. |
 | **Test report** | [`reports/report.md`](reports/report.md), [`reports/results.json`](reports/results.json) | Results per requirement and implementation, with libCartoSym from the `cartosym` pip package. [`reports/libcartosym-main/`](reports/libcartosym-main/) has the same against the latest libCartoSym from GitHub, written by CI. |
 | **Grammar check** | [`tools/check_grammar.py`](tools/check_grammar.py), [`cases/grammar/`](cases/grammar/) | Generates a parser from the spec's CartoSym-CSS grammar with ANTLR and runs 38 cases and every `.cscss` example through it. |
-| **Schema tests** | [`schema-tests/`](schema-tests/) | 663 CartoSym-JSON documents with expected outcomes, validated against the Part 1 and Part 3 schemas with python-jsonschema, Hyperjump and Ajv. They run against the #188 branch; the Part 2 to 4 schemas on `main` break them. |
+| **Schema tests** | [`schema-tests/`](schema-tests/) | 709 CartoSym-JSON documents with expected outcomes, validated against the Part 1 and Part 3 schemas with python-jsonschema, Hyperjump and Ajv. They run against the #188 branch; the Part 2 to 4 schemas on `main` break them. The 589 built by code are also in [`schema-tests/cases.json`](schema-tests/cases.json), as plain JSON. |
 
 **For discussion**
 
