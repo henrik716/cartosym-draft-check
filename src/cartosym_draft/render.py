@@ -40,6 +40,8 @@ class View:
     height: int = 200
     background: str = "#f4f1ea"
     system: dict[str, Any] = field(default_factory=dict)
+    # /req/variables/definition: values the application sets at run time, overriding the style's definitions.
+    variables: dict[str, Any] = field(default_factory=dict)
 
     @property
     def px_per_m(self) -> float:
@@ -671,7 +673,7 @@ def render(style: dict, layers: list[Layer], view: View, opts: Options | None = 
             continue
         for feat in layer.features:
             ctx = Context(properties=feat.get("properties") or {}, system=system, options=opts,
-                          null_reports=null_reports)
+                          variables=view.variables, null_reports=null_reports)
             sym = resolve(style, ctx)
             if sym.get("visibility") is False:
                 continue

@@ -85,14 +85,21 @@ class Panel:
 class Variant:
     """One panel of a vignette: the example's style with one snippet replaced, or the same style in another view."""
     label: str  # shown under the panel
-    replace: tuple[str, str] | None = None  # (snippet of the CSS file, what replaces it in this panel)
+    # (snippet of the CSS file, what replaces it in this panel), or a list of such pairs
+    replace: tuple[str, str] | list[tuple[str, str]] | None = None
     panel: Panel | None = None  # another view than the example's first panel
     time_interval: tuple[datetime.date, datetime.date] | None = None
+    system: dict = field(default_factory=dict)  # System Identifiers set differently for this panel
+    variables: dict = field(default_factory=dict)  # variables the application sets at run time for this panel
+
+    @property
+    def replacements(self) -> list[tuple[str, str]]:
+        return [] if self.replace is None else [self.replace] if isinstance(self.replace, tuple) else self.replace
 
     @property
     def shows_file(self) -> bool:
         """Whether this panel's style is the one in the .cscss file (printed under the figure)."""
-        return self.replace is None or self.replace[0] == self.replace[1]
+        return all(old == new for old, new in self.replacements)
 
 
 @dataclass
@@ -121,13 +128,12 @@ class DocExample:
         """The CSS of each rendered panel."""
         out = []
         for v in self.variants or [Variant("")]:
-            if v.replace is None:
-                out.append(css)
-                continue
-            old, new = v.replace
-            if old not in css:
-                raise ValueError(f"{self.name}: snippet {old!r} is not in the CSS")
-            out.append(css.replace(old, new))
+            panel_css = css
+            for old, new in v.replacements:
+                if panel_css.count(old) != 1:
+                    raise ValueError(f"{self.name}: snippet {old!r} is {panel_css.count(old)} times in the CSS, not once")
+                panel_css = panel_css.replace(old, new)
+            out.append(panel_css)
         return out
 
 
@@ -262,14 +268,62 @@ def _values(snippet: str, values: list[tuple[str, str]]) -> list[Variant]:
     return [Variant(label, (snippet, new)) for label, new in values]
 
 
-# The requirement figures: vignettes of small panels, each changing one value (agreed with the Part 1 editor,
-# following Jérôme on #185 and #192). The pale lakes under vector vignettes are the only context.
+# The requirement figures: one vignette under each requirement whose effect a map can show (Jérôme, Nov 20: a
+# vignette under each requirement), each of small panels changing one value (agreed with the Part 1 editor,
+# following Jérôme on #185 and #192). The first requirement of each is the one it is placed under
+# (tools/place_vignettes.py). The pale lakes under vector vignettes are the only context.
+POND_NAMES = (36750, 13380)  # a dozen named ponds within 2 x 1.4 km
+MOUNTAIN_DOT_SNIPPET = "Dot { size: 6 px, color: #b8322a }"
+_LAKES = "Landcover[class = 'forest'] { fill.color: #93bf85; }\nLandcover[area < 50000] { fill.color: #e8c86a; }"
+_NESTED = ("   [class = 'forest']\n   {\n      fill.color: #5e8f52;\n      [area < 50000] { fill.color: #e8c86a; }\n   }")
+_LAKE_RULE = "Landcover[class = 'lake']\n{\n"
+_LAKE_STROKE = "   stroke: { color: #3f7fb3; width: 1 px };\n"
+_MARKER2 = "marker: { elements: [ Dot { size: 7 px, color: white }, Dot { size: 4.5 px, color: #b8322a } ] }"
+_HATCH = "hatch: { width: 1 px; angle: 45; distance: 6 px }"
+_DOTS = "dotpattern: { distance: { horizontal: 6 px; vertical: 6 px } }"
+_RGB = ("colorChannels.r: B04 / 2500;", "colorChannels.g: B03 / 2500;", "colorChannels.b: B02 / 2500;")
+_COND = "size: elevation >= 1900 ? 8 : 4, color"
+
+
+def _rgb(r: str, g: str, b: str) -> list[tuple[str, str]]:
+    return list(zip(_RGB, (f"colorChannels.r: {r};", f"colorChannels.g: {g};", f"colorChannels.b: {b};")))
+
+
+def _scales(at: tuple[float, float], scales) -> list[Variant]:
+    return [Variant(p.label, panel=p) for p in (Panel(s, at, VW, VH) for s in scales)]
+
+
 REQUIREMENT_EXAMPLES = [
-    _single("core-rules", "Rules, nested rules and visibility on the land cover around Myrtjørna",
-            ["/req/core/rules", "/req/core/selector", "/req/core/nested", "/req/core/symbolizer", "/req/core/visibility",
-             "/req/core/layers", "/req/core/expressions-field-identifiers"],
-            ["Landcover"], Panel(25000, MYRTJORNA, 600, 400), context=False,
-            notes=["Open land is not drawn (visibility false)."]),
+    # --- Core (clause 7)
+    _vig("core-rules", "Three rules for the land cover around Myrtjørna, the later ones overriding the earlier ones",
+         ["/req/core/rules"], ["Landcover"], Panel(20000, MYRTJORNA, VW, VH), "the rules in the style",
+         _values(_LAKES, [("the first rule", ""),
+                          ("the first two rules", "Landcover[class = 'forest'] { fill.color: #93bf85; }"),
+                          ("all three rules", _LAKES),
+                          ("the last two swapped", "\n".join(reversed(_LAKES.split("\n"))))]), context=False),
+    _vig("core-selector", "A rule applied only to the land cover its selector selects, around Myrtjørna",
+         ["/req/core/selector"], ["Landcover"], Panel(20000, MYRTJORNA, VW, VH), "the `selector` of the second rule",
+         _values("[class = 'forest']", [("[class = 'forest']", "[class = 'forest']"), ("[class = 'bog']", "[class = 'bog']"),
+                                        ("[class = 'lake']", "[class = 'lake']")]), context=False),
+    _vig("core-nested", "A nested rule for the small forest patches around Myrtjørna", ["/req/core/nested"],
+         ["Landcover"], Panel(20000, MYRTJORNA, VW, VH), "whether and where the rule for `area < 50000` is nested",
+         _values(_NESTED, [("without the nested rule", "   [class = 'forest'] { fill.color: #5e8f52; }"),
+                           ("nested in the forest rule", _NESTED),
+                           ("not nested", "   [class = 'forest'] { fill.color: #5e8f52; }\n"
+                                          "   [area < 50000] { fill.color: #e8c86a; }")]), context=False),
+    _vig("core-symbolizer", "The default values for what no rule sets and for the land cover no rule selects, "
+         "around Myrtjørna", ["/req/core/symbolizer"], ["Landcover"], Panel(20000, MYRTJORNA, VW, VH),
+         "the rules around the one for the lakes",
+         [Variant("a rule for the lakes only"),
+          Variant("plus marker: null", (_LAKE_STROKE, _LAKE_STROKE + "   marker: null;\n")),
+          Variant("and visibility: false first", [(_LAKE_STROKE, _LAKE_STROKE + "   marker: null;\n"),
+                                                   (_LAKE_RULE, "Landcover { visibility: false; }\n" + _LAKE_RULE
+                                                    + "   visibility: true;\n")])], context=False),
+    _vig("core-visibility", "Land cover around Myrtjørna, some of it not portrayed", ["/req/core/visibility"],
+         ["Landcover"], Panel(20000, MYRTJORNA, VW, VH), "the land cover whose `visibility` is false",
+         _values("   [class = 'bog'] { visibility: false; }",
+                 [("visibility not set", ""), ("bogs: visibility false", "   [class = 'bog'] { visibility: false; }"),
+                  ("all but lakes: false", "   [class <> 'lake'] { visibility: false; }")]), context=False),
     _vig("core-opacity", "Symbolizer opacity on Rondane national park, fill and wide stroke together",
          ["/req/core/opacity", "/rec/core/opacity-together"], ["ProtectedAreas"], Panel(200000, PARK_WEST_EDGE, VW, VH),
          "the Symbolizer `opacity`",
@@ -278,39 +332,96 @@ REQUIREMENT_EXAMPLES = [
     _vig("core-z-order", "zOrder: rivers and roads at Mysusæter", ["/req/core/z-order"], ["Roads", "Rivers"],
          Panel(20000, MYSUSAETER, VW, VH), "the `zOrder` of the rivers (the roads have 1)",
          _values("   zOrder: 2;", [("Rivers zOrder: 0", "   zOrder: 0;"), ("Rivers zOrder: 2", "   zOrder: 2;")])),
+    _vig("core-parameters", "Literal values for the Dot on the peaks around Rondslottet", ["/req/core/parameters"],
+         ["Places"], Panel(150000, RONDSLOTTET, VW, VH), "the literal `size` and `color` of the Dot",
+         _values(MOUNTAIN_DOT_SNIPPET, [("size: 3 px", "Dot { size: 3 px, color: #b8322a }"),
+                                        ("size: 6 px", MOUNTAIN_DOT_SNIPPET),
+                                        ("color: #1f4e79", "Dot { size: 6 px, color: #1f4e79 }"),
+                                        ("color: gray", "Dot { size: 6 px, color: gray }")])),
+    _vig("core-expressions-field-identifiers", "A selector on a property of the land cover around Myrtjørna",
+         ["/req/core/expressions-field-identifiers"], ["Landcover"], Panel(20000, MYRTJORNA, VW, VH),
+         "the property the selector of the nested rule names",
+         _values("[class = 'forest']", [("[class = 'forest']", "[class = 'forest']"),
+                                        ("[area > 100000]", "[area > 100000]")]), context=False),
+    _vig("core-expressions-system-identifiers", "A hatch fill on the forest where the renderer supports hatches",
+         ["/req/core/expressions-system-identifiers"], ["Landcover"], Panel(20000, MYRTJORNA, VW, VH),
+         "whether the renderer supports the Hatch fills requirements class; the style is the same in all panels",
+         [Variant("capabilities.hatches: true"),
+          Variant("capabilities.hatches: false", system={"capabilities.hatches": False})]),
+    _vig("core-scale", "Paths and tractor roads at Mysusæter, hidden at scales smaller than 1:40 000",
+         ["/req/core/scale"], ["Roads"], Panel(20000, MYSUSAETER, VW, VH),
+         "the scale; the style is the same in all panels", _scales(MYSUSAETER, (20000, 35000, 60000))),
+    _vig("core-time", "Roads updated in the visualization's time interval near Otta", ["/req/core/time"], ["Roads"],
+         Panel(50000, OTTA_ROADS, VW, VH), "the start of the visualization's time interval (it ends on 14 November "
+         "2026); the style is the same in all panels",
+         [Variant(f"from {y}-01-01", time_interval=(datetime.date(y, 1, 1), VIEW_DATE)) for y in (2022, 2018, 2010)]),
+    _vig("core-layers", "A rule selecting by data layer, on the roads and rivers at Mysusæter", ["/req/core/layers"],
+         ["Roads", "Rivers"], Panel(20000, MYSUSAETER, VW, VH), "the selector of the last rule",
+         _values("[dataLayer.id = 'Rivers']",
+                 [("[dataLayer.id = 'Rivers']", "[dataLayer.id = 'Rivers']"),
+                  ("[dataLayer.id = 'Roads']", "[dataLayer.id = 'Roads']"),
+                  ("[dataLayer.type = vector]", "[dataLayer.type = vector]")])),
+    _vig("core-operations", "The priority of operators in a selector on the bogs and lakes near Grønbakktjønne",
+         ["/req/core/operations"], ["Landcover"], Panel(20000, (5000, 26000), VW, VH), "the parentheses in the selector",
+         _values("[class = 'bog' or class = 'lake' and area > 50000]",
+                 [("bog or (lake and large)", "[class = 'bog' or class = 'lake' and area > 50000]"),
+                  ("(bog or lake) and large", "[(class = 'bog' or class = 'lake') and area > 50000]")]),
+         context=False),
+    _vig("core-logical", "Logical operators in a selector on the land cover around Myrtjørna", ["/req/core/logical"],
+         ["Landcover"], Panel(20000, MYRTJORNA, VW, VH), "the logical operator in the selector",
+         _values("[class = 'forest' or class = 'bog']",
+                 [("forest or bog", "[class = 'forest' or class = 'bog']"),
+                  ("forest and area > 100000", "[class = 'forest' and area > 100000]"),
+                  ("not forest", "[not (class = 'forest')]")]), context=False),
+    _vig("core-relational", "Relational operators selecting the peaks around Rondslottet", ["/req/core/relational"],
+         ["Places"], Panel(150000, RONDSLOTTET, VW, VH), "the selector of the larger red Dots",
+         _values("[elevation >= 1900]",
+                 [("elevation >= 1900", "[elevation >= 1900]"), ("elevation < 1850", "[elevation < 1850]"),
+                  ("between 1850 and 2000", "[elevation between 1850 and 2000]"),
+                  ("name in (...)", "[name in ('Rondslottet', 'Storronden', 'Vinjeronden')]")])),
     _vig("core-instances", "Changing one member of the stroke in a nested rule", ["/req/core/instances"], ["Roads"],
          Panel(80000, SEL_600, VW, VH), "whether the nested rule that sets `stroke.color` is there",
          _values("   [class = 'county' or class = 'european'] { stroke.color: #d0483a; }\n",
                  [("without the nested rule", ""),
                   ("with it", "   [class = 'county' or class = 'european'] { stroke.color: #d0483a; }\n")])),
-    _single("core-parameters", "Dot size computed from the elevation of each spot height", ["/req/core/parameters"],
-            ["SpotHeights"], Panel(100000, RONDSLOTTET, 600, 400),
-            notes=["The size is an arithmetic expression, so this style also needs the \"Parameter Values\" and "
-                   "\"Arithmetic\" requirements classes."]),
-    _vig("core-time", "Roads updated in the visualization's time interval near Otta", ["/req/core/time"], ["Roads"],
-         Panel(50000, OTTA_ROADS, VW, VH), "the start of the visualization's time interval (it ends on 14 November "
-         "2026); the style is the same in all panels",
-         [Variant(f"from {y}-01-01", time_interval=(datetime.date(y, 1, 1), VIEW_DATE)) for y in (2022, 2018, 2010)]),
-    _vig("vector-fill-stroke", "Fill and stroke of the lakes around Myrtjørna", ["/req/vector/fill", "/req/vector/stroke"],
-         ["Landcover"], Panel(20000, MYRTJORNA, VW, VH), "the `fill` and `stroke`",
-         _values("fill: { color: #b7d3e6 }; stroke: { color: #3f7fb3; width: 1 px };",
-                 [("fill only", "fill: { color: #b7d3e6 }; stroke: { width: 0 };"),
-                  ("fill and stroke", "fill: { color: #b7d3e6 }; stroke: { color: #3f7fb3; width: 1 px };"),
-                  ("fill opacity 0.4", "fill: { color: #b7d3e6; opacity: 0.4 }; stroke: { color: #3f7fb3; width: 1 px };"),
-                  ("stroke only, 2 px", "fill: { opacity: 0 }; stroke: { color: #3f7fb3; width: 2 px };")]),
+    _vig("core-default-values", "Default values for the stroke of the roads at Selsverket",
+         ["/req/core/default-values"], ["Roads"], Panel(25000, SELSVERKET_UNITS, VW, VH),
+         "the members of the stroke that are set",
+         [Variant("color and width"),
+          Variant("color only", ("stroke: { color: #d0483a; width: 3 px };", "stroke: { color: #d0483a };")),
+          Variant("width only", ("stroke: { color: #d0483a; width: 3 px };", "stroke: { width: 3 px };"))]),
+    # --- Basic Vector Features Styling (clause 8)
+    _vig("vector-fill", "The fill of the lakes around Myrtjørna", ["/req/vector/fill"], ["Landcover"],
+         Panel(20000, MYRTJORNA, VW, VH), "the `color` and `opacity` of the `fill`",
+         _values("fill: { color: #3f7fb3 }", [("color: #3f7fb3", "fill: { color: #3f7fb3 }"),
+                                              ("color: #b7d3e6", "fill: { color: #b7d3e6 }"),
+                                              ("opacity: 0.4", "fill: { color: #3f7fb3; opacity: 0.4 }")]),
          context=False),
+    _vig("vector-stroke", "The stroke of the lakes around Myrtjørna", ["/req/vector/stroke"], ["Landcover"],
+         Panel(20000, MYRTJORNA, VW, VH), "the `color` and `width` of the `stroke`",
+         _values("stroke: { color: #3f7fb3; width: 1 px }",
+                 [("width: 1 px", "stroke: { color: #3f7fb3; width: 1 px }"),
+                  ("width: 3 px", "stroke: { color: #3f7fb3; width: 3 px }"),
+                  ("color: #b8322a", "stroke: { color: #b8322a; width: 1 px }"),
+                  ("width: 0", "stroke: { color: #3f7fb3; width: 0 }")]), context=False),
     _vig("vector-units", "Stroke widths in metres, pixels and millimetres at three scales", ["/req/vector/units"],
          ["Roads"], Panel(10000, SELSVERKET_UNITS, VW, VH), "the scale; the style is the same in all panels",
-         [Variant(p.label, panel=p) for p in (Panel(s, SELSVERKET_UNITS, VW, VH) for s in (10000, 25000, 50000))]),
-    _vig("vector-marker-dot", "Dot markers on a cabin (point), a marked path (line vertices) and a lake (centroid) at Smuksjøseter",
-         ["/req/vector/marker", "/req/vector/dot", "/req/vector/graphics"], ["Landcover", "Roads", "Huts"],
-         Panel(15000, SMUKSJOSETER, VW, VH), "the Dots of the marker (the same in all three layers)",
-         _values("Dot { size: 7 px, color: white }, Dot { size: 4.5 px, color: #b8322a }",
-                 [("one Dot", "Dot { size: 4.5 px, color: #b8322a }"),
-                  ("two Dots (an outline)", "Dot { size: 7 px, color: white }, Dot { size: 4.5 px, color: #b8322a }"),
-                  ("plus a Dot at 6 -6", "Dot { size: 7 px, color: white }, Dot { size: 4.5 px, color: #b8322a }, "
-                                         "Dot { size: 3 px, color: #1f4e79, position: 6 -6 }")]),
-         context=False),
+         _scales(SELSVERKET_UNITS, (10000, 25000, 50000))),
+    _vig("vector-marker", "A marker on a cabin (point), a marked path (line vertices) and a lake (centroid) at "
+         "Smuksjøseter", ["/req/vector/marker"], ["Landcover", "Roads", "Huts"], Panel(15000, SMUKSJOSETER, VW, VH),
+         "the `marker` of the first rule", _values(_MARKER2, [("marker: null", "marker: null"),
+                                                              ("a marker of two Dots", _MARKER2)]), context=False),
+    _vig("vector-graphics", "The position of a Dot relative to the tourist cabins in Dørålen (the blue Dot marks the "
+         "cabin)", ["/req/vector/graphics"], ["Huts"], Panel(10000, DORAALSETER, VW, VH),
+         "the `position` of the red Dot",
+         _values("position: 10 0", [("position: 0 0", "position: 0 0"), ("position: 10 0", "position: 10 0"),
+                                    ("position: 0 10", "position: 0 10"), ("position: -10 -10", "position: -10 -10")])),
+    _vig("vector-dot", "Dots on the spot heights around Rondslottet", ["/req/vector/dot"], ["SpotHeights"],
+         Panel(100000, RONDSLOTTET, VW, VH), "the `size` and `color` of the Dot",
+         _values("Dot { size: 6 px, color: #8a5a3a }",
+                 [("size: 3 px", "Dot { size: 3 px, color: #8a5a3a }"), ("size: 6 px", "Dot { size: 6 px, color: #8a5a3a }"),
+                  ("size: 10 px", "Dot { size: 10 px, color: #8a5a3a }"),
+                  ("color: #1f4e79", "Dot { size: 6 px, color: #1f4e79 }")])),
     _vig("vector-image", "An Image marker on the tourist cabins in Dørålen (the blue Dot marks the cabin)",
          ["/req/vector/image"], ["Huts"], Panel(10000, DORAALSETER, VW, VH), "the `hotSpot` and `blackTint`",
          _values("hotSpot: 50 pc 100 pc; blackTint: #b8322a;",
@@ -319,81 +430,230 @@ REQUIREMENT_EXAMPLES = [
                   ("hotSpot: 0 0", "hotSpot: 0 0; blackTint: #b8322a;"),
                   ("blackTint: #3a7d44", "hotSpot: 50 pc 100 pc; blackTint: #3a7d44;")])),
     _vig("vector-text", "The alignment of Text graphics on the peaks around Ljosåbelgen (the Dot marks the position)",
-         ["/req/vector/text", "/req/vector/fonts"], ["Places"], Panel(52000, LJOSABELGEN, VW, VH), "the `alignment`",
+         ["/req/vector/text"], ["Places"], Panel(52000, LJOSABELGEN, VW, VH), "the `alignment`",
          _values(", alignment: center middle",
                  [("left top (default)", ""), ("center middle", ", alignment: center middle"),
                   ("right bottom", ", alignment: right bottom"), ("center bottom", ", alignment: center bottom")])),
-    _vig("casing", "Casing and center line of the roads at Selsverket, Sel", ["/req/casing/casing", "/req/casing/center"],
-         ["Roads"], Panel(25000, (7900, 3300), VW, VH), "the `casing` and `center` of the stroke",
-         _values("; casing: { color: #8c8172; width: 1 px }; center: { color: #d0483a; width: 1 px }",
-                 [("no casing", ""), ("casing 1 px", "; casing: { color: #8c8172; width: 1 px }"),
-                  ("casing 2.5 px", "; casing: { color: #8c8172; width: 2.5 px }"),
-                  ("casing and center", "; casing: { color: #8c8172; width: 1 px }; center: { color: #d0483a; width: 1 px }")])),
-    _vig("dashes", "Dash patterns and a dash offset on the paths at Rondvassbu",
-         ["/req/dashes/dash-pattern", "/req/dashes/dash-offset"], ["Roads"], Panel(12000, RONDVASSBU, VW, VH),
-         "the `dashPattern` and `dashOffset`",
-         _values("; dashPattern: [ 10 px, 10 px ]",
-                 [("no dashPattern", ""), ("[ 10 px, 10 px ]", "; dashPattern: [ 10 px, 10 px ]"),
-                  ("[ 10 px, 10 px ], dashOffset: 10 px", "; dashPattern: [ 10 px, 10 px ]; dashOffset: 10 px"),
-                  ("[ 8 px, 3 px, 2 px, 3 px ]", "; dashPattern: [ 8 px, 3 px, 2 px, 3 px ]")])),
-    _vig("hatches", "Hatch fills on the forest around Myrtjørna", ["/req/hatches/hatch", "/req/hatches/width",
-         "/req/hatches/angle", "/req/hatches/distance"], ["Landcover"], Panel(20000, MYRTJORNA, VW, VH),
-         "the `hatch`",
-         _values("hatch: { width: 1 px; angle: 45; distance: 6 px }",
-                 [("angle: 0", "hatch: { width: 1 px; angle: 0; distance: 6 px }"),
-                  ("angle: 45", "hatch: { width: 1 px; angle: 45; distance: 6 px }"),
-                  ("angle: 135", "hatch: { width: 1 px; angle: 135; distance: 6 px }"),
-                  ("width: 2 px, distance: 12 px", "hatch: { width: 2 px; angle: 45; distance: 12 px }")])),
-    _vig("stipples-dot-patterns", "Stipple and dot pattern fills on the forest around Myrtjørna",
-         ["/req/stipples/ratio", "/req/dot-patterns/dotpattern", "/req/dot-patterns/distance"], ["Landcover"],
-         Panel(20000, MYRTJORNA, VW, VH), "the `stipple` or `dotpattern` of the fill",
-         _values("stipple: { ratio: 0.2 }",
-                 [("stipple ratio: 0.2", "stipple: { ratio: 0.2 }"), ("stipple ratio: 0.5", "stipple: { ratio: 0.5 }"),
-                  ("dotpattern 6 × 6 px", "dotpattern: { distance: { horizontal: 6 px; vertical: 6 px } }"),
-                  ("dotpattern 10 × 5 px", "dotpattern: { distance: { horizontal: 10 px; vertical: 5 px } }")])),
-    _vig("font-outlines", "Font outlines on peak names over the relief", ["/req/font-outlines/outline",
-         "/req/font-outlines/size", "/req/font-outlines/opacity", "/req/font-outlines/color"], ["Elevation", "Places"],
-         Panel(100000, RONDSLOTTET, VW, VH), "the `outline` of the font",
-         _values(", outline: { size: 2, opacity: 0.85, color: white }",
-                 [("no outline", ""), ("size 1, white", ", outline: { size: 1, color: white }"),
-                  ("size 2, white, opacity 0.85", ", outline: { size: 2, opacity: 0.85, color: white }"),
-                  ("size 3, #f3e7b8, opacity 0.5", ", outline: { size: 3, opacity: 0.5, color: #f3e7b8 }")]),
+    _vig("vector-fonts", "The font of the peak names around Ljosåbelgen", ["/req/vector/fonts"], ["Places"],
+         Panel(38000, (16265, 12780), VW, VH), "the `font`",  # room for the names at size 12
+         _values("font: { face: 'Arial', size: 9, color: #2b2b2b }",
+                 [("size: 9", "font: { face: 'Arial', size: 9, color: #2b2b2b }"),
+                  ("size: 12", "font: { face: 'Arial', size: 12, color: #2b2b2b }"),
+                  ("bold: true", "font: { face: 'Arial', size: 9, bold: true, color: #2b2b2b }"),
+                  ("italic: true", "font: { face: 'Arial', size: 9, italic: true, color: #2b2b2b }")])),
+    # --- Basic Coverage Styling and Hill Shading (clause 9)
+    _vig("coverage-color-channels", "Color channels from the bands of a Sentinel-2 scene (1 September 2024) around "
+         "Myrtjørna", ["/req/coverage/color-channels"], ["sentinel2-l2a"], Panel(150000, MYRTJORNA, VW, VH),
+         "the `colorChannels`",
+         [Variant("B04, B03, B02 (natural)"),
+          Variant("B08, B04, B03 (false color)", _rgb("B08 / 4000", "B04 / 2500", "B03 / 2500")),
+          Variant("B04, B03, B02 / 1500", _rgb("B04 / 1500", "B03 / 1500", "B02 / 1500"))], context=False),
+    _vig("coverage-alpha-channel", "The alpha channel of a Sentinel-2 scene over the relief around Myrtjørna",
+         ["/req/coverage/alpha-channel"], ["sentinel2-l2a"], Panel(150000, MYRTJORNA, VW, VH), "the `alphaChannel`",
+         _values("alphaChannel: 0.5;", [("alphaChannel: 1", "alphaChannel: 1;"), ("alphaChannel: 0.5", "alphaChannel: 0.5;"),
+                                        ("alphaChannel: 0.2", "alphaChannel: 0.2;")]), context="relief"),
+    _vig("coverage-single-channel", "One band of a Sentinel-2 scene around Myrtjørna through a grey color map",
+         ["/req/coverage/single-channel"], ["sentinel2-l2a"], Panel(150000, MYRTJORNA, VW, VH), "the `singleChannel`",
+         _values("singleChannel: B08;", [("singleChannel: B02", "singleChannel: B02;"),
+                                         ("singleChannel: B04", "singleChannel: B04;"),
+                                         ("singleChannel: B08", "singleChannel: B08;")]), context=False),
+    _vig("coverage-color-map", "A color map on the elevation of Rondane", ["/req/coverage/color-map"], ["Elevation"],
+         Panel(WHOLE_SD_600 * 2, WHOLE, VW, VH), "the `colorMap`",
+         _values("colorMap: [ 500 #7d9a6a, 1300 #d6c79e, 2100 #9c8f84 ];",
+                 [("two entries", "colorMap: [ 500 #4f7a4a, 2100 #f4f1ee ];"),
+                  ("three entries", "colorMap: [ 500 #7d9a6a, 1300 #d6c79e, 2100 #9c8f84 ];"),
+                  ("five entries", "colorMap: [ 500 #4f7a4a, 900 #8fae74, 1300 #d6c79e, 1700 #b39a7c, 2100 #f4f1ee ];")]),
          context=False),
-    _vig("labels-priority", "Peak labels placed by priority, overlapping labels left out",
-         ["/req/labels/label", "/req/labels/placement", "/rec/labels/overlap"], ["Places"],
-         Panel(250000, RONDSLOTTET, VW, VH), "the `priority` of the label placement",
-         _values(",\n               placement: { priority: elevation }",
-                 [("no priority", ""), ("priority: elevation", ",\n               placement: { priority: elevation }"),
-                  # Part 1 has no unary minus (only `not` is unary), so -elevation would not validate.
-                  ("priority: 0 - elevation", ",\n               placement: { priority: 0 - elevation }")])),
-    _vig("labels-spacing", "Road numbers repeated along the roads near Otta", ["/req/labels/placement"], ["Roads"],
-         Panel(50000, OTTA_ROADS, VW, VH), "the `minSpacing` of the label placement",
-         _values("minSpacing: 150", [("minSpacing: 80", "minSpacing: 80"), ("minSpacing: 150", "minSpacing: 150"),
-                                     ("minSpacing: 300", "minSpacing: 300")])),
     _vig("coverage-opacity-map", "An opacity map on the elevation of Rondane", ["/req/coverage/opacity-map",
          "/rec/coverage/map-interpolation"], ["Elevation"], Panel(WHOLE_SD_600 * 2, WHOLE, VW, VH), "the `opacityMap`",
          _values("\n   opacityMap: [ 700 0.0, 900 1.0 ];",
                  [("no opacityMap", ""), ("fades out below 900 m", "\n   opacityMap: [ 700 0.0, 900 1.0 ];"),
                   ("fades out below 1500 m", "\n   opacityMap: [ 1300 0.0, 1500 1.0 ];")]),
          context=False),
+    _vig("hill-shading-hill-shading", "Hill shading of Rondane at three scales", ["/req/hill-shading/hill-shading"],
+         ["Elevation"], Panel(150000, WHOLE, VW, VH), "the scale; the style is the same in all panels",
+         _scales(WHOLE, (150000, 250000, 400000)), context=False),
     _vig("hill-shading-factor", "Hill shading with different factors (sun at the default azimuth 315, elevation 45)",
-         ["/req/hill-shading/hill-shading", "/req/hill-shading/factor"], ["Elevation"],
-         Panel(150000, RONDSLOTTET, VW, VH), "the `factor`",
+         ["/req/hill-shading/factor"], ["Elevation"], Panel(150000, RONDSLOTTET, VW, VH), "the `factor`",
          _values("factor: 3", [("factor: 0 (off)", "factor: 0"), ("factor: 0.5", "factor: 0.5"),
                                ("factor: 1", "factor: 1"), ("factor: 3", "factor: 3")]),
          context=False),
-    _vig("hill-shading-sun", "Hill shading with the sun from different directions", ["/req/hill-shading/hill-shading",
-         "/req/hill-shading/sun"], ["Elevation"], Panel(150000, RONDSLOTTET, VW, VH), "the `azimuth` of the `sun`",
+    _vig("hill-shading-sun", "Hill shading with the sun from different directions", ["/req/hill-shading/sun"],
+         ["Elevation"], Panel(150000, RONDSLOTTET, VW, VH), "the `azimuth` of the `sun`",
          _values("azimuth: 315", [("azimuth: 315, the default", "azimuth: 315"), ("azimuth: 45", "azimuth: 45"),
                                   ("azimuth: 135", "azimuth: 135"), ("azimuth: 225", "azimuth: 225")]),
          context=False),
+    _vig("hill-shading-color-map", "A color map on the computed shade of Rondane", ["/req/hill-shading/color-map"],
+         ["Elevation"], Panel(150000, RONDSLOTTET, VW, VH), "the `colorMap` of the `hillShading`",
+         _values("colorMap: [ 0 #2f3a42, 1 #ffffff ]",
+                 [("[ 0 #2f3a42, 1 #ffffff ]", "colorMap: [ 0 #2f3a42, 1 #ffffff ]"),
+                  ("[ 0 #3a2c1e, 1 #f6edd4 ]", "colorMap: [ 0 #3a2c1e, 1 #f6edd4 ]"),
+                  ("[ 0 #1f4e79, 0.5 #9fb7c9, 1 #ffffff ]", "colorMap: [ 0 #1f4e79, 0.5 #9fb7c9, 1 #ffffff ]")]),
+         context=False),
+    _vig("hill-shading-opacity-map", "An opacity map on the computed shade, over the land cover around Myrtjørna",
+         ["/req/hill-shading/opacity-map"], ["Landcover", "Elevation"], Panel(150000, MYRTJORNA, VW, VH),
+         "the `opacityMap` of the `hillShading`",
+         _values("opacityMap: [ 0 0.8, 0.7 0.0 ]", [(f"[ {m} ]", f"opacityMap: [ {m} ]") for m in
+                                                    ("0 0.8, 1 0.0", "0 0.8, 0.7 0.0", "0 0.4, 0.7 0.0")]),
+         context=False),
+    # --- Labeling and Font Outlines (clause 10)
+    _vig("labels-label", "Pond names drawn as a marker or as a label, with the lakes drawn above them",
+         ["/req/labels/label"], ["Landcover", "Places"], Panel(25000, POND_NAMES, VW, VH),
+         "whether the Text is in the `marker` or the `label`",
+         _values("label: { elements: [ Text", [("in the marker", "marker: { elements: [ Text"),
+                                              ("in the label", "label: { elements: [ Text")]), context=False),
+    _vig("labels-placement-priority", "Peak labels placed by priority, overlapping labels left out",
+         ["/req/labels/placement", "/rec/labels/overlap"], ["Places"],
+         Panel(250000, RONDSLOTTET, VW, VH), "the `priority` of the label placement",
+         _values(",\n               placement: { priority: elevation }",
+                 [("no priority", ""), ("priority: elevation", ",\n               placement: { priority: elevation }"),
+                  # Part 1 has no unary minus (only `not` is unary), so -elevation would not validate.
+                  ("priority: 0 - elevation", ",\n               placement: { priority: 0 - elevation }")])),
+    _vig("labels-placement-spacing", "Road numbers repeated along the roads near Otta", ["/req/labels/placement"],
+         ["Roads"], Panel(50000, OTTA_ROADS, VW, VH), "the `minSpacing` of the label placement",
+         _values("minSpacing: 150", [("minSpacing: 80", "minSpacing: 80"), ("minSpacing: 150", "minSpacing: 150"),
+                                     ("minSpacing: 300", "minSpacing: 300")])),
+    _vig("font-outlines-outline", "An outline around the peak names over the relief", ["/req/font-outlines/outline"],
+         ["Elevation", "Places"], Panel(100000, RONDSLOTTET, VW, VH), "the `outline` of the font",
+         _values(", outline: { size: 2, color: white }", [("no outline", ""),
+                                                         ("outline", ", outline: { size: 2, color: white }")]),
+         context=False),
+    _vig("font-outlines-size", "The size of the outline around the peak names", ["/req/font-outlines/size"],
+         ["Elevation", "Places"], Panel(100000, RONDSLOTTET, VW, VH), "the `size` of the outline",
+         _values("outline: { size: 2,", [("size: 1", "outline: { size: 1,"), ("size: 2", "outline: { size: 2,"),
+                                         ("size: 3.5", "outline: { size: 3.5,")]), context=False),
+    _vig("font-outlines-opacity", "The opacity of the outline around the peak names", ["/req/font-outlines/opacity"],
+         ["Elevation", "Places"], Panel(100000, RONDSLOTTET, VW, VH), "the `opacity` of the outline",
+         _values("opacity: 0.6", [("opacity: 0.3", "opacity: 0.3"), ("opacity: 0.6", "opacity: 0.6"),
+                                  ("opacity: 1", "opacity: 1")]), context=False),
+    _vig("font-outlines-color", "The color of the outline around the peak names", ["/req/font-outlines/color"],
+         ["Elevation", "Places"], Panel(100000, RONDSLOTTET, VW, VH), "the `color` of the outline",
+         _values("color: white }", [("color: white", "color: white }"), ("color: #f3e7b8", "color: #f3e7b8 }"),
+                                    ("color: #e8a090", "color: #e8a090 }")]), context=False),
+    # --- Dashes, Casing and Centerline (clause 11)
+    _vig("dashes-dash-pattern", "Dash patterns on the paths at Rondvassbu", ["/req/dashes/dash-pattern"], ["Roads"],
+         Panel(12000, RONDVASSBU, VW, VH), "the `dashPattern`",
+         _values("; dashPattern: [ 10 px, 10 px ]",
+                 [("no dashPattern", ""), ("[ 10 px, 10 px ]", "; dashPattern: [ 10 px, 10 px ]"),
+                  ("[ 8 px, 3 px, 2 px, 3 px ]", "; dashPattern: [ 8 px, 3 px, 2 px, 3 px ]"),
+                  ("[ 2 mm, 1 mm ]", "; dashPattern: [ 2 mm, 1 mm ]")])),
+    _vig("dashes-dash-offset", "A dash offset on the paths at Rondvassbu", ["/req/dashes/dash-offset"], ["Roads"],
+         Panel(12000, RONDVASSBU, VW, VH), "the `dashOffset`",
+         _values("; dashOffset: 5 px", [("no dashOffset", ""), ("dashOffset: 5 px", "; dashOffset: 5 px"),
+                                        ("dashOffset: 10 px", "; dashOffset: 10 px")])),
+    _vig("casing-casing", "Casing of the roads at Selsverket, Sel", ["/req/casing/casing"],
+         ["Roads"], Panel(25000, (7900, 3300), VW, VH), "the `casing` of the stroke",
+         _values("; casing: { color: #8c8172; width: 1 px }",
+                 [("no casing", ""), ("casing 1 px", "; casing: { color: #8c8172; width: 1 px }"),
+                  ("casing 2.5 px", "; casing: { color: #8c8172; width: 2.5 px }")])),
+    _vig("casing-center", "Center line of the roads at Selsverket, Sel", ["/req/casing/center"],
+         ["Roads"], Panel(25000, (7900, 3300), VW, VH), "the `center` of the stroke",
+         _values("; center: { color: #d0483a; width: 1 px }",
+                 [("no center", ""), ("center 1 px", "; center: { color: #d0483a; width: 1 px }"),
+                  ("center 2 px", "; center: { color: #d0483a; width: 2 px }")])),
+    # --- Hatch, dot pattern and stipple fills (clause 12)
+    _vig("hatches-hatch", "A hatch fill on the forest around Myrtjørna", ["/req/hatches/hatch"], ["Landcover"],
+         Panel(20000, MYRTJORNA, VW, VH), "whether the fill has a `hatch`",
+         _values("; " + _HATCH, [("no hatch", ""), ("hatch", "; " + _HATCH)])),
+    _vig("hatches-width", "The width of the hatch lines on the forest around Myrtjørna", ["/req/hatches/width"],
+         ["Landcover"], Panel(20000, MYRTJORNA, VW, VH), "the `width` of the hatch",
+         _values(_HATCH, [("width: 0.5 px", "hatch: { width: 0.5 px; angle: 45; distance: 6 px }"),
+                          ("width: 1 px", _HATCH), ("width: 2.5 px", "hatch: { width: 2.5 px; angle: 45; distance: 6 px }")])),
+    _vig("hatches-angle", "The angle of the hatch lines on the forest around Myrtjørna", ["/req/hatches/angle"],
+         ["Landcover"], Panel(20000, MYRTJORNA, VW, VH), "the `angle` of the hatch",
+         _values(_HATCH, [(f"angle: {a}", f"hatch: {{ width: 1 px; angle: {a}; distance: 6 px }}")
+                          for a in (0, 45, 90, 135)])),
+    _vig("hatches-distance", "The distance between the hatch lines on the forest around Myrtjørna",
+         ["/req/hatches/distance"], ["Landcover"], Panel(20000, MYRTJORNA, VW, VH), "the `distance` of the hatch",
+         _values(_HATCH, [(f"distance: {d} px", f"hatch: {{ width: 1 px; angle: 45; distance: {d} px }}")
+                          for d in (4, 6, 12)])),
+    _vig("dot-patterns-dotpattern", "A dot pattern fill on the forest around Myrtjørna", ["/req/dot-patterns/dotpattern"],
+         ["Landcover"], Panel(20000, MYRTJORNA, VW, VH), "whether the fill has a `dotpattern`",
+         _values("; " + _DOTS, [("no dotpattern", ""), ("dotpattern", "; " + _DOTS)])),
+    _vig("dot-patterns-distance", "The distance between the dots on the forest around Myrtjørna",
+         ["/req/dot-patterns/distance"], ["Landcover"], Panel(20000, MYRTJORNA, VW, VH),
+         "the `distance` of the dot pattern",
+         _values(_DOTS, [(f"{h} × {v} px", f"dotpattern: {{ distance: {{ horizontal: {h} px; vertical: {v} px }} }}")
+                         for h, v in ((6, 6), (10, 5), (4, 10))])),
+    _vig("stipples-ratio", "Stipple fills on the forest around Myrtjørna", ["/req/stipples/ratio"], ["Landcover"],
+         Panel(20000, MYRTJORNA, VW, VH), "the `ratio` of the stipple",
+         _values("ratio: 0.3", [("ratio: 0.1", "ratio: 0.1"), ("ratio: 0.3", "ratio: 0.3"), ("ratio: 0.6", "ratio: 0.6")])),
+    # --- Additional expressions (clause 13) and functions (clause 15)
+    _vig("parameter-values-expressions", "Dot size computed from the elevation of each spot height",
+         ["/req/parameter-values/expressions"], ["SpotHeights"], Panel(100000, RONDSLOTTET, VW, VH),
+         "the expression for the `size` of the Dot",
+         _values("size: (elevation - 1000) / 80", [("size: 6", "size: 6"),
+                                                   ("(elevation - 1000) / 80", "size: (elevation - 1000) / 80"),
+                                                   ("(elevation - 1000) / 160", "size: (elevation - 1000) / 160")]),
+         notes=["The size is an arithmetic expression, so this style also needs the \"Arithmetic\" requirements "
+                "class."]),
+    _vig("parameter-values-null", "A Dot size computed from an elevation that only the mountains and peaks have",
+         ["/req/parameter-values/null"], ["Places"], Panel(100000, RONDSLOTTET, VW, VH),
+         "the `size` of the Dot",
+         _values("size: elevation / 250", [("size: 6", "size: 6"), ("size: elevation / 250", "size: elevation / 250")]),
+         notes=["The valleys, lakes and other places have no elevation: their size is NULL, so 0, and no Dot is "
+                "drawn."]),
+    _vig("right-hand-operands", "Peaks higher than an expression on the right-hand side, around Rondslottet",
+         ["/req/right-hand/operands"], ["Places"], Panel(150000, RONDSLOTTET, VW, VH),
+         "the right-hand operand of the selector of the larger red Dots",
+         _values("[elevation > 1500 + 300]",
+                 [("elevation > 1800", "[elevation > 1800]"), ("elevation > 1500 + 300", "[elevation > 1500 + 300]"),
+                  ("> viz.sd / 75", "[elevation > viz.sd / 75]")])),
+    _vig("conditional-condition", "A conditional Dot size on the peaks around Rondslottet",
+         ["/req/conditional/condition"], ["Places"], Panel(150000, RONDSLOTTET, VW, VH), "the `condition`",
+         _values(_COND, [("elevation >= 1900", _COND), ("elevation >= 1700", _COND.replace("1900", "1700")),
+                         ("elevation < 2000", _COND.replace(">= 1900", "< 2000"))])),
+    _vig("conditional-then-exp", "A conditional Dot size on the peaks around Rondslottet",
+         ["/req/conditional/then-exp"], ["Places"], Panel(150000, RONDSLOTTET, VW, VH), "the `thenExp`",
+         _values("? 8 :", [("? 8 :", "? 8 :"), ("? 12 :", "? 12 :"), ("? (elevation - 1700) / 40 :", "? (elevation - 1700) / 40 :")])),
+    _vig("conditional-else-exp", "A conditional Dot size on the peaks around Rondslottet",
+         ["/req/conditional/else-exp"], ["Places"], Panel(150000, RONDSLOTTET, VW, VH), "the `elseExp`",
+         _values(": 4, color", [(": 4", ": 4, color"), (": 2", ": 2, color"), (": 0", ": 0, color")])),
+    _vig("variables-definition", "A variable for the minimum elevation of the highlighted peaks around Rondslottet",
+         ["/req/variables/definition"], ["Places"], Panel(150000, RONDSLOTTET, VW, VH),
+         "the value of `@minElevation`, which the application sets at run time; the style is the same in all panels",
+         [Variant("as defined: 1900"), Variant("set to 1700", variables={"minElevation": 1700}),
+          Variant("set to 2050", variables={"minElevation": 2050})]),
+    _vig("variables-expression", "A variable for the size of the Dot on the peaks above 1900 m around Rondslottet",
+         ["/req/variables/expression"], ["Places"], Panel(150000, RONDSLOTTET, VW, VH),
+         "the `size` of the larger red Dots",
+         _values("size: @dotSize,", [("size: 5", "size: 5,"), ("size: @dotSize", "size: @dotSize,"),
+                                     ("size: @dotSize / 2 + 3", "size: @dotSize / 2 + 3,")])),
+    _vig("functions-call-expressions", "Dot sizes returned by functions on the peaks around Rondslottet",
+         ["/req/functions/call-expressions"], ["Places"], Panel(150000, RONDSLOTTET, VW, VH),
+         "the expression for the `size` of the Dot",
+         _values("size: sqrt(elevation - 1000) / 3", [("size: 6", "size: 6"),
+                                                      ("sqrt(elevation - 1000) / 3", "size: sqrt(elevation - 1000) / 3"),
+                                                      ("max(3, (elevation - 1700) / 30)", "size: max(3, (elevation - 1700) / 30)")]),
+         notes=["`sqrt` and `max` are functions of the \"Math Functions\" requirements class."]),
 ]
 
 # What pycartosym 0.6.5 writes differently in CSS → JSON; to_json fixes it and reports the fix-up.
 # (0.6.5 fixed the other gaps the figures found: pycartosym #174, #182 to #185.)
 PYCARTOSYM_GAPS = [
     "`center` is written as `centerLine`, the name before the SWG's decision on #120 (the schema follows in #188)",
+    "the `capabilities.*` System Identifiers (clause 7) are written as properties, not as `sysId`",
 ]
+
+
+def _capabilities_sysids(style) -> bool:
+    """Turn `{"property": "capabilities.x"}` into `{"sysId": "capabilities.x"}` (PYCARTOSYM_GAPS); whether any was."""
+    changed = False
+
+    def walk(obj):
+        nonlocal changed
+        if isinstance(obj, dict):
+            if isinstance(obj.get("property"), str) and obj["property"].startswith("capabilities.") and len(obj) == 1:
+                obj["sysId"] = obj.pop("property")
+                changed = True
+            for v in obj.values():
+                walk(v)
+        elif isinstance(obj, list):
+            for v in obj:
+                walk(v)
+
+    walk(style)
+    return changed
 
 
 def _center_from_center_line(style) -> bool:
@@ -510,6 +770,8 @@ def to_json(css: str) -> tuple[dict, list[str]]:
     fixups += [f"pycartosym warning: {w}" for w in warnings]
     if _center_from_center_line(style):
         fixups.append("centerLine renamed center (#120)")
+    if _capabilities_sysids(style):
+        fixups.append("capabilities.* written as sysId")
     return style, fixups
 
 
@@ -626,8 +888,10 @@ def render_example(ex: DocExample, styles: list[dict]) -> str:
     marks_file = vignette and any(not v.shows_file for v in ex.variants)
     parts, x = [], 0
     for i, ((p, interval), style) in enumerate(zip(views, styles)):
+        variant = ex.variants[i] if vignette else Variant("")
         system = {"viz.date": VIEW_DATE, "visualization.date": VIEW_DATE,
-                  "viz.timeInterval.start.date": interval[0], "viz.timeInterval.end.date": interval[1]}
+                  "viz.timeInterval.start.date": interval[0], "viz.timeInterval.end.date": interval[1],
+                  **variant.system}
         bbox = p.bbox
         bg = "#ffffff"
         if ex.context == "water":
@@ -648,7 +912,7 @@ def render_example(ex: DocExample, styles: list[dict]) -> str:
                 ctx_svg = ctx_svg.replace("image-rendering:pixelated", "image-rendering:optimizeQuality")
                 parts.append(f'<g transform="translate({x},0)" opacity="{opacity}">' + _strip(ctx_svg) + "</g>")
             bg = "none"
-        view = View(bbox, p.width, p.height, background=bg, system=system)
+        view = View(bbox, p.width, p.height, background=bg, system=system, variables=variant.variables)
         parts.append(f'<g transform="translate({x},0)">' + _strip(render(style, _layers(ex.layers, p), view, DRAFT))
                      + "</g>")
         if vignette:
@@ -682,6 +946,8 @@ def adoc_block(ex: DocExample) -> str:
              "" if ex.variants else  # the panels are labelled with their scale
              ", at " + ", ".join(scales[:-1]) + f" and {scales[-1]}, from left to right")
     context = (" The pale blue lakes are context, not part of the style." if ex.context == "water" else
+               " The grey shadows of the relief under the coverage are context, not part of the style."
+               if ex.context == "relief" and ex.variants else
                " The grey shadows of the relief, seen through the 80 % opaque coverage, the scale bar and the credit "
                "are context, not part of the style." if ex.context == "relief" else
                " The pale land cover, water and rivers, the grey shadows of the relief, the scale bar and the credit "
