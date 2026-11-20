@@ -1095,6 +1095,51 @@
    }
   }
  },
+ "null-literal": {
+  "requirement": "/req/core/literals",
+  "input": "null",
+  "expect": "null",
+  "json": null,
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "null"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "converts to the case's CQL2-JSON"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "null"
+   }
+  }
+ },
+ "null-literal-is-null": {
+  "requirement": "/req/core/literals",
+  "input": "null is null",
+  "expect": "true",
+  "json": {
+   "op": "isNull",
+   "args": [
+    null
+   ]
+  },
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "true"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "converts to the case's CQL2-JSON"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "true"
+   }
+  }
+ },
  "core-array": {
   "requirement": "/req/core/arrays",
   "input": "a_equals((1, 2, 3), (1, 2, 3))",
@@ -1150,6 +1195,107 @@
    "draft renderer": {
     "verdict": "pass",
     "detail": "3000"
+   }
+  }
+ },
+ "null-property-named-null": {
+  "requirement": "/req/core/expressions-field-identifiers",
+  "input": "\"null\"",
+  "expect": 5,
+  "json": {
+   "property": "null"
+  },
+  "properties": {
+   "null": 5
+  },
+  "draft_only": true,
+  "results": {
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "5"
+   }
+  }
+ },
+ "null-property-named-null-is-null": {
+  "requirement": "/req/core/expressions-field-identifiers",
+  "input": "\"null\" is null",
+  "expect": "false",
+  "json": {
+   "op": "isNull",
+   "args": [
+    {
+     "property": "null"
+    }
+   ]
+  },
+  "properties": {
+   "null": 5
+  },
+  "draft_only": true,
+  "results": {
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "false"
+   }
+  }
+ },
+ "null-property-named-null-compare": {
+  "requirement": "/req/core/expressions-field-identifiers",
+  "input": "\"null\" > 1",
+  "expect": "true",
+  "json": {
+   "op": ">",
+   "args": [
+    {
+     "property": "null"
+    },
+    1
+   ]
+  },
+  "properties": {
+   "null": 5
+  },
+  "draft_only": true,
+  "results": {
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "true"
+   }
+  }
+ },
+ "null-property-named-true": {
+  "requirement": "/req/core/expressions-field-identifiers",
+  "input": "\"true\"",
+  "expect": "false",
+  "json": {
+   "property": "true"
+  },
+  "properties": {
+   "true": false
+  },
+  "draft_only": true,
+  "results": {
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "false"
+   }
+  }
+ },
+ "null-property-named-false": {
+  "requirement": "/req/core/expressions-field-identifiers",
+  "input": "\"false\"",
+  "expect": "true",
+  "json": {
+   "property": "false"
+  },
+  "properties": {
+   "false": true
+  },
+  "draft_only": true,
+  "results": {
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "true"
    }
   }
  },
@@ -2824,6 +2970,78 @@
      "op": "accenti",
      "args": [
       "cafe"
+     ]
+    }
+   ]
+  },
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "true"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "converts to the case's CQL2-JSON"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "true"
+   }
+  }
+ },
+ "textfn-accenti-tajik": {
+  "requirement": "/req/text-manipulation/accent-insensitize",
+  "input": "accenti('Тоҷикистон') = accenti('Точикистон')",
+  "expect": "true",
+  "json": {
+   "op": "=",
+   "args": [
+    {
+     "op": "accenti",
+     "args": [
+      "Тоҷикистон"
+     ]
+    },
+    {
+     "op": "accenti",
+     "args": [
+      "Точикистон"
+     ]
+    }
+   ]
+  },
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "true"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "converts to the case's CQL2-JSON"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "true"
+   }
+  }
+ },
+ "textfn-accenti-cyrillic-seven": {
+  "requirement": "/req/text-manipulation/accent-insensitize",
+  "input": "accenti('ҳҶҷҸҿӋӌ') = accenti('хЧчЧҽЧч')",
+  "expect": "true",
+  "json": {
+   "op": "=",
+   "args": [
+    {
+     "op": "accenti",
+     "args": [
+      "ҳҶҷҸҿӋӌ"
+     ]
+    },
+    {
+     "op": "accenti",
+     "args": [
+      "хЧчЧҽЧч"
      ]
     }
    ]

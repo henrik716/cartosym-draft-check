@@ -6,6 +6,7 @@
     "vs_case": "same",
     "text": "ACOS(1)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "acos",
      "args": [
@@ -18,6 +19,7 @@
     "vs_case": "same",
     "text": "ASIN(1)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "asin",
      "args": [
@@ -30,6 +32,7 @@
     "vs_case": "same",
     "text": "ATAN(1)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "atan",
      "args": [
@@ -42,6 +45,7 @@
     "vs_case": "same",
     "text": "ATAN2(1, -1)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "atan2",
      "args": [
@@ -55,6 +59,7 @@
     "vs_case": "same",
     "text": "CEIL(-2.5)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "ceil",
      "args": [
@@ -67,6 +72,7 @@
     "vs_case": "same",
     "text": "CEIL(2.5)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "ceil",
      "args": [
@@ -79,6 +85,7 @@
     "vs_case": "same",
     "text": "FLOOR(2.5)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "floor",
      "args": [
@@ -91,6 +98,7 @@
     "vs_case": "same",
     "text": "ROUND(2.5)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "round",
      "args": [
@@ -103,6 +111,7 @@
     "vs_case": "same",
     "text": "COS(0)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "cos",
      "args": [
@@ -115,6 +124,7 @@
     "vs_case": "same",
     "text": "COSH(0)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "cosh",
      "args": [
@@ -127,6 +137,7 @@
     "vs_case": "same",
     "text": "EXP(1)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "exp",
      "args": [
@@ -139,6 +150,7 @@
     "vs_case": "same",
     "text": "LOG10(1000)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "log10",
      "args": [
@@ -151,6 +163,7 @@
     "vs_case": "same",
     "text": "SIN(0)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "sin",
      "args": [
@@ -163,6 +176,7 @@
     "vs_case": "same",
     "text": "SINH(0)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "sinh",
      "args": [
@@ -175,6 +189,7 @@
     "vs_case": "same",
     "text": "TAN(0)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "tan",
      "args": [
@@ -187,6 +202,7 @@
     "vs_case": "same",
     "text": "TANH(0)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "tanh",
      "args": [
@@ -196,21 +212,30 @@
    },
    "math-random": {
     "to_json": "ok",
-    "vs_case": "/args/0/args: 2 items vs 1",
-    "text": ">=0 AND <1",
-    "stable": "text does not parse: error: Failed to parse in.cql2 as a CQL2-Text expression",
+    "vs_case": "same",
+    "text": "RANDOM() >= 0 AND RANDOM() < 1",
+    "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "and",
      "args": [
       {
        "op": ">=",
        "args": [
+        {
+         "op": "random",
+         "args": []
+        },
         0
        ]
       },
       {
        "op": "<",
        "args": [
+        {
+         "op": "random",
+         "args": []
+        },
         1
        ]
       }
@@ -222,6 +247,7 @@
     "vs_case": "same",
     "text": "CONTAINS('Oslo', 'sl')",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "contains",
      "args": [
@@ -235,6 +261,7 @@
     "vs_case": "same",
     "text": "STARTSWITH('Oslo', 'Os')",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "startsWith",
      "args": [
@@ -248,6 +275,7 @@
     "vs_case": "same",
     "text": "ENDSWITH('Oslo', 'lo')",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "endsWith",
      "args": [
@@ -261,6 +289,7 @@
     "vs_case": "same",
     "text": "NOT CONTAINS('Oslo', 'sl')",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "not",
      "args": [
@@ -279,6 +308,7 @@
     "vs_case": "same",
     "text": "NOT STARTSWITH('Oslo', 'sl')",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "not",
      "args": [
@@ -297,6 +327,7 @@
     "vs_case": "same",
     "text": "NOT ENDSWITH('Oslo', 'lo')",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "not",
      "args": [
@@ -312,23 +343,52 @@
    },
    "cond-string-then": {
     "to_json": "ok",
-    "vs_case": "/: `{\"op\": \"?:\", \"args\": [{\"op\": \">\", \"args\": [2, 1...` vs `null`",
-    "text": "null",
-    "stable": "/: `null` vs `{\"property\": \"null\"}`",
-    "json": null
+    "vs_case": "same",
+    "text": "\"?:\"(2 > 1, 'yes', 'no')",
+    "stable": "yes",
+    "escaped": "-",
+    "json": {
+     "op": "?:",
+     "args": [
+      {
+       "op": ">",
+       "args": [
+        2,
+        1
+       ]
+      },
+      "yes",
+      "no"
+     ]
+    }
    },
    "cond-string-else": {
     "to_json": "ok",
-    "vs_case": "/: `{\"op\": \"?:\", \"args\": [{\"op\": \"<\", \"args\": [2, 1...` vs `null`",
-    "text": "null",
-    "stable": "/: `null` vs `{\"property\": \"null\"}`",
-    "json": null
+    "vs_case": "same",
+    "text": "\"?:\"(2 < 1, 'yes', 'no')",
+    "stable": "yes",
+    "escaped": "-",
+    "json": {
+     "op": "?:",
+     "args": [
+      {
+       "op": "<",
+       "args": [
+        2,
+        1
+       ]
+      },
+      "yes",
+      "no"
+     ]
+    }
    },
    "rhs-function": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "3 < ABS(-5)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "<",
      "args": [
@@ -347,6 +407,7 @@
     "vs_case": "same",
     "text": "ABS(-2)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "abs",
      "args": [
@@ -359,6 +420,7 @@
     "vs_case": "same",
     "text": "POW(2)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "pow",
      "args": [
@@ -371,6 +433,7 @@
     "vs_case": "/op: `\"pow\"` vs `\"^\"`",
     "text": "'a' ^ 2",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "^",
      "args": [
@@ -384,6 +447,7 @@
     "vs_case": "same",
     "text": "ATAN2(1, 1)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "atan2",
      "args": [
@@ -397,6 +461,7 @@
     "vs_case": "same",
     "text": "MAX(1, 5)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "max",
      "args": [
@@ -410,6 +475,7 @@
     "vs_case": "same",
     "text": "ATAN2(1, 1, 1)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "atan2",
      "args": [
@@ -424,6 +490,7 @@
     "vs_case": "same",
     "text": "'abc'",
     "stable": "yes",
+    "escaped": "-",
     "json": "abc"
    },
    "core-literal-real": {
@@ -431,6 +498,7 @@
     "vs_case": "same",
     "text": "3.25",
     "stable": "yes",
+    "escaped": "-",
     "json": 3.25
    },
    "core-literal-boolean": {
@@ -438,6 +506,7 @@
     "vs_case": "same",
     "text": "true",
     "stable": "yes",
+    "escaped": "-",
     "json": true
    },
    "core-array": {
@@ -445,6 +514,7 @@
     "vs_case": "same",
     "text": "A_EQUALS((1, 2, 3), (1, 2, 3))",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "a_equals",
      "args": [
@@ -466,6 +536,7 @@
     "vs_case": "-",
     "text": "1 + 2",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "+",
      "args": [
@@ -479,6 +550,7 @@
     "vs_case": "-",
     "text": "5 - 7",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "-",
      "args": [
@@ -492,6 +564,7 @@
     "vs_case": "-",
     "text": "3 * 4",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "*",
      "args": [
@@ -505,6 +578,7 @@
     "vs_case": "-",
     "text": "7.0 / 2",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "/",
      "args": [
@@ -518,6 +592,7 @@
     "vs_case": "-",
     "text": "7 / 2",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "/",
      "args": [
@@ -531,6 +606,7 @@
     "vs_case": "-",
     "text": "7 DIV 2",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "div",
      "args": [
@@ -544,6 +620,7 @@
     "vs_case": "-",
     "text": "-7 DIV 2",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "div",
      "args": [
@@ -557,8 +634,9 @@
     "vs_case": "-",
     "text": "7  3",
     "stable": "/args: missing",
+    "escaped": "-",
     "json": {
-     "op": null,
+     "op": "%",
      "args": [
       7,
       3
@@ -570,8 +648,9 @@
     "vs_case": "-",
     "text": "-7  3",
     "stable": "/args: missing",
+    "escaped": "-",
     "json": {
-     "op": null,
+     "op": "%",
      "args": [
       -7,
       3
@@ -583,6 +662,7 @@
     "vs_case": "same",
     "text": "2 ^ 10",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "^",
      "args": [
@@ -596,6 +676,7 @@
     "vs_case": "-",
     "text": "1 < 2 AND 3 < 4",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "and",
      "args": [
@@ -621,6 +702,7 @@
     "vs_case": "-",
     "text": "1 > 2 OR 3 < 4",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "or",
      "args": [
@@ -646,6 +728,7 @@
     "vs_case": "-",
     "text": "NOT(1 = 2)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "not",
      "args": [
@@ -664,6 +747,7 @@
     "vs_case": "-",
     "text": "1 < 2 AND (NOT(3 = 4))",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "and",
      "args": [
@@ -694,6 +778,7 @@
     "vs_case": "-",
     "text": "2 = 2",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "=",
      "args": [
@@ -707,6 +792,7 @@
     "vs_case": "-",
     "text": "2 <> 3",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "<>",
      "args": [
@@ -720,6 +806,7 @@
     "vs_case": "-",
     "text": "2 <= 2",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "<=",
      "args": [
@@ -733,6 +820,7 @@
     "vs_case": "-",
     "text": "5 BETWEEN (1 AND 10)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "between",
      "args": [
@@ -752,6 +840,7 @@
     "vs_case": "-",
     "text": "5 NOT BETWEEN (6 AND 10)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "not",
      "args": [
@@ -776,6 +865,7 @@
     "vs_case": "-",
     "text": "2 IN (1, 2, 3)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "in",
      "args": [
@@ -791,17 +881,23 @@
    "core-not-in": {
     "to_json": "ok",
     "vs_case": "-",
-    "text": "4  (1, 2, 3)",
-    "stable": "/: `{\"op\": null, \"args\": [4, [1, 2, 3]]}` vs `null`",
+    "text": "4 NOT IN (1, 2, 3)",
+    "stable": "yes",
+    "escaped": "-",
     "json": {
-     "op": null,
+     "op": "not",
      "args": [
-      4,
-      [
-       1,
-       2,
-       3
-      ]
+      {
+       "op": "in",
+       "args": [
+        4,
+        [
+         1,
+         2,
+         3
+        ]
+       ]
+      }
      ]
     }
    },
@@ -810,12 +906,11 @@
     "vs_case": "-",
     "text": "null IS null",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "isNull",
      "args": [
-      {
-       "property": "null"
-      }
+      null
      ]
     }
    },
@@ -824,6 +919,7 @@
     "vs_case": "-",
     "text": "(1 + 2) * 3",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "*",
      "args": [
@@ -843,6 +939,7 @@
     "vs_case": "same",
     "text": "'Oslo' LIKE 'O%'",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "like",
      "args": [
@@ -856,6 +953,7 @@
     "vs_case": "same",
     "text": "'Oslo' LIKE 'O_lo'",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "like",
      "args": [
@@ -869,6 +967,7 @@
     "vs_case": "same",
     "text": "'Oslo' LIKE 'B%'",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "like",
      "args": [
@@ -882,6 +981,7 @@
     "vs_case": "-",
     "text": "'Oslo' NOT LIKE 'B%'",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "not",
      "args": [
@@ -897,36 +997,66 @@
    },
    "text-like-escape": {
     "to_json": "ok",
-    "vs_case": "/args/1: `\"50\\\\%\"` vs `\"50%\"`",
-    "text": "'50%' LIKE '50%'",
+    "vs_case": "same",
+    "text": "'50%' LIKE '50\\%'",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "like",
      "args": [
       "50%",
-      "50%"
+      "50\\%"
      ]
     }
    },
    "cond-true": {
     "to_json": "ok",
-    "vs_case": "/: `{\"op\": \"?:\", \"args\": [{\"op\": \"<\", \"args\": [1, 2...` vs `null`",
-    "text": "null",
-    "stable": "/: `null` vs `{\"property\": \"null\"}`",
-    "json": null
+    "vs_case": "same",
+    "text": "\"?:\"(1 < 2, 10, 20)",
+    "stable": "yes",
+    "escaped": "-",
+    "json": {
+     "op": "?:",
+     "args": [
+      {
+       "op": "<",
+       "args": [
+        1,
+        2
+       ]
+      },
+      10,
+      20
+     ]
+    }
    },
    "cond-false": {
     "to_json": "ok",
-    "vs_case": "/: `{\"op\": \"?:\", \"args\": [{\"op\": \">\", \"args\": [1, 2...` vs `null`",
-    "text": "null",
-    "stable": "/: `null` vs `{\"property\": \"null\"}`",
-    "json": null
+    "vs_case": "same",
+    "text": "\"?:\"(1 > 2, 10, 20)",
+    "stable": "yes",
+    "escaped": "-",
+    "json": {
+     "op": "?:",
+     "args": [
+      {
+       "op": ">",
+       "args": [
+        1,
+        2
+       ]
+      },
+      10,
+      20
+     ]
+    }
    },
    "array-contains": {
     "to_json": "ok",
     "vs_case": "-",
     "text": "A_CONTAINS((1, 2, 3), (1, 2))",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "a_contains",
      "args": [
@@ -947,6 +1077,7 @@
     "vs_case": "-",
     "text": "A_CONTAINEDBY((1, 2), (1, 2, 3))",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "a_containedBy",
      "args": [
@@ -967,6 +1098,7 @@
     "vs_case": "-",
     "text": "A_EQUALS((1, 2), (1, 2))",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "a_equals",
      "args": [
@@ -986,6 +1118,7 @@
     "vs_case": "-",
     "text": "A_EQUALS((1, 2), (2, 1))",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "a_equals",
      "args": [
@@ -1005,6 +1138,7 @@
     "vs_case": "-",
     "text": "A_OVERLAPS((1, 2), (2, 3))",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "a_overlaps",
      "args": [
@@ -1024,6 +1158,7 @@
     "vs_case": "same",
     "text": "A_OVERLAPS((1, 2), (3, 4))",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "a_overlaps",
      "args": [
@@ -1043,6 +1178,7 @@
     "vs_case": "/args/0/op: `\"caseInsensitize\"` vs `\"CASEINSENSITIZE\"`",
     "text": "CASEINSENSITIZE('ABC') = CASEINSENSITIZE('abc')",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "=",
      "args": [
@@ -1066,6 +1202,7 @@
     "vs_case": "same",
     "text": "CASEI('ABC') = CASEI('abc')",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "=",
      "args": [
@@ -1087,8 +1224,9 @@
    "textfn-accent-insensitize": {
     "to_json": "ok",
     "vs_case": "/args/0/op: `\"accentInsensitize\"` vs `\"ACCENTINSENSITIZE\"`",
-    "text": "ACCENTINSENSITIZE('cafu00e9') = ACCENTINSENSITIZE('cafe')",
-    "stable": "/args/0/args/0: `\"café\"` vs `\"cafu00e9\"`",
+    "text": "ACCENTINSENSITIZE('café') = ACCENTINSENSITIZE('cafe')",
+    "stable": "yes",
+    "escaped": "same",
     "json": {
      "op": "=",
      "args": [
@@ -1110,8 +1248,9 @@
    "textfn-accenti-o-stroke": {
     "to_json": "ok",
     "vs_case": "same",
-    "text": "ACCENTI('u00d8re') = ACCENTI('Ore')",
-    "stable": "/args/0/args/0: `\"Øre\"` vs `\"u00d8re\"`",
+    "text": "ACCENTI('Øre') = ACCENTI('Ore')",
+    "stable": "yes",
+    "escaped": "same",
     "json": {
      "op": "=",
      "args": [
@@ -1133,8 +1272,9 @@
    "textfn-accenti": {
     "to_json": "ok",
     "vs_case": "same",
-    "text": "ACCENTI('cafu00e9') = ACCENTI('cafe')",
-    "stable": "/args/0/args/0: `\"café\"` vs `\"cafu00e9\"`",
+    "text": "ACCENTI('café') = ACCENTI('cafe')",
+    "stable": "yes",
+    "escaped": "same",
     "json": {
      "op": "=",
      "args": [
@@ -1153,11 +1293,60 @@
      ]
     }
    },
+   "textfn-accenti-tajik": {
+    "to_json": "ok",
+    "vs_case": "same",
+    "text": "ACCENTI('Тоҷикистон') = ACCENTI('Точикистон')",
+    "stable": "yes",
+    "escaped": "same",
+    "json": {
+     "op": "=",
+     "args": [
+      {
+       "op": "accenti",
+       "args": [
+        "Тоҷикистон"
+       ]
+      },
+      {
+       "op": "accenti",
+       "args": [
+        "Точикистон"
+       ]
+      }
+     ]
+    }
+   },
+   "textfn-accenti-cyrillic-seven": {
+    "to_json": "ok",
+    "vs_case": "same",
+    "text": "ACCENTI('ҳҶҷҸҿӋӌ') = ACCENTI('хЧчЧҽЧч')",
+    "stable": "yes",
+    "escaped": "same",
+    "json": {
+     "op": "=",
+     "args": [
+      {
+       "op": "accenti",
+       "args": [
+        "ҳҶҷҸҿӋӌ"
+       ]
+      },
+      {
+       "op": "accenti",
+       "args": [
+        "хЧчЧҽЧч"
+       ]
+      }
+     ]
+    }
+   },
    "textfn-upper-case": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "UPPERCASE('abc')",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "upperCase",
      "args": [
@@ -1170,6 +1359,7 @@
     "vs_case": "same",
     "text": "LOWERCASE('ABC')",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "lowerCase",
      "args": [
@@ -1182,6 +1372,7 @@
     "vs_case": "same",
     "text": "CONCATENATE('ab', 'cd')",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "concatenate",
      "args": [
@@ -1195,6 +1386,7 @@
     "vs_case": "same",
     "text": "SUBSTITUTE('a-b-c', '-', '+')",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "substitute",
      "args": [
@@ -1209,6 +1401,7 @@
     "vs_case": "-",
     "text": "FORMAT('%d items', 3)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "format",
      "args": [
@@ -1222,6 +1415,7 @@
     "vs_case": "-",
     "text": "ABS(-2)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "abs",
      "args": [
@@ -1234,6 +1428,7 @@
     "vs_case": "-",
     "text": "2 ^ 3",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "^",
      "args": [
@@ -1247,6 +1442,7 @@
     "vs_case": "-",
     "text": "MIN(2, 3)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "min",
      "args": [
@@ -1260,6 +1456,7 @@
     "vs_case": "-",
     "text": "MAX(2, 3)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "max",
      "args": [
@@ -1273,6 +1470,7 @@
     "vs_case": "-",
     "text": "MAX(1, 5, 3)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "max",
      "args": [
@@ -1287,6 +1485,7 @@
     "vs_case": "-",
     "text": "MIN(7)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "min",
      "args": [
@@ -1299,6 +1498,7 @@
     "vs_case": "-",
     "text": "LOG(1)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "log",
      "args": [
@@ -1311,6 +1511,7 @@
     "vs_case": "-",
     "text": "ROUND(2.5)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "round",
      "args": [
@@ -1323,6 +1524,7 @@
     "vs_case": "-",
     "text": "ROUND(-2.5)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "round",
      "args": [
@@ -1335,6 +1537,7 @@
     "vs_case": "-",
     "text": "SQRT(16)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "sqrt",
      "args": [
@@ -1347,6 +1550,7 @@
     "vs_case": "-",
     "text": "FLOOR(-1.5)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "floor",
      "args": [
@@ -1359,6 +1563,7 @@
     "vs_case": "same",
     "text": "2 <> 2",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "<>",
      "args": [
@@ -1372,6 +1577,7 @@
     "vs_case": "same",
     "text": "3 <> 2",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "<>",
      "args": [
@@ -1385,6 +1591,7 @@
     "vs_case": "same",
     "text": "10 <> 2",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "<>",
      "args": [
@@ -1398,6 +1605,7 @@
     "vs_case": "same",
     "text": "'a' <> 'b'",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "<>",
      "args": [
@@ -1411,6 +1619,7 @@
     "vs_case": "same",
     "text": "'a' <> 'a'",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "<>",
      "args": [
@@ -1424,6 +1633,7 @@
     "vs_case": "same",
     "text": "2 <> 3",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "<>",
      "args": [
@@ -1437,6 +1647,7 @@
     "vs_case": "same",
     "text": "(1 + 1) <> 3",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "<>",
      "args": [
@@ -1456,6 +1667,7 @@
     "vs_case": "same",
     "text": "1 <> 2 AND 3 <> 4",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "and",
      "args": [
@@ -1481,6 +1693,7 @@
     "vs_case": "same",
     "text": "2 <> 3 = true",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "=",
      "args": [
@@ -1500,6 +1713,7 @@
     "vs_case": "same",
     "text": "NOT(2 <> 2)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "not",
      "args": [
@@ -1515,93 +1729,87 @@
    },
    "null-arithmetic": {
     "to_json": "ok",
-    "vs_case": "/args/0: `null` vs `{\"property\": \"null\"}`",
+    "vs_case": "same",
     "text": "null + 1",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "+",
      "args": [
-      {
-       "property": "null"
-      },
+      null,
       1
      ]
     }
    },
    "null-equal": {
     "to_json": "ok",
-    "vs_case": "/args/0: `null` vs `{\"property\": \"null\"}`",
+    "vs_case": "same",
     "text": "null = 1",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "=",
      "args": [
-      {
-       "property": "null"
-      },
+      null,
       1
      ]
     }
    },
    "null-not-equal": {
     "to_json": "ok",
-    "vs_case": "/args/0: `null` vs `{\"property\": \"null\"}`",
+    "vs_case": "same",
     "text": "null <> 1",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "<>",
      "args": [
-      {
-       "property": "null"
-      },
+      null,
       1
      ]
     }
    },
    "null-compare": {
     "to_json": "ok",
-    "vs_case": "/args/0: `null` vs `{\"property\": \"null\"}`",
+    "vs_case": "same",
     "text": "null > 1",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": ">",
      "args": [
-      {
-       "property": "null"
-      },
+      null,
       1
      ]
     }
    },
    "null-like": {
     "to_json": "ok",
-    "vs_case": "/args/0: `null` vs `{\"property\": \"null\"}`",
+    "vs_case": "same",
     "text": "null LIKE 'a%'",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "like",
      "args": [
-      {
-       "property": "null"
-      },
+      null,
       "a%"
      ]
     }
    },
    "null-not": {
     "to_json": "ok",
-    "vs_case": "/args/0/args/0: `null` vs `{\"property\": \"null\"}`",
+    "vs_case": "same",
     "text": "NOT(null > 1)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "not",
      "args": [
       {
        "op": ">",
        "args": [
-        {
-         "property": "null"
-        },
+        null,
         1
        ]
       }
@@ -1610,18 +1818,17 @@
    },
    "null-and-true": {
     "to_json": "ok",
-    "vs_case": "/args/0/args/0: `null` vs `{\"property\": \"null\"}`",
+    "vs_case": "same",
     "text": "null > 1 AND true",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "and",
      "args": [
       {
        "op": ">",
        "args": [
-        {
-         "property": "null"
-        },
+        null,
         1
        ]
       },
@@ -1631,18 +1838,17 @@
    },
    "null-and-false": {
     "to_json": "ok",
-    "vs_case": "/args/0/args/0: `null` vs `{\"property\": \"null\"}`",
+    "vs_case": "same",
     "text": "null > 1 AND false",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "and",
      "args": [
       {
        "op": ">",
        "args": [
-        {
-         "property": "null"
-        },
+        null,
         1
        ]
       },
@@ -1652,18 +1858,17 @@
    },
    "null-or-true": {
     "to_json": "ok",
-    "vs_case": "/args/0/args/0: `null` vs `{\"property\": \"null\"}`",
+    "vs_case": "same",
     "text": "null > 1 OR true",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "or",
      "args": [
       {
        "op": ">",
        "args": [
-        {
-         "property": "null"
-        },
+        null,
         1
        ]
       },
@@ -1673,18 +1878,17 @@
    },
    "null-or-false": {
     "to_json": "ok",
-    "vs_case": "/args/0/args/0: `null` vs `{\"property\": \"null\"}`",
+    "vs_case": "same",
     "text": "null > 1 OR false",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "or",
      "args": [
       {
        "op": ">",
        "args": [
-        {
-         "property": "null"
-        },
+        null,
         1
        ]
       },
@@ -1694,21 +1898,41 @@
    },
    "null-is-null": {
     "to_json": "ok",
-    "vs_case": "/args/0/args/0: `null` vs `{\"property\": \"null\"}`",
+    "vs_case": "same",
     "text": "null + 1 IS null",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "isNull",
      "args": [
       {
        "op": "+",
        "args": [
-        {
-         "property": "null"
-        },
+        null,
         1
        ]
       }
+     ]
+    }
+   },
+   "null-literal": {
+    "to_json": "ok",
+    "vs_case": "same",
+    "text": "null",
+    "stable": "yes",
+    "escaped": "-",
+    "json": null
+   },
+   "null-literal-is-null": {
+    "to_json": "ok",
+    "vs_case": "same",
+    "text": "null IS null",
+    "stable": "yes",
+    "escaped": "-",
+    "json": {
+     "op": "isNull",
+     "args": [
+      null
      ]
     }
    }
@@ -1719,6 +1943,7 @@
     "vs_case": "same",
     "text": "acos(1)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "acos",
      "args": [
@@ -1731,6 +1956,7 @@
     "vs_case": "same",
     "text": "asin(1)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "asin",
      "args": [
@@ -1743,6 +1969,7 @@
     "vs_case": "same",
     "text": "atan(1)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "atan",
      "args": [
@@ -1755,6 +1982,7 @@
     "vs_case": "same",
     "text": "atan2(1, -1)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "atan2",
      "args": [
@@ -1768,6 +1996,7 @@
     "vs_case": "same",
     "text": "ceil(-2.5)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "ceil",
      "args": [
@@ -1780,6 +2009,7 @@
     "vs_case": "same",
     "text": "ceil(2.5)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "ceil",
      "args": [
@@ -1792,6 +2022,7 @@
     "vs_case": "same",
     "text": "floor(2.5)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "floor",
      "args": [
@@ -1804,6 +2035,7 @@
     "vs_case": "same",
     "text": "round(2.5)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "round",
      "args": [
@@ -1816,6 +2048,7 @@
     "vs_case": "same",
     "text": "cos(0)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "cos",
      "args": [
@@ -1828,6 +2061,7 @@
     "vs_case": "same",
     "text": "cosh(0)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "cosh",
      "args": [
@@ -1840,6 +2074,7 @@
     "vs_case": "same",
     "text": "exp(1)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "exp",
      "args": [
@@ -1852,6 +2087,7 @@
     "vs_case": "same",
     "text": "log10(1000)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "log10",
      "args": [
@@ -1864,6 +2100,7 @@
     "vs_case": "same",
     "text": "sin(0)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "sin",
      "args": [
@@ -1876,6 +2113,7 @@
     "vs_case": "same",
     "text": "sinh(0)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "sinh",
      "args": [
@@ -1888,6 +2126,7 @@
     "vs_case": "same",
     "text": "tan(0)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "tan",
      "args": [
@@ -1900,6 +2139,7 @@
     "vs_case": "same",
     "text": "tanh(0)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "tanh",
      "args": [
@@ -1912,6 +2152,7 @@
     "vs_case": "same",
     "text": "random() >= 0 and random() < 1",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "and",
      "args": [
@@ -1943,6 +2184,7 @@
     "vs_case": "same",
     "text": "contains('Oslo', 'sl')",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "contains",
      "args": [
@@ -1956,6 +2198,7 @@
     "vs_case": "same",
     "text": "startsWith('Oslo', 'Os')",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "startsWith",
      "args": [
@@ -1969,6 +2212,7 @@
     "vs_case": "same",
     "text": "endsWith('Oslo', 'lo')",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "endsWith",
      "args": [
@@ -1982,6 +2226,7 @@
     "vs_case": "same",
     "text": "not contains('Oslo', 'sl')",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "not",
      "args": [
@@ -2000,6 +2245,7 @@
     "vs_case": "same",
     "text": "not startsWith('Oslo', 'sl')",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "not",
      "args": [
@@ -2018,6 +2264,7 @@
     "vs_case": "same",
     "text": "not endsWith('Oslo', 'lo')",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "not",
      "args": [
@@ -2036,6 +2283,7 @@
     "vs_case": "same",
     "text": "2 > 1 ? 'yes' : 'no'",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "?:",
      "args": [
@@ -2056,6 +2304,7 @@
     "vs_case": "same",
     "text": "2 < 1 ? 'yes' : 'no'",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "?:",
      "args": [
@@ -2076,6 +2325,7 @@
     "vs_case": "same",
     "text": "3 < abs(-5)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "<",
      "args": [
@@ -2094,6 +2344,7 @@
     "vs_case": "same",
     "text": "abs(-2)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "abs",
      "args": [
@@ -2106,6 +2357,7 @@
     "vs_case": "same",
     "text": "pow(2)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "pow",
      "args": [
@@ -2118,6 +2370,7 @@
     "vs_case": "same",
     "text": "pow('a', 2)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "pow",
      "args": [
@@ -2131,6 +2384,7 @@
     "vs_case": "same",
     "text": "atan2(1, 1)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "atan2",
      "args": [
@@ -2144,6 +2398,7 @@
     "vs_case": "same",
     "text": "max(1, 5)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "max",
      "args": [
@@ -2157,6 +2412,7 @@
     "vs_case": "same",
     "text": "atan2(1, 1, 1)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "atan2",
      "args": [
@@ -2171,6 +2427,7 @@
     "vs_case": "same",
     "text": "'abc'",
     "stable": "yes",
+    "escaped": "-",
     "json": "abc"
    },
    "core-literal-real": {
@@ -2178,6 +2435,7 @@
     "vs_case": "same",
     "text": "3.25",
     "stable": "yes",
+    "escaped": "-",
     "json": 3.25
    },
    "core-literal-boolean": {
@@ -2185,6 +2443,7 @@
     "vs_case": "same",
     "text": "true",
     "stable": "yes",
+    "escaped": "-",
     "json": true
    },
    "core-array": {
@@ -2192,6 +2451,7 @@
     "vs_case": "same",
     "text": "A_EQUALS([1, 2, 3], [1, 2, 3])",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "a_equals",
      "args": [
@@ -2213,6 +2473,7 @@
     "vs_case": "-",
     "text": "1 + 2",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "+",
      "args": [
@@ -2226,6 +2487,7 @@
     "vs_case": "-",
     "text": "5 - 7",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "-",
      "args": [
@@ -2239,6 +2501,7 @@
     "vs_case": "-",
     "text": "3 * 4",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "*",
      "args": [
@@ -2252,6 +2515,7 @@
     "vs_case": "-",
     "text": "7.0 / 2",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "/",
      "args": [
@@ -2265,6 +2529,7 @@
     "vs_case": "-",
     "text": "7 / 2",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "/",
      "args": [
@@ -2278,6 +2543,7 @@
     "vs_case": "-",
     "text": "//(7, 2)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "//",
      "args": [
@@ -2291,6 +2557,7 @@
     "vs_case": "-",
     "text": "//(-7, 2)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "//",
      "args": [
@@ -2304,6 +2571,7 @@
     "vs_case": "-",
     "text": "%(7, 3)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "%",
      "args": [
@@ -2317,6 +2585,7 @@
     "vs_case": "-",
     "text": "%(-7, 3)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "%",
      "args": [
@@ -2330,6 +2599,7 @@
     "vs_case": "same",
     "text": "2 ^ 10",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "^",
      "args": [
@@ -2343,6 +2613,7 @@
     "vs_case": "-",
     "text": "1 < 2 and 3 < 4",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "and",
      "args": [
@@ -2368,6 +2639,7 @@
     "vs_case": "-",
     "text": "1 > 2 or 3 < 4",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "or",
      "args": [
@@ -2393,6 +2665,7 @@
     "vs_case": "-",
     "text": "not 1 = 2",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "not",
      "args": [
@@ -2411,6 +2684,7 @@
     "vs_case": "-",
     "text": "1 < 2 and not 3 = 4",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "and",
      "args": [
@@ -2441,6 +2715,7 @@
     "vs_case": "-",
     "text": "2 = 2",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "=",
      "args": [
@@ -2454,6 +2729,7 @@
     "vs_case": "-",
     "text": "2 <> 3",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "<>",
      "args": [
@@ -2467,6 +2743,7 @@
     "vs_case": "-",
     "text": "2 <= 2",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "<=",
      "args": [
@@ -2480,6 +2757,7 @@
     "vs_case": "-",
     "text": "5 between 1 and 10",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "between",
      "args": [
@@ -2494,6 +2772,7 @@
     "vs_case": "-",
     "text": "5 not between 6 and 10",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "not",
      "args": [
@@ -2513,6 +2792,7 @@
     "vs_case": "-",
     "text": "2 in (1, 2, 3)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "in",
      "args": [
@@ -2530,6 +2810,7 @@
     "vs_case": "-",
     "text": "4 not in (1, 2, 3)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "not",
      "args": [
@@ -2552,6 +2833,7 @@
     "vs_case": "-",
     "text": "'None' is null",
     "stable": "/args/0: `null` vs `\"None\"`",
+    "escaped": "-",
     "json": {
      "op": "isNull",
      "args": [
@@ -2564,6 +2846,7 @@
     "vs_case": "-",
     "text": "(1 + 2) * 3",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "*",
      "args": [
@@ -2583,6 +2866,7 @@
     "vs_case": "same",
     "text": "'Oslo' like 'O%'",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "like",
      "args": [
@@ -2596,6 +2880,7 @@
     "vs_case": "same",
     "text": "'Oslo' like 'O_lo'",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "like",
      "args": [
@@ -2609,6 +2894,7 @@
     "vs_case": "same",
     "text": "'Oslo' like 'B%'",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "like",
      "args": [
@@ -2622,6 +2908,7 @@
     "vs_case": "-",
     "text": "'Oslo' not like 'B%'",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "not",
      "args": [
@@ -2640,6 +2927,7 @@
     "vs_case": "same",
     "text": "'50%' like '50\\%'",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "like",
      "args": [
@@ -2653,6 +2941,7 @@
     "vs_case": "same",
     "text": "1 < 2 ? 10 : 20",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "?:",
      "args": [
@@ -2673,6 +2962,7 @@
     "vs_case": "same",
     "text": "1 > 2 ? 10 : 20",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "?:",
      "args": [
@@ -2693,6 +2983,7 @@
     "vs_case": "-",
     "text": "A_CONTAINS([1, 2, 3], [1, 2])",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "a_contains",
      "args": [
@@ -2713,6 +3004,7 @@
     "vs_case": "-",
     "text": "A_CONTAINEDBY([1, 2], [1, 2, 3])",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "a_containedby",
      "args": [
@@ -2733,6 +3025,7 @@
     "vs_case": "-",
     "text": "A_EQUALS([1, 2], [1, 2])",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "a_equals",
      "args": [
@@ -2752,6 +3045,7 @@
     "vs_case": "-",
     "text": "A_EQUALS([1, 2], [2, 1])",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "a_equals",
      "args": [
@@ -2771,6 +3065,7 @@
     "vs_case": "-",
     "text": "A_OVERLAPS([1, 2], [2, 3])",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "a_overlaps",
      "args": [
@@ -2790,6 +3085,7 @@
     "vs_case": "same",
     "text": "A_OVERLAPS([1, 2], [3, 4])",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "a_overlaps",
      "args": [
@@ -2809,6 +3105,7 @@
     "vs_case": "same",
     "text": "caseInsensitize('ABC') = caseInsensitize('abc')",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "=",
      "args": [
@@ -2832,6 +3129,7 @@
     "vs_case": "same",
     "text": "CASEI('ABC') = CASEI('abc')",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "=",
      "args": [
@@ -2855,6 +3153,7 @@
     "vs_case": "same",
     "text": "accentInsensitize('café') = accentInsensitize('cafe')",
     "stable": "yes",
+    "escaped": "same",
     "json": {
      "op": "=",
      "args": [
@@ -2878,6 +3177,7 @@
     "vs_case": "same",
     "text": "ACCENTI('Øre') = ACCENTI('Ore')",
     "stable": "yes",
+    "escaped": "same",
     "json": {
      "op": "=",
      "args": [
@@ -2901,6 +3201,7 @@
     "vs_case": "same",
     "text": "ACCENTI('café') = ACCENTI('cafe')",
     "stable": "yes",
+    "escaped": "same",
     "json": {
      "op": "=",
      "args": [
@@ -2919,11 +3220,60 @@
      ]
     }
    },
+   "textfn-accenti-tajik": {
+    "to_json": "ok",
+    "vs_case": "same",
+    "text": "ACCENTI('Тоҷикистон') = ACCENTI('Точикистон')",
+    "stable": "yes",
+    "escaped": "same",
+    "json": {
+     "op": "=",
+     "args": [
+      {
+       "op": "accenti",
+       "args": [
+        "Тоҷикистон"
+       ]
+      },
+      {
+       "op": "accenti",
+       "args": [
+        "Точикистон"
+       ]
+      }
+     ]
+    }
+   },
+   "textfn-accenti-cyrillic-seven": {
+    "to_json": "ok",
+    "vs_case": "same",
+    "text": "ACCENTI('ҳҶҷҸҿӋӌ') = ACCENTI('хЧчЧҽЧч')",
+    "stable": "yes",
+    "escaped": "same",
+    "json": {
+     "op": "=",
+     "args": [
+      {
+       "op": "accenti",
+       "args": [
+        "ҳҶҷҸҿӋӌ"
+       ]
+      },
+      {
+       "op": "accenti",
+       "args": [
+        "хЧчЧҽЧч"
+       ]
+      }
+     ]
+    }
+   },
    "textfn-upper-case": {
     "to_json": "ok",
     "vs_case": "same",
     "text": "UPPERCASE('abc')",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "upperCase",
      "args": [
@@ -2936,6 +3286,7 @@
     "vs_case": "same",
     "text": "LOWERCASE('ABC')",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "lowerCase",
      "args": [
@@ -2948,6 +3299,7 @@
     "vs_case": "same",
     "text": "CONCATENATE('ab', 'cd')",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "concatenate",
      "args": [
@@ -2961,6 +3313,7 @@
     "vs_case": "same",
     "text": "SUBSTITUTE('a-b-c', '-', '+')",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "substitute",
      "args": [
@@ -2975,6 +3328,7 @@
     "vs_case": "-",
     "text": "FORMAT('%d items', 3)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "format",
      "args": [
@@ -2988,6 +3342,7 @@
     "vs_case": "-",
     "text": "abs(-2)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "abs",
      "args": [
@@ -3000,6 +3355,7 @@
     "vs_case": "-",
     "text": "pow(2, 3)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "pow",
      "args": [
@@ -3013,6 +3369,7 @@
     "vs_case": "-",
     "text": "min(2, 3)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "min",
      "args": [
@@ -3026,6 +3383,7 @@
     "vs_case": "-",
     "text": "max(2, 3)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "max",
      "args": [
@@ -3039,6 +3397,7 @@
     "vs_case": "-",
     "text": "max(1, 5, 3)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "max",
      "args": [
@@ -3053,6 +3412,7 @@
     "vs_case": "-",
     "text": "min(7)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "min",
      "args": [
@@ -3065,6 +3425,7 @@
     "vs_case": "-",
     "text": "log(1)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "log",
      "args": [
@@ -3077,6 +3438,7 @@
     "vs_case": "-",
     "text": "round(2.5)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "round",
      "args": [
@@ -3089,6 +3451,7 @@
     "vs_case": "-",
     "text": "round(-2.5)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "round",
      "args": [
@@ -3101,6 +3464,7 @@
     "vs_case": "-",
     "text": "sqrt(16)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "sqrt",
      "args": [
@@ -3113,6 +3477,7 @@
     "vs_case": "-",
     "text": "floor(-1.5)",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "floor",
      "args": [
@@ -3125,6 +3490,7 @@
     "vs_case": "same",
     "text": "2 <> 2",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "<>",
      "args": [
@@ -3138,6 +3504,7 @@
     "vs_case": "same",
     "text": "3 <> 2",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "<>",
      "args": [
@@ -3151,6 +3518,7 @@
     "vs_case": "same",
     "text": "10 <> 2",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "<>",
      "args": [
@@ -3164,6 +3532,7 @@
     "vs_case": "same",
     "text": "'a' <> 'b'",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "<>",
      "args": [
@@ -3177,6 +3546,7 @@
     "vs_case": "same",
     "text": "'a' <> 'a'",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "<>",
      "args": [
@@ -3190,6 +3560,7 @@
     "vs_case": "same",
     "text": "2 <> 3",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "<>",
      "args": [
@@ -3203,6 +3574,7 @@
     "vs_case": "same",
     "text": "1 + 1 <> 3",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "<>",
      "args": [
@@ -3222,6 +3594,7 @@
     "vs_case": "same",
     "text": "1 <> 2 and 3 <> 4",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "and",
      "args": [
@@ -3247,6 +3620,7 @@
     "vs_case": "same",
     "text": "2 <> 3 = true",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "=",
      "args": [
@@ -3266,6 +3640,7 @@
     "vs_case": "same",
     "text": "not 2 <> 2",
     "stable": "yes",
+    "escaped": "-",
     "json": {
      "op": "not",
      "args": [
@@ -3284,6 +3659,7 @@
     "vs_case": "same",
     "text": "'None' + 1",
     "stable": "/args/0: `null` vs `\"None\"`",
+    "escaped": "-",
     "json": {
      "op": "+",
      "args": [
@@ -3297,6 +3673,7 @@
     "vs_case": "same",
     "text": "'None' = 1",
     "stable": "/args/0: `null` vs `\"None\"`",
+    "escaped": "-",
     "json": {
      "op": "=",
      "args": [
@@ -3310,6 +3687,7 @@
     "vs_case": "same",
     "text": "'None' <> 1",
     "stable": "/args/0: `null` vs `\"None\"`",
+    "escaped": "-",
     "json": {
      "op": "<>",
      "args": [
@@ -3323,6 +3701,7 @@
     "vs_case": "same",
     "text": "'None' > 1",
     "stable": "/args/0: `null` vs `\"None\"`",
+    "escaped": "-",
     "json": {
      "op": ">",
      "args": [
@@ -3336,6 +3715,7 @@
     "vs_case": "same",
     "text": "'None' like 'a%'",
     "stable": "/args/0: `null` vs `\"None\"`",
+    "escaped": "-",
     "json": {
      "op": "like",
      "args": [
@@ -3349,6 +3729,7 @@
     "vs_case": "same",
     "text": "not 'None' > 1",
     "stable": "/args/0/args/0: `null` vs `\"None\"`",
+    "escaped": "-",
     "json": {
      "op": "not",
      "args": [
@@ -3367,6 +3748,7 @@
     "vs_case": "same",
     "text": "'None' > 1 and true",
     "stable": "/args/0/args/0: `null` vs `\"None\"`",
+    "escaped": "-",
     "json": {
      "op": "and",
      "args": [
@@ -3386,6 +3768,7 @@
     "vs_case": "same",
     "text": "'None' > 1 and false",
     "stable": "/args/0/args/0: `null` vs `\"None\"`",
+    "escaped": "-",
     "json": {
      "op": "and",
      "args": [
@@ -3405,6 +3788,7 @@
     "vs_case": "same",
     "text": "'None' > 1 or true",
     "stable": "/args/0/args/0: `null` vs `\"None\"`",
+    "escaped": "-",
     "json": {
      "op": "or",
      "args": [
@@ -3424,6 +3808,7 @@
     "vs_case": "same",
     "text": "'None' > 1 or false",
     "stable": "/args/0/args/0: `null` vs `\"None\"`",
+    "escaped": "-",
     "json": {
      "op": "or",
      "args": [
@@ -3443,6 +3828,7 @@
     "vs_case": "same",
     "text": "'None' + 1 is null",
     "stable": "/args/0/args/0: `null` vs `\"None\"`",
+    "escaped": "-",
     "json": {
      "op": "isNull",
      "args": [
@@ -3453,6 +3839,27 @@
         1
        ]
       }
+     ]
+    }
+   },
+   "null-literal": {
+    "to_json": "ok",
+    "vs_case": "same",
+    "text": "'None'",
+    "stable": "/: `null` vs `\"None\"`",
+    "escaped": "-",
+    "json": null
+   },
+   "null-literal-is-null": {
+    "to_json": "ok",
+    "vs_case": "same",
+    "text": "'None' is null",
+    "stable": "/args/0: `null` vs `\"None\"`",
+    "escaped": "-",
+    "json": {
+     "op": "isNull",
+     "args": [
+      null
      ]
     }
    }
