@@ -671,7 +671,12 @@ def render_example(ex: DocExample, styles: list[dict]) -> str:
             f'viewBox="0 0 {width} {height}"><rect width="100%" height="100%" fill="#ffffff"/>{"".join(parts)}</svg>')
 
 
+# Examples in Annex C, which shows its styles in CartoSym-CSS only (its other use cases too).
+ANNEX_C = {"10-protected-areas", "11-rondane-overview"}
+
+
 def adoc_block(ex: DocExample) -> str:
+    css_only = bool(ex.subdir) or ex.name in ANNEX_C
     scales = list(dict.fromkeys(p.label for p, _ in ex.views()))
     where = (f", at {scales[0]}" if len(scales) == 1 else
              "" if ex.variants else  # the panels are labelled with their scale
@@ -684,7 +689,7 @@ def adoc_block(ex: DocExample) -> str:
     vignette = ""
     if ex.variants:
         vignette = f" The panels differ only in {ex.varies}"
-        vignette += (("; the CartoSym-CSS below is that of the panel marked in bold." if ex.subdir else
+        vignette += (("; the CartoSym-CSS below is that of the panel marked in bold." if css_only else
                       "; the CartoSym-CSS and CartoSym-JSON below are those of the panel marked in bold.")
                      if any(not v.shows_file for v in ex.variants) else ".")
     notes = "".join(" " + n for n in ex.notes)
@@ -698,8 +703,8 @@ image::{figure}[]
 
 {reqs}Rendered by the draft renderer of cartosym-draft-check.{vignette}{context}{notes} Map data © Kartverket, CC BY 4.0{"; contains modified Copernicus Sentinel data 2024" if "sentinel2-l2a" in ex.layers else ""}.
 """
-    if ex.subdir:
-        # The requirement figures show the CartoSym-CSS only, without a table (Jérôme, Nov 20).
+    if css_only:
+        # The requirement figures and Annex C show the CartoSym-CSS only, without a table (Jérôme, Nov 20).
         return head + f"""
 [source,cscss]
 ----
