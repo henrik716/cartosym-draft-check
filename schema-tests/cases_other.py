@@ -79,6 +79,12 @@ cases = [
     ("graphic MultiGraphic", True, sym({"marker": {"elements": [{"elements": [T("a")]}]}})),
     ("elements index with invalid Text", False, sym({"marker": {"alter": True, "elements": {"index": 0, "value": T(BAD_COND)}}})),
     ("marker null", True, sym({"marker": None})),
+    # null fill and stroke: not drawn, as for marker (kraftto and Jérôme on #207, 2026-11-19)
+    ("fill null", True, sym({"fill": None})),
+    ("stroke null", True, sym({"stroke": None})),
+    ("label null", True, sym({"label": None})),
+    ("base rule unsetting fill, stroke and marker", True, sym({"zOrder": op("abs", P("ebene")), "fill": None, "stroke": None, "marker": None})),
+    ("Dot stroke null", True, sym({"marker": {"elements": [{"type": "Dot", "size": 4, "stroke": None}]}})),
     ("marker overriding properties only", True, sym({"marker": {"alter": True, "opacity": 0.5}})),
     ("marker property", True, sym({"marker": P("m")})),
     ("marker invalid operation", False, sym({"marker": op("and", 1)})),

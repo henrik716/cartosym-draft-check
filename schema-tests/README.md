@@ -27,7 +27,7 @@ node schema-tests/js/depth.mjs ../cartographic-symbology          # Ajv and Hype
 | Expressions | 512 | [`cases_expressions.py`](cases_expressions.py): for each operator and function, valid uses and invalid ones (wrong number of arguments, an argument of the wrong kind, a malformed object), each put in a selector; since 2026-11-17 also array elements, operators of the wrong type inside other operations, and two expressions 16 levels deep | As written per case |
 | CartoSym-JSON examples | 11 | `1-core/examples/*.cs.json` of the checkout being tested | Valid |
 | CQL2-JSON examples | 109 | The examples of OGC API - Features Part 3 (CQL2), fetched by [`fetch_cql2_examples.py`](fetch_cql2_examples.py) at commit `66faf8c`, each put in a selector | Valid |
-| Other changes | 77 | [`cases_other.py`](cases_other.py): the schema changes outside expressions (dot patterns, colours, value ranges, units, stroke, system identifiers), the examples of clause 16, and since 2026-11-18 graphics, markers and variable references | As written per case |
+| Other changes | 82 | [`cases_other.py`](cases_other.py): the schema changes outside expressions (dot patterns, colours, value ranges, units, stroke, system identifiers), the examples of clause 16, since 2026-11-18 graphics, markers and variable references, and since 2026-11-20 `null` as a fill or stroke | As written per case |
 
 The two sets built by code are also published as plain JSON in [`cases.json`](cases.json), so they can be used without running Python: an array with one object per document (`set`, `name`, `valid`, `part3`, `group` and `note` where they apply, `document`), one per line. `part3` is true for the documents with an `s_*` or `t_*` operation (see below). It is written by `python schema-tests/export_cases.py`, and `--check` tells whether it is up to date with the case files. Pin a commit when downloading it.
 
@@ -45,10 +45,12 @@ The three validators must also agree with each other on every document; `check.m
 
 ## Results
 
-On the [`schema-fixes`](https://github.com/henrik716/cartographic-symbology/tree/schema-fixes) branch at 6810d14 (2026-11-18, graphics checked by their `type`, variable references), with all three validators:
-- Part 3: 0 wrong of 709
-- Part 1: 0 wrong of the 499 documents without Part 3 operations
+On the [`schema-fixes`](https://github.com/henrik716/cartographic-symbology/tree/schema-fixes) branch at 45d78d1 (2026-11-20, `null` accepted as a fill or stroke), with all three validators:
+- Part 3: 0 wrong of 714
+- Part 1: 0 wrong of the 504 documents without Part 3 operations
 - The three validators give the same result for every document and both schemas
+
+At 6810d14 (2026-11-18, graphics checked by their `type`, variable references) the result was 0 wrong of the 709 documents there were then. Of the 5 added on 2026-11-20, 6810d14 gets 4 wrong: it rejects `fill: null`, `stroke: null` (also a Dot's) and the base rule that unsets fill, stroke and marker.
 
 At a709fde (2026-11-17) the result was 0 wrong of the 681 documents there were then. Of the 28 added on 2026-11-18, a709fde gets 11 wrong: it rejects the 8 valid variable references, a property as a fill pattern and an `elements` array mixing a property and a Text (both because an expression matched two alternatives of a `oneOf`), and it accepts a marker that is an invalid operation.
 
