@@ -51,13 +51,36 @@ def _merge(base: Any, update: Any) -> Any:
     return copy.deepcopy(update)
 
 
-def _apply_rules(rules: list[dict], ctx: Context, sym: dict) -> None:
+def references(obj: Any, ids: set[str] | frozenset[str]) -> set[str]:
+    """The System Identifiers of *ids* that *obj* (an expression, a rule or a whole style) refers to."""
+    found: set[str] = set()
+
+    def walk(o):
+        if isinstance(o, dict):
+            if o.get("sysId") in ids:
+                found.add(o["sysId"])
+            for v in o.values():
+                walk(v)
+        elif isinstance(o, list):
+            for v in o:
+                walk(v)
+
+    walk(obj)
+    return found
+
+
+def _apply_rules(rules: list[dict], ctx: Context, sym: dict, watch: frozenset[str] = frozenset(),
+                 tested: set[str] | None = None, inherited: frozenset[str] = frozenset()) -> None:
     for rule in rules or []:
         if not matches_selector(rule.get("selector"), ctx):
             continue
+        # The System Identifiers of *watch* (the rendering passes) that this rule or a parent rule tests.
+        here = inherited | frozenset(references(rule.get("selector"), watch)) if watch else inherited
+        if tested is not None and here and rule.get("symbolizer"):
+            tested.update(here)
         for key, value in (rule.get("symbolizer") or {}).items():
             sym[key] = _merge(sym.get(key), value)
-        _apply_rules(rule.get("nestedRules"), ctx, sym)
+        _apply_rules(rule.get("nestedRules"), ctx, sym, watch, tested, here)
 
 
 # /req/parameter-values/null: the value of a property whose expression evaluates
@@ -126,12 +149,16 @@ def load(path: str | Path) -> dict:
     return style
 
 
-def resolve(style: dict, ctx: Context) -> dict:
-    """Return the resolved symbolizer for the feature described by *ctx*."""
+def resolve(style: dict, ctx: Context, watch: frozenset[str] = frozenset(), tested: set[str] | None = None) -> dict:
+    """Return the resolved symbolizer for the feature described by *ctx*.
+
+    With *watch* and *tested*, adds to *tested* the identifiers of *watch* tested by a selected rule (or one of
+    its parents) that sets Symbolizer properties: render() draws a feature in a pass other than 0 only then.
+    """
     if style.get("$variables"):
         ctx = dataclasses.replace(ctx, definitions=style["$variables"])
     sym: dict[str, Any] = {}
-    _apply_rules(style.get("stylingRules", []), ctx, sym)
+    _apply_rules(style.get("stylingRules", []), ctx, sym, watch, tested)
     resolved = copy.deepcopy(DEFAULTS)
     if ctx.options.default_marker == "dot":
         resolved["marker"] = {"elements": [{"type": "Dot", "stroke": {"width": {"px": 10}, "color": "white"}}]}

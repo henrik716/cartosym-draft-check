@@ -17,7 +17,7 @@ import random
 from dataclasses import dataclass, field
 from typing import Any
 
-from .cascade import resolve
+from .cascade import references, resolve
 from .coverage import Grid, parse_color, portray
 from .evaluate import Context
 from .options import Options
@@ -495,6 +495,18 @@ class _Item:
     strokes: list[str] = field(default_factory=list)  # main strokes and markers
     centers: list[str] = field(default_factory=list)
     labels: list[str] = field(default_factory=list)  # with label_pass == "with-feature"
+    viz_pass: int = 0  # visualization.pass
+    feature_pass: int = 0  # feature.pass
+
+
+# Rendering passes (clause 7, Visualization Rendering Passes; clause 8, Feature Rendering Passes). The passes are
+# the values a style tests (Jérôme on #198); the draft renderer finds them by trying each value in PASSES, for
+# styles that refer to the pass at all. A rule that does not test the pass is evaluated in every pass, but a
+# feature is drawn in a pass other than 0 only if a selected rule testing that pass sets Symbolizer properties
+# (Jérôme on #207 and #211: "only a rule that checks viz.pass is automatically rendered").
+VIZ_PASS = frozenset({"viz.pass", "visualization.pass"})
+FEATURE_PASS = frozenset({"feature.pass"})
+PASSES = range(-8, 33)
 
 
 # ----------------------------------------------------------------- labels
@@ -653,10 +665,12 @@ def render(style: dict, layers: list[Layer], view: View, opts: Options | None = 
     items: list[_Item] = []
     labels: list[_Label] = []
     seq = 0
+    viz_passes = PASSES if references(style, VIZ_PASS) else [0]
+    feature_passes = PASSES if references(style, FEATURE_PASS) else [0]
     for layer in layers:
         system = {"viz.sd": view.scale_denominator, "visualization.scaleDenominator": view.scale_denominator,
                   "dataLayer.id": layer.id, "dataLayer.identifier": layer.id, "dataLayer.type": layer.type,
-                  **CAPABILITIES, **view.system}
+                  "viz.pass": 0, "visualization.pass": 0, "feature.pass": 0, **CAPABILITIES, **view.system}
         dims = _geometry_dimensions(layer)
         if dims is not None:
             system["dataLayer.featuresGeometryDimensions"] = dims
@@ -671,10 +685,15 @@ def render(style: dict, layers: list[Layer], view: View, opts: Options | None = 
                 items.append(_Item(z if opts.z_order == "higher-on-top" else -z, seq, layer.id, 1.0, fills=[frag]))
                 seq += 1
             continue
-        for feat in layer.features:
-            ctx = Context(properties=feat.get("properties") or {}, system=system, options=opts,
-                          variables=view.variables, null_reports=null_reports)
-            sym = resolve(style, ctx)
+        for feat, vp, fp in ((f, vp, fp) for f in layer.features for vp in viz_passes for fp in feature_passes):
+            first = vp == 0 and fp == 0  # labels and NULL reports come from pass 0 only
+            passes = {"viz.pass": vp, "visualization.pass": vp, "feature.pass": fp}
+            ctx = Context(properties=feat.get("properties") or {}, system={**system, **passes}, options=opts,
+                          variables=view.variables, null_reports=null_reports if first else None)
+            tested: set[str] = set()
+            sym = resolve(style, ctx, VIZ_PASS | FEATURE_PASS, tested)
+            if (vp != 0 and not tested & VIZ_PASS) or (fp != 0 and not tested & FEATURE_PASS):
+                continue
             if sym.get("visibility") is False:
                 continue
             op = float(sym.get("opacity", 1))
@@ -703,7 +722,7 @@ def render(style: dict, layers: list[Layer], view: View, opts: Options | None = 
                     cross = f"M{x - 7:.1f},{y:.1f} H{x + 7:.1f} M{x:.1f},{y - 7:.1f} V{y + 7:.1f}"
                     frags.append(f'<path d="{cross}" stroke="white" stroke-width="4"/>'
                                  f'<path d="{cross}" stroke="black" stroke-width="1.5"/>')
-            label = sym.get("label")
+            label = sym.get("label") if first else None
             if isinstance(label, dict) and label.get("elements"):
                 placement = label.get("placement") or {}
                 prio = float(placement.get("priority", 0) or 0)
@@ -715,7 +734,7 @@ def render(style: dict, layers: list[Layer], view: View, opts: Options | None = 
                 for text, box in _label_candidates(label, pts, lines, polys, view, 1.0, opts):
                     labels.append(_Label(prio, seq, len(items), text, box, (layer.id, content), spacing))
             items.append(_Item(z if opts.z_order == "higher-on-top" else -z, seq, layer.id, op,
-                               fills, svg.casings, frags, svg.centers))
+                               fills, svg.casings, frags, svg.centers, viz_pass=vp, feature_pass=fp))
             seq += 1
 
     # /req/labels/*: place in priority order, dropping labels that would overlap.
@@ -740,9 +759,12 @@ def render(style: dict, layers: list[Layer], view: View, opts: Options | None = 
     # /rec/core/opacity-together: with "whole", translucent features are made transparent as one
     # group per data layer, zOrder and opacity, drawn in the same order inside the group; labels
     # stay outside it (NOTE in /req/core/opacity).
-    for z in sorted({it.z for it in items}):
+    # Rendering passes: each visualization pass after the whole map of the earlier ones; within a zOrder, each
+    # feature's passes in turn (the painter's algorithm of clause 7: for each viz.pass, each zOrder, each casing
+    # pass, each data layer, each feature, each feature.pass).
+    for vp, z in sorted({(it.viz_pass, it.z) for it in items}):
         groups: dict[tuple | None, list[_Item]] = {}
-        for it in sorted((it for it in items if it.z == z), key=lambda it: it.seq):
+        for it in sorted((it for it in items if it.z == z and it.viz_pass == vp), key=lambda it: (it.seq, it.feature_pass)):
             key = (it.layer, it.opacity) if opts.opacity == "whole" and it.opacity < 1 else None
             groups.setdefault(key, []).append(it)
         for key, group in groups.items():

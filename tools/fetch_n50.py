@@ -225,6 +225,33 @@ def railways(gdbs):
     write("Railways", [({}, r.geometry) for r in df.itertuples()], "N50 railway lines")
 
 
+def transport(gdbs):
+    """Roads and railways in one layer, split at bridges and tunnels, for the rendering-pass examples of Annex C.
+
+    A separate layer, so that Roads and Railways (and the figures drawn from them) stay as they are.
+    """
+    df = clip(read(gdbs, "N50_Samferdsel_senterlinje"), 3)
+    df = dedupe(df[df.objtype.isin(["Veglenke", "Bane"])], ["objtype", "typeveg", "vegkategori", "medium"])
+    rows = []
+    for r in df.itertuples():
+        if r.objtype == "Bane":
+            cls = "railway"
+        elif r.typeveg in ("enkelBilveg", "kanalisertVeg"):
+            cls = ROAD_CATEGORY.get(_str(r.vegkategori))
+        else:
+            cls = ROAD_TYPE.get(r.typeveg)
+        if cls is None:
+            continue
+        medium = _str(r.medium)
+        rows.append(({"class": cls, "bridge": medium == "L", "tunnel": medium == "U",
+                      # 0 in a tunnel, 1 on the ground, 2 on a bridge (N50's medium U, T, L)
+                      "z_order": {"U": 0, "L": 2}.get(medium, 1)}, r.geometry))
+    write("Transport", merge_lines(rows),
+          "N50 roads and railways for the rendering-pass examples: class is european, national, county, municipal, "
+          "private, cycleway, tractor, path or railway; bridge and tunnel (booleans) and z_order (0 in a tunnel, "
+          "1 on the ground, 2 on a bridge) from N50's medium; lines are joined only where all of these are equal")
+
+
 def huts(gdbs):
     df = clip(read(gdbs, "N50_BygningerOgAnlegg_posisjon"), 0)
     df = df[df.navn.notna() & df.betjeningsgrad.isin(HUT_SERVICE)]
@@ -337,10 +364,14 @@ def name_lakes() -> None:
 
 def main() -> int:
     gdbs = download()
+    if sys.argv[1:] == ["transport"]:  # only the Transport layer
+        transport(gdbs)
+        return 0
     landcover(gdbs)
     rivers(gdbs)
     roads(gdbs)
     railways(gdbs)
+    transport(gdbs)
     huts(gdbs)
     buildings(gdbs)
     contours(gdbs)

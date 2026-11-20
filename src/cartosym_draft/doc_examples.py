@@ -151,6 +151,8 @@ SELSVERKET_CASING = (7300, 3300)
 DORAALSETER_WIDE = (23900, 24800)  # Dørålseter, Nedre Dørålseter and Ellandkollbua
 DORAALSETER = (23130, 24400)
 DORAALSETER_4000 = (23200, 24400)
+OTTA_OVERPASS = (7030, 420)  # Otta: Rv 15 on a bridge over the Dovre line and two municipal roads
+OTTA_RAIL_BRIDGE = (967, 8593)  # north of Otta: a railway bridge over a municipal road
 
 
 EXAMPLES = [
@@ -180,6 +182,12 @@ EXAMPLES = [
     DocExample("11-rondane-overview", "Overview map of Rondane from several N50 layers and the elevation model",
                ["Elevation", "Landcover", "Rivers", "Roads", "ProtectedAreas", "Municipalities", "Places"],
                [Panel(WHOLE_SD, WHOLE, 900, 600)], context=False),
+    DocExample("12-visualization-passes", "Roads and the railway at Otta in visualization passes: Rv 15 over the railway, and a railway bridge (N50 Kartdata)",
+               ["Transport"], [Panel(7500, OTTA_OVERPASS), Panel(4000, OTTA_RAIL_BRIDGE)],
+               notes=["`z_order` is 0 in a tunnel, 1 on the ground and 2 on a bridge, from N50's `medium`."]),
+    DocExample("13-feature-passes", "Roads and the railway at Otta with casings and a feature pass: Rv 15 over the railway, and a railway bridge (N50 Kartdata)",
+               ["Transport"], [Panel(7500, OTTA_OVERPASS), Panel(4000, OTTA_RAIL_BRIDGE)],
+               notes=["`z_order` is 0 in a tunnel, 1 on the ground and 2 on a bridge, from N50's `medium`."]),
 ]
 
 
@@ -632,18 +640,47 @@ REQUIREMENT_EXAMPLES = [
 # (0.6.5 fixed the other gaps the figures found: pycartosym #174, #182 to #185.)
 PYCARTOSYM_GAPS = [
     "`center` is written as `centerLine`, the name before the SWG's decision on #120 (the schema follows in #188)",
-    "the `capabilities.*` System Identifiers (clause 7) are written as properties, not as `sysId`",
+    "the `capabilities.*` (clause 7) and `feature.*` (clause 8) System Identifiers are written as properties, not "
+    "as `sysId` (pycartosym#224)",
+    "an expression for `zOrder` (or `opacity`) is written as its CQL2 text, not as CQL2-JSON",
 ]
 
 
-def _capabilities_sysids(style) -> bool:
-    """Turn `{"property": "capabilities.x"}` into `{"sysId": "capabilities.x"}` (PYCARTOSYM_GAPS); whether any was."""
+def _scalar_expressions(style) -> bool:
+    """Parse a `zOrder` or `opacity` that pycartosym left as CQL2 text (PYCARTOSYM_GAPS); whether any was."""
+    from pycartosym import cql2
     changed = False
 
     def walk(obj):
         nonlocal changed
         if isinstance(obj, dict):
-            if isinstance(obj.get("property"), str) and obj["property"].startswith("capabilities.") and len(obj) == 1:
+            sym = obj.get("symbolizer")
+            if isinstance(sym, dict):
+                for key in ("zOrder", "opacity"):
+                    if isinstance(sym.get(key), str):
+                        sym[key] = cql2.to_cql2_json(cql2.parse_text(sym[key]))
+                        changed = True
+            for v in obj.values():
+                walk(v)
+        elif isinstance(obj, list):
+            for v in obj:
+                walk(v)
+
+    walk(style)
+    return changed
+
+
+_SYSID_PREFIXES = ("capabilities.", "feature.")
+
+
+def _capabilities_sysids(style) -> bool:
+    """Turn `{"property": "capabilities.x"}` (or `feature.x`) into a `sysId` (PYCARTOSYM_GAPS); whether any was."""
+    changed = False
+
+    def walk(obj):
+        nonlocal changed
+        if isinstance(obj, dict):
+            if isinstance(obj.get("property"), str) and obj["property"].startswith(_SYSID_PREFIXES) and len(obj) == 1:
                 obj["sysId"] = obj.pop("property")
                 changed = True
             for v in obj.values():
@@ -771,7 +808,9 @@ def to_json(css: str) -> tuple[dict, list[str]]:
     if _center_from_center_line(style):
         fixups.append("centerLine renamed center (#120)")
     if _capabilities_sysids(style):
-        fixups.append("capabilities.* written as sysId")
+        fixups.append("capabilities.*/feature.* written as sysId")
+    if _scalar_expressions(style):
+        fixups.append("zOrder/opacity expression parsed")
     return style, fixups
 
 
@@ -936,7 +975,7 @@ def render_example(ex: DocExample, styles: list[dict]) -> str:
 
 
 # Examples in Annex C, which shows its styles in CartoSym-CSS only (its other use cases too).
-ANNEX_C = {"10-protected-areas", "11-rondane-overview"}
+ANNEX_C = {"10-protected-areas", "11-rondane-overview", "12-visualization-passes", "13-feature-passes"}
 
 
 def adoc_block(ex: DocExample) -> str:

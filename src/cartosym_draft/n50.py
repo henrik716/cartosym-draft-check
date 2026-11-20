@@ -19,7 +19,7 @@ from .render import Layer
 DATA = Path(__file__).resolve().parent / "data" / "rondane"
 ORIGIN = rondane_data.ORIGIN
 ATTRIBUTION = "Map data © Kartverket, CC BY 4.0"
-LAYERS = ("Landcover", "Rivers", "Roads", "Railways", "Huts", "Buildings", "Contours", "SpotHeights", "ProtectedAreas",
+LAYERS = ("Landcover", "Rivers", "Roads", "Railways", "Transport", "Huts", "Buildings", "Contours", "SpotHeights", "ProtectedAreas",
           "Municipalities", "Places")
 
 
