@@ -15,3 +15,16 @@
 - {id: null-or-true, requirement: /req/core/operations, kind: expression, input: "(null > 1) or true", json: {op: or, args: [{op: ">", args: [null, 1]}, true]}, expect: "true"}
 - {id: null-or-false, requirement: /req/core/operations, kind: expression, input: "(null > 1) or false", json: {op: or, args: [{op: ">", args: [null, 1]}, false]}, expect: "null"}
 - {id: null-is-null, requirement: /req/core/operations, kind: expression, input: "(null + 1) is null", json: {op: isNull, args: [{op: "+", args: [null, 1]}]}, expect: "true"}
+
+# The null literal and a property named "null" (Jérôme on henrik716/cartosym-draft-check#2, 2026-11-20):
+# in CQL2-Text `null` is the literal and `"null"` a property; the same for true and false. The cases with
+# a property set need feature properties, so only the draft renderer runs them. Without the property,
+# Jérôme expects `"null" is null` and `"null" > 1` to be unresolved; those wait until it is settled
+# whether that differs from a property a feature has no value for (asked on #2).
+- {id: null-literal, requirement: /req/core/literals, kind: expression, input: "null", json: null, expect: "null"}
+- {id: null-literal-is-null, requirement: /req/core/literals, kind: expression, input: "null is null", json: {op: isNull, args: [null]}, expect: "true"}
+- {id: null-property-named-null, requirement: /req/core/expressions-field-identifiers, kind: expression, draft_only: true, input: "\"null\"", json: {property: "null"}, properties: {"null": 5}, expect: 5}
+- {id: null-property-named-null-is-null, requirement: /req/core/expressions-field-identifiers, kind: expression, draft_only: true, input: "\"null\" is null", json: {op: isNull, args: [{property: "null"}]}, properties: {"null": 5}, expect: "false"}
+- {id: null-property-named-null-compare, requirement: /req/core/expressions-field-identifiers, kind: expression, draft_only: true, input: "\"null\" > 1", json: {op: ">", args: [{property: "null"}, 1]}, properties: {"null": 5}, expect: "true"}
+- {id: null-property-named-true, requirement: /req/core/expressions-field-identifiers, kind: expression, draft_only: true, input: "\"true\"", json: {property: "true"}, properties: {"true": false}, expect: "false"}
+- {id: null-property-named-false, requirement: /req/core/expressions-field-identifiers, kind: expression, draft_only: true, input: "\"false\"", json: {property: "false"}, properties: {"false": true}, expect: "true"}

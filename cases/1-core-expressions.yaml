@@ -245,6 +245,20 @@
   json: {"op": "=", "args": [{"op": "accenti", "args": ["café"]}, {"op": "accenti", "args": ["cafe"]}]}
   expect: "true"
   note: CQL2 name used by both implementations.
+- id: textfn-accenti-tajik
+  requirement: /req/text-manipulation/accent-insensitize
+  kind: expression
+  input: "accenti('Тоҷикистон') = accenti('Точикистон')"
+  json: {"op": "=", "args": [{"op": "accenti", "args": ["Тоҷикистон"]}, {"op": "accenti", "args": ["Точикистон"]}]}
+  expect: "true"
+  note: "Tajikistan in Tajik: `ҷ` is `ч` with a descender, folded as `Ø` is to `O`. One of the seven Cyrillic letters that UTR #30's table, and so eC's, folded to the wrong letter (#152), fixed in ecere/eC@2280ffb."
+- id: textfn-accenti-cyrillic-seven
+  requirement: /req/text-manipulation/accent-insensitize
+  kind: expression
+  input: "accenti('ҳҶҷҸҿӋӌ') = accenti('хЧчЧҽЧч')"
+  json: {"op": "=", "args": [{"op": "accenti", "args": ["ҳҶҷҸҿӋӌ"]}, {"op": "accenti", "args": ["хЧчЧҽЧч"]}]}
+  expect: "true"
+  note: "The seven letters of #152 (U+04B3, U+04B6, U+04B7, U+04B8, U+04BF, U+04CB, U+04CC), each folded to the letter without its descender, stroke or hook, in the same case; fixed in ecere/eC@2280ffb."
 - id: textfn-upper-case
   requirement: /req/text-manipulation/upper-case
   kind: expression

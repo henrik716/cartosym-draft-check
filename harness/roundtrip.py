@@ -4,7 +4,8 @@ Usage: uv run python harness/roundtrip.py [path to a cartographic-symbology chec
 
 Expressions (the expression cases in cases/, as run.py runs them):
   1. CQL2-Text -> CQL2-JSON; compared with the case's own CQL2-JSON where it has one
-  2. that CQL2-JSON -> CQL2-Text
+  2. that CQL2-JSON -> CQL2-Text, written with non-ASCII characters as they are; for a case with any, also
+     with them as \\u escapes, which should give the same CQL2-Text
   3. that CQL2-Text -> CQL2-JSON again; the round trip is stable if this is the CQL2-JSON of step 1
 Styles (each 1-core/examples/<name>.cscss with its <name>.cs.json in the checkout):
   1. CartoSym-CSS -> CartoSym-JSON; compared with the example's CartoSym-JSON
@@ -128,9 +129,12 @@ def _fail(outcome: adapters.Outcome) -> str:
 
 # ------------------------------------------------------------------ the checks
 
-def expression_trip(convert, text: str, case_json) -> dict:
+NO_JSON = object()  # a case without its own CQL2-JSON (a case's JSON can be null)
+
+
+def expression_trip(convert, text: str, case_json=NO_JSON) -> dict:
     """CQL2-Text -> CQL2-JSON -> CQL2-Text -> CQL2-JSON."""
-    r = {"to_json": None, "vs_case": "-", "text": None, "stable": None}
+    r = {"to_json": None, "vs_case": "-", "text": None, "stable": None, "escaped": "-"}
     o = convert(text, "cql2", "cql2json")
     if o.status != "ok":
         r["to_json"] = _fail(o)
@@ -140,13 +144,24 @@ def expression_trip(convert, text: str, case_json) -> dict:
         r["to_json"] = err
         return r
     r["to_json"], r["json"] = "ok", j1
-    if case_json is not None:
+    if case_json is not NO_JSON:
         r["vs_case"] = diff(case_json, j1) or "same"
-    o = convert(json.dumps(j1), "cql2json", "cql2")
+    # Non-ASCII characters as they are, as cs-canif writes them (RFC 8259 allows both forms).
+    plain = json.dumps(j1, ensure_ascii=False)
+    o = convert(plain, "cql2json", "cql2")
     if o.status != "ok":
         r["text"], r["stable"] = _fail(o), "-"
         return r
     r["text"] = o.value.strip()
+    # The same CQL2-JSON with non-ASCII characters as \u escapes (json.dumps's default), which a reader
+    # must also accept: it should give the same CQL2-Text.
+    escaped = json.dumps(j1)
+    if escaped != plain:
+        e = convert(escaped, "cql2json", "cql2")
+        if e.status != "ok":
+            r["escaped"] = _fail(e)
+        else:
+            r["escaped"] = "same" if e.value.strip() == r["text"] else f"`{e.value.strip()}`"
     o = convert(r["text"], "cql2", "cql2json")
     if o.status != "ok":
         r["stable"] = "text does not parse: " + _fail(o)
@@ -200,7 +215,7 @@ def main(spec: Path) -> int:
     spec_branch = subprocess.run(["git", "-C", str(spec), "branch", "--show-current"], capture_output=True,
                                  text=True).stdout.strip()
 
-    expr = {impl: {c["id"]: expression_trip(fn, c["input"], c.get("json")) for c in cases} for impl, fn in EXPR.items()}
+    expr = {impl: {c["id"]: expression_trip(fn, c["input"], c.get("json", NO_JSON)) for c in cases} for impl, fn in EXPR.items()}
     style = {}
     for impl, fn in STYLE.items():
         style[impl] = {}
@@ -238,6 +253,9 @@ def main(spec: Path) -> int:
         (f"Text → JSON → text → JSON gives the same JSON (of {len(cases)})", "stable", "yes", None),
     ]:
         lines.append(f"| {label} | " + " | ".join(str(count(expr[i].values(), key, ok)) for i in EXPR) + " |")
+    n_escaped = max(sum(1 for r in expr[i].values() if r["escaped"] != "-") for i in EXPR)
+    lines.append(f"| CQL2-JSON with `\\u` escapes gives the same CQL2-Text (of the {n_escaped} cases with non-ASCII "
+                 "text) | " + " | ".join(str(count(expr[i].values(), "escaped", "same")) for i in EXPR) + " |")
     for label, key, ok in [
         (f"Examples converted from CartoSym-CSS to CartoSym-JSON (of {len(examples)})", "css_to_json", "ok"),
         (f"Same CartoSym-JSON as the example (of {len(examples)})", "vs_spec", "same"),
@@ -253,21 +271,24 @@ def main(spec: Path) -> int:
               "`cql2.to_cql2_text(json)`; styles with `cartosym in.cscss -o out.cs.json` and back.",
               "- JSON is compared as data: member order and the spelling of numbers (`2` and `2.0`) do not matter, "
               "but `true` is not `1`. `$comment` members, which keep CSS comments in the JSON, are left out. "
+              "CQL2-JSON is converted back to CQL2-Text with non-ASCII characters as they are, and, for the cases "
+              "that have any, also with them as `\\u` escapes (both are JSON, RFC 8259), which should give the same "
+              "CQL2-Text. "
               "[`roundtrip.json`](roundtrip.json) has each conversion's output. A difference is shown as the path of the first one, with the expected value "
               "(the case's or the example's, or the first conversion's for the round trip) first.",
               ""]
 
     lines += ["## Expressions", ""]
     for impl in EXPR:
-        lines += [f"### {impl}", "", "| Case | Input | To CQL2-JSON | Same as the case | Back to CQL2-Text | Stable |",
-                  "|---|---|---|---|---|---|"]
+        lines += [f"### {impl}", "", "| Case | Input | To CQL2-JSON | Same as the case | Back to CQL2-Text | "
+                  "From `\\u` escapes | Stable |", "|---|---|---|---|---|---|---|"]
         for c in cases:
             r = expr[impl][c["id"]]
             inp = c["input"].strip().replace("|", "\\|")
             text = r["text"]  # the CQL2-Text written, or why none was
             text_cell = "-" if text is None else _cell(f"`{text}`" if r["stable"] != "-" else text)
             lines.append(f"| {c['id']} | `{inp}` | {_cell(r['to_json'])} | {_cell(r['vs_case'])} | {text_cell} | "
-                         f"{_cell(r['stable'])} |")
+                         f"{_cell(r['escaped'])} | {_cell(r['stable'])} |")
         lines.append("")
 
     lines += ["## Styles", ""]
