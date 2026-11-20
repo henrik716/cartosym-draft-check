@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CartoSym gallery maps</title>
+<style>
+:root { --paper:#f5f8fa; --ink:#15232e; --muted:#536473; --rule:#d3dde4; --code:#ffffff; }
+@media (prefers-color-scheme: dark) { :root { --paper:#121a20; --ink:#e3eaef; --muted:#9aabb8; --rule:#2c3a44;
+  --code:#1a252d; } }
+body { margin:0 auto; max-width:1100px; padding:24px 16px; background:var(--paper); color:var(--ink);
+  font:15px/1.5 "Segoe UI",Arial,sans-serif; }
+a { color:inherit; } .meta { color:var(--muted); font-size:13px; }
+section { border-top:1px solid var(--rule); padding-top:12px; margin-top:28px; }
+h2 { font-size:18px; margin:0 0 4px; } img { max-width:100%; height:auto; display:block; }
+pre { background:var(--code); border:1px solid var(--rule); padding:10px; overflow-x:auto; font-size:12.5px; }
+</style></head><body>
+<h1>Gallery maps</h1>
+<p>Maps on the Rondane data (Kartverket N50, CC BY 4.0) that combine a requirement of OGC CartoSym Part 1 with
+land cover, relief and rivers as context; the context is not part of the style. They were the requirement figures of
+#192 until the vignettes replaced them, and are not in the document. Rendered by the draft renderer of
+cartosym-draft-check (<code>python -m cartosym_draft.doc_examples</code>).</p>
+<section id="core-rules">
+<h2>Rules, nested rules and visibility on the land cover around Myrtjørna</h2>
+<p class="meta"><code>/req/core/rules</code>, <code>/req/core/selector</code>, <code>/req/core/nested</code>, <code>/req/core/symbolizer</code>, <code>/req/core/visibility</code>, <code>/req/core/layers</code>, <code>/req/core/expressions-field-identifiers</code> · 1:25 000 ·
+<a href="core-rules.cscss">core-rules.cscss</a> · <a href="core-rules.cs.json">core-rules.cs.json</a></p>
+<img loading="lazy" src="core-rules.jpg" alt="Rules, nested rules and visibility on the land cover around Myrtjørna">
+<pre>// /req/core/rules, selector, nested, symbolizer, visibility, layers, expressions-field-identifiers
+Landcover[dataLayer.type = vector]
+{
+   marker: null;
+   fill: { color: #e4e0d4 };
+   stroke: { color: #b8b2a2; width: 0.75 px };
+
+   [class = &#x27;forest&#x27;]
+   {
+      fill.color: #93bf85;
+      // Nested twice: small forest patches
+      [area &lt; 50000] { fill.color: #c9e0bb; }
+   }
+   [class = &#x27;bog&#x27;] { fill.color: #e3dcb0; }
+   [class = &#x27;farmland&#x27;] { fill.color: #f3e7b8; }
+   [class = &#x27;lake&#x27;]
+   {
+      fill.color: #b7d3e6;
+      stroke: { color: #3f7fb3; width: 1.5 px };
+   }
+   [class = &#x27;open&#x27;] { visibility: false; }
+}
+</pre>
+</section><section id="core-opacity">
+<h2>Symbolizer opacity on Rondane national park, fill and wide stroke together</h2>
+<p class="meta"><code>/req/core/opacity</code>, <code>/rec/core/opacity-together</code> · 1:100 000 ·
+<a href="core-opacity.cscss">core-opacity.cscss</a> · <a href="core-opacity.cs.json">core-opacity.cs.json</a></p>
+<img loading="lazy" src="core-opacity.jpg" alt="Symbolizer opacity on Rondane national park, fill and wide stroke together">
+<pre>// /req/core/opacity, /rec/core/opacity-together: the fill and the wide stroke are made transparent together
+ProtectedAreas
+{
+   marker: null;
+   visibility: false;
+   [class = &#x27;nationalPark&#x27;]
+   {
+      visibility: true;
+      opacity: 0.45;
+      fill: { color: #5e8f52 };
+      stroke: { color: #2f5d2a; width: 10 px };
+   }
+}
+</pre>
+</section><section id="core-z-order">
+<h2>zOrder: rivers above roads at Mysusæter</h2>
+<p class="meta"><code>/req/core/z-order</code> · 1:20 000 ·
+<a href="core-z-order.cscss">core-z-order.cscss</a> · <a href="core-z-order.cs.json">core-z-order.cs.json</a></p>
+<img loading="lazy" src="core-z-order.jpg" alt="zOrder: rivers above roads at Mysusæter">
+<pre>// /req/core/z-order: rivers (zOrder 2) are drawn over roads (zOrder 1)
+Roads
+{
+   marker: null;
+   zOrder: 1;
+   stroke: { color: #f2b84b; width: 5 px };
+   [class = &#x27;path&#x27; or class = &#x27;tractor&#x27;] { visibility: false; }
+}
+Rivers
+{
+   marker: null;
+   zOrder: 2;
+   stroke: { color: #3f7fb3; width: 2 px };
+}
+</pre>
+</section><section id="core-instances">
+<h2>Changing one member of the stroke in a nested rule</h2>
+<p class="meta"><code>/req/core/instances</code> · 1:100 000 ·
+<a href="core-instances.cscss">core-instances.cscss</a> · <a href="core-instances.cs.json">core-instances.cs.json</a></p>
+<img loading="lazy" src="core-instances.jpg" alt="Changing one member of the stroke in a nested rule">
+<pre>// /req/core/instances: a nested rule changes only the color of the stroke, keeping its width
+Roads
+{
+   marker: null;
+   stroke: { color: #9a958b; width: 3 px };
+   [class = &#x27;county&#x27; or class = &#x27;european&#x27;] { stroke.color: #d0483a; }
+   [class = &#x27;path&#x27; or class = &#x27;tractor&#x27;] { visibility: false; }
+}
+</pre>
+</section><section id="core-parameters">
+<h2>Dot size computed from the elevation of each spot height</h2>
+<p class="meta"><code>/req/core/parameters</code> · 1:100 000 ·
+<a href="core-parameters.cscss">core-parameters.cscss</a> · <a href="core-parameters.cs.json">core-parameters.cs.json</a></p>
+<img loading="lazy" src="core-parameters.jpg" alt="Dot size computed from the elevation of each spot height">
+<pre>// /req/core/parameters: the size of each Dot is computed from the elevation property
+SpotHeights
+{
+   visibility: false;
+   [elevation &gt;= 1300]
+   {
+      visibility: true;
+      marker: { elements: [
+         Dot { size: (elevation - 1000) / 80 + 3, color: white },
+         Dot { size: (elevation - 1000) / 80, color: #8a5a3a }
+      ] };
+   }
+}
+</pre>
+</section><section id="core-time">
+<h2>Roads updated in the visualization&#x27;s time interval (1 January 2020 to 14 November 2026)</h2>
+<p class="meta"><code>/req/core/time</code> · 1:50 000 ·
+<a href="core-time.cscss">core-time.cscss</a> · <a href="core-time.cs.json">core-time.cs.json</a></p>
+<img loading="lazy" src="core-time.jpg" alt="Roads updated in the visualization&#x27;s time interval (1 January 2020 to 14 November 2026)">
+<pre>// /req/core/time: roads updated within the visualization&#x27;s time interval in red
+Roads
+{
+   marker: null;
+   stroke: { color: #c9c4bb; width: 2 px };
+   [validDate &gt;= viz.timeInterval.start.date and validDate &lt;= viz.timeInterval.end.date]
+   {
+      stroke: { color: #d0483a; width: 3 px };
+   }
+   [class = &#x27;path&#x27; or class = &#x27;tractor&#x27;] { visibility: false; }
+}
+</pre>
+</section><section id="vector-fill-stroke">
+<h2>Fill and stroke of forest, bogs and lakes at Mysusæter</h2>
+<p class="meta"><code>/req/vector/fill</code>, <code>/req/vector/stroke</code> · 1:25 000 ·
+<a href="vector-fill-stroke.cscss">vector-fill-stroke.cscss</a> · <a href="vector-fill-stroke.cs.json">vector-fill-stroke.cs.json</a></p>
+<img loading="lazy" src="vector-fill-stroke.jpg" alt="Fill and stroke of forest, bogs and lakes at Mysusæter">
+<pre>// /req/vector/fill, /req/vector/stroke
+Landcover
+{
+   marker: null;
+   visibility: false;
+   [class = &#x27;forest&#x27;]
+   {
+      visibility: true;
+      fill: { color: #5e8f52; opacity: 0.35 };
+      stroke: { width: 0 };
+   }
+   [class = &#x27;bog&#x27;]
+   {
+      visibility: true;
+      fill: { color: #c9bb6e; opacity: 0.5 };
+      stroke: { color: #8f8448; width: 0.75 px };
+   }
+   [class = &#x27;lake&#x27; or class = &#x27;river&#x27;]
+   {
+      visibility: true;
+      fill: { color: #b7d3e6 };
+      stroke: { color: #3f7fb3; width: 1 px };
+   }
+}
+</pre>
+</section><section id="vector-units">
+<h2>Stroke widths in metres, pixels and millimetres at two scales</h2>
+<p class="meta"><code>/req/vector/units</code> · 1:8 000, 1:20 000 ·
+<a href="vector-units.cscss">vector-units.cscss</a> · <a href="vector-units.cs.json">vector-units.cs.json</a></p>
+<img loading="lazy" src="vector-units.jpg" alt="Stroke widths in metres, pixels and millimetres at two scales">
+<pre>// /req/vector/units: widths in metres follow the map scale, widths in pixels and millimetres do not
+Roads
+{
+   marker: null;
+   visibility: false;
+   [class = &#x27;county&#x27; or class = &#x27;municipal&#x27;] { visibility: true; stroke: { color: #d0483a; width: 12 m }; }
+   [class = &#x27;private&#x27;] { visibility: true; stroke: { color: #f2b84b; width: 3 px }; }
+   [class = &#x27;tractor&#x27;] { visibility: true; stroke: { color: #8a6a4a; width: 0.5 mm }; }
+}
+</pre>
+</section><section id="vector-marker-dot">
+<h2>Dot markers on cabins (points), marked paths (line vertices) and lakes (centroids)</h2>
+<p class="meta"><code>/req/vector/marker</code>, <code>/req/vector/dot</code>, <code>/req/vector/graphics</code> · 1:30 000 ·
+<a href="vector-marker-dot.cscss">vector-marker-dot.cscss</a> · <a href="vector-marker-dot.cs.json">vector-marker-dot.cs.json</a></p>
+<img loading="lazy" src="vector-marker-dot.jpg" alt="Dot markers on cabins (points), marked paths (line vertices) and lakes (centroids)">
+<pre>// /req/vector/marker, /req/vector/dot, /req/vector/graphics: markers at points, line vertices and polygon centroids
+Huts
+{
+   marker: { elements: [
+      Dot { size: 14 px, color: white },
+      Dot { size: 9 px, color: #b8322a },
+      Dot { size: 5 px, color: #b8322a, position: 12 12 }
+   ] };
+}
+Landcover
+{
+   visibility: false;
+   [class = &#x27;lake&#x27; and area &gt; 20000]
+   {
+      visibility: true;
+      fill: { color: #cfe1ee };
+      stroke: { width: 0 };
+      marker: { elements: [ Dot { size: 7 px, color: white }, Dot { size: 5 px, color: #1f4e79 } ] };
+   }
+}
+Roads
+{
+   visibility: false;
+   [class = &#x27;path&#x27; and marked = true]
+   {
+      visibility: true;
+      stroke: { color: #b8442f; width: 1 px };
+      marker: { elements: [ Dot { size: 3 px, color: #b8442f } ] };
+   }
+}
+</pre>
+</section><section id="vector-image">
+<h2>An Image marker on the tourist cabins, colored by service</h2>
+<p class="meta"><code>/req/vector/image</code> · 1:267 857 ·
+<a href="vector-image.cscss">vector-image.cscss</a> · <a href="vector-image.cs.json">vector-image.cs.json</a></p>
+<img loading="lazy" src="vector-image.jpg" alt="An Image marker on the tourist cabins, colored by service">
+<pre>// /req/vector/image: the bottom centre of the icon (hotSpot 50 pc 100 pc) sits on the cabin, recolored by tint and blackTint
+Huts
+{
+   marker: { elements: [
+      Image {
+         image: { uri: &#x27;http://example.com/icons/hut.png&#x27;; path: &#x27;../icons/hut.png&#x27;; type: &#x27;image/png&#x27; };
+         hotSpot: 50 pc 100 pc;
+         tint: white;
+         blackTint: #b8322a;
+      }
+   ] };
+   // Self-service cabins and shelters: the same icon in other colors
+   [service = &#x27;selfService&#x27;]
+   {
+      marker: { elements: [
+         Image {
+            image: { uri: &#x27;http://example.com/icons/hut.png&#x27;; path: &#x27;../icons/hut.png&#x27;; type: &#x27;image/png&#x27; };
+            hotSpot: 50 pc 100 pc;
+            tint: white;
+            blackTint: #d9822b;
+         }
+      ] };
+   }
+   [service = &#x27;shelter&#x27;]
+   {
+      marker: { elements: [
+         Image {
+            image: { uri: &#x27;http://example.com/icons/hut.png&#x27;; path: &#x27;../icons/hut.png&#x27;; type: &#x27;image/png&#x27; };
+            hotSpot: 50 pc 100 pc;
+            tint: white;
+            blackTint: #6b5a4a;
+         }
+      ] };
+   }
+}
+</pre>
+</section><section id="vector-text">
+<h2>Text markers on the peaks above 1900 m</h2>
+<p class="meta"><code>/req/vector/text</code>, <code>/req/vector/fonts</code> · 1:100 000 ·
+<a href="vector-text.cscss">vector-text.cscss</a> · <a href="vector-text.cs.json">vector-text.cs.json</a></p>
+<img loading="lazy" src="vector-text.jpg" alt="Text markers on the peaks above 1900 m">
+<pre>// /req/vector/text, /req/vector/fonts: Text graphics with a font and an alignment
+Places
+{
+   visibility: false;
+   marker: null;
+   [type = &#x27;mountain&#x27; and elevation &gt;= 2000]
+   {
+      visibility: true;
+      marker: { elements: [
+         Dot { size: 5 px, color: #2b2b2b },
+         Text { text: name, position: 6 0, alignment: left middle,
+                font: { face: &#x27;Arial&#x27;, size: 9, bold: true, color: #2b2b2b } },
+         Text { text: elevation, position: 0 6, alignment: center top,
+                font: { face: &#x27;Arial&#x27;, size: 7, italic: true, color: #6b6b6b } }
+      ] };
+   }
+}
+</pre>
+</section><section id="casing">
+<h2>Casing and center line of the roads at Selsverket, Sel</h2>
+<p class="meta"><code>/req/casing/casing</code>, <code>/req/casing/center</code> · 1:25 000 ·
+<a href="casing.cscss">casing.cscss</a> · <a href="casing.cs.json">casing.cs.json</a></p>
+<img loading="lazy" src="casing.jpg" alt="Casing and center line of the roads at Selsverket, Sel">
+<pre>// /req/casing/casing, /req/casing/center: casings of joining roads merge beneath the main strokes
+Roads
+{
+   marker: null;
+   visibility: false;
+   [class = &#x27;municipal&#x27; or class = &#x27;private&#x27;]
+   {
+      visibility: true;
+      stroke: { color: white; width: 4 px; casing: { color: #8c8172; width: 1 px } };
+   }
+   [class = &#x27;county&#x27; or class = &#x27;national&#x27;]
+   {
+      visibility: true;
+      stroke: { color: #f2b84b; width: 6 px; casing: { color: #8a6a2a; width: 1 px } };
+   }
+   [class = &#x27;european&#x27;]
+   {
+      visibility: true;
+      stroke: { color: #d0483a; width: 8 px; casing: { color: #6e2219; width: 1.25 px };
+                center: { color: #f7d26a; width: 1 px } };
+   }
+}
+</pre>
+</section><section id="dashes">
+<h2>Dashed paths around Rondvassbu</h2>
+<p class="meta"><code>/req/dashes/dash-pattern</code>, <code>/req/dashes/dash-offset</code> · 1:30 000 ·
+<a href="dashes.cscss">dashes.cscss</a> · <a href="dashes.cs.json">dashes.cs.json</a></p>
+<img loading="lazy" src="dashes.jpg" alt="Dashed paths around Rondvassbu">
+<pre>// /req/dashes/dash-pattern, /req/dashes/dash-offset: marked hiking routes dashed in pixels, other paths in millimetres
+Roads
+{
+   marker: null;
+   visibility: false;
+   [class = &#x27;path&#x27; and marked = true]
+   {
+      visibility: true;
+      stroke: { color: #b8442f; width: 2.5 px; dashPattern: [ 10 px, 5 px ]; dashOffset: 5 px };
+   }
+   [class = &#x27;path&#x27; and marked = false]
+   {
+      visibility: true;
+      stroke: { color: #4a4a4a; width: 1 px; dashPattern: [ 1 mm, 0.75 mm ] };
+   }
+   [class = &#x27;tractor&#x27;]
+   {
+      visibility: true;
+      stroke: { color: #8a6a4a; width: 1.5 px; dashPattern: [ 8 px, 3 px, 2 px, 3 px ] };
+   }
+}
+</pre>
+</section><section id="hatches">
+<h2>Hatch fills on the land cover around Myrtjørna</h2>
+<p class="meta"><code>/req/hatches/hatch</code>, <code>/req/hatches/width</code>, <code>/req/hatches/angle</code>, <code>/req/hatches/distance</code> · 1:20 000 ·
+<a href="hatches.cscss">hatches.cscss</a> · <a href="hatches.cs.json">hatches.cs.json</a></p>
+<img loading="lazy" src="hatches.jpg" alt="Hatch fills on the land cover around Myrtjørna">
+<pre>// /req/hatches/hatch, width, angle, distance
+Landcover
+{
+   marker: null;
+   visibility: false;
+   stroke: { color: #b0aa98; width: 0.5 px };
+   [class = &#x27;bog&#x27;] { visibility: true; fill: { color: #a39a5c; hatch: { width: 1 px; angle: 0; distance: 4 px } }; }
+   [class = &#x27;forest&#x27;] { visibility: true; fill: { color: #5e8f52; hatch: { width: 1.5 px; angle: 45; distance: 8 px } }; }
+   [class = &#x27;lake&#x27;] { visibility: true; fill: { color: #3f7fb3; hatch: { width: 1 px; angle: 90; distance: 3 px } }; }
+}
+</pre>
+</section><section id="stipples-dot-patterns">
+<h2>Stipple and dot pattern fills on the land cover around Myrtjørna</h2>
+<p class="meta"><code>/req/stipples/ratio</code>, <code>/req/dot-patterns/dotpattern</code>, <code>/req/dot-patterns/distance</code> · 1:20 000 ·
+<a href="stipples-dot-patterns.cscss">stipples-dot-patterns.cscss</a> · <a href="stipples-dot-patterns.cs.json">stipples-dot-patterns.cs.json</a></p>
+<img loading="lazy" src="stipples-dot-patterns.jpg" alt="Stipple and dot pattern fills on the land cover around Myrtjørna">
+<pre>// /req/stipples/ratio, /req/dot-patterns/dotpattern, /req/dot-patterns/distance
+Landcover
+{
+   marker: null;
+   visibility: false;
+   stroke: { color: #b0aa98; width: 0.5 px };
+   [class = &#x27;bog&#x27;] { visibility: true; fill: { color: #8f8650; stipple: { ratio: 0.3 } }; }
+   [class = &#x27;forest&#x27;] { visibility: true; fill: { color: #5e8f52; dotpattern: { distance: { horizontal: 8 px; vertical: 4 px } } }; }
+}
+</pre>
+</section><section id="font-outlines">
+<h2>Font outlines on peak names over the relief</h2>
+<p class="meta"><code>/req/font-outlines/outline</code>, <code>/req/font-outlines/size</code>, <code>/req/font-outlines/opacity</code>, <code>/req/font-outlines/color</code> · 1:100 000 ·
+<a href="font-outlines.cscss">font-outlines.cscss</a> · <a href="font-outlines.cs.json">font-outlines.cs.json</a></p>
+<img loading="lazy" src="font-outlines.jpg" alt="Font outlines on peak names over the relief">
+<pre>// /req/font-outlines/outline, size, opacity, color: peak names over the relief
+Elevation
+{
+   singleChannel: elevation;
+   colorMap: [ 300 #56704a, 1200 #8d7f62, 2200 #4a4a4a ];
+   hillShading: { factor: 2; sun: { azimuth: 315; elevation: 45 } };
+}
+Places
+{
+   visibility: false;
+   marker: null;
+   [type = &#x27;mountain&#x27; and elevation &gt;= 2000]
+   {
+      visibility: true;
+      label: { elements: [ Text { text: name, alignment: center middle,
+         font: { face: &#x27;Arial&#x27;, size: 10, color: #2b2b2b, outline: { size: 2, opacity: 0.85, color: white } } } ] };
+   }
+}
+</pre>
+</section><section id="labels-priority">
+<h2>Peak labels placed by priority (elevation), overlapping labels left out</h2>
+<p class="meta"><code>/req/labels/label</code>, <code>/req/labels/placement</code>, <code>/rec/labels/overlap</code> · 1:150 000 ·
+<a href="labels-priority.cscss">labels-priority.cscss</a> · <a href="labels-priority.cs.json">labels-priority.cs.json</a></p>
+<img loading="lazy" src="labels-priority.jpg" alt="Peak labels placed by priority (elevation), overlapping labels left out">
+<pre>// /req/labels/label, /req/labels/placement (priority), /rec/labels/overlap: higher peaks win where labels would overlap
+Places
+{
+   visibility: false;
+   marker: null;
+   [type = &#x27;mountain&#x27; or type = &#x27;peak&#x27;]
+   {
+      visibility: true;
+      marker: { elements: [ Dot { size: 4 px, color: #2b2b2b } ] };
+      label: { elements: [ Text { text: name, position: 0 -8, alignment: center middle, font: { face: &#x27;Arial&#x27;, size: 9, color: #2b2b2b } } ],
+               placement: { priority: elevation } };
+   }
+}
+</pre>
+</section><section id="labels-spacing">
+<h2>Road numbers repeated along the roads near Otta</h2>
+<p class="meta"><code>/req/labels/placement</code> · 1:50 000 ·
+<a href="labels-spacing.cscss">labels-spacing.cscss</a> · <a href="labels-spacing.cs.json">labels-spacing.cs.json</a></p>
+<img loading="lazy" src="labels-spacing.jpg" alt="Road numbers repeated along the roads near Otta">
+<pre>// /req/labels/placement (minSpacing): road numbers repeated along the road, at least 150 pixels apart
+Roads
+{
+   marker: null;
+   visibility: false;
+   [class = &#x27;european&#x27; or class = &#x27;national&#x27; or class = &#x27;county&#x27;]
+   {
+      visibility: true;
+      stroke: { color: #d0483a; width: 2 px };
+      label: { elements: [ Text { text: number, alignment: center middle, font: { face: &#x27;Arial&#x27;, size: 8, bold: true, color: #b8322a,
+                                                         outline: { size: 2, color: white } } } ],
+               placement: { minSpacing: 150 } };
+   }
+}
+</pre>
+</section><section id="coverage-opacity-map">
+<h2>An opacity map on the elevation of Rondane</h2>
+<p class="meta"><code>/req/coverage/opacity-map</code>, <code>/rec/coverage/map-interpolation</code> · 1:267 857 ·
+<a href="coverage-opacity-map.cscss">coverage-opacity-map.cscss</a> · <a href="coverage-opacity-map.cs.json">coverage-opacity-map.cs.json</a></p>
+<img loading="lazy" src="coverage-opacity-map.jpg" alt="An opacity map on the elevation of Rondane">
+<pre>// /req/coverage/opacity-map, /rec/coverage/map-interpolation: the valleys fade out below 900 m
+Elevation
+{
+   singleChannel: elevation;
+   colorMap: [ 900 #a3917a, 1600 #d8cfc0, 2200 #ffffff ];
+   opacityMap: [ 600 0.0, 900 0.2, 1300 1.0 ];
+}
+</pre>
+</section><section id="hill-shading-sun">
+<h2>Hill shading with the sun in the south-east, without a hill-shading color map</h2>
+<p class="meta"><code>/req/hill-shading/hill-shading</code>, <code>/req/hill-shading/factor</code>, <code>/req/hill-shading/sun</code> · 1:267 857 ·
+<a href="hill-shading-sun.cscss">hill-shading-sun.cscss</a> · <a href="hill-shading-sun.cs.json">hill-shading-sun.cs.json</a></p>
+<img loading="lazy" src="hill-shading-sun.jpg" alt="Hill shading with the sun in the south-east, without a hill-shading color map">
+<pre>// /req/hill-shading/hill-shading, factor, sun: no colorMap, so the shade multiplies the colors of the elevation color map
+Elevation
+{
+   singleChannel: elevation;
+   colorMap: [ 300 #cfe3c0, 1300 #e9d9b0, 2200 #fafafa ];
+   hillShading: { factor: 2; sun: { azimuth: 135; elevation: 30 } };
+}
+</pre>
+</section>
+</body></html>

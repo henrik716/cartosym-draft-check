@@ -323,7 +323,7 @@ def examples_grid(spec: Path) -> str:
         req.append(f'<figure class="thumb"><img loading="lazy" alt="requirement figure {esc(p.stem)}" '
                    f'src="{jpeg(p, 1040)}"><figcaption>{esc(p.stem)}</figcaption></figure>')
     gallery = []
-    for p in sorted((fig / "gallery").glob("*.jpg")):
+    for p in sorted((ROOT / "gallery" / "maps").glob("*.jpg")):
         gallery.append(f'<figure class="thumb"><img loading="lazy" alt="gallery map {esc(p.stem)}" '
                        f'src="{jpeg(p, 520)}"><figcaption>{esc(p.stem)}</figcaption></figure>')
     return (f'<h3>The {len(items)} examples of clause 17 and Annex C</h3><div class="grid">' + "".join(items) + "</div>"
@@ -332,8 +332,9 @@ def examples_grid(spec: Path) -> str:
             'whose style is printed under the figure. Pale lakes are the only context.</p>'
             '<div class="rows">' + "".join(req) + "</div>"
             f'<h3>The {len(gallery)} gallery maps (not in the document)</h3>'
-            '<p>The earlier requirement figures, with land cover, relief and rivers as context. They are kept in '
-            '<code>1-core/examples/gallery</code> for a later gallery or use case annex, as Jérôme suggested on #185.</p>'
+            '<p>The earlier requirement figures, with land cover, relief and rivers as context. They are not part of '
+            '#192: their styles and renders are in <a href="maps/">gallery/maps</a> of cartosym-draft-check, for a later '
+            'gallery or use case annex, as Jérôme suggested on #185.</p>'
             '<div class="grid">' + "".join(gallery) + "</div>")
 
 
