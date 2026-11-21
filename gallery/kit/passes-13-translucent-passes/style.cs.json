@@ -1,0 +1,81 @@
+{
+  "stylingRules": [
+    {
+      "$comment": "A translucent road layer drawn in two visualization passes over a zone.\nThe Symbolizer opacity applies to the parts of a feature together\n(/rec/core/opacity-together): for each pass, or for the layer's passes\ntogether?",
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "sysId": "dataLayer.id"
+          },
+          "Zones"
+        ]
+      },
+      "symbolizer": {
+        "fill": {
+          "color": [
+            91,
+            140,
+            90
+          ]
+        },
+        "marker": null
+      }
+    },
+    {
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "sysId": "dataLayer.id"
+          },
+          "Roads"
+        ]
+      },
+      "symbolizer": {
+        "opacity": 0.5,
+        "marker": null
+      },
+      "nestedRules": [
+        {
+          "selector": {
+            "op": "=",
+            "args": [
+              {
+                "sysId": "viz.pass"
+              },
+              0
+            ]
+          },
+          "symbolizer": {
+            "stroke": {
+              "color": "black",
+              "width": {
+                "px": 12.0
+              }
+            }
+          }
+        },
+        {
+          "selector": {
+            "op": "=",
+            "args": [
+              {
+                "sysId": "viz.pass"
+              },
+              1
+            ]
+          },
+          "symbolizer": {
+            "stroke": {
+              "color": "white",
+              "width": {
+                "px": 8.0
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

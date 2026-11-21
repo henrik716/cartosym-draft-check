@@ -79,6 +79,7 @@ def export(key: str, title: str, styles: dict[str, dict], layers: list[Layer], v
         "width": view.width, "height": view.height,
         "scaleDenominator": round(view.scale_denominator, 1),
         "pixelSize_mm": 0.28,
+        "background": view.background,
         "layers": [{"id": layer.id, "type": layer.type} for layer in layers],
         "note": "Render each layer with the style, at this extent and size. Coverage bands share one grid; "
                 "a cell's properties are the band names (e.g. elevation, B04).",

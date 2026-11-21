@@ -1,0 +1,77 @@
+{
+  "stylingRules": [
+    {
+      "$comment": "Roads and a railway in two data layers with the same zOrder, both with\ncasings. \"The casings of all features with the same zOrder\" are drawn\nbeneath \"the main strokes of all those features\" (/req/casing/casing):\ndoes that include the features of other data layers?",
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "sysId": "dataLayer.id"
+          },
+          "Roads"
+        ]
+      },
+      "symbolizer": {
+        "stroke": {
+          "color": [
+            245,
+            215,
+            110
+          ],
+          "width": {
+            "px": 8.0
+          },
+          "casing": {
+            "color": [
+              107,
+              79,
+              29
+            ],
+            "width": {
+              "px": 1.5
+            }
+          }
+        },
+        "marker": null
+      }
+    },
+    {
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "sysId": "dataLayer.id"
+          },
+          "Rails"
+        ]
+      },
+      "symbolizer": {
+        "stroke": {
+          "color": "white",
+          "width": {
+            "px": 3.0
+          },
+          "casing": {
+            "color": [
+              51,
+              51,
+              51
+            ],
+            "width": {
+              "px": 1.5
+            }
+          },
+          "dashPattern": [
+            {
+              "px": 6.0
+            },
+            {
+              "px": 6.0
+            }
+          ]
+        },
+        "marker": null
+      }
+    }
+  ]
+}

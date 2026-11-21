@@ -1,0 +1,9 @@
+// 03-feature-pass with wider strokes, so that the difference from 04 shows:
+// each feature is drawn with the black stroke, then with the white one,
+// before the next feature is drawn.
+[kind = 'road']
+{
+   marker: null;
+   [feature.pass = 0] { stroke: { color: black; width: 12 px; }; }
+   [feature.pass = 1] { stroke: { color: white; width: 8 px; }; }
+}

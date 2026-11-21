@@ -1,0 +1,9 @@
+// 04-viz-pass with wider strokes, to compare with 03-feature-pass-wide:
+// all the roads are drawn with the black stroke first, then all of them
+// with the white one.
+Roads
+{
+   marker: null;
+   [viz.pass = 0] { stroke: { color: black; width: 12 px; }; }
+   [viz.pass = 1] { stroke: { color: white; width: 8 px; }; }
+}

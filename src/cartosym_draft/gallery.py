@@ -976,11 +976,15 @@ what the text says, the proposed resolution from the Part 1 editor, and where ea
 def main(argv: list[str]) -> int:
     out = Path(argv[0] if argv else "gallery/index.html")
     from . import playground
+    from .passes import build as build_passes
     from .requirements_page import build as build_requirements
     from .samples import samples
 
     req_page = build_requirements(out.parent)
     playground.write(out.parent, decisions(), samples(), CSS)
+    problems = build_passes(out.parent)  # the pass cases' kits and passes.html, before build() zips the kits
+    if problems:
+        raise SystemExit("Pass cases:\n  " + "\n  ".join(problems))
     out.write_text(build(out.parent), encoding="utf-8")  # last: it zips all kits, the samples' included
     (out.parent / "requirements.html").write_text(req_page, encoding="utf-8")
     print(f"Wrote {out.resolve()}, requirements.html and the render kits in {(out.parent / 'kit').resolve()}")

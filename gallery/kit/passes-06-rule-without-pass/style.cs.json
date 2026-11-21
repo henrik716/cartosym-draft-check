@@ -1,0 +1,76 @@
+{
+  "stylingRules": [
+    {
+      "$comment": "A rule without viz.pass next to rules that have one: it applies in pass 0\nonly (settled in opengeospatial/cartographic-symbology#198), so the\nbackground fill is drawn once, with the first pass.",
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "sysId": "dataLayer.id"
+          },
+          "Zones"
+        ]
+      },
+      "symbolizer": {
+        "fill": {
+          "color": "lightGray"
+        },
+        "marker": null
+      }
+    },
+    {
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "sysId": "dataLayer.id"
+          },
+          "Roads"
+        ]
+      },
+      "symbolizer": {
+        "marker": null
+      },
+      "nestedRules": [
+        {
+          "selector": {
+            "op": "=",
+            "args": [
+              {
+                "sysId": "viz.pass"
+              },
+              0
+            ]
+          },
+          "symbolizer": {
+            "stroke": {
+              "color": "black",
+              "width": {
+                "px": 5.0
+              }
+            }
+          }
+        },
+        {
+          "selector": {
+            "op": "=",
+            "args": [
+              {
+                "sysId": "viz.pass"
+              },
+              1
+            ]
+          },
+          "symbolizer": {
+            "stroke": {
+              "color": "white",
+              "width": {
+                "px": 3.0
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

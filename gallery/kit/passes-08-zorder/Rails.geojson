@@ -1,0 +1,1 @@
+{"type": "FeatureCollection", "name": "Rails", "crs": {"type": "name", "properties": {"name": "urn:ogc:def:crs:EPSG::25833"}}, "features": [{"type": "Feature", "properties": {"kind": "rail", "name": "Railway"}, "geometry": {"type": "LineString", "coordinates": [[597010.0, 6643150.0], [597150.0, 6643040.0], [597290.0, 6643080.0]]}}]}

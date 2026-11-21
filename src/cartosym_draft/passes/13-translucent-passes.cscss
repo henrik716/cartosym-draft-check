@@ -1,0 +1,12 @@
+// A translucent road layer drawn in two visualization passes over a zone.
+// The Symbolizer opacity applies to the parts of a feature together
+// (/rec/core/opacity-together): for each pass, or for the layer's passes
+// together?
+Zones { marker: null; fill: { color: #5b8c5a }; }
+Roads
+{
+   marker: null;
+   opacity: 0.5;
+   [viz.pass = 0] { stroke: { color: black; width: 12 px }; }
+   [viz.pass = 1] { stroke: { color: white; width: 8 px }; }
+}

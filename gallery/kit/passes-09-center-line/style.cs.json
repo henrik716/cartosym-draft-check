@@ -1,0 +1,49 @@
+{
+  "stylingRules": [
+    {
+      "$comment": "Built-in casing and center line: within a zOrder, the casings of all roads\ngo beneath all main strokes, and the center lines of all roads on top of\nthem, so a joining road cuts neither (/req/casing/casing, /req/casing/center).",
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "sysId": "dataLayer.id"
+          },
+          "Roads"
+        ]
+      },
+      "symbolizer": {
+        "stroke": {
+          "color": [
+            245,
+            215,
+            110
+          ],
+          "width": {
+            "px": 10.0
+          },
+          "casing": {
+            "color": [
+              107,
+              79,
+              29
+            ],
+            "width": {
+              "px": 1.5
+            }
+          },
+          "center": {
+            "color": [
+              107,
+              79,
+              29
+            ],
+            "width": {
+              "px": 1.0
+            }
+          }
+        },
+        "marker": null
+      }
+    }
+  ]
+}

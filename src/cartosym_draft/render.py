@@ -520,6 +520,7 @@ class _Label:
     box: tuple[float, float, float, float]
     key: tuple = ()  # (layer, content): labels with the same key are repetitions of one label
     spacing: float = 0.0  # minSpacing in pixels
+    viz_pass: int = 0  # the visualization pass the label comes from
 
 
 _FONT_FILES = {"arial": "arial", "tahoma": "tahoma", "times new roman": "times", "verdana": "verdana"}
@@ -665,6 +666,7 @@ def render(style: dict, layers: list[Layer], view: View, opts: Options | None = 
     items: list[_Item] = []
     labels: list[_Label] = []
     seq = 0
+    labelled: set[int] = set()  # id() of the features that have their label
     viz_passes = PASSES if references(style, VIZ_PASS) else [0]
     feature_passes = PASSES if references(style, FEATURE_PASS) else [0]
     for layer in layers:
@@ -722,8 +724,11 @@ def render(style: dict, layers: list[Layer], view: View, opts: Options | None = 
                     cross = f"M{x - 7:.1f},{y:.1f} H{x + 7:.1f} M{x:.1f},{y - 7:.1f} V{y + 7:.1f}"
                     frags.append(f'<path d="{cross}" stroke="white" stroke-width="4"/>'
                                  f'<path d="{cross}" stroke="black" stroke-width="1.5"/>')
-            label = sym.get("label") if first else None
+            # A feature's label comes from the first pass that draws the feature with one: in later passes the
+            # same label would only be dropped as overlapping itself (/rec/labels/overlap).
+            label = sym.get("label") if id(feat) not in labelled else None
             if isinstance(label, dict) and label.get("elements"):
+                labelled.add(id(feat))
                 placement = label.get("placement") or {}
                 prio = float(placement.get("priority", 0) or 0)
                 min_sp = placement.get("minSpacing")
@@ -732,7 +737,7 @@ def render(style: dict, layers: list[Layer], view: View, opts: Options | None = 
                 content = tuple(str(el.get("text")) for el in label["elements"] if isinstance(el, dict))
                 # The Symbolizer opacity does not apply to labels (NOTE in /req/core/opacity).
                 for text, box in _label_candidates(label, pts, lines, polys, view, 1.0, opts):
-                    labels.append(_Label(prio, seq, len(items), text, box, (layer.id, content), spacing))
+                    labels.append(_Label(prio, seq, len(items), text, box, (layer.id, content), spacing, vp))
             items.append(_Item(z if opts.z_order == "higher-on-top" else -z, seq, layer.id, op,
                                fills, svg.casings, frags, svg.centers, viz_pass=vp, feature_pass=fp))
             seq += 1
@@ -762,27 +767,44 @@ def render(style: dict, layers: list[Layer], view: View, opts: Options | None = 
     # Rendering passes: each visualization pass after the whole map of the earlier ones; within a zOrder, each
     # feature's passes in turn (the painter's algorithm of clause 7: for each viz.pass, each zOrder, each casing
     # pass, each data layer, each feature, each feature.pass).
-    for vp, z in sorted({(it.viz_pass, it.z) for it in items}):
-        groups: dict[tuple | None, list[_Item]] = {}
-        for it in sorted((it for it in items if it.z == z and it.viz_pass == vp), key=lambda it: (it.seq, it.feature_pass)):
-            key = (it.layer, it.opacity) if opts.opacity == "whole" and it.opacity < 1 else None
-            groups.setdefault(key, []).append(it)
-        for key, group in groups.items():
-            body = ("".join(f for it in group for f in it.fills)
-                    + "".join(c for it in group for c in it.casings)
-                    + "".join("".join(it.strokes) + ("" if key else "".join(it.labels)) for it in group)
-                    + "".join(c for it in group for c in it.centers))
-            if key:
-                # The same as opacity="…" on the group, but as a filter whose region is the map: resvg
-                # (0.5.0) drops the tinted images of an opacity group reaching far beyond a nested
-                # <svg>, as each panel of the document figures is.
-                fid = svg.new_id("op")
-                svg.defs.append(f'<filter id="{fid}" filterUnits="userSpaceOnUse" x="0" y="0" width="{view.width}" '
-                                f'height="{view.height}" color-interpolation-filters="sRGB"><feComponentTransfer>'
-                                f'<feFuncA type="linear" slope="{key[1]:g}"/></feComponentTransfer></filter>')
-                body = f'<g filter="url(#{fid})">{body}</g>' + "".join(lb for it in group for lb in it.labels)
-            svg.body.append(body)
-    if opts.label_pass == "on-top":
+    # Options: casing_layers == "per-layer" composes each data layer of a zOrder on its own; opacity_passes ==
+    # "all-passes" makes a translucent layer's passes one group, drawn where its first pass is;
+    # label_viz_pass == "own-pass" draws the labels of each visualization pass at its end.
+    def steps(group: list[_Item], with_labels: bool) -> str:
+        return ("".join(f for it in group for f in it.fills)
+                + "".join(c for it in group for c in it.casings)
+                + "".join("".join(it.strokes) + ("".join(it.labels) if with_labels else "") for it in group)
+                + "".join(c for it in group for c in it.centers))
+
+    by_step = lambda it: (it.seq, it.feature_pass)  # noqa: E731
+    grouped_across_passes: set[tuple] = set()
+    for vp in sorted({it.viz_pass for it in items}):
+        for z in sorted({it.z for it in items if it.viz_pass == vp}):
+            slot = sorted((it for it in items if it.z == z and it.viz_pass == vp), key=by_step)
+            if opts.casing_layers == "per-layer":
+                parts = [[it for it in slot if it.layer == lyr] for lyr in dict.fromkeys(it.layer for it in slot)]
+            else:
+                parts = [slot]
+            for part in parts:
+                groups: dict[tuple | None, list[_Item]] = {}
+                for it in part:
+                    key = (it.layer, it.opacity) if opts.opacity == "whole" and it.opacity < 1 else None
+                    groups.setdefault(key, []).append(it)
+                for key, group in groups.items():
+                    if key and opts.opacity_passes == "all-passes":
+                        if (key, z) in grouped_across_passes:
+                            continue
+                        grouped_across_passes.add((key, z))
+                        same = [it for it in items if (it.layer, it.opacity, it.z) == (*key, z)]
+                        group = sorted(same, key=lambda it: (it.viz_pass, *by_step(it)))
+                        body = "".join(steps([it for it in group if it.viz_pass == v], False)
+                                       for v in sorted({it.viz_pass for it in group}))
+                    else:
+                        body = steps(group, not key)
+                    svg.body.append(_opacity_group(svg, view, key, body, group) if key else body)
+        if opts.label_pass == "on-top" and opts.label_viz_pass == "own-pass":
+            svg.body.extend(lb.svg for lb in sorted(placed, key=lambda lb: lb.seq) if lb.viz_pass == vp)
+    if opts.label_pass == "on-top" and opts.label_viz_pass == "after-all":
         svg.body.extend(lb.svg for lb in sorted(placed, key=lambda lb: lb.seq))
     LAST_NULL_REPORTS[:] = null_reports
     if null_reports:
@@ -790,6 +812,18 @@ def render(style: dict, layers: list[Layer], view: View, opts: Options | None = 
         keys = sorted({str(k) for k, _ in null_reports})
         svg.body.append(f"<!-- NULL values: {len(null_reports)} for {', '.join(keys)} -->")
     return svg.text()
+
+
+def _opacity_group(svg: _Svg, view: View, key: tuple, body: str, group: list[_Item]) -> str:
+    """The translucent group of *body* with *key*'s opacity; its labels (with label_pass "with-feature") after it."""
+    # The same as opacity="…" on the group, but as a filter whose region is the map: resvg (0.5.0) drops the
+    # tinted images of an opacity group reaching far beyond a nested <svg>, as each panel of the document
+    # figures is.
+    fid = svg.new_id("op")
+    svg.defs.append(f'<filter id="{fid}" filterUnits="userSpaceOnUse" x="0" y="0" width="{view.width}" '
+                    f'height="{view.height}" color-interpolation-filters="sRGB"><feComponentTransfer>'
+                    f'<feFuncA type="linear" slope="{key[1]:g}"/></feComponentTransfer></filter>')
+    return f'<g filter="url(#{fid})">{body}</g>' + "".join(lb for it in group for lb in it.labels)
 
 
 __all__ = ["Grid", "Layer", "View", "render", "to_px"]

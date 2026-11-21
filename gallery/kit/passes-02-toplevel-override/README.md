@@ -1,0 +1,36 @@
+# 02-toplevel-override: Top-level rules with the same selector override each other
+
+Part of the rendering-pass cases of [opengeospatial/cartographic-symbology#212](https://github.com/opengeospatial/cartographic-symbology/issues/212). From maxcollombin/pycartosym [`examples/passes/02-toplevel-override`](https://github.com/maxcollombin/pycartosym/tree/main/examples/passes) (MIT License, © Maxime Collombin), with `marker: null;` added to each top-level rule so that no default Dot is drawn.
+
+The same mechanisms on a real map: Annex C examples 12 (visualization passes) and 13 (casings, `zOrder` and a
+feature pass), roads and the railway at Otta, in [#233](https://github.com/opengeospatial/cartographic-symbology/pull/233).
+
+## Style
+
+```css
+// Top-level rules with the same selector override one another as well:
+// identical to the single rule with the white stroke.
+[kind = 'road'] { marker: null; stroke: { color: black; width: 5 px; }; }
+[kind = 'road'] { marker: null; stroke: { color: white; width: 3 px; }; }
+```
+
+## What should be drawn
+
+The same as 01: both rules select every road, and the second rule's `stroke` replaces the first's. Each road has only the white 3 px stroke.
+
+## Files
+
+- `style.cscss`: the style in CartoSym-CSS
+- `style.cs.json`: the same in CartoSym-JSON, converted from `style.cscss` with pycartosym 0.6.5
+- `Roads.geojson`: the data layer `Roads` (3 features, EPSG:25833)
+- `view.json`: extent (EPSG:25833), size in pixels, scale denominator and map background
+- `draft-render.png`: the draft renderer, at 2 × the size of `view.json`
+- `draft-render-detail.png`: the same, the crossing and the T-junction enlarged 4 ×
+
+Render each data layer with the style at the extent and size of `view.json`, on its background color.
+
+## Other renderers
+
+Pull requests to [henrik716/cartosym-draft-check](https://github.com/henrik716/cartosym-draft-check) are welcome:
+`style.sld` (SLD/SE), `style.maplibre.json` or a note on why MapLibre can't express the case, and renders from
+other software (e.g. `qgis-render.png`), with a line here on what it can't express.

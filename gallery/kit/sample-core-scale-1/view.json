@@ -11,6 +11,7 @@
   "height": 200,
   "scaleDenominator": 5000.0,
   "pixelSize_mm": 0.28,
+  "background": "#f4f1ea",
   "layers": [
     {
       "id": "Places",

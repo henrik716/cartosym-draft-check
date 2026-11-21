@@ -1,0 +1,11 @@
+// Labels on roads drawn in two visualization passes. Labels are drawn
+// "as a separate pass on top of all styled vector features" (/req/labels/label):
+// after the last visualization pass, or at the end of the pass that sets them?
+Roads
+{
+   marker: null;
+   label: { elements: [ Text { text: name, alignment: center middle,
+                               font: { face: 'Arial', size: 11, bold: true, color: black } } ] };
+   [viz.pass = 0] { stroke: { color: black; width: 12 px }; }
+   [viz.pass = 1] { stroke: { color: white; width: 8 px }; }
+}

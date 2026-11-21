@@ -11,7 +11,8 @@ from __future__ import annotations
 
 import html
 
-PAGES = [("index.html", "Gallery"), ("requirements.html", "Requirements"), ("playground.html", "Playground")]
+PAGES = [("index.html", "Gallery"), ("requirements.html", "Requirements"), ("playground.html", "Playground"),
+         ("passes.html", "Passes")]
 # (file, label, tooltip). Static pages: the #133 one is a record, the #192 one is built by tools/build_renders_walkthrough.py.
 WALKTHROUGHS = [
     ("pr133-requirements-walkthrough.html", "#133 requirements",

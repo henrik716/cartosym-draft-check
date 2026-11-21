@@ -1,0 +1,79 @@
+{
+  "stylingRules": [
+    {
+      "$comment": "Labels on roads drawn in two visualization passes. Labels are drawn\n\"as a separate pass on top of all styled vector features\" (/req/labels/label):\nafter the last visualization pass, or at the end of the pass that sets them?",
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "sysId": "dataLayer.id"
+          },
+          "Roads"
+        ]
+      },
+      "symbolizer": {
+        "marker": null,
+        "label": {
+          "elements": [
+            {
+              "type": "Text",
+              "text": {
+                "property": "name"
+              },
+              "alignment": [
+                "center",
+                "middle"
+              ],
+              "font": {
+                "face": "Arial",
+                "size": 11,
+                "bold": true,
+                "color": "black"
+              }
+            }
+          ]
+        }
+      },
+      "nestedRules": [
+        {
+          "selector": {
+            "op": "=",
+            "args": [
+              {
+                "sysId": "viz.pass"
+              },
+              0
+            ]
+          },
+          "symbolizer": {
+            "stroke": {
+              "color": "black",
+              "width": {
+                "px": 12.0
+              }
+            }
+          }
+        },
+        {
+          "selector": {
+            "op": "=",
+            "args": [
+              {
+                "sysId": "viz.pass"
+              },
+              1
+            ]
+          },
+          "symbolizer": {
+            "stroke": {
+              "color": "white",
+              "width": {
+                "px": 8.0
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

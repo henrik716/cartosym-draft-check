@@ -1,0 +1,9 @@
+// The same map as 09-center-line, written with three visualization passes:
+// all casings, then all main strokes, then all center lines.
+Roads
+{
+   marker: null;
+   [viz.pass = 0] { stroke: { color: #6b4f1d; width: 13 px }; }
+   [viz.pass = 1] { stroke: { color: #f5d76e; width: 10 px }; }
+   [viz.pass = 2] { stroke: { color: #6b4f1d; width: 1 px }; }
+}

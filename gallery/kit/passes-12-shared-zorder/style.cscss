@@ -1,0 +1,6 @@
+// Roads and a railway in two data layers with the same zOrder, both with
+// casings. "The casings of all features with the same zOrder" are drawn
+// beneath "the main strokes of all those features" (/req/casing/casing):
+// does that include the features of other data layers?
+Roads { marker: null; stroke: { color: #f5d76e; width: 8 px; casing: { color: #6b4f1d; width: 1.5 px } }; }
+Rails { marker: null; stroke: { color: white; width: 3 px; dashPattern: [ 6 px, 6 px ]; casing: { color: #333333; width: 1.5 px } }; }

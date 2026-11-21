@@ -1,0 +1,8 @@
+// Built-in casing and center line: within a zOrder, the casings of all roads
+// go beneath all main strokes, and the center lines of all roads on top of
+// them, so a joining road cuts neither (/req/casing/casing, /req/casing/center).
+Roads
+{
+   marker: null;
+   stroke: { color: #f5d76e; width: 10 px; casing: { color: #6b4f1d; width: 1.5 px }; center: { color: #6b4f1d; width: 1 px } };
+}

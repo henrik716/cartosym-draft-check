@@ -1,0 +1,113 @@
+{
+  "stylingRules": [
+    {
+      "$comment": "A railway bridge over a road, as in Annex C example 13. zOrder raises the\nbridge (z_order 2) over the road (zOrder 1). In feature pass -1 the bridge\ngets a wide white line with a dark casing; in pass 0 the railway itself is\ndrawn on it.",
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "sysId": "dataLayer.id"
+          },
+          "Roads"
+        ]
+      },
+      "symbolizer": {
+        "zOrder": 1,
+        "stroke": {
+          "color": [
+            245,
+            215,
+            110
+          ],
+          "width": {
+            "px": 8.0
+          },
+          "casing": {
+            "color": [
+              107,
+              79,
+              29
+            ],
+            "width": {
+              "px": 1.0
+            }
+          }
+        },
+        "marker": null
+      }
+    },
+    {
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "sysId": "dataLayer.id"
+          },
+          "Rails"
+        ]
+      },
+      "symbolizer": {
+        "zOrder": {
+          "property": "z_order"
+        },
+        "stroke": {
+          "color": [
+            51,
+            51,
+            51
+          ],
+          "width": {
+            "px": 3.0
+          }
+        },
+        "marker": null
+      },
+      "nestedRules": [
+        {
+          "$comment": "After the rule above, so that it overrides the railway's stroke in pass -1",
+          "selector": {
+            "op": "and",
+            "args": [
+              {
+                "op": "=",
+                "args": [
+                  {
+                    "sysId": "feature.pass"
+                  },
+                  -1
+                ]
+              },
+              {
+                "op": "=",
+                "args": [
+                  {
+                    "property": "bridge"
+                  },
+                  true
+                ]
+              }
+            ]
+          },
+          "symbolizer": {
+            "stroke": {
+              "color": "white",
+              "width": {
+                "px": 9.0
+              },
+              "casing": {
+                "color": [
+                  51,
+                  51,
+                  51
+                ],
+                "width": {
+                  "px": 1.0
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

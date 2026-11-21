@@ -1,0 +1,13 @@
+// A railway bridge over a road, as in Annex C example 13. zOrder raises the
+// bridge (z_order 2) over the road (zOrder 1). In feature pass -1 the bridge
+// gets a wide white line with a dark casing; in pass 0 the railway itself is
+// drawn on it.
+Roads { marker: null; zOrder: 1; stroke: { color: #f5d76e; width: 8 px; casing: { color: #6b4f1d; width: 1 px } }; }
+Rails
+{
+   marker: null;
+   zOrder: z_order;
+   stroke: { color: #333333; width: 3 px };
+   // After the rule above, so that it overrides the railway's stroke in pass -1
+   [feature.pass = -1 and bridge = true] { stroke: { color: white; width: 9 px; casing: { color: #333333; width: 1 px } }; }
+}

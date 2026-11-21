@@ -1,0 +1,90 @@
+{
+  "stylingRules": [
+    {
+      "$comment": "The same map as 09-center-line, written with three visualization passes:\nall casings, then all main strokes, then all center lines.",
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "sysId": "dataLayer.id"
+          },
+          "Roads"
+        ]
+      },
+      "symbolizer": {
+        "marker": null
+      },
+      "nestedRules": [
+        {
+          "selector": {
+            "op": "=",
+            "args": [
+              {
+                "sysId": "viz.pass"
+              },
+              0
+            ]
+          },
+          "symbolizer": {
+            "stroke": {
+              "color": [
+                107,
+                79,
+                29
+              ],
+              "width": {
+                "px": 13.0
+              }
+            }
+          }
+        },
+        {
+          "selector": {
+            "op": "=",
+            "args": [
+              {
+                "sysId": "viz.pass"
+              },
+              1
+            ]
+          },
+          "symbolizer": {
+            "stroke": {
+              "color": [
+                245,
+                215,
+                110
+              ],
+              "width": {
+                "px": 10.0
+              }
+            }
+          }
+        },
+        {
+          "selector": {
+            "op": "=",
+            "args": [
+              {
+                "sysId": "viz.pass"
+              },
+              2
+            ]
+          },
+          "symbolizer": {
+            "stroke": {
+              "color": [
+                107,
+                79,
+                29
+              ],
+              "width": {
+                "px": 1.0
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

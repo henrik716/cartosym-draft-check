@@ -18,6 +18,10 @@ class Options:
     # "per-element" multiplies it into each part separately, which meets the
     # requirement but lets them show through each other.
     opacity: str = "whole"
+    # With visualization passes and "whole": one group per visualization pass ("per-pass", draft: each pass
+    # is drawn after the whole map of the earlier ones), or one group for all passes of a data layer and
+    # zOrder ("all-passes"), so a layer's passes don't show through each other.
+    opacity_passes: str = "per-pass"
 
     # /req/casing/casing: "below" draws the casing beneath the main stroke.
     casing: str = "below"
@@ -32,6 +36,11 @@ class Options:
     # the fills of all features with the same zOrder are drawn first (Jérôme's
     # order on #198: fill, casing, main stroke, center line).
     casing_pass: str = "all-first"
+    # Which features "all features with the same zOrder" covers (/req/casing/casing): "all" data layers, so
+    # the casings of roads and a railway with the same zOrder merge (draft; also the painter's algorithm,
+    # which is commented out of clause 7); "per-layer" draws each data layer's fills, casings, main strokes
+    # and center lines before the next layer's, as separate QGIS or MapLibre layers do.
+    casing_layers: str = "all"
 
     # /req/font-outlines/outline: "below" draws the outline beneath the glyphs.
     font_outline: str = "below"
@@ -79,6 +88,11 @@ class Options:
     # features; "with-feature" draws each label with its own feature.
     # /rec/labels/overlap: labels that would overlap are always omitted.
     label_pass: str = "on-top"
+    # With "on-top" and visualization passes: the labels pass comes after all visualization passes
+    # ("after-all", draft: "on top of all styled vector features") or at the end of the visualization pass
+    # that sets the label ("own-pass"), under later passes. A feature's label comes from the first pass
+    # in which it is drawn with one.
+    label_viz_pass: str = "after-all"
 
     # /req/coverage/color-map, /req/coverage/opacity-map: "interpolate"
     # between entries, or "step" (each entry applies up to the next one).

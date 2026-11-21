@@ -1,0 +1,59 @@
+{
+  "stylingRules": [
+    {
+      "$comment": "04-viz-pass with wider strokes, to compare with 03-feature-pass-wide:\nall the roads are drawn with the black stroke first, then all of them\nwith the white one.",
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "sysId": "dataLayer.id"
+          },
+          "Roads"
+        ]
+      },
+      "symbolizer": {
+        "marker": null
+      },
+      "nestedRules": [
+        {
+          "selector": {
+            "op": "=",
+            "args": [
+              {
+                "sysId": "viz.pass"
+              },
+              0
+            ]
+          },
+          "symbolizer": {
+            "stroke": {
+              "color": "black",
+              "width": {
+                "px": 12.0
+              }
+            }
+          }
+        },
+        {
+          "selector": {
+            "op": "=",
+            "args": [
+              {
+                "sysId": "viz.pass"
+              },
+              1
+            ]
+          },
+          "symbolizer": {
+            "stroke": {
+              "color": "white",
+              "width": {
+                "px": 8.0
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
