@@ -157,7 +157,8 @@ EXTRA_ROWS: list[tuple[str, Row]] = [
          "Jérôme on #140 (13 November): the same, and written back to CartoSym-CSS as `NOT LIKE`. Now tracked in "
          "#167.")),
     ("caseInsensitize / accentInsensitize vs casei / accenti",
-     Row("long names (model); short in the schema", "Use the CQL2 names casei and accenti.", "Open, #167.")),
+     Row("long names (model); short in the schema", "Use the CQL2 names casei and accenti.",
+         "Done in #224 (merged 20 November), as Jérôme asked on #167.")),
     ("What counts as an accent (`Ø`)",
      Row("accent stripping and diacritic folding (CQL2 Requirement 9)", "Fold Ø → O, as libCartoSym does.",
          "In Part 1 (#133), with a NOTE pointing to Unicode Technical Report 30; #152 open.")),

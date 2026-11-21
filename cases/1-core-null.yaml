@@ -19,12 +19,19 @@
 # The null literal and a property named "null" (Jérôme on henrik716/cartosym-draft-check#2, 2026-11-20):
 # in CQL2-Text `null` is the literal and `"null"` a property; the same for true and false. The cases with
 # a property set need feature properties, so only the draft renderer runs them. Without the property,
-# Jérôme expects `"null" is null` and `"null" > 1` to be unresolved; those wait until it is settled
-# whether that differs from a property a feature has no value for (asked on #2).
+# Jérôme (same issue, 2026-11-20) distinguishes two cases. A property the data layer has (in its logical
+# schema, explicit or inferred from the data) but this feature has no value for is NULL, as a coverage
+# cell with NODATA is: the two `null-property-missing` cases below. A property the logical schema does not
+# have at all is unresolved; Part 1 does not yet say what an unresolved identifier evaluates to, and the
+# harness has no logical schema, so there is no case for it (to settle in the NULL text, #155).
 - {id: null-literal, requirement: /req/core/literals, kind: expression, input: "null", json: null, expect: "null"}
 - {id: null-literal-is-null, requirement: /req/core/literals, kind: expression, input: "null is null", json: {op: isNull, args: [null]}, expect: "true"}
 - {id: null-property-named-null, requirement: /req/core/expressions-field-identifiers, kind: expression, draft_only: true, input: "\"null\"", json: {property: "null"}, properties: {"null": 5}, expect: 5}
 - {id: null-property-named-null-is-null, requirement: /req/core/expressions-field-identifiers, kind: expression, draft_only: true, input: "\"null\" is null", json: {op: isNull, args: [{property: "null"}]}, properties: {"null": 5}, expect: "false"}
 - {id: null-property-named-null-compare, requirement: /req/core/expressions-field-identifiers, kind: expression, draft_only: true, input: "\"null\" > 1", json: {op: ">", args: [{property: "null"}, 1]}, properties: {"null": 5}, expect: "true"}
-- {id: null-property-named-true, requirement: /req/core/expressions-field-identifiers, kind: expression, draft_only: true, input: "\"true\"", json: {property: "true"}, properties: {"true": false}, expect: "false"}
+- {id: null-property-missing-is-null, requirement: /req/core/operations, kind: expression, draft_only: true, input: "\"null\" is null", json: {op: isNull, args: [{property: "null"}]}, properties: {}, expect: "true",
+   note: "The data layer has a property named null; this feature has no value for it."}
+- {id: null-property-missing-compare, requirement: /req/core/operations, kind: expression, draft_only: true, input: "\"null\" > 1", json: {op: ">", args: [{property: "null"}, 1]}, properties: {}, expect: "null",
+   note: "The data layer has a property named null; this feature has no value for it."}
+- {id: null-property-named-true,requirement: /req/core/expressions-field-identifiers, kind: expression, draft_only: true, input: "\"true\"", json: {property: "true"}, properties: {"true": false}, expect: "false"}
 - {id: null-property-named-false, requirement: /req/core/expressions-field-identifiers, kind: expression, draft_only: true, input: "\"false\"", json: {property: "false"}, properties: {"false": true}, expect: "true"}

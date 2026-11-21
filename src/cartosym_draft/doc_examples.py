@@ -11,9 +11,8 @@ model and a Sentinel-2 scene) and writes:
 - ``1-core/examples/<name>.cs.json``: the CartoSym-JSON;
 - ``1-core/figures/examples/<name>.jpg``: the render, one panel per scale or per variant (JPEG at quality 88
   without chroma subsampling: a third of the size of a PNG, with no visible difference on these maps);
-- ``1-core/examples/<name>.adoc``: the render above a two-column table with the
-  CartoSym-CSS and the CartoSym-JSON, for the document to include (the CartoSym-CSS only, for the
-  requirement figures).
+- ``1-core/examples/<name>.adoc``: the render above the CartoSym-CSS, for the document to include; the
+  examples of the CartoSym-CSS clause add a link to their CartoSym-JSON (JSON_BASE_URL, #230).
 
 The gallery maps (GALLERY_EXAMPLES) are not in the document: their style, JSON and render are in this
 repository's ``gallery/maps``, with an ``index.html`` that shows them on GitHub Pages.
@@ -976,10 +975,15 @@ def render_example(ex: DocExample, styles: list[dict]) -> str:
 
 # Examples in Annex C, which shows its styles in CartoSym-CSS only (its other use cases too).
 ANNEX_C = {"10-protected-areas", "11-rondane-overview", "12-visualization-passes", "13-feature-passes"}
+# Where the examples of the CartoSym-CSS clause link their CartoSym-JSON (#230): the GitHub repository for now,
+# schemas.opengis.net on publication.
+JSON_BASE_URL = "https://github.com/opengeospatial/cartographic-symbology/blob/main/1-core/examples/"
 
 
 def adoc_block(ex: DocExample) -> str:
-    css_only = bool(ex.subdir) or ex.name in ANNEX_C
+    # Every example shows its CartoSym-CSS only, without a table (Jérôme, Nov 20: #228 for Annex C and the
+    # requirement figures, #230 for the CartoSym-CSS clause). The examples of that clause link their CartoSym-JSON.
+    links_json = not ex.subdir and ex.name not in ANNEX_C
     scales = list(dict.fromkeys(p.label for p, _ in ex.views()))
     where = (f", at {scales[0]}" if len(scales) == 1 else
              "" if ex.variants else  # the panels are labelled with their scale
@@ -994,8 +998,7 @@ def adoc_block(ex: DocExample) -> str:
     vignette = ""
     if ex.variants:
         vignette = f" The panels differ only in {ex.varies}"
-        vignette += (("; the CartoSym-CSS below is that of the panel marked in bold." if css_only else
-                      "; the CartoSym-CSS and CartoSym-JSON below are those of the panel marked in bold.")
+        vignette += ("; the CartoSym-CSS below is that of the panel marked in bold."
                      if any(not v.shows_file for v in ex.variants) else ".")
     notes = "".join(" " + n for n in ex.notes)
     figure = f"figures/examples/{ex.subdir + '/' if ex.subdir else ''}{ex.name}.jpg"
@@ -1008,32 +1011,14 @@ image::{figure}[]
 
 {reqs}Rendered by the draft renderer of cartosym-draft-check.{vignette}{context}{notes} Map data © Kartverket, CC BY 4.0{"; contains modified Copernicus Sentinel data 2024" if "sentinel2-l2a" in ex.layers else ""}.
 """
-    if css_only:
-        # The requirement figures and Annex C show the CartoSym-CSS only, without a table (Jérôme, Nov 20).
-        return head + f"""
-[source,cscss]
-----
-include::{ex.name}.cscss[]
-----
-"""
+    link = (f"\nThe same style in CartoSym-JSON: {JSON_BASE_URL}{ex.name}.cs.json[{ex.name}.cs.json].\n"
+            if links_json else "")
     return head + f"""
-[cols="1,1",options="header"]
-|===
-| CartoSym-CSS | CartoSym-JSON
-
-a|
 [source,cscss]
 ----
 include::{ex.name}.cscss[]
 ----
-
-a|
-[source,json]
-----
-include::{ex.name}.cs.json[]
-----
-|===
-"""
+{link}"""
 
 
 GALLERY_DIR = ROOT / "gallery" / "maps"

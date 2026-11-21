@@ -208,29 +208,13 @@
   expect: "false"
 
 # --- Text manipulation (rc-text-manipulation.adoc) ---------------------------
-- id: textfn-case-insensitize
-  requirement: /req/text-manipulation/case-insensitize
-  kind: expression
-  input: "caseInsensitize('ABC') = caseInsensitize('abc')"
-  json: {"op": "=", "args": [{"op": "caseInsensitize", "args": ["ABC"]}, {"op": "caseInsensitize", "args": ["abc"]}]}
-  expect: "true"
-  note: Draft function name.
-  disputed: "The draft names the function caseInsensitize; the JSON schema and libCartoSym use the CQL2 name casei (https://github.com/opengeospatial/cartographic-symbology/issues/140)."
 - id: textfn-casei
   requirement: /req/text-manipulation/case-insensitize
   kind: expression
   input: "casei('ABC') = casei('abc')"
   json: {"op": "=", "args": [{"op": "casei", "args": ["ABC"]}, {"op": "casei", "args": ["abc"]}]}
   expect: "true"
-  note: CQL2 name used by both implementations.
-- id: textfn-accent-insensitize
-  requirement: /req/text-manipulation/accent-insensitize
-  kind: expression
-  input: "accentInsensitize('café') = accentInsensitize('cafe')"
-  json: {"op": "=", "args": [{"op": "accentInsensitize", "args": ["café"]}, {"op": "accentInsensitize", "args": ["cafe"]}]}
-  expect: "true"
-  note: Draft function name.
-  disputed: "The draft names the function accentInsensitize; the JSON schema and libCartoSym use the CQL2 name accenti (https://github.com/opengeospatial/cartographic-symbology/issues/140)."
+  note: The CQL2 name, used by the draft since spec PR #224 (it was caseInsensitize).
 - id: textfn-accenti-o-stroke
   requirement: /req/text-manipulation/accent-insensitize
   kind: expression
@@ -244,7 +228,7 @@
   input: "accenti('café') = accenti('cafe')"
   json: {"op": "=", "args": [{"op": "accenti", "args": ["café"]}, {"op": "accenti", "args": ["cafe"]}]}
   expect: "true"
-  note: CQL2 name used by both implementations.
+  note: The CQL2 name, used by the draft since spec PR #224 (it was accentInsensitize).
 - id: textfn-accenti-tajik
   requirement: /req/text-manipulation/accent-insensitize
   kind: expression
