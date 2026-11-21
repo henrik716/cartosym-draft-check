@@ -1,6 +1,6 @@
 # CartoSym draft requirements vs implementations
 
-Generated 2026-11-20 with libCartoSym (cs-canif built from ecere/libCartoSym main @ e9342b6 and ecere/eC main @ bb2f036, on Ubuntu) and pycartosym 0.6.5.
+Generated 2026-11-21 with libCartoSym (cs-canif built from ecere/libCartoSym main @ e9342b6 and ecere/eC main @ bb2f036, on Ubuntu) and pycartosym 0.6.5.
 
 Expected values are what the **draft requirement** says. `FAIL` means the implementation disagrees with the draft, which may mean the draft or the implementation is wrong. pycartosym does not evaluate expressions, so for expression cases it is checked on converting them to CQL2-JSON (see below). The draft renderer is `cartosym_draft` in this repository, which implements the draft requirements; a FAIL there means it does not do what the draft says.
 
@@ -9,8 +9,8 @@ Expected values are what the **draft requirement** says. `FAIL` means the implem
 | Implementation | pass | FAIL | unsupported | CRASH | error |
 |---|---|---|---|---|---|
 | draft renderer | 132 | 0 | 0 | 0 | 0 |
-| libCartoSym | 119 | 0 | 2 | 0 | 0 |
-| pycartosym | 121 | 0 | 0 | 0 | 0 |
+| libCartoSym | 119 | 0 | 0 | 0 | 0 |
+| pycartosym | 119 | 0 | 0 | 0 | 0 |
 
 ## How the cases are run
 
@@ -19,7 +19,7 @@ Expected values are what the **draft requirement** says. `FAIL` means the implem
 - **draft renderer:** `cartosym_draft.evaluate.evaluate(expression, Context(...))`. Where a case gives its own CQL2-JSON, that is what it evaluates, and the result is marked _(CQL2-JSON)_, so it does not depend on pycartosym's parser; otherwise the Input text is converted with pycartosym as above.
 - **Comparing results:** quotes around text are ignored and numbers are compared as numbers, so `3.0` passes for `3`, except in cases marked `exact`, where the printed result must be the expected text (used to check that a result is an integer).
 - **Values:** feature properties, system identifiers, style variables (`@name`) and variables set by the application that a case is evaluated with are listed under its input (_with …_).
-- **Draft renderer only** (14 cases): cases that need such values. The harness does not pass them to `cs-canif` or pycartosym, so those columns show `-`.
+- **Draft renderer only** (16 cases): cases that need such values. The harness does not pass them to `cs-canif` or pycartosym, so those columns show `-`.
 - **Styles** (3 cases): libCartoSym converts them with `cs-canif convert style.cscss style-out.cscss` (valid if it converts); pycartosym checks them with `cartosym validate`.
 
 The cases are in [`cases/`](../cases/), the calls in [`harness/adapters.py`](../harness/adapters.py), and every result with the implementation's full output in [`results.json`](results.json).
@@ -179,6 +179,10 @@ The cases are in [`cases/`](../cases/), the calls in [`harness/adapters.py`](../
 | null-or-true | `(null > 1) or true` | `true` | pass: true | pass: converts to the case's CQL2-JSON | pass: true _(CQL2-JSON)_ |
 | null-or-false | `(null > 1) or false` | `null` | pass: null | pass: converts to the case's CQL2-JSON | pass: null _(CQL2-JSON)_ |
 | null-is-null | `(null + 1) is null` | `true` | pass: true | pass: converts to the case's CQL2-JSON | pass: true _(CQL2-JSON)_ |
+| null-property-missing-is-null | `"null" is null` | `true` | - | - | pass: true _(CQL2-JSON)_ |
+| | _The data layer has a property named null; this feature has no value for it._ | | | | |
+| null-property-missing-compare | `"null" > 1` | `null` | - | - | pass: null _(CQL2-JSON)_ |
+| | _The data layer has a property named null; this feature has no value for it._ | | | | |
 
 ### `/req/core/relational`
 
@@ -399,12 +403,10 @@ The cases are in [`cases/`](../cases/), the calls in [`harness/adapters.py`](../
 
 | Case | Input | Expected | libCartoSym | pycartosym | draft renderer |
 |---|---|---|---|---|---|
-| textfn-accent-insensitize | `accentInsensitize('café') = accentInsensitize('cafe')` | `true` | unsupported: returned `null` (function or operator not recognised) | pass: converts to the case's CQL2-JSON | pass: true _(CQL2-JSON)_ |
-| | _Draft function name._ | | | | |
 | textfn-accenti-o-stroke | `accenti('Øre') = accenti('Ore')` | `true` | pass: true | pass: converts to the case's CQL2-JSON | pass: true _(CQL2-JSON)_ |
 | | _Diacritic folding also folds Ø, which does not decompose in Unicode, as libCartoSym does (#152)._ | | | | |
 | textfn-accenti | `accenti('café') = accenti('cafe')` | `true` | pass: true | pass: converts to the case's CQL2-JSON | pass: true _(CQL2-JSON)_ |
-| | _CQL2 name used by both implementations._ | | | | |
+| | _The CQL2 name, used by the draft since spec PR_ | | | | |
 | textfn-accenti-tajik | `accenti('Тоҷикистон') = accenti('Точикистон')` | `true` | pass: true | pass: converts to the case's CQL2-JSON | pass: true _(CQL2-JSON)_ |
 | | _Tajikistan in Tajik: `ҷ` is `ч` with a descender, folded as `Ø` is to `O`. One of the seven Cyrillic letters that UTR #30's table, and so eC's, folded to the wrong letter (#152), fixed in ecere/eC@2280ffb._ | | | | |
 | textfn-accenti-cyrillic-seven | `accenti('ҳҶҷҸҿӋӌ') = accenti('хЧчЧҽЧч')` | `true` | pass: true | pass: converts to the case's CQL2-JSON | pass: true _(CQL2-JSON)_ |
@@ -414,10 +416,8 @@ The cases are in [`cases/`](../cases/), the calls in [`harness/adapters.py`](../
 
 | Case | Input | Expected | libCartoSym | pycartosym | draft renderer |
 |---|---|---|---|---|---|
-| textfn-case-insensitize | `caseInsensitize('ABC') = caseInsensitize('abc')` | `true` | unsupported: returned `null` (function or operator not recognised) | pass: converts to the case's CQL2-JSON | pass: true _(CQL2-JSON)_ |
-| | _Draft function name._ | | | | |
 | textfn-casei | `casei('ABC') = casei('abc')` | `true` | pass: true | pass: converts to the case's CQL2-JSON | pass: true _(CQL2-JSON)_ |
-| | _CQL2 name used by both implementations._ | | | | |
+| | _The CQL2 name, used by the draft since spec PR_ | | | | |
 
 ### `/req/text-manipulation/concatenate`
 

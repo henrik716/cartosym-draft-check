@@ -1,6 +1,6 @@
 # Round trips through CQL2-JSON and CartoSym-JSON
 
-Generated 2026-11-20 by [`harness/roundtrip.py`](../harness/roundtrip.py) with libCartoSym (cs-canif built from ecere/libCartoSym main @ e9342b6 and ecere/eC main @ bb2f036, on Ubuntu) and pycartosym 0.6.5; the style examples are those of opengeospatial/cartographic-symbology at `c9808c0` (branch `main`).
+Generated 2026-11-21 by [`harness/roundtrip.py`](../harness/roundtrip.py) with libCartoSym (cs-canif built from ecere/libCartoSym main @ e9342b6 and ecere/eC main @ bb2f036, on Ubuntu) and pycartosym 0.6.5; the style examples are those of opengeospatial/cartographic-symbology at `5dbf8e8` (branch `main`).
 
 This checks conversion only: whether each implementation writes the same JSON as the case or the example, and whether converting back and forth gives the same JSON again. It does not evaluate anything; [`report.md`](report.md) has the evaluation results. A difference from a case or an example may be in the case, the example or the implementation.
 
@@ -8,14 +8,14 @@ This checks conversion only: whether each implementation writes the same JSON as
 
 | | libCartoSym | pycartosym |
 |---|---|---|
-| Expressions converted to CQL2-JSON (of 118) | 118 | 118 |
-| Same CQL2-JSON as the case (of the 78 cases that give one) | 75 | 78 |
-| Text → JSON → text → JSON gives the same JSON (of 118) | 116 | 104 |
-| CQL2-JSON with `\u` escapes gives the same CQL2-Text (of the 5 cases with non-ASCII text) | 5 | 5 |
-| Examples converted from CartoSym-CSS to CartoSym-JSON (of 11) | 11 | 11 |
-| Same CartoSym-JSON as the example (of 11) | 6 | 11 |
-| CSS → JSON → CSS → JSON gives the same JSON (of 11) | 11 | 11 |
-| The example's JSON → CSS → JSON gives it back (of 11) | 6 | 11 |
+| Expressions converted to CQL2-JSON (of 116) | 116 | 116 |
+| Same CQL2-JSON as the case (of the 76 cases that give one) | 75 | 76 |
+| Text → JSON → text → JSON gives the same JSON (of 116) | 114 | 102 |
+| CQL2-JSON with `\u` escapes gives the same CQL2-Text (of the 4 cases with non-ASCII text) | 4 | 4 |
+| Examples converted from CartoSym-CSS to CartoSym-JSON (of 13) | 13 | 13 |
+| Same CartoSym-JSON as the example (of 13) | 6 | 12 |
+| CSS → JSON → CSS → JSON gives the same JSON (of 13) | 12 | 12 |
+| The example's JSON → CSS → JSON gives it back (of 13) | 6 | 11 |
 
 ## How they are run
 
@@ -101,9 +101,7 @@ This checks conversion only: whether each implementation writes the same JSON as
 | array-equals-order | `a_equals((1, 2), (2, 1))` | ok | - | `A_EQUALS((1, 2), (2, 1))` | - | yes |
 | array-overlaps | `a_overlaps((1, 2), (2, 3))` | ok | - | `A_OVERLAPS((1, 2), (2, 3))` | - | yes |
 | array-overlaps-none | `a_overlaps((1, 2), (3, 4))` | ok | same | `A_OVERLAPS((1, 2), (3, 4))` | - | yes |
-| textfn-case-insensitize | `caseInsensitize('ABC') = caseInsensitize('abc')` | ok | /args/0/op: `"caseInsensitize"` vs `"CASEINSENSITIZE"` | `CASEINSENSITIZE('ABC') = CASEINSENSITIZE('abc')` | - | yes |
 | textfn-casei | `casei('ABC') = casei('abc')` | ok | same | `CASEI('ABC') = CASEI('abc')` | - | yes |
-| textfn-accent-insensitize | `accentInsensitize('café') = accentInsensitize('cafe')` | ok | /args/0/op: `"accentInsensitize"` vs `"ACCENTINSENSITIZE"` | `ACCENTINSENSITIZE('café') = ACCENTINSENSITIZE('cafe')` | same | yes |
 | textfn-accenti-o-stroke | `accenti('Øre') = accenti('Ore')` | ok | same | `ACCENTI('Øre') = ACCENTI('Ore')` | same | yes |
 | textfn-accenti | `accenti('café') = accenti('cafe')` | ok | same | `ACCENTI('café') = ACCENTI('cafe')` | same | yes |
 | textfn-accenti-tajik | `accenti('Тоҷикистон') = accenti('Точикистон')` | ok | same | `ACCENTI('Тоҷикистон') = ACCENTI('Точикистон')` | same | yes |
@@ -224,9 +222,7 @@ This checks conversion only: whether each implementation writes the same JSON as
 | array-equals-order | `a_equals((1, 2), (2, 1))` | ok | - | `A_EQUALS([1, 2], [2, 1])` | - | yes |
 | array-overlaps | `a_overlaps((1, 2), (2, 3))` | ok | - | `A_OVERLAPS([1, 2], [2, 3])` | - | yes |
 | array-overlaps-none | `a_overlaps((1, 2), (3, 4))` | ok | same | `A_OVERLAPS([1, 2], [3, 4])` | - | yes |
-| textfn-case-insensitize | `caseInsensitize('ABC') = caseInsensitize('abc')` | ok | same | `caseInsensitize('ABC') = caseInsensitize('abc')` | - | yes |
 | textfn-casei | `casei('ABC') = casei('abc')` | ok | same | `CASEI('ABC') = CASEI('abc')` | - | yes |
-| textfn-accent-insensitize | `accentInsensitize('café') = accentInsensitize('cafe')` | ok | same | `accentInsensitize('café') = accentInsensitize('cafe')` | same | yes |
 | textfn-accenti-o-stroke | `accenti('Øre') = accenti('Ore')` | ok | same | `ACCENTI('Øre') = ACCENTI('Ore')` | same | yes |
 | textfn-accenti | `accenti('café') = accenti('cafe')` | ok | same | `ACCENTI('café') = ACCENTI('cafe')` | same | yes |
 | textfn-accenti-tajik | `accenti('Тоҷикистон') = accenti('Точикистон')` | ok | same | `ACCENTI('Тоҷикистон') = ACCENTI('Точикистон')` | same | yes |
@@ -280,21 +276,23 @@ This checks conversion only: whether each implementation writes the same JSON as
 | 1-core | ok | same | yes | yes |
 | 2-vector-polygon | ok | /stylingRules/0/nestedRules/0/nestedRules/3/symbolizer/marker/elements/0/position: `{"x": 20.0, "y": 0.0}` vs `[20, 0]` | yes | /stylingRules/0/nestedRules/0/nestedRules/3/symbolizer/marker/elements/0/position: `{"x": 20.0, "y": 0.0}` vs `[20.0, 0.0]` |
 | 3-vector-line | ok | same | yes | yes |
-| 4-vector-point | ok | /stylingRules/0/nestedRules/0/nestedRules/0/nestedRules/0/symbolizer/marker/elements/value/position: `{"x": 20.0, "y": 0.0}` vs `[20, 0]` | yes | /stylingRules/0/nestedRules/0/nestedRules/0/nestedRules/0/symbolizer/marker/elements/value/position: `{"x": 20.0, "y": 0.0}` vs `[20.0, 0.0]` |
+| 4-vector-point | ok | /stylingRules/0/nestedRules/0/nestedRules/0/nestedRules/0/symbolizer/marker/elements/value/position: `{"x": 12.0, "y": 0.0}` vs `[12, 0]` | yes | /stylingRules/0/nestedRules/0/nestedRules/0/nestedRules/0/symbolizer/marker/elements/value/position: `{"x": 12.0, "y": 0.0}` vs `[12.0, 0.0]` |
 | 5-coverage-dem | ok | same | yes | yes |
 | 6-coverage-sentinel2 | ok | /stylingRules/0/nestedRules/0/symbolizer/colorChannels: missing | yes | /stylingRules/0/nestedRules/0/symbolizer/colorChannels: missing |
 | 7-coverage-ndvi | ok | same | yes | yes |
 | 8-coverage-hillshading | ok | same | yes | yes |
 | 9-coverage-hillshading-opacity | ok | same | yes | yes |
 | 10-natural_earth_economies | ok | /metadata/abstract: `"This style is used to draw the economic status...` vs `"This style is used to draw the economic status...` | yes | to CartoSym-CSS: error: Warning: Value type mismatch (1:306) |
+| 10-protected-areas | ok | /metadata/abstract: `"This style is used to draw the protected areas...` vs `"This style is used to draw the protected areas...` | /stylingRules/0/nestedRules/0/symbolizer/label/placement: missing | to CartoSym-CSS: error: Warning: Value type mismatch (1:387) |
 | 11-natural_earth_continents | ok | /stylingRules/5/nestedRules/0/symbolizer/label/elements/2/position/args: added (`[10, 4]`) | yes | /stylingRules/5/nestedRules/0/symbolizer/label/elements/2/position: `{"x": 10.0, "y": -4.0}` vs `[10.0, -4.0]` |
+| 11-rondane-overview | ok | /stylingRules/2/symbolizer/colorMap/0/1: `"#e4f4f7"` vs `[228, 244, 247]` | yes | /stylingRules/7/nestedRules/0/symbolizer/label/elements/2/position: `{"x": 10.0, "y": 4.0}` vs `[10.0, 4.0]` |
 
 ### pycartosym
 
 | Example | CSS to JSON | Same as the example's JSON | CSS → JSON → CSS → JSON stable | Example's JSON → CSS → JSON |
 |---|---|---|---|---|
 | 1-core | ok | same | yes | yes |
-| 2-vector-polygon | ok | same | yes | yes |
+| 2-vector-polygon | ok | same | /stylingRules/0/nestedRules/0/nestedRules/3/nestedRules/0/symbolizer/marker/elements/value/blackTint: `[107, 95, 42]` vs `"[107, 95, 42]"` | /stylingRules/0/nestedRules/0/nestedRules/3/nestedRules/0/symbolizer/marker/elements/value/blackTint: `[107, 95, 42]` vs `"[107, 95, 42]"` |
 | 3-vector-line | ok | same | yes | yes |
 | 4-vector-point | ok | same | yes | yes |
 | 5-coverage-dem | ok | same | yes | yes |
@@ -303,4 +301,6 @@ This checks conversion only: whether each implementation writes the same JSON as
 | 8-coverage-hillshading | ok | same | yes | yes |
 | 9-coverage-hillshading-opacity | ok | same | yes | yes |
 | 10-natural_earth_economies | ok | same | yes | yes |
+| 10-protected-areas | ok | /stylingRules/0/nestedRules/0/symbolizer/stroke/center: missing | yes | to CartoSym-CSS: error: error: conversion failed: 3 validation errors for Style |
 | 11-natural_earth_continents | ok | same | yes | yes |
+| 11-rondane-overview | ok | same | yes | yes |
