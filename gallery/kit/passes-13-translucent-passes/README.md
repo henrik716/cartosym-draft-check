@@ -57,3 +57,5 @@ Render each data layer with the style at the extent and size of `view.json`, on 
 Pull requests to [henrik716/cartosym-draft-check](https://github.com/henrik716/cartosym-draft-check) are welcome:
 `style.sld` (SLD/SE), `style.maplibre.json` or a note on why MapLibre can't express the case, and renders from
 other software (e.g. `qgis-render.png`), with a line here on what it can't express.
+
+- QGIS 4.2.3 (`qgis-render*.png`, set up and rendered by [`qgis/render_kits.py`](../../../qgis/render_kits.py)): `qgis-render.png` (a group per pass) has a map layer per pass, each at 50 % layer opacity. `qgis-render-one-group-for-all-passes.png` has one map layer at 50 % layer opacity. `qgis-render-each-stroke-on-its-own.png` has 50 % alpha in each line's colour.

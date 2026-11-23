@@ -44,3 +44,5 @@ Render each data layer with the style at the extent and size of `view.json`, on 
 Pull requests to [henrik716/cartosym-draft-check](https://github.com/henrik716/cartosym-draft-check) are welcome:
 `style.sld` (SLD/SE), `style.maplibre.json` or a note on why MapLibre can't express the case, and renders from
 other software (e.g. `qgis-render.png`), with a line here on what it can't express.
+
+- QGIS 4.2.3 (`qgis-render*.png`, set up and rendered by [`qgis/render_kits.py`](../../../qgis/render_kits.py)): Roads and Rails are separate map layers, Roads beneath, and Rails is ordered by `z_order`. The bridge's feature pass -1 is two line layers enabled by `bridge`, before the railway's line in the same symbol and at the same rendering pass. The map layer order stands in for the roads' `zOrder` 1, which works because no rail is below it.

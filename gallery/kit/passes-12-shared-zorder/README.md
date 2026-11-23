@@ -48,3 +48,5 @@ Render each data layer with the style at the extent and size of `view.json`, on 
 Pull requests to [henrik716/cartosym-draft-check](https://github.com/henrik716/cartosym-draft-check) are welcome:
 `style.sld` (SLD/SE), `style.maplibre.json` or a note on why MapLibre can't express the case, and renders from
 other software (e.g. `qgis-render.png`), with a line here on what it can't express.
+
+- QGIS 4.2.3 (`qgis-render*.png`, set up and rendered by [`qgis/render_kits.py`](../../../qgis/render_kits.py)): `qgis-render.png` puts both data layers in one map layer (a memory layer with a rule per data layer), so the casings at rendering pass 0 go beneath all main strokes. `qgis-render-each-data-layer-complete-before-the-next.png` has a map layer per data layer, which is what QGIS draws without that merge.
