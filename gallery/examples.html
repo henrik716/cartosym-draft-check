@@ -1,0 +1,690 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1"><title>CartoSym Examples</title>
+<meta name="description" content="The example maps of OGC CartoSym 2.0 Part 1, drawn on Norwegian data by the draft renderer.">
+<style>@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;600&display=swap');
+
+:root { color-scheme: light; --bg:#fbfaf7; --fg:#1f2328; --muted:#5b6370; --card:#fff; --line:#e3e0d8; --accent:#b45309; --accent-bg:#fffbeb; --badge-bg:#fde68a; --badge-fg:#92400e;
+  --json-k:#7a3e9d; --json-s:#1a7f5a; --json-n:#b35900; --json-b:#2357b0; }
+:root[data-theme="dark"] { color-scheme: dark; --bg:#16181d; --fg:#e8e6e1; --muted:#a3a9b3; --card:#1f2229; --line:#30343c; --accent:#fbbf24; --accent-bg:#422006; --badge-bg:#78350f; --badge-fg:#fde68a; --json-k:#d7a6f2; --json-s:#7fd8a9; --json-n:#f0a868; --json-b:#8fb4ff; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { color-scheme: dark; --bg:#16181d; --fg:#e8e6e1; --muted:#a3a9b3; --card:#1f2229; --line:#30343c; --accent:#fbbf24; --accent-bg:#422006; --badge-bg:#78350f; --badge-fg:#fde68a; --json-k:#d7a6f2; --json-s:#7fd8a9; --json-n:#f0a868; --json-b:#8fb4ff; } }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.55 "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; }
+code, pre, kbd { font-family: "IBM Plex Mono", ui-monospace, Consolas, monospace; }
+main { max-width: 1320px; margin: 0 auto; padding: 32px 16px 64px; }
+h1 { font-size: 26px; margin: 0 0 6px; } h2 { font-size: 19px; margin: 0 0 4px; }
+.lead { color: var(--muted); max-width: 760px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 20px; margin: 22px 0; }
+.reqs code { font-size: 12.5px; color: var(--muted); margin-right: 8px; }
+.question { margin: 10px 0 14px; }
+.variants { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+figure { margin: 0; } figure svg, figure img.raster { width: 100%; height: auto; border-radius: 6px; border: 1px solid var(--line); display:block; }
+figure img.raster { image-rendering: pixelated; background: var(--card); }
+figcaption { font-size: 13.5px; margin-top: 6px; }
+.badge { display:inline-block; font-size: 11.5px; font-weight: 600; padding: 1px 7px; border-radius: 99px; background: var(--badge-bg); color: var(--badge-fg); margin-left: 6px; }
+.evidence { font-size: 13.5px; color: var(--muted); border-top: 1px solid var(--line); margin-top: 14px; padding-top: 10px; }
+details { margin-top: 8px; font-size: 13px; } pre { overflow-x: auto; background: var(--bg); padding: 10px; border-radius: 6px; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; } th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); }
+.table-wrap { overflow-x: auto; }
+.req { font-size: 13.5px; margin: 6px 0; } .req ul { margin: 4px 0 8px; padding-left: 20px; }
+.draft-text { margin: 6px 0 0; } .draft-text summary { font-size: 13.5px; }
+.sources, .kit, .note, .legend { font-size: 13px; color: var(--muted); margin: 6px 0; }
+.badge.open { background: var(--bg); color: var(--muted); border: 1px solid var(--line); font-weight: 500; vertical-align: middle; }
+.vnote { display: block; font-size: 12.5px; color: var(--muted); }
+.matrix td, .matrix th { font-size: 13.5px; vertical-align: top; }
+a { color: inherit; text-decoration: underline; text-decoration-color: var(--accent); text-decoration-thickness: 1.5px; text-underline-offset: 2px; }
+a:hover { color: var(--accent); }
+h2.group { font-size: 21px; margin: 40px 0 0; }
+.card-body { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; align-items: start; }
+@media (min-width: 1100px) { .card-body { grid-template-columns: minmax(0, 1fr) 380px; } }
+.style-pane { min-width: 0; }
+.pane-head { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); margin-bottom: 4px; flex-wrap: wrap; }
+.pane-head strong { color: var(--fg); margin-right: auto; }
+.pane-head button { font: inherit; font-size: 12px; padding: 2px 8px; border-radius: 6px; border: 1px solid var(--line); background: var(--card); color: var(--fg); cursor: pointer; }
+.json { max-height: 460px; overflow: auto; font: 12px/1.45 ui-monospace, Consolas, monospace; margin: 0; }
+.json .k { color: var(--json-k); } .json .s { color: var(--json-s); } .json .n { color: var(--json-n); } .json .b { color: var(--json-b); }
+
+[id] { scroll-margin-top: 64px; }
+.topbar { position: sticky; top: 0; z-index: 10; background: var(--card); border-bottom: 1px solid var(--line);
+  font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; line-height: 1.4; }
+.topbar-in { max-width: 1600px; margin: 0 auto; padding: 8px 16px; display: flex; align-items: center; gap: 6px 14px; flex-wrap: wrap; }
+.topbar .brand { font-weight: 600; margin-right: 6px; color: var(--fg); text-decoration: none; font-size: 15px; }
+.topbar .brand:hover { color: var(--accent); }
+.topbar nav { position: static; max-height: none; overflow: visible; display: flex; gap: 4px; flex-wrap: wrap; align-items: center; font-size: 14px; }
+.topbar nav a, .topbar .records summary { padding: 4px 10px; border-radius: 6px; text-decoration: none; color: var(--fg); font-size: 14px; }
+.topbar nav a:hover, .topbar .records summary:hover { background: var(--bg); }
+.topbar nav a.active, .topbar .records.active summary { background: var(--accent-bg); color: var(--fg); font-weight: 600; box-shadow: inset 0 -2px 0 var(--accent); }
+.topbar .records { position: relative; display: flex; align-items: center; margin-left: 6px; padding-left: 10px; border-left: 1px solid var(--line); }
+.topbar .records summary { cursor: pointer; list-style: none; display: block; }
+.topbar .records summary::-webkit-details-marker { display: none; }
+.topbar .records summary::after { content: " ▾"; color: var(--muted); font-size: 12px; }
+.topbar .records .menu { position: absolute; top: calc(100% + 6px); left: 0; z-index: 11; width: min(360px, calc(100vw - 32px));
+  background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 6px; box-shadow: 0 6px 24px rgba(0,0,0,.14); }
+.topbar .records .menu a { display: block; padding: 6px 10px; }
+.topbar .records .menu a small { display: block; color: var(--muted); font-size: 12px; font-weight: 400; line-height: 1.35; }
+.topbar .records .menu a.active { box-shadow: inset 2px 0 0 var(--accent); }
+.topbar .tools { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+.topbar .theme { font: inherit; font-size: 13px; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--line);
+  background: var(--card); color: var(--fg); cursor: pointer; white-space: nowrap; }
+.topbar .jump { max-width: 320px; font: inherit; font-size: 13px; padding: 4px 6px; border-radius: 6px;
+  border: 1px solid var(--line); background: var(--card); color: var(--fg); }
+.record-note { max-width: 1600px; margin: 0 auto; padding: 6px 16px; font-size: 13px; color: var(--muted);
+  font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+@media (max-width: 640px) {
+  .topbar .tools { margin-left: 0; }
+  .topbar .records { margin-left: 0; padding-left: 0; border-left: 0; }
+  .topbar .jump { max-width: 100%; }
+}
+
+.layout { max-width: 1600px; margin: 0 auto; }
+.toc { display: none; }
+@media (min-width: 1500px) {
+  .layout.has-toc { display: grid; grid-template-columns: 250px minmax(0, 1fr); }
+  .layout.has-toc .toc { display: block; position: sticky; top: 50px; align-self: start; max-height: calc(100vh - 60px);
+    overflow: auto; padding: 28px 8px 24px 16px; font-size: 13px; }
+  body.has-toc .jump { display: none; }
+  .layout.has-toc main { margin: 0; width: 100%; }
+}
+.toc a { display: block; padding: 2px 8px; border-radius: 5px; color: var(--muted); text-decoration: none; line-height: 1.35; margin: 1px 0; }
+.toc a:hover { color: var(--fg); background: var(--bg); }
+.toc a.current { color: var(--fg); background: var(--accent-bg); box-shadow: inset 2px 0 0 var(--accent); }
+.toc .toc-group { font-weight: 600; color: var(--fg); margin-top: 12px; }
+.toc .open-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; border: 1px solid var(--muted); margin-left: 5px; vertical-align: middle; }
+.permalink { margin-left: 8px; font-size: 15px; color: var(--muted); text-decoration: none; opacity: .5; }
+.permalink:hover, .permalink.copied { opacity: 1; color: var(--accent); }
+.up { margin-left: 10px; font-size: 13px; white-space: nowrap; }
+
+.example { background: var(--card); border: 1px solid var(--line); border-radius: 12px; margin: 26px 0; overflow: hidden;
+  display: grid; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 1100px) {
+  .example { grid-template-columns: minmax(0, 1.75fr) minmax(320px, 1fr); }
+  .example pre { max-height: 440px; }
+}
+.example > a.fig { display: block; background: #e9e6df; align-self: start; }
+.example img { width: 100%; height: auto; display: block; }
+.example .body { padding: 16px 20px 18px; }
+.example h2 { font-size: 20px; margin: 0 0 4px; }
+.example .num { color: var(--accent); font-weight: 600; margin-right: 6px; }
+.meta { font-size: 13px; color: var(--muted); margin: 6px 0 0; }
+.meta a { color: inherit; }
+.example details { margin-top: 10px; }
+.example details summary { cursor: pointer; font-size: 14px; }
+.example pre { font-size: 12px; max-height: 360px; overflow-y: auto; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px;
+  overflow-x: auto; margin: 8px 0 0; }
+.thumbs { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; margin: 14px 0 8px; }
+.thumbs a { display: block; background: var(--card); border: 1px solid var(--line); border-radius: 10px; overflow: hidden;
+  color: var(--fg); text-decoration: none; }
+.thumbs a:hover { border-color: var(--accent); }
+.thumbs img { width: 100%; height: auto; display: block; background: #e9e6df; }
+.thumbs span { display: block; padding: 8px 12px 10px; font-size: 13.5px; line-height: 1.4; }
+.thumbs small { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; }
+.section-head { margin-top: 40px; }
+</style></head><body class="has-toc">
+<header class="topbar"><div class="topbar-in"><a class="brand" href="../index.html">CartoSym draft check</a><nav aria-label="Pages"><a href="examples.html" class="active" aria-current="page">Examples</a><a href="requirements.html">Requirements</a><a href="index.html">Judgement calls</a><a href="passes.html">Rendering passes</a><a href="playground.html">Playground</a><details class="records"><summary>Records</summary><div class="menu"><a href="pr133-requirements-walkthrough.html">#133 walkthrough<small>The Part 1 requirements class by class, as prepared for the SWG meeting of 13 November 2026, where #133 was merged</small></a><a href="pr192-renders-walkthrough.html">#192 walkthrough<small>The examples and figures in the Part 1 document, and the wording checked with independent renderers</small></a><a href="https://github.com/henrik716/cartosym-draft-check/blob/main/reports/wording-decisions.md">Wording decisions<small>For each requirement whose wording #192 tightened: the text before, how each reader rendered it, the reading proposed</small></a><a href="https://github.com/henrik716/cartosym-draft-check/tree/main/reports/independent">Independent renders<small>Renderers and expression evaluators written from the requirement text alone, with their notes and images</small></a><a href="https://github.com/henrik716/cartosym-draft-check/blob/main/reports/libcartosym-main/report.md">Expression test report<small>Every test case with each implementation&#x27;s full output, against the latest libCartoSym (CI)</small></a></div></details></nav><div class="tools"><select class="jump" aria-label="Jump to a section"><option value="">Jump to…</option><option value="1-core">1. Land cover with the default symbolizer (Rondane, N50 Kartdata)</option><option value="2-vector-polygon">2. Land cover in Rondane (N50 Kartdata) around Myrtjørna</option><option value="3-vector-line">3. Roads in Sel by road class, with the E6 through Selsverket (N50 Kartdata)</option><option value="4-vector-point">4. Tourist cabins in Dørålen, Rondane (N50 Kartdata)</option><option value="5-coverage-dem">5. Elevation of Rondane with a color map</option><option value="6-coverage-sentinel2">6. Sentinel-2 L2A over Rondane (1 September 2024) in natural color</option><option value="7-coverage-ndvi">7. NDVI of the same Sentinel-2 scene with a color map</option><option value="8-coverage-hillshading">8. Elevation of Rondane with hill shading and a color map</option><option value="9-coverage-hillshading-opacity">9. Hill shading of Rondane with an opacity map</option><option value="10-protected-areas">10. Protected areas around Rondane by kind of protection (N50 Kartdata)</option><option value="11-rondane-overview">11. Overview map of Rondane from several N50 layers and the elevation model</option><option value="vignettes">Requirement figures</option><option value="gallery-maps">Gallery maps</option></select><button class="theme" type="button" aria-label="Switch between light and dark">◐ Auto</button></div></div></header><script>
+(() => {
+  const modes = ["auto", "light", "dark"], labels = { auto: "◐ Auto", light: "☀ Light", dark: "☾ Dark" };
+  const b = document.querySelector(".topbar .theme");
+  let mode = "auto";
+  try { mode = localStorage.getItem("theme") || "auto"; } catch (e) {}
+  const apply = () => {
+    if (mode === "auto") document.documentElement.removeAttribute("data-theme");
+    else document.documentElement.setAttribute("data-theme", mode);
+    b.textContent = labels[mode] || labels.auto;
+    b.title = "Theme: " + mode + (mode === "auto" ? " (follows your system)" : "") + ". Click to change.";
+  };
+  b.addEventListener("click", () => {
+    mode = modes[(modes.indexOf(mode) + 1) % modes.length];
+    try { localStorage.setItem("theme", mode); } catch (e) {}
+    apply();
+  });
+  apply();
+  const rec = document.querySelector(".topbar .records");
+  if (rec) {
+    document.addEventListener("click", (e) => { if (rec.open && !rec.contains(e.target)) rec.open = false; });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape" && rec.open) { rec.open = false; rec.querySelector("summary").focus(); } });
+  }
+})();
+</script>
+<div class="layout has-toc"><nav class="toc" aria-label="Contents"><div class="toc-group">In the standard</div><a href="#1-core">1. Land cover with the default symbolizer (Rondane, N50 Kartdata)</a><a href="#2-vector-polygon">2. Land cover in Rondane (N50 Kartdata) around Myrtjørna</a><a href="#3-vector-line">3. Roads in Sel by road class, with the E6 through Selsverket (N50 Kartdata)</a><a href="#4-vector-point">4. Tourist cabins in Dørålen, Rondane (N50 Kartdata)</a><a href="#5-coverage-dem">5. Elevation of Rondane with a color map</a><a href="#6-coverage-sentinel2">6. Sentinel-2 L2A over Rondane (1 September 2024) in natural color</a><a href="#7-coverage-ndvi">7. NDVI of the same Sentinel-2 scene with a color map</a><a href="#8-coverage-hillshading">8. Elevation of Rondane with hill shading and a color map</a><a href="#9-coverage-hillshading-opacity">9. Hill shading of Rondane with an opacity map</a><a href="#10-protected-areas">10. Protected areas around Rondane by kind of protection (N50 Kartdata)</a><a href="#11-rondane-overview">11. Overview map of Rondane from several N50 layers and the elevation model</a><a href="#vignettes">Requirement figures</a><a href="#gallery-maps">Gallery maps</a></nav><main>
+<h1>Examples</h1>
+<p class="lead">The example maps of OGC Cartographic Symbology 2.0 Part 1, as they are in the document: each drawn by
+the draft renderer from the CartoSym-CSS below it, on real data of Rondane, Norway (Kartverket N50 Kartdata and the
+national elevation model, and Copernicus Sentinel-2). Land cover, relief and rivers drawn as context are not part of the
+style; the figure captions in the document say where. From the spec at <code>origin/main</code>
+<a href="https://github.com/opengeospatial/cartographic-symbology/tree/fefe225"><code>fefe225</code></a>.</p>
+<section class="example" id="1-core"><a class="fig" href="https://github.com/opengeospatial/cartographic-symbology/blob/fefe225/1-core/figures/examples/1-core.jpg"><img src="showcase/1-core-1600.jpg" srcset="showcase/1-core-640.jpg 640w, showcase/1-core-1600.jpg 1600w" sizes="(min-width: 1100px) 800px, 100vw" width="1600" height="1067" alt="Land cover with the default symbolizer (Rondane, N50 Kartdata)" fetchpriority="high" decoding="async"></a><div class="body"><h2><span class=num>Example 1</span>Land cover with the default symbolizer (Rondane, N50 Kartdata)<a class="permalink" href="#1-core" title="Copy a link to this" aria-label="Link to this section">#</a></h2><p class="meta">No fill, stroke or marker is set, so the default values apply: each polygon is drawn with the default fill and stroke and the default Dot at its centroid, all at 50 % opacity.</p><p class="meta"><a href="https://github.com/opengeospatial/cartographic-symbology/blob/fefe225/1-core/examples/1-core.cscss">1-core.cscss</a> · <a href="https://github.com/opengeospatial/cartographic-symbology/blob/fefe225/1-core/examples/1-core.cs.json">1-core.cs.json</a> · <a href="https://github.com/opengeospatial/cartographic-symbology/blob/fefe225/1-core/figures/examples/1-core.jpg">full-size figure</a></p><details open><summary>The style, in CartoSym-CSS</summary><pre>.title &#x27;Styling a land cover layer&#x27;
+.abstract &#x27;Styling land cover data with Style &amp; Symbology Core&#x27;
+.description &#x27;This is a simple example of how to style a land cover layer using Style &amp; Symbology Core.&#x27;
+
+Landcover[dataLayer.type = vector]
+{
+   visibility: false;
+
+   [viz.sd &lt; 200000 and viz.date &gt; DATE(&#x27;2020-01-01&#x27;)]
+   {
+      visibility: true;
+      opacity: 0.5;
+      zOrder: 1;
+   }
+}</pre></details></div></section><section class="example" id="2-vector-polygon"><a class="fig" href="https://github.com/opengeospatial/cartographic-symbology/blob/fefe225/1-core/figures/examples/2-vector-polygon.jpg"><img src="showcase/2-vector-polygon-1600.jpg" srcset="showcase/2-vector-polygon-640.jpg 640w, showcase/2-vector-polygon-1600.jpg 1600w" sizes="(min-width: 1100px) 800px, 100vw" width="1600" height="571" alt="Land cover in Rondane (N50 Kartdata) around Myrtjørna" loading="lazy" decoding="async"></a><div class="body"><h2><span class=num>Example 2</span>Land cover in Rondane (N50 Kartdata) around Myrtjørna<a class="permalink" href="#2-vector-polygon" title="Copy a link to this" aria-label="Link to this section">#</a></h2><p class="meta"><a href="https://github.com/opengeospatial/cartographic-symbology/blob/fefe225/1-core/examples/2-vector-polygon.cscss">2-vector-polygon.cscss</a> · <a href="https://github.com/opengeospatial/cartographic-symbology/blob/fefe225/1-core/examples/2-vector-polygon.cs.json">2-vector-polygon.cs.json</a> · <a href="https://github.com/opengeospatial/cartographic-symbology/blob/fefe225/1-core/figures/examples/2-vector-polygon.jpg">full-size figure</a></p><details open><summary>The style, in CartoSym-CSS</summary><pre>.title &#x27;Styling polygon vector features&#x27;
+.abstract &#x27;Basic vector features styling (polygons): land cover in Rondane, Norway (N50 Kartdata)&#x27;
+
+Landcover[dataLayer.type = vector and dataLayer.featuresGeometryDimensions = 2]
+{
+   // Do not show Landcover layer by default
+   visibility: false;
+   // No default Dot at each polygon&#x27;s centroid
+   marker: null;
+
+   // Show land cover if zoomed in more than 1:200,000 for data valid within visualization&#x27;s selected time range
+   [viz.sd &lt; 200000 and validDate &gt;= viz.timeInterval.start.date and validDate &lt;= viz.timeInterval.end.date]
+   {
+      visibility: true;
+      opacity: 0.8;
+      zOrder: 1;
+      // Open land and the other classes: a light neutral fill through which the relief below shows
+      fill: {color: #d6cfbd; opacity: 0.5};
+      stroke: {color: #a8a08c; width: 0.75 px; opacity: 1.0};
+
+      // Select different fill and stroke color based on class property
+      [class = &#x27;bog&#x27;]
+      {
+         fill.color: #cbb867;
+         stroke.color: #8f8448;
+      }
+      [class = &#x27;forest&#x27;]
+      {
+         fill.color: #4f8a45;
+         stroke.color: #3d6b35;
+      }
+      [class = &#x27;lake&#x27;]
+      {
+         fill.color: #6fa3cc;
+         stroke.color: #2f6d9e;
+      }
+
+      // If zoomed in more than 1:10,000
+      [viz.sd &lt; 10000]
+      {
+         // Change stroke width to 2 pixels
+         stroke.width: 2.0 px;
+         // Add a text marker (positioned at centroid + horizontal offset) showing name property
+         marker: {elements: [
+            Text(
+               position: 20 0; // Offset 20 pixels to the right
+               text: name;
+               alignment: left top;
+               font: {
+                  face: &#x27;Arial&#x27;;
+                  size: 14;
+                  bold: false;
+                  italic: true;
+                  opacity: 1.0;
+                  color: #1f4e79;
+               };
+            )
+         ]};
+         // Add icons at centroid based on land cover class property
+         [class = &#x27;bog&#x27;]
+         {
+            marker.elements[1]:
+               Image {
+                  image: {uri: &#x27;http://example.com/icons/bog.svg&#x27;; path: &#x27;icons/bog.svg&#x27;; id: &#x27;bog&#x27;; type: &#x27;image/svg+xml&#x27;; ext: &#x27;svg&#x27;};
+                  hotSpot: 50 pc 50 pc; tint: white; blackTint: #6b5f2a; alphaThreshold: 0.1;
+               };
+         }
+         [class = &#x27;forest&#x27;]
+         {
+            marker.elements[1]:
+               Image {
+                  image: {uri: &#x27;http://example.com/icons/forest.svg&#x27;; path: &#x27;icons/forest.svg&#x27;; id: &#x27;forest&#x27;; type: &#x27;image/svg+xml&#x27;; ext: &#x27;svg&#x27;};
+                  hotSpot: 50 pc 50 pc; tint: white; blackTint: #2f5d2a; alphaThreshold: 0.1;
+               };
+         }
+         [class = &#x27;lake&#x27;]
+         {
+            marker.elements[1]:
+               Image {
+                  image: {uri: &#x27;http://example.com/icons/lake.svg&#x27;; path: &#x27;icons/lake.svg&#x27;; id: &#x27;lake&#x27;; type: &#x27;image/svg+xml&#x27;; ext: &#x27;svg&#x27;};
+                  hotSpot: 50 pc 50 pc; tint: white; blackTint: #1f4e79; alphaThreshold: 0.1;
+               };
+         }
+      }
+   }
+}</pre></details></div></section><section class="example" id="3-vector-line"><a class="fig" href="https://github.com/opengeospatial/cartographic-symbology/blob/fefe225/1-core/figures/examples/3-vector-line.jpg"><img src="showcase/3-vector-line-1600.jpg" srcset="showcase/3-vector-line-640.jpg 640w, showcase/3-vector-line-1600.jpg 1600w" sizes="(min-width: 1100px) 800px, 100vw" width="1600" height="571" alt="Roads in Sel by road class, with the E6 through Selsverket (N50 Kartdata)" loading="lazy" decoding="async"></a><div class="body"><h2><span class=num>Example 3</span>Roads in Sel by road class, with the E6 through Selsverket (N50 Kartdata)<a class="permalink" href="#3-vector-line" title="Copy a link to this" aria-label="Link to this section">#</a></h2><p class="meta"><a href="https://github.com/opengeospatial/cartographic-symbology/blob/fefe225/1-core/examples/3-vector-line.cscss">3-vector-line.cscss</a> · <a href="https://github.com/opengeospatial/cartographic-symbology/blob/fefe225/1-core/examples/3-vector-line.cs.json">3-vector-line.cs.json</a> · <a href="https://github.com/opengeospatial/cartographic-symbology/blob/fefe225/1-core/figures/examples/3-vector-line.jpg">full-size figure</a></p><details open><summary>The style, in CartoSym-CSS</summary><pre>.title &#x27;Styling line vector features&#x27;
+.abstract &#x27;Basic vector features styling (lines): roads in Sel, Norway (N50 Kartdata), colored by road class&#x27;
+
+Roads[dataLayer.type = vector and dataLayer.featuresGeometryDimensions = 1]
+{
+   visibility: false;
+   // No default Dot at each vertex
+   marker: null;
+
+   [viz.sd &lt; 200000 and class &lt;&gt; &#x27;path&#x27; and validDate &gt;= viz.timeInterval.start.date and validDate &lt;= viz.timeInterval.end.date]
+   {
+      visibility: true;
+      zOrder: 2;
+      // Private and tractor roads
+      stroke: {color: #8c8172; width: 1.0 px; opacity: 1.0};
+
+      // Select stroke color, width and drawing order based on the class property
+      [class = &#x27;municipal&#x27;]
+      {
+         stroke: {color: #f2b84b; width: 2.5 px};
+         zOrder: 3;
+      }
+      [class = &#x27;county&#x27;]
+      {
+         stroke: {color: #f2b84b; width: 3.5 px};
+         zOrder: 4;
+      }
+      [class = &#x27;national&#x27;]
+      {
+         stroke: {color: #e8833a; width: 4.5 px};
+         zOrder: 5;
+      }
+      [class = &#x27;european&#x27;]
+      {
+         stroke: {color: #d0483a; width: 5.5 px};
+         zOrder: 6;
+      }
+
+      // If zoomed in more than 1:10,000
+      [viz.sd &lt; 10000]
+      {
+         // Change stroke width to 8 meters (12 meters for the main roads)
+         stroke.width: 8.0 m;
+         // Add Dot at each segment end-point
+         marker: { elements: [
+            Dot {
+               size: 4 m; // Alias for base Shape class stroke width
+               color: white;
+            }
+         ] };
+         [class = &#x27;national&#x27; or class = &#x27;european&#x27;]
+         {
+            stroke.width: 12.0 m;
+         }
+      }
+   }
+}</pre></details></div></section><section class="example" id="4-vector-point"><a class="fig" href="https://github.com/opengeospatial/cartographic-symbology/blob/fefe225/1-core/figures/examples/4-vector-point.jpg"><img src="showcase/4-vector-point-1600.jpg" srcset="showcase/4-vector-point-640.jpg 640w, showcase/4-vector-point-1600.jpg 1600w" sizes="(min-width: 1100px) 800px, 100vw" width="1600" height="549" alt="Tourist cabins in Dørålen, Rondane (N50 Kartdata)" loading="lazy" decoding="async"></a><div class="body"><h2><span class=num>Example 4</span>Tourist cabins in Dørålen, Rondane (N50 Kartdata)<a class="permalink" href="#4-vector-point" title="Copy a link to this" aria-label="Link to this section">#</a></h2><p class="meta"><a href="https://github.com/opengeospatial/cartographic-symbology/blob/fefe225/1-core/examples/4-vector-point.cscss">4-vector-point.cscss</a> · <a href="https://github.com/opengeospatial/cartographic-symbology/blob/fefe225/1-core/examples/4-vector-point.cs.json">4-vector-point.cs.json</a> · <a href="https://github.com/opengeospatial/cartographic-symbology/blob/fefe225/1-core/figures/examples/4-vector-point.jpg">full-size figure</a></p><details open><summary>The style, in CartoSym-CSS</summary><pre>.title &#x27;Styling point vector features&#x27;
+.abstract &#x27;Basic vector features styling (points): tourist cabins in Dørålen, Rondane, Norway (N50 Kartdata)&#x27;
+
+Huts[dataLayer.type = &#x27;vector&#x27; and dataLayer.featuresGeometryDimensions = 0]
+{
+   visibility: false;
+
+   [viz.sd &lt; 200000 and validDate &gt;= viz.timeInterval.start.date and validDate &lt;= viz.timeInterval.end.date]
+   {
+      visibility: true;
+      opacity: 0.9;
+      zOrder: 3;
+      // A small Dot (positioned at the point)
+      marker: { elements: [ Dot { size: 7 px; color: #b8322a } ] };
+
+      // If zoomed in more than 1:10,000
+      [viz.sd &lt; 10000]
+      {
+         // Replace it with a double-Dot marker (positioned at centroid)
+         marker: { elements: [
+            Dot {  // larger white dot underneath
+               size: 14 px; // Alias for base Shape class stroke width
+               position: 0 0;
+               color: white;
+            },
+            Dot {  // smaller red dot in center
+               size: 10 px; // Alias for base Shape class stroke width
+               position: 0 0;
+               color: #b8322a;
+            }
+         ]};
+         [viz.sd &lt; 5000]
+         {
+            // Add a Text graphic to Marker at 1:5000
+            marker.elements[2]:
+               Text {
+                  position: 12 0; // Offset 12 pixels to the right
+                  text: name; // Name of the cabin
+                  alignment: left middle;
+                  font: {
+                     face: &#x27;Arial&#x27;;
+                     size: 12;
+                     bold: true;
+                     italic: false;
+                     opacity: 1.0;
+                     color: #2b2b2b;
+                  }
+               };
+         }
+      }
+   }
+}</pre></details></div></section><section class="example" id="5-coverage-dem"><a class="fig" href="https://github.com/opengeospatial/cartographic-symbology/blob/fefe225/1-core/figures/examples/5-coverage-dem.jpg"><img src="showcase/5-coverage-dem-1600.jpg" srcset="showcase/5-coverage-dem-640.jpg 640w, showcase/5-coverage-dem-1600.jpg 1600w" sizes="(min-width: 1100px) 800px, 100vw" width="1600" height="1067" alt="Elevation of Rondane with a color map" loading="lazy" decoding="async"></a><div class="body"><h2><span class=num>Example 5</span>Elevation of Rondane with a color map<a class="permalink" href="#5-coverage-dem" title="Copy a link to this" aria-label="Link to this section">#</a></h2><p class="meta"><a href="https://github.com/opengeospatial/cartographic-symbology/blob/fefe225/1-core/examples/5-coverage-dem.cscss">5-coverage-dem.cscss</a> · <a href="https://github.com/opengeospatial/cartographic-symbology/blob/fefe225/1-core/examples/5-coverage-dem.cs.json">5-coverage-dem.cs.json</a> · <a href="https://github.com/opengeospatial/cartographic-symbology/blob/fefe225/1-core/figures/examples/5-coverage-dem.jpg">full-size figure</a></p><details open><summary>The style, in CartoSym-CSS</summary><pre>.title &#x27;DEM with color map&#x27;
+.abstract &#x27;Applying a color map to a Digital Elevation Model with Style &amp; Symbology Basic Coverage Styling&#x27;
+
+Elevation[dataLayer.type = coverage]
+{
+   visibility: false;
+
+   [viz.sd &lt; 200000]
+   {
+      visibility: true;
+      opacity: 0.8;
+      zOrder: 1;
+
+      singleChannel: elevation; // Use elevation coverage field
+      colorMap: [ 0 96 136 73, 900 226 219 167, 1300 252 197 117, 1900 254 168 134, 2500 250 250 250 ];
+   }
+}</pre></details></div></section><section class="example" id="6-coverage-sentinel2"><a class="fig" href="https://github.com/opengeospatial/cartographic-symbology/blob/fefe225/1-core/figures/examples/6-coverage-sentinel2.jpg"><img src="showcase/6-coverage-sentinel2-1600.jpg" srcset="showcase/6-coverage-sentinel2-640.jpg 640w, showcase/6-coverage-sentinel2-1600.jpg 1600w" sizes="(min-width: 1100px) 800px, 100vw" width="1600" height="1067" alt="Sentinel-2 L2A over Rondane (1 September 2024) in natural color" loading="lazy" decoding="async"></a><div class="body"><h2><span class=num>Example 6</span>Sentinel-2 L2A over Rondane (1 September 2024) in natural color<a class="permalink" href="#6-coverage-sentinel2" title="Copy a link to this" aria-label="Link to this section">#</a></h2><p class="meta"><a href="https://github.com/opengeospatial/cartographic-symbology/blob/fefe225/1-core/examples/6-coverage-sentinel2.cscss">6-coverage-sentinel2.cscss</a> · <a href="https://github.com/opengeospatial/cartographic-symbology/blob/fefe225/1-core/examples/6-coverage-sentinel2.cs.json">6-coverage-sentinel2.cs.json</a> · <a href="https://github.com/opengeospatial/cartographic-symbology/blob/fefe225/1-core/figures/examples/6-coverage-sentinel2.jpg">full-size figure</a></p><details open><summary>The style, in CartoSym-CSS</summary><pre>.title &#x27;sentinel-2 natural color&#x27;
+.abstract &#x27;Styling a Sentinel-2 L2A coverage with Style &amp; Symbology Basic Coverage Styling&#x27;
+
+&quot;sentinel2-l2a&quot;[dataLayer.type = coverage]
+{
+   visibility: false;
+
+   [viz.sd &lt; 200000]
+   {
+      visibility: true;
+      opacity: 0.8;
+      zOrder: 1;
+
+      colorChannels.r: B04 / 2500;
+      colorChannels.g: B03 / 2500;
+      colorChannels.b: B02 / 2500;
+      alphaChannel: 1.0;
+      [SCL=8] { alphaChannel: 0.5; }   // Reduce alpha channel value for medium cloud probability
+      [SCL=9] { alphaChannel: 0.0; }   // Zero alpha channel value for high cloud probability
+   }
+}</pre></details></div></section><section class="example" id="7-coverage-ndvi"><a class="fig" href="https://github.com/opengeospatial/cartographic-symbology/blob/fefe225/1-core/figures/examples/7-coverage-ndvi.jpg"><img src="showcase/7-coverage-ndvi-1600.jpg" srcset="showcase/7-coverage-ndvi-640.jpg 640w, showcase/7-coverage-ndvi-1600.jpg 1600w" sizes="(min-width: 1100px) 800px, 100vw" width="1600" height="1067" alt="NDVI of the same Sentinel-2 scene with a color map" loading="lazy" decoding="async"></a><div class="body"><h2><span class=num>Example 7</span>NDVI of the same Sentinel-2 scene with a color map<a class="permalink" href="#7-coverage-ndvi" title="Copy a link to this" aria-label="Link to this section">#</a></h2><p class="meta"><a href="https://github.com/opengeospatial/cartographic-symbology/blob/fefe225/1-core/examples/7-coverage-ndvi.cscss">7-coverage-ndvi.cscss</a> · <a href="https://github.com/opengeospatial/cartographic-symbology/blob/fefe225/1-core/examples/7-coverage-ndvi.cs.json">7-coverage-ndvi.cs.json</a> · <a href="https://github.com/opengeospatial/cartographic-symbology/blob/fefe225/1-core/figures/examples/7-coverage-ndvi.jpg">full-size figure</a></p><details open><summary>The style, in CartoSym-CSS</summary><pre>.title &#x27;sentinel-2 NDVI&#x27;
+.abstract &#x27;Styling a Sentinel-2 L2A coverage for NDVI with Style &amp; Symbology Basic Coverage Styling&#x27;
+
+&quot;sentinel2-l2a&quot;[dataLayer.type = coverage]
+{
+   visibility: false;
+
+   [viz.sd &lt; 200000]
+   {
+      visibility: true;
+      opacity: 0.8;
+      zOrder: 1;
+
+      singleChannel: (B08 - B04)/(B08 + B04);
+      alphaChannel: 1.0;
+      colorMap: [-1.0 saddleBrown,0.0 peru,0.2 goldenrod,0.5 olive,0.6 yellowGreen,0.8 greenYellow,1.0 lime];
+
+      [SCL=8] { alphaChannel: 0.5; }   // Reduce alpha channel value for medium cloud probability
+      [SCL=9] { alphaChannel: 0.0; }   // Zero alpha channel value for high cloud probability
+   }
+}</pre></details></div></section><section class="example" id="8-coverage-hillshading"><a class="fig" href="https://github.com/opengeospatial/cartographic-symbology/blob/fefe225/1-core/figures/examples/8-coverage-hillshading.jpg"><img src="showcase/8-coverage-hillshading-1600.jpg" srcset="showcase/8-coverage-hillshading-640.jpg 640w, showcase/8-coverage-hillshading-1600.jpg 1600w" sizes="(min-width: 1100px) 800px, 100vw" width="1600" height="1067" alt="Elevation of Rondane with hill shading and a color map" loading="lazy" decoding="async"></a><div class="body"><h2><span class=num>Example 8</span>Elevation of Rondane with hill shading and a color map<a class="permalink" href="#8-coverage-hillshading" title="Copy a link to this" aria-label="Link to this section">#</a></h2><p class="meta"><a href="https://github.com/opengeospatial/cartographic-symbology/blob/fefe225/1-core/examples/8-coverage-hillshading.cscss">8-coverage-hillshading.cscss</a> · <a href="https://github.com/opengeospatial/cartographic-symbology/blob/fefe225/1-core/examples/8-coverage-hillshading.cs.json">8-coverage-hillshading.cs.json</a> · <a href="https://github.com/opengeospatial/cartographic-symbology/blob/fefe225/1-core/figures/examples/8-coverage-hillshading.jpg">full-size figure</a></p><details open><summary>The style, in CartoSym-CSS</summary><pre>.title &#x27;hill-shaded DEM with color map&#x27;
+.abstract &#x27;Applying hill-shading and a color map to a Digital Elevation Model with Style &amp; Symbology Basic Coverage Styling&#x27;
+
+Elevation[dataLayer.type = coverage]
+{
+   visibility: false;
+
+   [viz.sd &lt; 200000]
+   {
+      visibility: true;
+      opacity: 0.8;
+      zOrder: 1;
+
+      singleChannel: elevation; // Use elevation coverage field
+      // This color map is mapped from elevation values
+      colorMap: [0 96 136 73, 900 226 219 167, 1300 252 197 117, 1900 254 168 134, 2500 250 250 250];
+      hillShading: {factor: 3; sun: {azimuth: 45.0; elevation: 60.0}};
+   }
+}</pre></details></div></section><section class="example" id="9-coverage-hillshading-opacity"><a class="fig" href="https://github.com/opengeospatial/cartographic-symbology/blob/fefe225/1-core/figures/examples/9-coverage-hillshading-opacity.jpg"><img src="showcase/9-coverage-hillshading-opacity-1600.jpg" srcset="showcase/9-coverage-hillshading-opacity-640.jpg 640w, showcase/9-coverage-hillshading-opacity-1600.jpg 1600w" sizes="(min-width: 1100px) 800px, 100vw" width="1600" height="1067" alt="Hill shading of Rondane with an opacity map" loading="lazy" decoding="async"></a><div class="body"><h2><span class=num>Example 9</span>Hill shading of Rondane with an opacity map<a class="permalink" href="#9-coverage-hillshading-opacity" title="Copy a link to this" aria-label="Link to this section">#</a></h2><p class="meta"><a href="https://github.com/opengeospatial/cartographic-symbology/blob/fefe225/1-core/examples/9-coverage-hillshading-opacity.cscss">9-coverage-hillshading-opacity.cscss</a> · <a href="https://github.com/opengeospatial/cartographic-symbology/blob/fefe225/1-core/examples/9-coverage-hillshading-opacity.cs.json">9-coverage-hillshading-opacity.cs.json</a> · <a href="https://github.com/opengeospatial/cartographic-symbology/blob/fefe225/1-core/figures/examples/9-coverage-hillshading-opacity.jpg">full-size figure</a></p><details open><summary>The style, in CartoSym-CSS</summary><pre>.title &#x27;hill-shaded DEM with opacity and color map for shading intensity&#x27;
+.abstract &#x27;Applying hill-shading a color map to a Digital Elevation Model with Style &amp; Symbology Basic Coverage Styling&#x27;
+
+// This type of intensity-based hill shading can be overlaid on top of imagery or vector maps
+
+Elevation[dataLayer.type = coverage]
+{
+   visibility: false;
+
+   [viz.sd &lt; 200000]
+   {
+      visibility: true;
+      opacity: 0.8;
+      zOrder: 1;
+
+      singleChannel: elevation; // Use elevation coverage field
+      hillShading: {
+         factor: 3;
+         sun: {azimuth: 45.0; elevation: 60.0};
+         // These colors and opacity are mapped from the 0..1 shading intensity rather than elevation values
+         colorMap : [0 black, 0.15 gray, 0.35 silver, 0.55 white];
+         opacityMap: [0 0.75, 0.15 0.50, 0.35 0.25, 0.55 0.00];
+      };
+   }
+}</pre></details></div></section><section class="example" id="10-protected-areas"><a class="fig" href="https://github.com/opengeospatial/cartographic-symbology/blob/fefe225/1-core/figures/examples/10-protected-areas.jpg"><img src="showcase/10-protected-areas-1600.jpg" srcset="showcase/10-protected-areas-640.jpg 640w, showcase/10-protected-areas-1600.jpg 1600w" sizes="(min-width: 1100px) 800px, 100vw" width="1600" height="1067" alt="Protected areas around Rondane by kind of protection (N50 Kartdata)" loading="lazy" decoding="async"></a><div class="body"><h2><span class=num>Example 10</span>Protected areas around Rondane by kind of protection (N50 Kartdata)<a class="permalink" href="#10-protected-areas" title="Copy a link to this" aria-label="Link to this section">#</a></h2><p class="meta"><a href="https://github.com/opengeospatial/cartographic-symbology/blob/fefe225/1-core/examples/10-protected-areas.cscss">10-protected-areas.cscss</a> · <a href="https://github.com/opengeospatial/cartographic-symbology/blob/fefe225/1-core/examples/10-protected-areas.cs.json">10-protected-areas.cs.json</a> · <a href="https://github.com/opengeospatial/cartographic-symbology/blob/fefe225/1-core/figures/examples/10-protected-areas.jpg">full-size figure</a></p><details open><summary>The style, in CartoSym-CSS</summary><pre>.title &#x27;Protected areas by class&#x27;
+.abstract &#x27;This style is used to draw the protected areas around Rondane, Norway, by the kind of protection.
+&#x27;
+          &#x27;This style uses the protected areas of N50 Kartdata from the Norwegian Mapping Authority (Kartverket), available at https://kartkatalog.geonorge.no/metadata/n50-kartdata/ea192681-d039-42ec-b1bc-f3ce04c189ac&#x27;
+
+.keywords &#x27;Protected area, National park, Norway&#x27;
+
+// A light tint over the context, a soft band along each boundary with a crisp line in its center,
+// and a texture for the kinds of protection other than the national park
+ProtectedAreas[dataLayer.type = vector]
+{
+   visibility: true;
+   zOrder: 1;
+   marker: null;
+
+   [class = &#x27;nationalPark&#x27;]
+   {
+      fill: { color: #4f8a3c; opacity: 0.12 };
+      stroke: { color: #4f8a3c; width: 7 px; opacity: 0.45; center: { color: #2f5d2a; width: 1.2 px } };
+      label: { elements: [ Text { text: name, alignment: center middle,
+                                 font: { face: &#x27;Arial&#x27;, size: 13, bold: true, italic: true, color: #2f5d2a,
+                                         outline: { size: 2.5, opacity: 0.85, color: white } } } ],
+               placement: { priority: 3; minSpacing: 500 } };
+   }
+   [class = &#x27;landscapeProtection&#x27;]
+   {
+      fill: { color: #a8741a; opacity: 0.55; dotpattern: { distance: { horizontal: 7 px; vertical: 7 px } } };
+      stroke: { color: #c99a3a; width: 5 px; opacity: 0.4; center: { color: #8a5e14; width: 1 px } };
+      label: { elements: [ Text { text: name, alignment: center middle,
+                                 font: { face: &#x27;Arial&#x27;, size: 8.5, italic: true, color: #6e4a0e,
+                                         outline: { size: 2, opacity: 0.85, color: white } } } ] };
+   }
+   [class = &#x27;natureReserve&#x27;]
+   {
+      fill: { color: #b8442f; opacity: 0.6; hatch: { width: 1 px; angle: 45; distance: 5 px } };
+      stroke: { color: #d0705a; width: 5 px; opacity: 0.4; center: { color: #9a3322; width: 1 px } };
+      label: { elements: [ Text { text: name, alignment: center middle,
+                                 font: { face: &#x27;Arial&#x27;, size: 8.5, italic: true, color: #7e2a1c,
+                                         outline: { size: 2, opacity: 0.85, color: white } } } ] };
+   }
+}</pre></details></div></section><section class="example" id="11-rondane-overview"><a class="fig" href="https://github.com/opengeospatial/cartographic-symbology/blob/fefe225/1-core/figures/examples/11-rondane-overview.jpg"><img src="showcase/11-rondane-overview-1600.jpg" srcset="showcase/11-rondane-overview-640.jpg 640w, showcase/11-rondane-overview-1600.jpg 1600w" sizes="(min-width: 1100px) 800px, 100vw" width="1600" height="1067" alt="Overview map of Rondane from several N50 layers and the elevation model" loading="lazy" decoding="async"></a><div class="body"><h2><span class=num>Example 11</span>Overview map of Rondane from several N50 layers and the elevation model<a class="permalink" href="#11-rondane-overview" title="Copy a link to this" aria-label="Link to this section">#</a></h2><p class="meta"><a href="https://github.com/opengeospatial/cartographic-symbology/blob/fefe225/1-core/examples/11-rondane-overview.cscss">11-rondane-overview.cscss</a> · <a href="https://github.com/opengeospatial/cartographic-symbology/blob/fefe225/1-core/examples/11-rondane-overview.cs.json">11-rondane-overview.cs.json</a> · <a href="https://github.com/opengeospatial/cartographic-symbology/blob/fefe225/1-core/figures/examples/11-rondane-overview.jpg">full-size figure</a></p><details open><summary>The style, in CartoSym-CSS</summary><pre>.title &#x27;Rondane overview map&#x27;
+.abstract &#x27;A map of the area around Rondane, Norway, from several N50 Kartdata layers and the elevation model&#x27;
+
+{ visibility: false; }
+
+Municipalities
+{
+   visibility: true;
+   zOrder: 1;
+   opacity: 0.3686275;
+   marker: null;
+
+   label: { elements: [ Text { text: name,
+                               alignment: center middle,
+                               font: { face: &#x27;Tahoma&#x27;,
+                                       size: 14,
+                                       outline: { size: 3,
+                                                  opacity: 0.75,
+                                                  color: white }
+                                      }
+                               } ] };
+
+   [name = &#x27;Alvdal&#x27;]
+   {
+      fill.color: #e8c9a0;
+   }
+
+   [name = &#x27;Dovre&#x27;]
+   {
+      fill.color: #c9dbb2;
+   }
+
+   [name = &#x27;Folldal&#x27;]
+   {
+      fill.color: #b9cfe0;
+   }
+
+   [name = &#x27;Nord-Fron&#x27;]
+   {
+      fill.color: #e6c3cf;
+   }
+
+   [name = &#x27;Sel&#x27;]
+   {
+      fill.color: #d9d0a6;
+   }
+
+   [name = &#x27;Stor-Elvdal&#x27;]
+   {
+      fill.color: #cdc4e2;
+   }
+}
+
+Elevation
+{
+   visibility: true;
+   zOrder: 0;
+   singleChannel: elevation;
+   colorMap: [ 300 #e4f4f7, 900 #f2f0e6, 1300 #e8dcc4, 1700 #d6c8b8, 2200 #ffffff ];
+   hillShading: { factor: 1.5; sun: { azimuth: 315; elevation: 60 } };
+}
+
+Landcover
+{
+   marker: null;
+   stroke: { width: 0 };
+
+   [class = &#x27;lake&#x27; or class = &#x27;river&#x27;]
+   {
+      visibility: true;
+      fill: { color: #7fb2d8 };
+      zOrder: 67;
+   }
+
+   [class = &#x27;bog&#x27;]
+   {
+      visibility: true;
+      opacity: 0.4235294;
+      fill: { color: burlyWood };
+      zOrder: 65;
+   }
+}
+
+Rivers
+{
+   visibility: true;
+   marker: null;
+   stroke: { color: #5f9ccc, width: 0.5 };
+   zOrder: 36;
+}
+
+Roads
+{
+   marker: null;
+   zOrder: 86;
+   [class = &#x27;european&#x27; or class = &#x27;national&#x27; or class = &#x27;county&#x27;]
+   {
+      visibility: true;
+      stroke: { width: 0.66, color : #c42e31 };
+   }
+   [class = &#x27;municipal&#x27; or class = &#x27;private&#x27;]
+   {
+      visibility: true;
+      stroke: { width: 0.5, color : gray };
+   }
+   [class = &#x27;path&#x27;][marked = true]
+   {
+      visibility: true;
+      stroke: { width: 0.5, color : #c42e31, dashPattern: [ 3, 2 ] };
+   }
+}
+
+ProtectedAreas
+{
+   visibility: true;
+   fill: { opacity: 0 };
+   stroke: { color: #00af7a, width: 1.5 };
+   marker: null;
+   zOrder: 87;
+   [class = &#x27;nationalPark&#x27;]
+   {
+      label: { elements: [ Text {
+                     text: name,
+                     font: { face: &#x27;Times New Roman&#x27;,
+                     size: 12,
+                     italic: true,
+                     color: papayaWhip,
+                     outline: { size: 3,
+                                color: black,
+                                opacity: 0.35 }
+                            },
+                     alignment: { center, middle }
+                                  }
+                         ] };
+   }
+}
+
+Places
+{
+   visibility: true;
+   zOrder: 24;
+   marker: null;
+
+   [type = &#x27;mountain&#x27; and elevation &gt;= 2100]
+   {
+      label: { elements: [
+         Dot { color: white, size: 10 },
+         Dot { color: darkOrange, size: 6 },
+         Text { text: name,
+                position: 10 4,
+                font: { face: &#x27;Tahoma&#x27;,
+                        size: 12,
+                        outline: { color: white,
+                                   size: 3.5,
+                                   opacity: 0.75 }
+                       },
+                alignment: { left, middle } }
+      ] };
+   }
+}</pre></details></div></section>
+<h2 class="section-head" id="vignettes">Requirement figures<a class="permalink" href="#vignettes" title="Copy a link to this" aria-label="Link to this section">#</a></h2>
+<p class="lead">Under each requirement a map can show, the document has a row of small panels that change one value of the
+style. A few of them; each links to its requirement.</p>
+<div class="thumbs"><a href="requirements.html#r-req-hatches-angle"><img src="showcase/req-hatches-angle-1200.jpg" srcset="showcase/req-hatches-angle-640.jpg 640w, showcase/req-hatches-angle-1200.jpg 1200w" sizes="(min-width: 800px) 33vw, 100vw" width="1200" height="216" alt="The angle of the hatch lines on the forest around Myrtjørna" loading="lazy" decoding="async"><span>The angle of the hatch lines on the forest around Myrtjørna<small>/req/hatches/angle · panels vary the angle of the hatch</small></span></a><a href="requirements.html#r-req-hill-shading-sun"><img src="showcase/req-hill-shading-sun-1200.jpg" srcset="showcase/req-hill-shading-sun-640.jpg 640w, showcase/req-hill-shading-sun-1200.jpg 1200w" sizes="(min-width: 800px) 33vw, 100vw" width="1200" height="216" alt="Hill shading with the sun from different directions" loading="lazy" decoding="async"><span>Hill shading with the sun from different directions<small>/req/hill-shading/sun · panels vary the azimuth of the sun</small></span></a><a href="requirements.html#r-req-casing-center"><img src="showcase/req-casing-center-1200.jpg" srcset="showcase/req-casing-center-640.jpg 640w, showcase/req-casing-center-1200.jpg 1200w" sizes="(min-width: 800px) 33vw, 100vw" width="1200" height="288" alt="Center line of the roads at Selsverket, Sel" loading="lazy" decoding="async"><span>Center line of the roads at Selsverket, Sel<small>/req/casing/center · panels vary the center of the stroke</small></span></a><a href="requirements.html#r-req-dashes-dash-pattern"><img src="showcase/req-dashes-dash-pattern-1200.jpg" srcset="showcase/req-dashes-dash-pattern-640.jpg 640w, showcase/req-dashes-dash-pattern-1200.jpg 1200w" sizes="(min-width: 800px) 33vw, 100vw" width="1200" height="216" alt="Dash patterns on the paths at Rondvassbu" loading="lazy" decoding="async"><span>Dash patterns on the paths at Rondvassbu<small>/req/dashes/dash-pattern · panels vary the dashPattern</small></span></a><a href="requirements.html#r-req-font-outlines-size"><img src="showcase/req-font-outlines-size-1200.jpg" srcset="showcase/req-font-outlines-size-640.jpg 640w, showcase/req-font-outlines-size-1200.jpg 1200w" sizes="(min-width: 800px) 33vw, 100vw" width="1200" height="288" alt="The size of the outline around the peak names" loading="lazy" decoding="async"><span>The size of the outline around the peak names<small>/req/font-outlines/size · panels vary the size of the outline</small></span></a><a href="requirements.html#r-req-coverage-color-channels"><img src="showcase/req-coverage-color-channels-1200.jpg" srcset="showcase/req-coverage-color-channels-640.jpg 640w, showcase/req-coverage-color-channels-1200.jpg 1200w" sizes="(min-width: 800px) 33vw, 100vw" width="1200" height="288" alt="Color channels from the bands of a Sentinel-2 scene (1 September 2024) around Myrtjørna" loading="lazy" decoding="async"><span>Color channels from the bands of a Sentinel-2 scene (1 September 2024) around Myrtjørna<small>/req/coverage/color-channels · panels vary the colorChannels</small></span></a><a href="requirements.html#r-req-stipples-ratio"><img src="showcase/req-stipples-ratio-1200.jpg" srcset="showcase/req-stipples-ratio-640.jpg 640w, showcase/req-stipples-ratio-1200.jpg 1200w" sizes="(min-width: 800px) 33vw, 100vw" width="1200" height="288" alt="Stipple fills on the forest around Myrtjørna" loading="lazy" decoding="async"><span>Stipple fills on the forest around Myrtjørna<small>/req/stipples/ratio · panels vary the ratio of the stipple</small></span></a><a href="requirements.html#r-req-labels-placement"><img src="showcase/req-labels-placement-priority-1200.jpg" srcset="showcase/req-labels-placement-priority-640.jpg 640w, showcase/req-labels-placement-priority-1200.jpg 1200w" sizes="(min-width: 800px) 33vw, 100vw" width="1200" height="288" alt="Peak labels placed by priority, overlapping labels left out" loading="lazy" decoding="async"><span>Peak labels placed by priority, overlapping labels left out<small>/req/labels/placement, /rec/labels/overlap · panels vary the priority of the label placement</small></span></a></div>
+<h2 class="section-head" id="gallery-maps">Gallery maps<a class="permalink" href="#gallery-maps" title="Copy a link to this" aria-label="Link to this section">#</a></h2>
+<p class="lead">Fuller maps that combine a requirement with land cover, relief and rivers. They were the requirement
+figures of #192 until the panels above replaced them, and are kept here, not in the document.</p>
+<div class="thumbs"><a href="maps/index.html#core-rules"><img src="showcase/map-core-rules-640.jpg" width="640" height="427" alt="Rules, nested rules and visibility on the land cover around Myrtjørna" loading="lazy" decoding="async"><span>Rules, nested rules and visibility on the land cover around Myrtjørna</span></a><a href="maps/index.html#core-opacity"><img src="showcase/map-core-opacity-640.jpg" width="640" height="427" alt="Symbolizer opacity on Rondane national park, fill and wide stroke together" loading="lazy" decoding="async"><span>Symbolizer opacity on Rondane national park, fill and wide stroke together</span></a><a href="maps/index.html#core-z-order"><img src="showcase/map-core-z-order-640.jpg" width="640" height="427" alt="zOrder: rivers above roads at Mysusæter" loading="lazy" decoding="async"><span>zOrder: rivers above roads at Mysusæter</span></a><a href="maps/index.html#core-instances"><img src="showcase/map-core-instances-640.jpg" width="640" height="427" alt="Changing one member of the stroke in a nested rule" loading="lazy" decoding="async"><span>Changing one member of the stroke in a nested rule</span></a><a href="maps/index.html#core-parameters"><img src="showcase/map-core-parameters-640.jpg" width="640" height="427" alt="Dot size computed from the elevation of each spot height" loading="lazy" decoding="async"><span>Dot size computed from the elevation of each spot height</span></a><a href="maps/index.html#core-time"><img src="showcase/map-core-time-640.jpg" width="640" height="427" alt="Roads updated in the visualization&#x27;s time interval (1 January 2020 to 14 November 2026)" loading="lazy" decoding="async"><span>Roads updated in the visualization&#x27;s time interval (1 January 2020 to 14 November 2026)</span></a><a href="maps/index.html#vector-fill-stroke"><img src="showcase/map-vector-fill-stroke-640.jpg" width="640" height="427" alt="Fill and stroke of forest, bogs and lakes at Mysusæter" loading="lazy" decoding="async"><span>Fill and stroke of forest, bogs and lakes at Mysusæter</span></a><a href="maps/index.html#vector-units"><img src="showcase/map-vector-units-640.jpg" width="640" height="229" alt="Stroke widths in metres, pixels and millimetres at two scales" loading="lazy" decoding="async"><span>Stroke widths in metres, pixels and millimetres at two scales</span></a><a href="maps/index.html#vector-marker-dot"><img src="showcase/map-vector-marker-dot-640.jpg" width="640" height="427" alt="Dot markers on cabins (points), marked paths (line vertices) and lakes (centroids)" loading="lazy" decoding="async"><span>Dot markers on cabins (points), marked paths (line vertices) and lakes (centroids)</span></a><a href="maps/index.html#vector-image"><img src="showcase/map-vector-image-640.jpg" width="640" height="427" alt="An Image marker on the tourist cabins, colored by service" loading="lazy" decoding="async"><span>An Image marker on the tourist cabins, colored by service</span></a><a href="maps/index.html#vector-text"><img src="showcase/map-vector-text-640.jpg" width="640" height="427" alt="Text markers on the peaks above 1900 m" loading="lazy" decoding="async"><span>Text markers on the peaks above 1900 m</span></a><a href="maps/index.html#casing"><img src="showcase/map-casing-640.jpg" width="640" height="427" alt="Casing and center line of the roads at Selsverket, Sel" loading="lazy" decoding="async"><span>Casing and center line of the roads at Selsverket, Sel</span></a><a href="maps/index.html#dashes"><img src="showcase/map-dashes-640.jpg" width="640" height="427" alt="Dashed paths around Rondvassbu" loading="lazy" decoding="async"><span>Dashed paths around Rondvassbu</span></a><a href="maps/index.html#hatches"><img src="showcase/map-hatches-640.jpg" width="640" height="427" alt="Hatch fills on the land cover around Myrtjørna" loading="lazy" decoding="async"><span>Hatch fills on the land cover around Myrtjørna</span></a><a href="maps/index.html#stipples-dot-patterns"><img src="showcase/map-stipples-dot-patterns-640.jpg" width="640" height="427" alt="Stipple and dot pattern fills on the land cover around Myrtjørna" loading="lazy" decoding="async"><span>Stipple and dot pattern fills on the land cover around Myrtjørna</span></a><a href="maps/index.html#font-outlines"><img src="showcase/map-font-outlines-640.jpg" width="640" height="427" alt="Font outlines on peak names over the relief" loading="lazy" decoding="async"><span>Font outlines on peak names over the relief</span></a><a href="maps/index.html#labels-priority"><img src="showcase/map-labels-priority-640.jpg" width="640" height="427" alt="Peak labels placed by priority (elevation), overlapping labels left out" loading="lazy" decoding="async"><span>Peak labels placed by priority (elevation), overlapping labels left out</span></a><a href="maps/index.html#labels-spacing"><img src="showcase/map-labels-spacing-640.jpg" width="640" height="427" alt="Road numbers repeated along the roads near Otta" loading="lazy" decoding="async"><span>Road numbers repeated along the roads near Otta</span></a><a href="maps/index.html#coverage-opacity-map"><img src="showcase/map-coverage-opacity-map-640.jpg" width="640" height="427" alt="An opacity map on the elevation of Rondane" loading="lazy" decoding="async"><span>An opacity map on the elevation of Rondane</span></a><a href="maps/index.html#hill-shading-sun"><img src="showcase/map-hill-shading-sun-640.jpg" width="640" height="427" alt="Hill shading with the sun in the south-east, without a hill-shading color map" loading="lazy" decoding="async"><span>Hill shading with the sun in the south-east, without a hill-shading color map</span></a></div>
+<p class="meta">Map data © Kartverket, CC BY 4.0; contains modified Copernicus Sentinel data 2024.</p>
+</main></div><script>
+(() => {
+  const jump = document.querySelector(".jump");
+  if (jump) jump.addEventListener("change", () => { if (jump.value) location.hash = jump.value; jump.value = ""; });
+  document.addEventListener("click", (e) => {
+    const a = e.target.closest("a.permalink");
+    if (!a || !navigator.clipboard) return;
+    navigator.clipboard.writeText(location.href.split("#")[0] + a.getAttribute("href"));
+    a.classList.add("copied"); a.title = "Link copied";
+    setTimeout(() => { a.classList.remove("copied"); a.title = "Copy a link to this"; }, 1500);
+  });
+  const links = [...document.querySelectorAll(".toc a[href^='#']")];
+  if (!links.length || !("IntersectionObserver" in window)) return;
+  const byId = new Map(links.map((l) => [l.getAttribute("href").slice(1), l]));
+  const visible = new Set();
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) e.isIntersecting ? visible.add(e.target.id) : visible.delete(e.target.id);
+    const first = [...byId.keys()].find((id) => visible.has(id));
+    if (!first) return;
+    links.forEach((l) => l.classList.toggle("current", l === byId.get(first)));
+  }, { rootMargin: "-60px 0px -60% 0px" });
+  for (const id of byId.keys()) { const el = document.getElementById(id); if (el) io.observe(el); }
+})();
+</script></body></html>

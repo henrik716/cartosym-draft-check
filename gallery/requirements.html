@@ -1,12 +1,14 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1"><title>CartoSym Requirements</title>
-<style>
+<style>@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;600&display=swap');
+
 :root { color-scheme: light; --bg:#fbfaf7; --fg:#1f2328; --muted:#5b6370; --card:#fff; --line:#e3e0d8; --accent:#b45309; --accent-bg:#fffbeb; --badge-bg:#fde68a; --badge-fg:#92400e;
   --json-k:#7a3e9d; --json-s:#1a7f5a; --json-n:#b35900; --json-b:#2357b0; }
 :root[data-theme="dark"] { color-scheme: dark; --bg:#16181d; --fg:#e8e6e1; --muted:#a3a9b3; --card:#1f2229; --line:#30343c; --accent:#fbbf24; --accent-bg:#422006; --badge-bg:#78350f; --badge-fg:#fde68a; --json-k:#d7a6f2; --json-s:#7fd8a9; --json-n:#f0a868; --json-b:#8fb4ff; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { color-scheme: dark; --bg:#16181d; --fg:#e8e6e1; --muted:#a3a9b3; --card:#1f2229; --line:#30343c; --accent:#fbbf24; --accent-bg:#422006; --badge-bg:#78350f; --badge-fg:#fde68a; --json-k:#d7a6f2; --json-s:#7fd8a9; --json-n:#f0a868; --json-b:#8fb4ff; } }
 * { box-sizing: border-box; }
-body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
+body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.55 "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; }
+code, pre, kbd { font-family: "IBM Plex Mono", ui-monospace, Consolas, monospace; }
 main { max-width: 1320px; margin: 0 auto; padding: 32px 16px 64px; }
 h1 { font-size: 26px; margin: 0 0 6px; } h2 { font-size: 19px; margin: 0 0 4px; }
 .lead { color: var(--muted); max-width: 760px; }
@@ -14,7 +16,8 @@ h1 { font-size: 26px; margin: 0 0 6px; } h2 { font-size: 19px; margin: 0 0 4px; 
 .reqs code { font-size: 12.5px; color: var(--muted); margin-right: 8px; }
 .question { margin: 10px 0 14px; }
 .variants { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
-figure { margin: 0; } figure svg { width: 100%; height: auto; border-radius: 6px; border: 1px solid var(--line); display:block; }
+figure { margin: 0; } figure svg, figure img.raster { width: 100%; height: auto; border-radius: 6px; border: 1px solid var(--line); display:block; }
+figure img.raster { image-rendering: pixelated; background: var(--card); }
 figcaption { font-size: 13.5px; margin-top: 6px; }
 .badge { display:inline-block; font-size: 11.5px; font-weight: 600; padding: 1px 7px; border-radius: 99px; background: var(--badge-bg); color: var(--badge-fg); margin-left: 6px; }
 .evidence { font-size: 13.5px; color: var(--muted); border-top: 1px solid var(--line); margin-top: 14px; padding-top: 10px; }
@@ -60,7 +63,7 @@ details.tests a.full { font-size: 12.5px; }
 
 [id] { scroll-margin-top: 64px; }
 .topbar { position: sticky; top: 0; z-index: 10; background: var(--card); border-bottom: 1px solid var(--line);
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; line-height: 1.4; }
+  font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; line-height: 1.4; }
 .topbar-in { max-width: 1600px; margin: 0 auto; padding: 8px 16px; display: flex; align-items: center; gap: 6px 14px; flex-wrap: wrap; }
 .topbar .brand { font-weight: 600; margin-right: 6px; color: var(--fg); text-decoration: none; font-size: 15px; }
 .topbar .brand:hover { color: var(--accent); }
@@ -83,7 +86,7 @@ details.tests a.full { font-size: 12.5px; }
 .topbar .jump { max-width: 320px; font: inherit; font-size: 13px; padding: 4px 6px; border-radius: 6px;
   border: 1px solid var(--line); background: var(--card); color: var(--fg); }
 .record-note { max-width: 1600px; margin: 0 auto; padding: 6px 16px; font-size: 13px; color: var(--muted);
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
 @media (max-width: 640px) {
   .topbar .tools { margin-left: 0; }
   .topbar .records { margin-left: 0; padding-left: 0; border-left: 0; }
@@ -108,7 +111,7 @@ details.tests a.full { font-size: 12.5px; }
 .permalink:hover, .permalink.copied { opacity: 1; color: var(--accent); }
 .up { margin-left: 10px; font-size: 13px; white-space: nowrap; }
 </style></head><body class="has-toc">
-<header class="topbar"><div class="topbar-in"><a class="brand" href="../index.html">CartoSym draft check</a><nav aria-label="Pages"><a href="requirements.html" class="active" aria-current="page">Requirements</a><a href="index.html">Judgement calls</a><a href="passes.html">Rendering passes</a><a href="playground.html">Playground</a><details class="records"><summary>Records</summary><div class="menu"><a href="pr133-requirements-walkthrough.html">#133 walkthrough<small>The Part 1 requirements class by class, as prepared for the SWG meeting of 13 November 2026, where #133 was merged</small></a><a href="pr192-renders-walkthrough.html">#192 walkthrough<small>The examples and figures in the Part 1 document, and the wording checked with independent renderers</small></a><a href="https://github.com/henrik716/cartosym-draft-check/blob/main/reports/wording-decisions.md">Wording decisions<small>For each requirement whose wording #192 tightened: the text before, how each reader rendered it, the reading proposed</small></a><a href="https://github.com/henrik716/cartosym-draft-check/tree/main/reports/independent">Independent renders<small>Renderers and expression evaluators written from the requirement text alone, with their notes and images</small></a><a href="https://github.com/henrik716/cartosym-draft-check/blob/main/reports/libcartosym-main/report.md">Expression test report<small>Every test case with each implementation&#x27;s full output, against the latest libCartoSym (CI)</small></a></div></details></nav><div class="tools"><select class="jump" aria-label="Jump to a section"><option value="">Jump to…</option><option value="c-core-clause-7">core (clause 7) (21)</option><option value="c-rc-arithmetic">rc-arithmetic (7)</option><option value="c-rc-array-relations">rc-array-relations (4)</option><option value="c-rc-casing">rc-casing (2)</option><option value="c-rc-conditional">rc-conditional (3)</option><option value="c-rc-coverage">rc-coverage (8)</option><option value="c-rc-cscss">rc-cscss (7)</option><option value="c-rc-dashes">rc-dashes (3)</option><option value="c-rc-dotpatterns">rc-dotpatterns (2)</option><option value="c-rc-font-outlines">rc-font-outlines (4)</option><option value="c-rc-functions">rc-functions (3)</option><option value="c-rc-hatches">rc-hatches (4)</option><option value="c-rc-hillshading">rc-hillshading (5)</option><option value="c-rc-json">rc-json (7)</option><option value="c-rc-labels">rc-labels (3)</option><option value="c-rc-math">rc-math (22)</option><option value="c-rc-parameter-values">rc-parameter-values (3)</option><option value="c-rc-righthand">rc-righthand (1)</option><option value="c-rc-stipples">rc-stipples (1)</option><option value="c-rc-text-manipulation">rc-text-manipulation (7)</option><option value="c-rc-text-relation">rc-text-relation (5)</option><option value="c-rc-variables">rc-variables (2)</option><option value="c-rc-vector">rc-vector (12)</option><option value="c-rc-gradients">rc-gradients (6)</option></select><button class="theme" type="button" aria-label="Switch between light and dark">◐ Auto</button></div></div></header><script>
+<header class="topbar"><div class="topbar-in"><a class="brand" href="../index.html">CartoSym draft check</a><nav aria-label="Pages"><a href="examples.html">Examples</a><a href="requirements.html" class="active" aria-current="page">Requirements</a><a href="index.html">Judgement calls</a><a href="passes.html">Rendering passes</a><a href="playground.html">Playground</a><details class="records"><summary>Records</summary><div class="menu"><a href="pr133-requirements-walkthrough.html">#133 walkthrough<small>The Part 1 requirements class by class, as prepared for the SWG meeting of 13 November 2026, where #133 was merged</small></a><a href="pr192-renders-walkthrough.html">#192 walkthrough<small>The examples and figures in the Part 1 document, and the wording checked with independent renderers</small></a><a href="https://github.com/henrik716/cartosym-draft-check/blob/main/reports/wording-decisions.md">Wording decisions<small>For each requirement whose wording #192 tightened: the text before, how each reader rendered it, the reading proposed</small></a><a href="https://github.com/henrik716/cartosym-draft-check/tree/main/reports/independent">Independent renders<small>Renderers and expression evaluators written from the requirement text alone, with their notes and images</small></a><a href="https://github.com/henrik716/cartosym-draft-check/blob/main/reports/libcartosym-main/report.md">Expression test report<small>Every test case with each implementation&#x27;s full output, against the latest libCartoSym (CI)</small></a></div></details></nav><div class="tools"><select class="jump" aria-label="Jump to a section"><option value="">Jump to…</option><option value="c-core-clause-7">core (clause 7) (21)</option><option value="c-rc-arithmetic">rc-arithmetic (7)</option><option value="c-rc-array-relations">rc-array-relations (4)</option><option value="c-rc-casing">rc-casing (2)</option><option value="c-rc-conditional">rc-conditional (3)</option><option value="c-rc-coverage">rc-coverage (8)</option><option value="c-rc-cscss">rc-cscss (7)</option><option value="c-rc-dashes">rc-dashes (3)</option><option value="c-rc-dotpatterns">rc-dotpatterns (2)</option><option value="c-rc-font-outlines">rc-font-outlines (4)</option><option value="c-rc-functions">rc-functions (3)</option><option value="c-rc-hatches">rc-hatches (4)</option><option value="c-rc-hillshading">rc-hillshading (5)</option><option value="c-rc-json">rc-json (7)</option><option value="c-rc-labels">rc-labels (3)</option><option value="c-rc-math">rc-math (22)</option><option value="c-rc-parameter-values">rc-parameter-values (3)</option><option value="c-rc-righthand">rc-righthand (1)</option><option value="c-rc-stipples">rc-stipples (1)</option><option value="c-rc-text-manipulation">rc-text-manipulation (7)</option><option value="c-rc-text-relation">rc-text-relation (5)</option><option value="c-rc-variables">rc-variables (2)</option><option value="c-rc-vector">rc-vector (12)</option><option value="c-rc-gradients">rc-gradients (6)</option></select><button class="theme" type="button" aria-label="Switch between light and dark">◐ Auto</button></div></div></header><script>
 (() => {
   const modes = ["auto", "light", "dark"], labels = { auto: "◐ Auto", light: "☀ Light", dark: "☾ Dark" };
   const b = document.querySelector(".topbar .theme");
@@ -139,7 +142,7 @@ details.tests a.full { font-size: 12.5px; }
 text leaves a choice, a sample render (below each class) for straightforward visual requirements, test cases for
 expressions, or a note for encodings. Samples show what the draft renderer draws; "Check" says what to look for. 142 requirements: 37 with a judgement call, 42 with a sample render, 62 with test cases, 12 checked as encodings, 0 partly and 0 not implemented. A requirement can be checked in more than one way.</p>
 <p class="provenance">Requirement text from <code>origin/main</code> at
-<code>fefe225</code>. Test cases as run on 2026-11-21 with libCartoSym main at e9342b6,
+<code>fefe225</code>. Test cases as run on 2026-11-23 with libCartoSym main at e9342b6,
 pycartosym 0.6.5 and the draft renderer. pycartosym does not evaluate expressions: "same" there
 means it converts the input to the case's CQL2-JSON, or parses it. Where an implementation gives something else, the
 text or the implementation may be the one to change.</p>
