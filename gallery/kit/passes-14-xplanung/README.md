@@ -4,7 +4,7 @@ Part of the rendering-pass cases of [opengeospatial/cartographic-symbology#212](
 
 ## Data
 
-- `HafenCity13.gml` (XPlanGML 5.4), converted to XPlanung 6.0 with xmas-core (`xmas convert --to 6.0`).
+- Bebauungsplan HafenCity 13 (`HafenCity13.gml`, XPlanGML 5.4), converted to XPlanung 6.0 with xmas-core (`xmas convert --to 6.0`). Source: Freie und Hansestadt Hamburg, Behörde für Stadtentwicklung und Wohnen, Amt für Landes- und Landschaftsplanung. Licence: [Datenlizenz Deutschland – Namensnennung – Version 2.0](https://www.govdata.de/dl-de/by-2-0) (dl-de/by-2.0).
 - One GeoJSON file per featuretype (a data layer, EPSG:25832), holding the areas and lines that meet the view. Their arcs are split into short straight segments, as GeoJSON has no curves. Their properties are as xmas-app stores them.
 - Left out: points, whose image sizes are metres in xmas-plugin's style, which the spec can't state yet ([#100](https://github.com/opengeospatial/cartographic-symbology/issues/100)), and the plan's presentation objects.
 - Three areas of `SO_Schienenverkehrsrecht` (the elevated railway) and two of `SO_Strassenverkehr` have `ebene` 1 (above ground). They lie over roads, railway areas and a Kennzeichnung at ground level.
@@ -13,12 +13,12 @@ Part of the rendering-pass cases of [opengeospatial/cartographic-symbology#212](
 
 `style.cs.json` holds xmas-plugin's rules for these featuretypes, for XPlanung 6, in the spec's encoding:
 
-- The first rule is the base rule. Its `zOrder` is `ebene` by its absolute value, with a missing `ebene` as 0. It unsets fill, stroke and marker, so only what a rule sets is drawn ([#207](https://github.com/opengeospatial/cartographic-symbology/issues/207)).
-- Each symbol layer has a `viz.pass` in a band, by what it draws, following the order of xmas-plugin's layers:
+- The first rule is the base rule. Its `zOrder` is `ebene` by its absolute value, with a missing `ebene` as 0. It unsets fill, stroke and marker (`null`), so only what a rule sets is drawn ([#207](https://github.com/opengeospatial/cartographic-symbology/issues/207)). xmas-plugin's own file writes `opacity: 0` and `elements: []` there until its model keeps `null`.
+- Each symbol layer has a `viz.pass` in a band, stated also where it is 0, by what it draws, following the order of xmas-plugin's layers:
 
   | `viz.pass` | Symbol layers |
   |---|---|
-  | 0–99 | fills of areas (here 0) |
+  | 0 | fills of areas |
   | 1–99 | pattern fills of areas (here 1) |
   | 100–199 | the rest of an area: borders, dashed and pattern lines (here 100) |
   | 200–299 | lines (here 200) |

@@ -25,15 +25,9 @@
             }
           ]
         },
-        "fill": {
-          "opacity": 0.0
-        },
-        "stroke": {
-          "opacity": 0.0
-        },
-        "marker": {
-          "elements": []
-        }
+        "fill": null,
+        "stroke": null,
+        "marker": null
       }
     },
     {
@@ -111,6 +105,15 @@
                   },
                   "nestedRules": [
                     {
+                      "selector": {
+                        "op": "=",
+                        "args": [
+                          {
+                            "sysId": "viz.pass"
+                          },
+                          0
+                        ]
+                      },
                       "symbolizer": {
                         "fill": {
                           "color": [
@@ -445,12 +448,26 @@
                   "nestedRules": [
                     {
                       "selector": {
-                        "op": "=",
+                        "op": "and",
                         "args": [
                           {
-                            "sysId": "feature.pass"
+                            "op": "=",
+                            "args": [
+                              {
+                                "sysId": "viz.pass"
+                              },
+                              0
+                            ]
                           },
-                          3
+                          {
+                            "op": "=",
+                            "args": [
+                              {
+                                "sysId": "feature.pass"
+                              },
+                              3
+                            ]
+                          }
                         ]
                       },
                       "symbolizer": {
@@ -564,12 +581,26 @@
                   "nestedRules": [
                     {
                       "selector": {
-                        "op": "=",
+                        "op": "and",
                         "args": [
                           {
-                            "sysId": "feature.pass"
+                            "op": "=",
+                            "args": [
+                              {
+                                "sysId": "viz.pass"
+                              },
+                              0
+                            ]
                           },
-                          0
+                          {
+                            "op": "=",
+                            "args": [
+                              {
+                                "sysId": "feature.pass"
+                              },
+                              0
+                            ]
+                          }
                         ]
                       },
                       "symbolizer": {
@@ -650,12 +681,26 @@
                   "nestedRules": [
                     {
                       "selector": {
-                        "op": "=",
+                        "op": "and",
                         "args": [
                           {
-                            "sysId": "feature.pass"
+                            "op": "=",
+                            "args": [
+                              {
+                                "sysId": "viz.pass"
+                              },
+                              0
+                            ]
                           },
-                          1
+                          {
+                            "op": "=",
+                            "args": [
+                              {
+                                "sysId": "feature.pass"
+                              },
+                              1
+                            ]
+                          }
                         ]
                       },
                       "symbolizer": {
