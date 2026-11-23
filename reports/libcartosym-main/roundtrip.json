@@ -7098,7 +7098,6 @@
         ]
        },
        "symbolizer": {
-        "visibility": true,
         "stroke": {
          "width": 0
         },
@@ -7131,6 +7130,7 @@
          },
          "symbolizer": {
           "zOrder": 67,
+          "visibility": true,
           "fill": {
            "color": [
             127,
@@ -7153,51 +7153,10 @@
          "symbolizer": {
           "zOrder": 65,
           "opacity": 0.4235294,
+          "visibility": true,
           "fill": {
            "color": "burlyWood"
           }
-         }
-        },
-        {
-         "selector": {
-          "op": "and",
-          "args": [
-           {
-            "op": "and",
-            "args": [
-             {
-              "op": "<>",
-              "args": [
-               {
-                "property": "class"
-               },
-               "lake"
-              ]
-             },
-             {
-              "op": "<>",
-              "args": [
-               {
-                "property": "class"
-               },
-               "river"
-              ]
-             }
-            ]
-           },
-           {
-            "op": "<>",
-            "args": [
-             {
-              "property": "class"
-             },
-             "bog"
-            ]
-           }
-          ]
-         },
-         "symbolizer": {
-          "visibility": false
          }
         }
        ]
@@ -7238,7 +7197,6 @@
        },
        "symbolizer": {
         "zOrder": 86,
-        "visibility": true,
         "marker": null
        },
        "nestedRules": [
@@ -7281,6 +7239,7 @@
           ]
          },
          "symbolizer": {
+          "visibility": true,
           "stroke": {
            "color": [
             196,
@@ -7316,6 +7275,7 @@
           ]
          },
          "symbolizer": {
+          "visibility": true,
           "stroke": {
            "color": "gray",
            "width": 0.5
@@ -7347,6 +7307,7 @@
           ]
          },
          "symbolizer": {
+          "visibility": true,
           "stroke": {
            "color": [
             196,
@@ -7359,62 +7320,6 @@
            ],
            "width": 0.5
           }
-         }
-        },
-        {
-         "selector": {
-          "op": "or",
-          "args": [
-           {
-            "op": "=",
-            "args": [
-             {
-              "property": "class"
-             },
-             "tractor"
-            ]
-           },
-           {
-            "op": "=",
-            "args": [
-             {
-              "property": "class"
-             },
-             "cycleway"
-            ]
-           }
-          ]
-         },
-         "symbolizer": {
-          "visibility": false
-         }
-        },
-        {
-         "selector": {
-          "op": "and",
-          "args": [
-           {
-            "op": "=",
-            "args": [
-             {
-              "property": "class"
-             },
-             "path"
-            ]
-           },
-           {
-            "op": "=",
-            "args": [
-             {
-              "property": "marked"
-             },
-             false
-            ]
-           }
-          ]
-         },
-         "symbolizer": {
-          "visibility": false
          }
         }
        ]
@@ -10942,7 +10847,6 @@
         ]
        },
        "symbolizer": {
-        "visibility": true,
         "stroke": {
          "width": 0.0
         },
@@ -10974,6 +10878,7 @@
           ]
          },
          "symbolizer": {
+          "visibility": true,
           "zOrder": 67,
           "fill": {
            "color": [
@@ -10995,53 +10900,12 @@
           ]
          },
          "symbolizer": {
+          "visibility": true,
           "opacity": 0.4235294,
           "zOrder": 65,
           "fill": {
            "color": "burlyWood"
           }
-         }
-        },
-        {
-         "selector": {
-          "op": "and",
-          "args": [
-           {
-            "op": "and",
-            "args": [
-             {
-              "op": "<>",
-              "args": [
-               {
-                "property": "class"
-               },
-               "lake"
-              ]
-             },
-             {
-              "op": "<>",
-              "args": [
-               {
-                "property": "class"
-               },
-               "river"
-              ]
-             }
-            ]
-           },
-           {
-            "op": "<>",
-            "args": [
-             {
-              "property": "class"
-             },
-             "bog"
-            ]
-           }
-          ]
-         },
-         "symbolizer": {
-          "visibility": false
          }
         }
        ]
@@ -11081,7 +10945,6 @@
         ]
        },
        "symbolizer": {
-        "visibility": true,
         "zOrder": 86,
         "marker": null
        },
@@ -11125,6 +10988,7 @@
           ]
          },
          "symbolizer": {
+          "visibility": true,
           "stroke": {
            "color": [
             196,
@@ -11160,6 +11024,7 @@
           ]
          },
          "symbolizer": {
+          "visibility": true,
           "stroke": {
            "color": "gray",
            "width": 0.5
@@ -11191,6 +11056,7 @@
           ]
          },
          "symbolizer": {
+          "visibility": true,
           "stroke": {
            "color": [
             196,
@@ -11203,62 +11069,6 @@
             2
            ]
           }
-         }
-        },
-        {
-         "selector": {
-          "op": "or",
-          "args": [
-           {
-            "op": "=",
-            "args": [
-             {
-              "property": "class"
-             },
-             "tractor"
-            ]
-           },
-           {
-            "op": "=",
-            "args": [
-             {
-              "property": "class"
-             },
-             "cycleway"
-            ]
-           }
-          ]
-         },
-         "symbolizer": {
-          "visibility": false
-         }
-        },
-        {
-         "selector": {
-          "op": "and",
-          "args": [
-           {
-            "op": "=",
-            "args": [
-             {
-              "property": "class"
-             },
-             "path"
-            ]
-           },
-           {
-            "op": "=",
-            "args": [
-             {
-              "property": "marked"
-             },
-             false
-            ]
-           }
-          ]
-         },
-         "symbolizer": {
-          "visibility": false
          }
         }
        ]

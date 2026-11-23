@@ -1,6 +1,6 @@
 # Round trips through CQL2-JSON and CartoSym-JSON
 
-Generated 2026-11-21 by [`harness/roundtrip.py`](../harness/roundtrip.py) with libCartoSym (cs-canif built from ecere/libCartoSym main @ e9342b6 and ecere/eC main @ bb2f036, on Ubuntu) and pycartosym 0.6.5; the style examples are those of opengeospatial/cartographic-symbology at `5dbf8e8` (branch `main`).
+Generated 2026-11-23 by [`harness/roundtrip.py`](../harness/roundtrip.py) with libCartoSym (cs-canif built from ecere/libCartoSym main @ e9342b6 and ecere/eC main @ bb2f036, on Ubuntu) and pycartosym 0.6.5; the style examples are those of opengeospatial/cartographic-symbology at `fefe225` (branch `main`).
 
 This checks conversion only: whether each implementation writes the same JSON as the case or the example, and whether converting back and forth gives the same JSON again. It does not evaluate anything; [`report.md`](report.md) has the evaluation results. A difference from a case or an example may be in the case, the example or the implementation.
 

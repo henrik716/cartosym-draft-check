@@ -1,6 +1,6 @@
 # CartoSym draft requirements vs implementations
 
-Generated 2026-11-21 with libCartoSym (cs-canif built from ecere/libCartoSym main @ e9342b6 and ecere/eC main @ bb2f036, on Ubuntu) and pycartosym 0.6.5.
+Generated 2026-11-23 with libCartoSym (cs-canif built from ecere/libCartoSym main @ e9342b6 and ecere/eC main @ bb2f036, on Ubuntu) and pycartosym 0.6.5.
 
 Expected values are what the **draft requirement** says. `FAIL` means the implementation disagrees with the draft, which may mean the draft or the implementation is wrong. pycartosym does not evaluate expressions, so for expression cases it is checked on converting them to CQL2-JSON (see below). The draft renderer is `cartosym_draft` in this repository, which implements the draft requirements; a FAIL there means it does not do what the draft says.
 
