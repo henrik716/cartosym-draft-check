@@ -993,11 +993,14 @@ def main(argv: list[str]) -> int:
         raise SystemExit("Pass cases:\n  " + "\n  ".join(problems))
     out.write_text(build(out.parent), encoding="utf-8")  # last: it zips all kits, the samples' included
     (out.parent / "requirements.html").write_text(req_page, encoding="utf-8")
+    from .showcase import SHOW_DIR, write as write_examples
+
+    found = write_examples(out.parent)  # gallery/examples.html and the web copies of the spec's renders
     home = write_home(out.parent.parent, CSS)
     _record_bar(out.parent)
     # Image files no page uses any more (they are named by their content, so old ones would pile up)
     pages = [p.read_text(encoding="utf-8") for p in [*out.parent.glob("*.html"), out.parent.parent / "index.html"]]
-    for folder in [IMG_DIR, *RECORD_IMAGES.values()]:
+    for folder in [IMG_DIR, SHOW_DIR, *RECORD_IMAGES.values()]:
         for name in prune(out.parent / folder, pages):
             print(f"Removed {folder}/{name}, no longer used")
     print(f"Wrote {out.resolve()}, requirements.html, {home.resolve()} and the render kits in {(out.parent / 'kit').resolve()}")

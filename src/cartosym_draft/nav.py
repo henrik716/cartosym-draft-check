@@ -17,7 +17,7 @@ import re
 HOME = "home"  # the active key of the home page, index.html at the repository root
 REPO = "https://github.com/henrik716/cartosym-draft-check"
 # (file in gallery/, label)
-PAGES = [("requirements.html", "Requirements"), ("index.html", "Judgement calls"), ("passes.html", "Rendering passes"),
+PAGES = [("examples.html", "Examples"), ("requirements.html", "Requirements"), ("index.html", "Judgement calls"), ("passes.html", "Rendering passes"),
          ("playground.html", "Playground")]
 # (href, label, description): files in gallery/ are relative, the rest absolute.
 RECORDS = [
