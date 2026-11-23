@@ -37,7 +37,7 @@ RECORDS = [
 BAR_CSS = """
 [id] { scroll-margin-top: 64px; }
 .topbar { position: sticky; top: 0; z-index: 10; background: var(--card); border-bottom: 1px solid var(--line);
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; line-height: 1.4; }
+  font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; line-height: 1.4; }
 .topbar-in { max-width: 1600px; margin: 0 auto; padding: 8px 16px; display: flex; align-items: center; gap: 6px 14px; flex-wrap: wrap; }
 .topbar .brand { font-weight: 600; margin-right: 6px; color: var(--fg); text-decoration: none; font-size: 15px; }
 .topbar .brand:hover { color: var(--accent); }
@@ -60,7 +60,7 @@ BAR_CSS = """
 .topbar .jump { max-width: 320px; font: inherit; font-size: 13px; padding: 4px 6px; border-radius: 6px;
   border: 1px solid var(--line); background: var(--card); color: var(--fg); }
 .record-note { max-width: 1600px; margin: 0 auto; padding: 6px 16px; font-size: 13px; color: var(--muted);
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
 @media (max-width: 640px) {
   .topbar .tools { margin-left: 0; }
   .topbar .records { margin-left: 0; padding-left: 0; border-left: 0; }

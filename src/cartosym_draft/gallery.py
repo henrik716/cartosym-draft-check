@@ -747,13 +747,17 @@ def decisions() -> list[Decision]:
 DARK = ("color-scheme: dark; --bg:#16181d; --fg:#e8e6e1; --muted:#a3a9b3; --card:#1f2229; --line:#30343c; --accent:#fbbf24; "
         "--accent-bg:#422006; --badge-bg:#78350f; --badge-fg:#fde68a; --json-k:#d7a6f2; --json-s:#7fd8a9; --json-n:#f0a868; --json-b:#8fb4ff;")
 
-CSS = """
+# IBM Plex, as in the walkthroughs, so that every page of the site has the same type (system fonts until it loads).
+FONTS = ("@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600"
+         "&family=IBM+Plex+Sans:wght@400;600&display=swap');\n")
+CSS = FONTS + """
 :root { color-scheme: light; --bg:#fbfaf7; --fg:#1f2328; --muted:#5b6370; --card:#fff; --line:#e3e0d8; --accent:#b45309; --accent-bg:#fffbeb; --badge-bg:#fde68a; --badge-fg:#92400e;
   --json-k:#7a3e9d; --json-s:#1a7f5a; --json-n:#b35900; --json-b:#2357b0; }
 """ + f""":root[data-theme="dark"] {{ {DARK} }}
 @media (prefers-color-scheme: dark) {{ :root:not([data-theme="light"]) {{ {DARK} }} }}
 """ + """* { box-sizing: border-box; }
-body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
+body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.55 "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; }
+code, pre, kbd { font-family: "IBM Plex Mono", ui-monospace, Consolas, monospace; }
 main { max-width: 1320px; margin: 0 auto; padding: 32px 16px 64px; }
 h1 { font-size: 26px; margin: 0 0 6px; } h2 { font-size: 19px; margin: 0 0 4px; }
 .lead { color: var(--muted); max-width: 760px; }
@@ -996,7 +1000,7 @@ def main(argv: list[str]) -> int:
     from .showcase import SHOW_DIR, write as write_examples
 
     found = write_examples(out.parent)  # gallery/examples.html and the web copies of the spec's renders
-    home = write_home(out.parent.parent, CSS)
+    home = write_home(out.parent.parent, CSS, found)
     _record_bar(out.parent)
     # Image files no page uses any more (they are named by their content, so old ones would pile up)
     pages = [p.read_text(encoding="utf-8") for p in [*out.parent.glob("*.html"), out.parent.parent / "index.html"]]
