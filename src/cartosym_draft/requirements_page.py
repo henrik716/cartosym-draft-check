@@ -8,7 +8,8 @@ import re
 from collections import defaultdict
 from pathlib import Path
 
-from .gallery import COPY_SCRIPT, CSS, PR_FILES, REQUIREMENTS, _check_styles, _inline_code, decisions, style_pane
+from .assets import raster_figure
+from .gallery import COPY_SCRIPT, CSS, IMG_DIR, PR_FILES, REQUIREMENTS, _check_styles, _inline_code, decisions, style_pane
 from .doc_examples import REQUIREMENT_EXAMPLES
 from .kit import export
 from .nav import NAV_CSS, NAV_SCRIPT, permalink, toc, topbar
@@ -215,6 +216,7 @@ def build(out_dir: Path) -> str:
                 links = export(f"sample-{s.key}-{i + 1}", s.title, {"style.cs.json": p.style}, p.layers, p.view, out_dir)
                 kit = " · ".join(f'<a href="{html.escape(u)}">{html.escape(n)}</a>' for n, u in links)
                 cap = f"<figcaption>{html.escape(p.caption)}<span class='vnote'>{kit}</span></figcaption>"
+                svg = raster_figure(svg, out_dir / IMG_DIR, IMG_DIR, alt=f"{s.title}: {p.caption}")
                 panels.append(f"<figure>{svg}{cap}</figure>")
             panes = "".join(
                 style_pane(f"json-{s.key}-{i + 1}", p.style,

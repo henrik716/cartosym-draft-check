@@ -16,6 +16,7 @@ from urllib.parse import quote
 
 from . import sample_data
 from .kit import export, zip_all
+from .assets import externalize_data_images, prune, raster_figure
 from .home import write as write_home
 from .nav import NAV_CSS, NAV_SCRIPT, insert_topbar, permalink, toc, topbar
 from .review import EXTRA_ROWS, ISSUES, MATRIX, MATRIX_AS_OF, SOURCES
@@ -760,7 +761,8 @@ h1 { font-size: 26px; margin: 0 0 6px; } h2 { font-size: 19px; margin: 0 0 4px; 
 .reqs code { font-size: 12.5px; color: var(--muted); margin-right: 8px; }
 .question { margin: 10px 0 14px; }
 .variants { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
-figure { margin: 0; } figure svg { width: 100%; height: auto; border-radius: 6px; border: 1px solid var(--line); display:block; }
+figure { margin: 0; } figure svg, figure img.raster { width: 100%; height: auto; border-radius: 6px; border: 1px solid var(--line); display:block; }
+figure img.raster { image-rendering: pixelated; background: var(--card); }
 figcaption { font-size: 13.5px; margin-top: 6px; }
 .badge { display:inline-block; font-size: 11.5px; font-weight: 600; padding: 1px 7px; border-radius: 99px; background: var(--badge-bg); color: var(--badge-fg); margin-left: 6px; }
 .evidence { font-size: 13.5px; color: var(--muted); border-top: 1px solid var(--line); margin-top: 14px; padding-top: 10px; }
@@ -849,6 +851,7 @@ def _check_styles(styles: dict[str, dict], key: str) -> list[str]:
             path = "/".join(map(str, leaf.absolute_path))
             problems.append(f"{key}/{name} at {path}: {leaf.message[:160]}")
     return problems
+IMG_DIR = "img"  # gallery/img: the coverage figures as WebP files (assets.raster_figure)
 # The requirement files at the snapshot's commit, so that the line numbers in requirements.json match.
 PR_FILES = f"https://github.com/opengeospatial/cartographic-symbology/blob/{REQUIREMENTS['commit']}/"
 
@@ -923,6 +926,7 @@ def build(out_dir: Path) -> str:
             svg = render(v.style or d.style, d.layers, d.view, v.options, anchors=d.anchors)
             badge = '<span class="badge">draft</span>' if v.is_draft else ""
             note = f'<span class="vnote">{html.escape(v.note)}</span>' if v.note else ""
+            svg = raster_figure(svg, out_dir / IMG_DIR, IMG_DIR, alt=f"{d.title}: {v.label}")  # coverages as files
             figs.append(f"<figure>{svg}<figcaption>{html.escape(v.label)}{badge}{note}</figcaption></figure>")
             if v.style:
                 styles[f"style-variant-{i + 1}.cs.json"] = v.style
@@ -991,6 +995,11 @@ def main(argv: list[str]) -> int:
     (out.parent / "requirements.html").write_text(req_page, encoding="utf-8")
     home = write_home(out.parent.parent, CSS)
     _record_bar(out.parent)
+    # Image files no page uses any more (they are named by their content, so old ones would pile up)
+    pages = [p.read_text(encoding="utf-8") for p in [*out.parent.glob("*.html"), out.parent.parent / "index.html"]]
+    for folder in [IMG_DIR, *RECORD_IMAGES.values()]:
+        for name in prune(out.parent / folder, pages):
+            print(f"Removed {folder}/{name}, no longer used")
     print(f"Wrote {out.resolve()}, requirements.html, {home.resolve()} and the render kits in {(out.parent / 'kit').resolve()}")
     return 0
 
@@ -1009,6 +1018,10 @@ RECORD_PAGES = {
 }
 
 
+# Where the images of a record go when they are moved out of the page (assets.externalize_data_images).
+RECORD_IMAGES = {"pr192-renders-walkthrough.html": "pr192"}
+
+
 def _record_bar(gallery_dir: Path) -> None:
     for name, kw in RECORD_PAGES.items():
         page = gallery_dir / name
@@ -1016,6 +1029,8 @@ def _record_bar(gallery_dir: Path) -> None:
             continue
         text = page.read_text(encoding="utf-8")
         new = insert_topbar(text, name, **kw)
+        if name in RECORD_IMAGES:
+            new = externalize_data_images(new, gallery_dir / RECORD_IMAGES[name], RECORD_IMAGES[name])
         if new != text:
             page.write_text(new, encoding="utf-8")
 

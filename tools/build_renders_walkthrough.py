@@ -489,11 +489,14 @@ def main(argv: list[str]) -> int:
     full = ('<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n'
             '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n'
             f"{head}</head>\n<body>\n{body}\n</body>\n</html>\n")
-    from cartosym_draft.gallery import RECORD_PAGES
+    from cartosym_draft.assets import externalize_data_images
+    from cartosym_draft.gallery import RECORD_IMAGES, RECORD_PAGES
     from cartosym_draft.nav import insert_topbar
 
     out = ROOT / "gallery" / "pr192-renders-walkthrough.html"
     full = insert_topbar(full, out.name, **RECORD_PAGES[out.name])  # the site's bar; the --artifact copy goes without
+    # The images as files next to the page (the --artifact copy keeps them inside, as claude.ai needs)
+    full = externalize_data_images(full, out.parent / RECORD_IMAGES[out.name], RECORD_IMAGES[out.name])
     out.write_text(full, encoding="utf-8")
     print(out, len(full) // 1024, "KiB")
     if args.artifact:
