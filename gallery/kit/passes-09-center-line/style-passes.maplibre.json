@@ -1,0 +1,41 @@
+{
+  "version": 8,
+  "sources": {
+    "cartosym": {
+      "type": "geojson",
+      "data": {
+        "type": "FeatureCollection",
+        "features": []
+      }
+    }
+  },
+  "layers": [
+    {
+      "id": "Roads-1",
+      "type": "line",
+      "source": "cartosym",
+      "paint": {
+        "line-color": "#6b4f1d",
+        "line-width": 13.0
+      }
+    },
+    {
+      "id": "Roads-2",
+      "type": "line",
+      "source": "cartosym",
+      "paint": {
+        "line-color": "#f5d76e",
+        "line-width": 10.0
+      }
+    },
+    {
+      "id": "Roads-3",
+      "type": "line",
+      "source": "cartosym",
+      "paint": {
+        "line-color": "#6b4f1d",
+        "line-width": 1.0
+      }
+    }
+  ]
+}

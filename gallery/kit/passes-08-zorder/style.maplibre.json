@@ -1,0 +1,32 @@
+{
+  "version": 8,
+  "sources": {
+    "cartosym": {
+      "type": "geojson",
+      "data": {
+        "type": "FeatureCollection",
+        "features": []
+      }
+    }
+  },
+  "layers": [
+    {
+      "id": "Roads",
+      "type": "line",
+      "source": "cartosym",
+      "paint": {
+        "line-color": "gray",
+        "line-width": 4.0
+      }
+    },
+    {
+      "id": "Rails",
+      "type": "line",
+      "source": "cartosym",
+      "paint": {
+        "line-color": "black",
+        "line-width": 2.0
+      }
+    }
+  ]
+}

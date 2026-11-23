@@ -41,3 +41,10 @@ Render each data layer with the style at the extent and size of `view.json`, on 
 Pull requests to [henrik716/cartosym-draft-check](https://github.com/henrik716/cartosym-draft-check) are welcome:
 `style.sld` (SLD/SE), `style.maplibre.json` or a note on why MapLibre can't express the case, and renders from
 other software (e.g. `qgis-render.png`), with a line here on what it can't express.
+
+## SLD/SE and MapLibre
+
+Written by pycartosym (main, after 0.6.6) from the style, as `cartosym <style>.cscss --to-format sld|maplibre`. They show what the two formats do with the case; they are not renders.
+
+- `style.cscss`, SLD/SE: `style.sld`
+- `style.cscss`, MapLibre: `style.maplibre.json`
