@@ -849,7 +849,8 @@ def _check_styles(styles: dict[str, dict], key: str) -> list[str]:
             path = "/".join(map(str, leaf.absolute_path))
             problems.append(f"{key}/{name} at {path}: {leaf.message[:160]}")
     return problems
-PR_FILES = "https://github.com/henrik716/cartographic-symbology/blob/requirements-placeholders/"
+# The requirement files at the snapshot's commit, so that the line numbers in requirements.json match.
+PR_FILES = f"https://github.com/opengeospatial/cartographic-symbology/blob/{REQUIREMENTS['commit']}/"
 
 
 def _requirement_text(ids: list[str]) -> str:

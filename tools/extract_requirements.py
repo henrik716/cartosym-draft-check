@@ -24,6 +24,10 @@ def main(argv: list[str]) -> int:
     spec = Path(argv[0] if argv else ROOT.parent / "cartographic-symbology")
     git = ["git", "-C", str(spec)]
     branch = subprocess.run([*git, "branch", "--show-current"], capture_output=True, text=True).stdout.strip()
+    if not branch:  # a detached worktree, such as one made from origin/main: name the remote branch it is on
+        remote = subprocess.run([*git, "branch", "-r", "--points-at", "HEAD", "--format=%(refname:short)"],
+                                capture_output=True, text=True).stdout.split()
+        branch = next((r for r in remote if r.endswith("/main")), remote[0] if remote else "detached")
     commit = subprocess.run([*git, "rev-parse", "--short", "HEAD"], capture_output=True, text=True).stdout.strip()
     dirty = bool(subprocess.run([*git, "status", "--porcelain", "--", "1-core", "2-shapes"],
                                 capture_output=True, text=True).stdout.strip())
