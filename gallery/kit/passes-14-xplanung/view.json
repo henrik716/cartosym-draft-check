@@ -1,0 +1,70 @@
+{
+  "card": "XPlanung: bands of rendering passes and the order by ebene",
+  "crs": "EPSG:25832",
+  "bbox": [
+    567776.0,
+    5932214.0,
+    567944.0,
+    5932326.0
+  ],
+  "width": 300,
+  "height": 200,
+  "scaleDenominator": 2000.0,
+  "pixelSize_mm": 0.28,
+  "background": "#ffffff",
+  "layers": [
+    {
+      "id": "BP_BaugebietsTeilFlaeche",
+      "type": "vector"
+    },
+    {
+      "id": "SO_Schienenverkehrsrecht",
+      "type": "vector"
+    },
+    {
+      "id": "SO_Strassenverkehr",
+      "type": "vector"
+    },
+    {
+      "id": "BP_TextAbschnittFlaeche",
+      "type": "vector"
+    },
+    {
+      "id": "BP_KennzeichnungsFlaeche",
+      "type": "vector"
+    },
+    {
+      "id": "BP_SpezielleBauweise",
+      "type": "vector"
+    },
+    {
+      "id": "BP_UeberbaubareGrundstuecksFlaeche",
+      "type": "vector"
+    },
+    {
+      "id": "BP_UnverbindlicheVormerkung",
+      "type": "vector"
+    },
+    {
+      "id": "SO_Denkmalschutzrecht",
+      "type": "vector"
+    },
+    {
+      "id": "SO_Wasserrecht",
+      "type": "vector"
+    },
+    {
+      "id": "BP_Wegerecht",
+      "type": "vector"
+    },
+    {
+      "id": "BP_StrassenbegrenzungsLinie",
+      "type": "vector"
+    },
+    {
+      "id": "BP_BauGrenze",
+      "type": "vector"
+    }
+  ],
+  "note": "Render each layer with the style, at this extent and size."
+}

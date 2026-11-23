@@ -1,0 +1,2068 @@
+{
+  "stylingRules": [
+    {
+      "$comment": "The base rule: the order of the objects by ebene, and nothing drawn by default",
+      "symbolizer": {
+        "zOrder": {
+          "op": "?:",
+          "args": [
+            {
+              "op": "isNull",
+              "args": [
+                {
+                  "property": "ebene"
+                }
+              ]
+            },
+            0.0,
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "property": "ebene"
+                }
+              ]
+            }
+          ]
+        },
+        "fill": {
+          "opacity": 0.0
+        },
+        "stroke": {
+          "opacity": 0.0
+        },
+        "marker": {
+          "elements": []
+        }
+      }
+    },
+    {
+      "name": "BP_BaugebietsTeilFlaeche",
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "sysId": "dataLayer.id"
+          },
+          "BP_BaugebietsTeilFlaeche"
+        ]
+      },
+      "nestedRules": [
+        {
+          "selector": {
+            "op": "=",
+            "args": [
+              {
+                "sysId": "dataLayer.featuresGeometryDimensions"
+              },
+              2.0
+            ]
+          },
+          "nestedRules": [
+            {
+              "selector": {
+                "op": "and",
+                "args": [
+                  {
+                    "op": "=",
+                    "args": [
+                      {
+                        "property": "flaechenschluss"
+                      },
+                      true
+                    ]
+                  },
+                  {
+                    "op": "or",
+                    "args": [
+                      {
+                        "op": "=",
+                        "args": [
+                          {
+                            "property": "ebene"
+                          },
+                          0
+                        ]
+                      },
+                      {
+                        "op": "isNull",
+                        "args": [
+                          {
+                            "property": "ebene"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              "nestedRules": [
+                {
+                  "name": "Kerngebiet",
+                  "$comment": "Kerngebiete (§ 7 BauNVO)",
+                  "selector": {
+                    "op": "=",
+                    "args": [
+                      {
+                        "property": "besondereArtDerBaulNutzung"
+                      },
+                      "1600"
+                    ]
+                  },
+                  "nestedRules": [
+                    {
+                      "symbolizer": {
+                        "fill": {
+                          "color": [
+                            213.0,
+                            167.0,
+                            68.0
+                          ]
+                        },
+                        "stroke": {
+                          "color": [
+                            35.0,
+                            35.0,
+                            35.0
+                          ],
+                          "width": {
+                            "m": 0.2
+                          },
+                          "join": "miter"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "SO_Schienenverkehrsrecht",
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "sysId": "dataLayer.id"
+          },
+          "SO_Schienenverkehrsrecht"
+        ]
+      },
+      "nestedRules": [
+        {
+          "selector": {
+            "op": "=",
+            "args": [
+              {
+                "sysId": "dataLayer.featuresGeometryDimensions"
+              },
+              2.0
+            ]
+          },
+          "nestedRules": [
+            {
+              "selector": {
+                "op": "not",
+                "args": [
+                  {
+                    "op": "and",
+                    "args": [
+                      {
+                        "op": "=",
+                        "args": [
+                          {
+                            "property": "flaechenschluss"
+                          },
+                          true
+                        ]
+                      },
+                      {
+                        "op": "or",
+                        "args": [
+                          {
+                            "op": "=",
+                            "args": [
+                              {
+                                "property": "ebene"
+                              },
+                              0
+                            ]
+                          },
+                          {
+                            "op": "isNull",
+                            "args": [
+                              {
+                                "property": "ebene"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              "nestedRules": [
+                {
+                  "name": "Hochgelegende Bahnanlage Flaeche",
+                  "$comment": "Bahnanlagen, hochgelegen",
+                  "selector": {
+                    "op": "and",
+                    "args": [
+                      {
+                        "op": "in",
+                        "args": [
+                          {
+                            "property": "artDerFestlegung"
+                          },
+                          [
+                            "1000",
+                            "1200",
+                            "1400",
+                            "10000",
+                            "10001",
+                            "10002",
+                            "10003",
+                            "12000",
+                            "12001",
+                            "12002",
+                            "12003",
+                            "12004",
+                            "12005",
+                            "14000",
+                            "14001",
+                            "14002",
+                            "14003",
+                            "9999"
+                          ]
+                        ]
+                      },
+                      {
+                        "op": ">=",
+                        "args": [
+                          {
+                            "property": "ebene"
+                          },
+                          1.0
+                        ]
+                      }
+                    ]
+                  },
+                  "nestedRules": [
+                    {
+                      "selector": {
+                        "op": "and",
+                        "args": [
+                          {
+                            "op": "=",
+                            "args": [
+                              {
+                                "sysId": "viz.pass"
+                              },
+                              100
+                            ]
+                          },
+                          {
+                            "op": "=",
+                            "args": [
+                              {
+                                "sysId": "feature.pass"
+                              },
+                              0
+                            ]
+                          }
+                        ]
+                      },
+                      "symbolizer": {
+                        "stroke": {
+                          "color": [
+                            0.0,
+                            0.0,
+                            0.0
+                          ],
+                          "width": {
+                            "m": 0.2
+                          },
+                          "join": "miter",
+                          "cap": "square"
+                        },
+                        "vendor.xleitstelle.offset": {
+                          "m": 2.0
+                        }
+                      }
+                    },
+                    {
+                      "selector": {
+                        "op": "and",
+                        "args": [
+                          {
+                            "op": "=",
+                            "args": [
+                              {
+                                "sysId": "viz.pass"
+                              },
+                              100
+                            ]
+                          },
+                          {
+                            "op": "=",
+                            "args": [
+                              {
+                                "sysId": "feature.pass"
+                              },
+                              1
+                            ]
+                          }
+                        ]
+                      },
+                      "symbolizer": {
+                        "stroke": {
+                          "color": [
+                            165.0,
+                            145.0,
+                            179.0
+                          ],
+                          "width": {
+                            "m": 2.0
+                          },
+                          "join": "miter",
+                          "cap": "square"
+                        },
+                        "vendor.xleitstelle.offset": {
+                          "m": 1.0
+                        }
+                      }
+                    },
+                    {
+                      "selector": {
+                        "op": "and",
+                        "args": [
+                          {
+                            "op": "=",
+                            "args": [
+                              {
+                                "sysId": "viz.pass"
+                              },
+                              100
+                            ]
+                          },
+                          {
+                            "op": "=",
+                            "args": [
+                              {
+                                "sysId": "feature.pass"
+                              },
+                              2
+                            ]
+                          }
+                        ]
+                      },
+                      "symbolizer": {
+                        "stroke": {
+                          "color": [
+                            35.0,
+                            35.0,
+                            35.0
+                          ],
+                          "width": {
+                            "m": 0.2
+                          },
+                          "join": "miter",
+                          "cap": "square"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "selector": {
+                "op": "and",
+                "args": [
+                  {
+                    "op": "=",
+                    "args": [
+                      {
+                        "property": "flaechenschluss"
+                      },
+                      true
+                    ]
+                  },
+                  {
+                    "op": "or",
+                    "args": [
+                      {
+                        "op": "=",
+                        "args": [
+                          {
+                            "property": "ebene"
+                          },
+                          0
+                        ]
+                      },
+                      {
+                        "op": "isNull",
+                        "args": [
+                          {
+                            "property": "ebene"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              "nestedRules": [
+                {
+                  "name": "Oberirdische Bahnanlage",
+                  "$comment": "Bahnanlagen (§ 5 Abs. 2 Nr. 3, § 9 Abs. 1 Nr. 11 BauGB)",
+                  "selector": {
+                    "op": "or",
+                    "args": [
+                      {
+                        "op": "isNull",
+                        "args": [
+                          {
+                            "property": "ebene"
+                          }
+                        ]
+                      },
+                      {
+                        "op": "=",
+                        "args": [
+                          {
+                            "property": "ebene"
+                          },
+                          0.0
+                        ]
+                      }
+                    ]
+                  },
+                  "nestedRules": [
+                    {
+                      "selector": {
+                        "op": "=",
+                        "args": [
+                          {
+                            "sysId": "feature.pass"
+                          },
+                          3
+                        ]
+                      },
+                      "symbolizer": {
+                        "fill": {
+                          "color": [
+                            165.0,
+                            145.0,
+                            179.0
+                          ]
+                        },
+                        "stroke": {
+                          "color": [
+                            0.0,
+                            0.0,
+                            0.0
+                          ],
+                          "width": {
+                            "m": 0.2
+                          },
+                          "join": "miter"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "SO_Strassenverkehr",
+      "$comment": "Straßenverkehr",
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "sysId": "dataLayer.id"
+          },
+          "SO_Strassenverkehr"
+        ]
+      },
+      "nestedRules": [
+        {
+          "selector": {
+            "op": "=",
+            "args": [
+              {
+                "sysId": "dataLayer.featuresGeometryDimensions"
+              },
+              2.0
+            ]
+          },
+          "nestedRules": [
+            {
+              "selector": {
+                "op": "not",
+                "args": [
+                  {
+                    "op": "and",
+                    "args": [
+                      {
+                        "op": "=",
+                        "args": [
+                          {
+                            "property": "flaechenschluss"
+                          },
+                          true
+                        ]
+                      },
+                      {
+                        "op": "or",
+                        "args": [
+                          {
+                            "op": "=",
+                            "args": [
+                              {
+                                "property": "ebene"
+                              },
+                              0
+                            ]
+                          },
+                          {
+                            "op": "isNull",
+                            "args": [
+                              {
+                                "property": "ebene"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              "nestedRules": [
+                {
+                  "name": "Strassenverkehrsflaeche",
+                  "$comment": "Straßenverkehrsflächen (§ 9 Abs. 1 Nr. 11 BauGB)",
+                  "selector": {
+                    "op": "=",
+                    "args": [
+                      {
+                        "property": "hatDarstellungMitBesondZweckbest"
+                      },
+                      false
+                    ]
+                  },
+                  "nestedRules": [
+                    {
+                      "selector": {
+                        "op": "=",
+                        "args": [
+                          {
+                            "sysId": "feature.pass"
+                          },
+                          0
+                        ]
+                      },
+                      "symbolizer": {
+                        "fill": {
+                          "color": [
+                            255.0,
+                            217.0,
+                            47.0
+                          ]
+                        },
+                        "stroke": {
+                          "color": [
+                            0.0,
+                            0.0,
+                            0.0
+                          ],
+                          "width": {
+                            "m": 0.2
+                          },
+                          "join": "miter"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "selector": {
+                "op": "and",
+                "args": [
+                  {
+                    "op": "=",
+                    "args": [
+                      {
+                        "property": "flaechenschluss"
+                      },
+                      true
+                    ]
+                  },
+                  {
+                    "op": "or",
+                    "args": [
+                      {
+                        "op": "=",
+                        "args": [
+                          {
+                            "property": "ebene"
+                          },
+                          0
+                        ]
+                      },
+                      {
+                        "op": "isNull",
+                        "args": [
+                          {
+                            "property": "ebene"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              "nestedRules": [
+                {
+                  "name": "Strassenverkehr",
+                  "$comment": "Straßenverkehrsflächen (§ 9 Abs. 1 Nr. 11 BauGB)",
+                  "selector": {
+                    "op": "=",
+                    "args": [
+                      {
+                        "property": "hatDarstellungMitBesondZweckbest"
+                      },
+                      false
+                    ]
+                  },
+                  "nestedRules": [
+                    {
+                      "selector": {
+                        "op": "=",
+                        "args": [
+                          {
+                            "sysId": "feature.pass"
+                          },
+                          1
+                        ]
+                      },
+                      "symbolizer": {
+                        "fill": {
+                          "color": [
+                            255.0,
+                            217.0,
+                            47.0
+                          ]
+                        },
+                        "stroke": {
+                          "color": [
+                            0.0,
+                            0.0,
+                            0.0
+                          ],
+                          "width": {
+                            "m": 0.2
+                          },
+                          "join": "miter"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "Verkehrsflaeche besonderer Zweckbestimmung",
+                  "$comment": "Verkehrsflächen besonderer Zweckbestimmung (§ 9 Abs. 1 Nr. 11 BauGB)",
+                  "selector": {
+                    "op": "=",
+                    "args": [
+                      {
+                        "property": "hatDarstellungMitBesondZweckbest"
+                      },
+                      true
+                    ]
+                  },
+                  "nestedRules": [
+                    {
+                      "selector": {
+                        "op": "and",
+                        "args": [
+                          {
+                            "op": "=",
+                            "args": [
+                              {
+                                "sysId": "viz.pass"
+                              },
+                              1
+                            ]
+                          },
+                          {
+                            "op": "=",
+                            "args": [
+                              {
+                                "sysId": "feature.pass"
+                              },
+                              2
+                            ]
+                          }
+                        ]
+                      },
+                      "symbolizer": {
+                        "fill": {
+                          "pattern": {
+                            "transform": {
+                              "scaling": [
+                                10.0,
+                                10.0
+                              ]
+                            },
+                            "type": "Image",
+                            "image": {
+                              "path": "svg/F_BP_SO_VerkehrsflaecheBesondererZweckbestimmung.svg"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "selector": {
+                        "op": "and",
+                        "args": [
+                          {
+                            "op": "=",
+                            "args": [
+                              {
+                                "sysId": "viz.pass"
+                              },
+                              100
+                            ]
+                          },
+                          {
+                            "op": "=",
+                            "args": [
+                              {
+                                "sysId": "feature.pass"
+                              },
+                              3
+                            ]
+                          }
+                        ]
+                      },
+                      "symbolizer": {
+                        "stroke": {
+                          "color": [
+                            35.0,
+                            35.0,
+                            35.0
+                          ],
+                          "width": {
+                            "m": 0.2
+                          },
+                          "join": "miter",
+                          "cap": "butt"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "BP_TextAbschnittFlaeche",
+      "$comment": "Geltungsbereich textlicher Festsetzungen",
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "sysId": "dataLayer.id"
+          },
+          "BP_TextAbschnittFlaeche"
+        ]
+      },
+      "nestedRules": [
+        {
+          "selector": {
+            "op": "=",
+            "args": [
+              {
+                "sysId": "dataLayer.featuresGeometryDimensions"
+              },
+              2.0
+            ]
+          },
+          "nestedRules": [
+            {
+              "selector": {
+                "op": "=",
+                "args": [
+                  {
+                    "sysId": "viz.pass"
+                  },
+                  100
+                ]
+              },
+              "symbolizer": {
+                "stroke": {
+                  "color": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "width": {
+                    "m": 0.3
+                  },
+                  "join": "miter",
+                  "cap": "butt"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "BP_KennzeichnungsFlaeche",
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "sysId": "dataLayer.id"
+          },
+          "BP_KennzeichnungsFlaeche"
+        ]
+      },
+      "nestedRules": [
+        {
+          "selector": {
+            "op": "=",
+            "args": [
+              {
+                "sysId": "dataLayer.featuresGeometryDimensions"
+              },
+              2.0
+            ]
+          },
+          "nestedRules": [
+            {
+              "name": "SchadstoffBelastBoden",
+              "$comment": "Kennzeichnung: Schadstoffbelasteter Boden",
+              "selector": {
+                "op": "=",
+                "args": [
+                  {
+                    "property": "zweckbestimmung.0"
+                  },
+                  "4000"
+                ]
+              },
+              "nestedRules": [
+                {
+                  "selector": {
+                    "op": "and",
+                    "args": [
+                      {
+                        "op": "=",
+                        "args": [
+                          {
+                            "sysId": "viz.pass"
+                          },
+                          100
+                        ]
+                      },
+                      {
+                        "op": "=",
+                        "args": [
+                          {
+                            "sysId": "feature.pass"
+                          },
+                          0
+                        ]
+                      }
+                    ]
+                  },
+                  "symbolizer": {
+                    "stroke": {
+                      "pattern": {
+                        "transform": {
+                          "scaling": [
+                            3.0,
+                            3.0
+                          ]
+                        },
+                        "type": "Image",
+                        "image": {
+                          "path": "svg/Laermschutzbereich_Bodenschutzrecht_SchadstoffBelastBoden.svg"
+                        }
+                      },
+                      "patternGap": {
+                        "m": 8.0
+                      },
+                      "patternInitialGap": {
+                        "m": 0.0
+                      }
+                    },
+                    "vendor.xleitstelle.offset": {
+                      "m": 1.5
+                    },
+                    "vendor.xleitstelle.placements": [
+                      "Interval"
+                    ],
+                    "vendor.xleitstelle.rotate": true
+                  }
+                },
+                {
+                  "selector": {
+                    "op": "and",
+                    "args": [
+                      {
+                        "op": "=",
+                        "args": [
+                          {
+                            "sysId": "viz.pass"
+                          },
+                          100
+                        ]
+                      },
+                      {
+                        "op": "=",
+                        "args": [
+                          {
+                            "sysId": "feature.pass"
+                          },
+                          1
+                        ]
+                      }
+                    ]
+                  },
+                  "symbolizer": {
+                    "stroke": {
+                      "color": [
+                        0.0,
+                        0.0,
+                        0.0
+                      ],
+                      "width": {
+                        "m": 0.1
+                      },
+                      "join": "round",
+                      "cap": "round"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "BP_SpezielleBauweise",
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "sysId": "dataLayer.id"
+          },
+          "BP_SpezielleBauweise"
+        ]
+      },
+      "nestedRules": [
+        {
+          "selector": {
+            "op": "=",
+            "args": [
+              {
+                "sysId": "dataLayer.featuresGeometryDimensions"
+              },
+              2.0
+            ]
+          },
+          "nestedRules": [
+            {
+              "name": "Arkade",
+              "$comment": "Arkade",
+              "selector": {
+                "op": "=",
+                "args": [
+                  {
+                    "property": "typ"
+                  },
+                  "1400"
+                ]
+              },
+              "nestedRules": [
+                {
+                  "selector": {
+                    "op": "and",
+                    "args": [
+                      {
+                        "op": "=",
+                        "args": [
+                          {
+                            "sysId": "viz.pass"
+                          },
+                          1
+                        ]
+                      },
+                      {
+                        "op": "=",
+                        "args": [
+                          {
+                            "sysId": "feature.pass"
+                          },
+                          0
+                        ]
+                      }
+                    ]
+                  },
+                  "symbolizer": {
+                    "fill": {
+                      "pattern": {
+                        "transform": {
+                          "scaling": [
+                            3.0,
+                            3.0
+                          ]
+                        },
+                        "type": "Image",
+                        "image": {
+                          "path": "svg/BP_SpezielleBauweise_Arkade.svg"
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  "selector": {
+                    "op": "and",
+                    "args": [
+                      {
+                        "op": "=",
+                        "args": [
+                          {
+                            "sysId": "viz.pass"
+                          },
+                          100
+                        ]
+                      },
+                      {
+                        "op": "=",
+                        "args": [
+                          {
+                            "sysId": "feature.pass"
+                          },
+                          1
+                        ]
+                      }
+                    ]
+                  },
+                  "symbolizer": {
+                    "stroke": {
+                      "color": [
+                        35.0,
+                        35.0,
+                        35.0
+                      ],
+                      "width": {
+                        "m": 0.3
+                      },
+                      "join": "miter",
+                      "cap": "square"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Durchgang, Durchfahrt, Luftgeschoss, Ueberbauung, Bruecke, Tunnel",
+              "$comment": "Durchgang, Durchfahrt, Luftgeschoss, Überbauung, Brücke oder Tunnel",
+              "selector": {
+                "op": "in",
+                "args": [
+                  {
+                    "property": "typ"
+                  },
+                  [
+                    "1000",
+                    "1100",
+                    "1200",
+                    "1500",
+                    "1600",
+                    "1700"
+                  ]
+                ]
+              },
+              "nestedRules": [
+                {
+                  "selector": {
+                    "op": "and",
+                    "args": [
+                      {
+                        "op": "=",
+                        "args": [
+                          {
+                            "sysId": "viz.pass"
+                          },
+                          1
+                        ]
+                      },
+                      {
+                        "op": "=",
+                        "args": [
+                          {
+                            "sysId": "feature.pass"
+                          },
+                          2
+                        ]
+                      }
+                    ]
+                  },
+                  "symbolizer": {
+                    "fill": {
+                      "pattern": {
+                        "transform": {
+                          "scaling": [
+                            3.0,
+                            3.0
+                          ]
+                        },
+                        "type": "Image",
+                        "image": {
+                          "path": "svg/BP_SpezielleBauweise_Durchgang_Durchfahrt_Luftgeschoss_Ueberbauung_Bruecke_Tunnel.svg"
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  "selector": {
+                    "op": "and",
+                    "args": [
+                      {
+                        "op": "=",
+                        "args": [
+                          {
+                            "sysId": "viz.pass"
+                          },
+                          100
+                        ]
+                      },
+                      {
+                        "op": "=",
+                        "args": [
+                          {
+                            "sysId": "feature.pass"
+                          },
+                          3
+                        ]
+                      }
+                    ]
+                  },
+                  "symbolizer": {
+                    "stroke": {
+                      "color": [
+                        35.0,
+                        35.0,
+                        35.0
+                      ],
+                      "width": {
+                        "m": 0.3
+                      },
+                      "join": "miter",
+                      "cap": "square"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "BP_UeberbaubareGrundstuecksFlaeche",
+      "$comment": "Überbaubare Grundstücksfläche (§ 9 Abs. 1 Nr. 2 BauGB)",
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "sysId": "dataLayer.id"
+          },
+          "BP_UeberbaubareGrundstuecksFlaeche"
+        ]
+      },
+      "nestedRules": [
+        {
+          "selector": {
+            "op": "=",
+            "args": [
+              {
+                "sysId": "dataLayer.featuresGeometryDimensions"
+              },
+              2.0
+            ]
+          },
+          "nestedRules": [
+            {
+              "selector": {
+                "op": "and",
+                "args": [
+                  {
+                    "op": "=",
+                    "args": [
+                      {
+                        "sysId": "viz.pass"
+                      },
+                      1
+                    ]
+                  },
+                  {
+                    "op": "=",
+                    "args": [
+                      {
+                        "sysId": "feature.pass"
+                      },
+                      0
+                    ]
+                  }
+                ]
+              },
+              "symbolizer": {
+                "fill": {
+                  "pattern": {
+                    "transform": {
+                      "scaling": [
+                        2.0,
+                        2.0
+                      ]
+                    },
+                    "type": "Image",
+                    "image": {
+                      "path": "svg/F_BP_UeberbaubareGrundstuecksFlaeche.svg"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "selector": {
+                "op": "and",
+                "args": [
+                  {
+                    "op": "=",
+                    "args": [
+                      {
+                        "sysId": "viz.pass"
+                      },
+                      100
+                    ]
+                  },
+                  {
+                    "op": "=",
+                    "args": [
+                      {
+                        "sysId": "feature.pass"
+                      },
+                      1
+                    ]
+                  }
+                ]
+              },
+              "symbolizer": {
+                "stroke": {
+                  "color": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "width": {
+                    "m": 0.2
+                  },
+                  "join": "miter",
+                  "cap": "butt"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "BP_UnverbindlicheVormerkung",
+      "$comment": "Unverbindliche Vormerkung",
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "sysId": "dataLayer.id"
+          },
+          "BP_UnverbindlicheVormerkung"
+        ]
+      },
+      "nestedRules": [
+        {
+          "selector": {
+            "op": "=",
+            "args": [
+              {
+                "sysId": "dataLayer.featuresGeometryDimensions"
+              },
+              2.0
+            ]
+          },
+          "nestedRules": [
+            {
+              "selector": {
+                "op": "=",
+                "args": [
+                  {
+                    "sysId": "viz.pass"
+                  },
+                  100
+                ]
+              },
+              "symbolizer": {
+                "stroke": {
+                  "color": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "width": {
+                    "m": 0.3
+                  },
+                  "dashPattern": [
+                    9,
+                    1
+                  ],
+                  "join": "miter",
+                  "cap": "butt"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "SO_Denkmalschutzrecht",
+      "$comment": "Festlegung nach Denkmalschutzrecht",
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "sysId": "dataLayer.id"
+          },
+          "SO_Denkmalschutzrecht"
+        ]
+      },
+      "nestedRules": [
+        {
+          "selector": {
+            "op": "=",
+            "args": [
+              {
+                "sysId": "dataLayer.featuresGeometryDimensions"
+              },
+              2.0
+            ]
+          },
+          "nestedRules": [
+            {
+              "selector": {
+                "op": "not",
+                "args": [
+                  {
+                    "op": "and",
+                    "args": [
+                      {
+                        "op": "=",
+                        "args": [
+                          {
+                            "property": "flaechenschluss"
+                          },
+                          true
+                        ]
+                      },
+                      {
+                        "op": "or",
+                        "args": [
+                          {
+                            "op": "=",
+                            "args": [
+                              {
+                                "property": "ebene"
+                              },
+                              0
+                            ]
+                          },
+                          {
+                            "op": "isNull",
+                            "args": [
+                              {
+                                "property": "ebene"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              "nestedRules": [
+                {
+                  "selector": {
+                    "op": "and",
+                    "args": [
+                      {
+                        "op": "=",
+                        "args": [
+                          {
+                            "sysId": "viz.pass"
+                          },
+                          100
+                        ]
+                      },
+                      {
+                        "op": "=",
+                        "args": [
+                          {
+                            "sysId": "feature.pass"
+                          },
+                          0
+                        ]
+                      }
+                    ]
+                  },
+                  "symbolizer": {
+                    "stroke": {
+                      "color": [
+                        35.0,
+                        35.0,
+                        35.0
+                      ],
+                      "width": {
+                        "m": 2.0
+                      },
+                      "join": "miter",
+                      "cap": "butt"
+                    },
+                    "vendor.xleitstelle.offset": {
+                      "m": 1.0
+                    }
+                  }
+                },
+                {
+                  "selector": {
+                    "op": "and",
+                    "args": [
+                      {
+                        "op": "=",
+                        "args": [
+                          {
+                            "sysId": "viz.pass"
+                          },
+                          100
+                        ]
+                      },
+                      {
+                        "op": "=",
+                        "args": [
+                          {
+                            "sysId": "feature.pass"
+                          },
+                          1
+                        ]
+                      }
+                    ]
+                  },
+                  "symbolizer": {
+                    "stroke": {
+                      "color": [
+                        224.0,
+                        51.0,
+                        91.0
+                      ],
+                      "width": {
+                        "m": 1.6
+                      },
+                      "dashPattern": [
+                        7,
+                        1
+                      ],
+                      "join": "miter",
+                      "cap": "butt"
+                    },
+                    "vendor.xleitstelle.offset": {
+                      "m": 1.0
+                    }
+                  }
+                },
+                {
+                  "selector": {
+                    "op": "and",
+                    "args": [
+                      {
+                        "op": "=",
+                        "args": [
+                          {
+                            "sysId": "viz.pass"
+                          },
+                          100
+                        ]
+                      },
+                      {
+                        "op": "=",
+                        "args": [
+                          {
+                            "sysId": "feature.pass"
+                          },
+                          2
+                        ]
+                      }
+                    ]
+                  },
+                  "symbolizer": {
+                    "stroke": {
+                      "color": [
+                        35.0,
+                        35.0,
+                        35.0
+                      ],
+                      "width": {
+                        "m": 2.0
+                      },
+                      "dashPattern": [
+                        0,
+                        5
+                      ],
+                      "join": "miter",
+                      "cap": "butt"
+                    },
+                    "vendor.xleitstelle.offset": {
+                      "m": 1.0
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "SO_Wasserrecht",
+      "$comment": "Festlegung nach Wasserrecht",
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "sysId": "dataLayer.id"
+          },
+          "SO_Wasserrecht"
+        ]
+      },
+      "nestedRules": [
+        {
+          "selector": {
+            "op": "=",
+            "args": [
+              {
+                "sysId": "dataLayer.featuresGeometryDimensions"
+              },
+              2.0
+            ]
+          },
+          "nestedRules": [
+            {
+              "selector": {
+                "op": "and",
+                "args": [
+                  {
+                    "op": "=",
+                    "args": [
+                      {
+                        "sysId": "viz.pass"
+                      },
+                      100
+                    ]
+                  },
+                  {
+                    "op": "=",
+                    "args": [
+                      {
+                        "sysId": "feature.pass"
+                      },
+                      0
+                    ]
+                  }
+                ]
+              },
+              "symbolizer": {
+                "stroke": {
+                  "color": [
+                    0.0,
+                    123.0,
+                    206.0
+                  ],
+                  "width": {
+                    "m": 3.0
+                  },
+                  "join": "miter",
+                  "cap": "butt"
+                },
+                "vendor.xleitstelle.offset": {
+                  "m": 1.5
+                }
+              }
+            },
+            {
+              "selector": {
+                "op": "and",
+                "args": [
+                  {
+                    "op": "=",
+                    "args": [
+                      {
+                        "sysId": "viz.pass"
+                      },
+                      100
+                    ]
+                  },
+                  {
+                    "op": "=",
+                    "args": [
+                      {
+                        "sysId": "feature.pass"
+                      },
+                      1
+                    ]
+                  }
+                ]
+              },
+              "symbolizer": {
+                "stroke": {
+                  "color": [
+                    35.0,
+                    35.0,
+                    35.0
+                  ],
+                  "width": {
+                    "m": 0.2
+                  },
+                  "join": "miter",
+                  "cap": "butt"
+                }
+              }
+            },
+            {
+              "selector": {
+                "op": "and",
+                "args": [
+                  {
+                    "op": "=",
+                    "args": [
+                      {
+                        "sysId": "viz.pass"
+                      },
+                      100
+                    ]
+                  },
+                  {
+                    "op": "=",
+                    "args": [
+                      {
+                        "sysId": "feature.pass"
+                      },
+                      2
+                    ]
+                  }
+                ]
+              },
+              "symbolizer": {
+                "stroke": {
+                  "color": [
+                    35.0,
+                    35.0,
+                    35.0
+                  ],
+                  "width": {
+                    "m": 0.2
+                  },
+                  "join": "miter",
+                  "cap": "butt"
+                },
+                "vendor.xleitstelle.offset": {
+                  "m": 3.0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "BP_Wegerecht",
+      "$comment": "Mit Geh-, Fahr- und Leitungsrechten zu belastende Flächen (§ 9 Abs. 1 Nr. 21 BauGB)",
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "sysId": "dataLayer.id"
+          },
+          "BP_Wegerecht"
+        ]
+      },
+      "nestedRules": [
+        {
+          "selector": {
+            "op": "=",
+            "args": [
+              {
+                "sysId": "dataLayer.featuresGeometryDimensions"
+              },
+              1.0
+            ]
+          },
+          "nestedRules": [
+            {
+              "selector": {
+                "op": "and",
+                "args": [
+                  {
+                    "op": "=",
+                    "args": [
+                      {
+                        "sysId": "viz.pass"
+                      },
+                      200
+                    ]
+                  },
+                  {
+                    "op": "=",
+                    "args": [
+                      {
+                        "sysId": "feature.pass"
+                      },
+                      0
+                    ]
+                  }
+                ]
+              },
+              "symbolizer": {
+                "stroke": {
+                  "color": [
+                    35.0,
+                    35.0,
+                    35.0
+                  ],
+                  "width": {
+                    "m": 0.2
+                  },
+                  "join": "miter",
+                  "cap": "butt"
+                }
+              }
+            },
+            {
+              "selector": {
+                "op": "and",
+                "args": [
+                  {
+                    "op": "=",
+                    "args": [
+                      {
+                        "sysId": "viz.pass"
+                      },
+                      200
+                    ]
+                  },
+                  {
+                    "op": "=",
+                    "args": [
+                      {
+                        "sysId": "feature.pass"
+                      },
+                      1
+                    ]
+                  }
+                ]
+              },
+              "symbolizer": {
+                "stroke": {
+                  "pattern": {
+                    "transform": {
+                      "scaling": [
+                        3.0,
+                        3.0
+                      ]
+                    },
+                    "type": "Image",
+                    "image": {
+                      "path": "svg/L_BP_WegerechtLinie.svg"
+                    }
+                  },
+                  "patternGap": {
+                    "m": 5.0
+                  },
+                  "patternInitialGap": {
+                    "m": 0.0
+                  }
+                },
+                "vendor.xleitstelle.offset": {
+                  "m": -0.75
+                },
+                "vendor.xleitstelle.placements": [
+                  "Interval"
+                ],
+                "vendor.xleitstelle.rotate": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "BP_StrassenbegrenzungsLinie",
+      "$comment": "Straßenbegrenzungslinie (§ 9 Abs. 1 Nr. 11 BauGB)",
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "sysId": "dataLayer.id"
+          },
+          "BP_StrassenbegrenzungsLinie"
+        ]
+      },
+      "nestedRules": [
+        {
+          "selector": {
+            "op": "=",
+            "args": [
+              {
+                "sysId": "dataLayer.featuresGeometryDimensions"
+              },
+              1.0
+            ]
+          },
+          "nestedRules": [
+            {
+              "selector": {
+                "op": "and",
+                "args": [
+                  {
+                    "op": "=",
+                    "args": [
+                      {
+                        "sysId": "viz.pass"
+                      },
+                      200
+                    ]
+                  },
+                  {
+                    "op": "=",
+                    "args": [
+                      {
+                        "sysId": "feature.pass"
+                      },
+                      0
+                    ]
+                  }
+                ]
+              },
+              "symbolizer": {
+                "stroke": {
+                  "color": [
+                    77.0,
+                    174.0,
+                    56.0
+                  ],
+                  "width": {
+                    "m": 0.8
+                  },
+                  "join": "miter",
+                  "cap": "butt"
+                },
+                "vendor.xleitstelle.offset": {
+                  "m": -0.5
+                }
+              }
+            },
+            {
+              "selector": {
+                "op": "and",
+                "args": [
+                  {
+                    "op": "=",
+                    "args": [
+                      {
+                        "sysId": "viz.pass"
+                      },
+                      200
+                    ]
+                  },
+                  {
+                    "op": "=",
+                    "args": [
+                      {
+                        "sysId": "feature.pass"
+                      },
+                      1
+                    ]
+                  }
+                ]
+              },
+              "symbolizer": {
+                "stroke": {
+                  "color": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "width": {
+                    "m": 0.3
+                  },
+                  "join": "miter",
+                  "cap": "butt"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "BP_BauGrenze",
+      "$comment": "Baugrenze (§ 9 Abs. 1 Nr. 2 BauGB, § 23 BauNVO)",
+      "selector": {
+        "op": "=",
+        "args": [
+          {
+            "sysId": "dataLayer.id"
+          },
+          "BP_BauGrenze"
+        ]
+      },
+      "nestedRules": [
+        {
+          "selector": {
+            "op": "=",
+            "args": [
+              {
+                "sysId": "dataLayer.featuresGeometryDimensions"
+              },
+              1.0
+            ]
+          },
+          "nestedRules": [
+            {
+              "selector": {
+                "op": "and",
+                "args": [
+                  {
+                    "op": "=",
+                    "args": [
+                      {
+                        "sysId": "viz.pass"
+                      },
+                      200
+                    ]
+                  },
+                  {
+                    "op": "=",
+                    "args": [
+                      {
+                        "sysId": "feature.pass"
+                      },
+                      0
+                    ]
+                  }
+                ]
+              },
+              "symbolizer": {
+                "stroke": {
+                  "color": [
+                    23.0,
+                    99.0,
+                    170.0
+                  ],
+                  "width": {
+                    "m": 1.0
+                  },
+                  "join": "miter",
+                  "cap": "butt"
+                },
+                "vendor.xleitstelle.offset": {
+                  "m": -0.5
+                },
+                "vendor.xleitstelle.trim": [
+                  {
+                    "m": 0.0
+                  },
+                  {
+                    "m": 0.1
+                  }
+                ]
+              }
+            },
+            {
+              "selector": {
+                "op": "and",
+                "args": [
+                  {
+                    "op": "=",
+                    "args": [
+                      {
+                        "sysId": "viz.pass"
+                      },
+                      200
+                    ]
+                  },
+                  {
+                    "op": "=",
+                    "args": [
+                      {
+                        "sysId": "feature.pass"
+                      },
+                      1
+                    ]
+                  }
+                ]
+              },
+              "symbolizer": {
+                "stroke": {
+                  "color": [
+                    35.0,
+                    35.0,
+                    35.0
+                  ],
+                  "width": {
+                    "m": 0.2
+                  },
+                  "join": "miter",
+                  "cap": "butt"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

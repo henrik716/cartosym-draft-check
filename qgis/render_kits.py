@@ -18,7 +18,8 @@ Run headless with PyQGIS (QGIS 4.2.3 here)::
 
     python qgis/render_kits.py gallery/kit
 
-writes ``qgis-render*.png`` into each ``passes-*`` kit.
+writes ``qgis-render*.png`` into each ``passes-*`` kit. The XPlanung kit is drawn by
+xmas-plugin's own style instead: it needs the plugin importable (its pixi environment).
 """
 
 import json
@@ -35,7 +36,10 @@ from qgis.core import (
     QgsCoordinateReferenceSystem,
     QgsFeature,
     QgsFeatureRequest,
+    QgsField,
     QgsFillSymbol,
+    QgsGeometry,
+    QgsJsonUtils,
     QgsLabelLineSettings,
     QgsLineSymbol,
     QgsMapRendererParallelJob,
@@ -53,7 +57,7 @@ from qgis.core import (
     QgsVectorLayer,
     QgsVectorLayerSimpleLabeling,
 )
-from qgis.PyQt.QtCore import QSize, Qt
+from qgis.PyQt.QtCore import QMetaType, QSize, Qt
 from qgis.PyQt.QtGui import QColor, QFont
 
 SCALE = 2
@@ -270,6 +274,51 @@ def translucent_passes(k: Kit) -> None:
     k.render([zones(), roads], "qgis-render-each-stroke-on-its-own")
 
 
+def xplanung(k: Kit) -> None:
+    """What xmas-plugin draws: its plan layers, styled from its own style file, of which
+    ``style.cs.json`` is the spec's encoding (levels as rendering passes, the order by
+    ``ebene`` as the layers' feature order)."""
+    try:
+        import xmas_plugin
+        from xmas_plugin.core.style.builder import FEATURE_VERSION, build_renderer, layer_context
+        from xmas_plugin.core.style.tree import VERSION_VARIABLE, load_rules
+    except ImportError:
+        print(f"{k.path.name}: skipped, it needs xmas-plugin")
+        return
+    rules = load_rules(Path(xmas_plugin.__file__).parents[1] / "style/definitions/xplan.yaml")
+
+    def fs(p):  # XPlanung's Flächenschlussobjekt, as the plugin splits its polygon layers
+        return p.get("flaechenschluss") is True and p.get("ebene") in (0, None)
+
+    layers = []  # the plugin's plan layers in the view, bottom to top
+    for name, geometry, fixed, accepts in [
+        ("Flächenschlussobjekte", "polygon", {"flaechenschluss": True}, fs),
+        ("Überlagerungsobjekte", "polygon", {"flaechenschluss": False}, lambda p: not fs(p)),
+        ("Linienobjekte", "line", None, lambda p: True),
+    ]:
+        kind = {"polygon": "Polygon", "line": "LineString"}[geometry]
+        layer = QgsVectorLayer(f"Multi{kind}?crs={k.view['crs']}", name, "memory")
+        layer.dataProvider().addAttributes(
+            [
+                QgsField("featuretype", QMetaType.Type.QString),
+                QgsField("properties", QMetaType.Type.QVariantMap),
+                QgsField("version", QMetaType.Type.QString),
+            ]
+        )
+        layer.updateFields()
+        layer.addExpressionField(FEATURE_VERSION, QgsField(VERSION_VARIABLE, QMetaType.Type.Int))
+        for data in k.view["layers"]:
+            for f in json.loads((k.path / f"{data['id']}.geojson").read_text())["features"]:
+                if f["geometry"]["type"].removeprefix("Multi") == kind and accepts(f["properties"]):
+                    g = QgsFeature(layer.fields())
+                    g.setGeometry(QgsGeometry(QgsJsonUtils.geometryFromGeoJson(json.dumps(f["geometry"]))))
+                    g.setAttributes([data["id"], f["properties"], "6.0", None])
+                    layer.dataProvider().addFeature(g)
+        layer.setRenderer(build_renderer(rules, layer_context(geometry, fixed, None, "6.0")))
+        layers.append(layer)
+    k.render(layers)
+
+
 KITS = {
     "01-nested-override": nested_override,
     "02-toplevel-override": toplevel_override,
@@ -284,6 +333,7 @@ KITS = {
     "11-feature-pass-minus-one": feature_pass_minus_one,
     "12-shared-zorder": shared_zorder,
     "13-translucent-passes": translucent_passes,
+    "14-xplanung": xplanung,
 }
 
 
