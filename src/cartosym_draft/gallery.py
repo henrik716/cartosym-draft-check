@@ -16,7 +16,8 @@ from urllib.parse import quote
 
 from . import sample_data
 from .kit import export, zip_all
-from .nav import NAV_CSS, NAV_SCRIPT, permalink, toc, topbar
+from .home import write as write_home
+from .nav import NAV_CSS, NAV_SCRIPT, insert_topbar, permalink, toc, topbar
 from .review import EXTRA_ROWS, ISSUES, MATRIX, MATRIX_AS_OF, SOURCES
 from .options import Options
 from .render import Layer, View, render
@@ -946,27 +947,27 @@ def build(out_dir: Path) -> str:
                 f"<code>{html.escape(snap['commit'])}</code>"
                 + (" with uncommitted changes" if snap["uncommitted_changes"] else "") + ".")
     return f"""<!doctype html><html lang="en"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1"><title>CartoSym Draft Decisions</title>
+<meta name="viewport" content="width=device-width, initial-scale=1"><title>CartoSym Judgement Calls</title>
 <style>{CSS}{NAV_CSS}</style></head><body class="has-toc">
 {topbar("index.html", [(a, label) for a, label, _ in contents])}
 <div class="layout has-toc">{toc(contents)}<main>
-<h1>CartoSym 2.0 draft: judgement calls, rendered</h1>
-<p class="lead">Where the spec text did not settle how a renderer should behave, the draft requirements in
-<a href="https://github.com/opengeospatial/cartographic-symbology/pull/133">PR #133</a> (merged on 13 November 2026) made a choice. Each card renders the same
-small map with the draft's choice and the alternatives. Because the draft renderer implements the draft itself, it can show
-what each choice looks like, but not whether that choice is the intended one: that is for the SWG to decide. Comparing with an
-independent renderer shows whether others read the requirements the same way, so each card links its style, data and view settings
-(all in <a href="kit.zip">kit.zip</a>), and the <a href="playground.html">playground</a> lets you edit a style and see the result.</p>
-<p class="legend"><strong><a href="requirements.html">All {len(snap["requirements"])} requirements and how each is checked →</a></strong> ·
-<strong><a href="playground.html">Playground: edit a style and see it rendered →</a></strong> ·
-<strong><a href="pr192-renders-walkthrough.html">How the wording was checked with independent renderers (PR #192) →</a></strong></p>
-<p class="legend"><span class="badge">draft</span> the draft's choice. <span class="badge open">open in draft</span> the draft
-does not settle the question; the variant labelled "draft renderer's choice" is the proposed resolution. {snapshot}</p>
+<h1>Judgement calls, rendered</h1>
+<p class="lead">Where the requirement text leaves a renderer a choice, or left one before it was tightened, each card draws
+the same small map with each reading. Because the draft renderer implements the text itself, it can show what each choice
+looks like, but not whether that choice is the intended one: that is for the SWG to decide. Each card links its style, data
+and view settings (all in <a href="kit.zip">kit.zip</a>) so that other renderers can draw the same map, and the
+<a href="playground.html">playground</a> lets you edit a style and see the result. For how each requirement is checked, see
+<a href="requirements.html">Requirements</a>; for passes, <code>zOrder</code> and casing, <a href="passes.html">Rendering passes</a>.</p>
+<p class="legend"><span class="badge">draft</span> the text's choice. <span class="badge open">open in draft</span> the text
+does not settle the question; the variant labelled "draft renderer's choice" is the proposed resolution. {snapshot}
+The cards were first made for the review of
+<a href="https://github.com/opengeospatial/cartographic-symbology/pull/133">#133</a> (merged on 13 November 2026); its
+walkthrough is under Records.</p>
 <section class="card" id="matrix"><h2>Decision matrix{permalink("matrix")}</h2>
-<p class="question">Written for the review of PR #133, which merged on 13 November 2026, and kept up to date since:
-what the text says, the proposed resolution from the Part 1 editor, and where each question stands on GitHub as of
-{MATRIX_AS_OF}, including the answers on PR #192 (W1 to W17 are its wording changes, see the
-<a href="pr192-renders-walkthrough.html">renders walkthrough</a>). "Answered by Jérôme" is one member's answer, not an SWG decision.</p>
+<p class="question">For each question: what the text says, the proposed resolution from the Part 1 editor, and where it
+stands on GitHub as of {MATRIX_AS_OF}. W1 to W17 are the wording changes of #192 (see the
+<a href="pr192-renders-walkthrough.html">#192 walkthrough</a>). "Answered by Jérôme" is one member's answer, not an SWG decision;
+a merged pull request counts as decided.</p>
 <div class="table-wrap"><table class="matrix"><thead><tr><th>Question</th><th>Text says</th><th>Proposed resolution</th>
 <th>Where it stands ({MATRIX_AS_OF})</th><th>Question for the SWG</th></tr></thead><tbody>{_matrix_rows(all_decisions)}</tbody></table></div></section>
 {''.join(cards)}
@@ -987,8 +988,35 @@ def main(argv: list[str]) -> int:
         raise SystemExit("Pass cases:\n  " + "\n  ".join(problems))
     out.write_text(build(out.parent), encoding="utf-8")  # last: it zips all kits, the samples' included
     (out.parent / "requirements.html").write_text(req_page, encoding="utf-8")
-    print(f"Wrote {out.resolve()}, requirements.html and the render kits in {(out.parent / 'kit').resolve()}")
+    home = write_home(out.parent.parent, CSS)
+    _record_bar(out.parent)
+    print(f"Wrote {out.resolve()}, requirements.html, {home.resolve()} and the render kits in {(out.parent / 'kit').resolve()}")
     return 0
+
+
+# The walkthroughs are records with their own styles: only the site's bar is put into them, and replaced on each
+# build. The #192 one is also built by tools/build_renders_walkthrough.py, which puts the bar in the same way.
+RECORD_PAGES = {
+    "pr133-requirements-walkthrough.html": dict(
+        note="A record: the walkthrough of #133 as presented at the SWG meeting of 13 November 2026, where it was "
+             "merged. Not updated since.",
+        extra_css=".wrap > nav { top: 64px; max-height: calc(100vh - 80px); }"),  # its contents rail is sticky too
+    "pr192-renders-walkthrough.html": dict(
+        note="A record: the walkthrough of #192 (renders in the Part 1 document), merged on 20 November 2026. "
+             "The replies after that are on GitHub.",
+        extra_css="body > .topbar { margin: -8px -8px 0; }"),  # its body keeps the browser's 8 px margin
+}
+
+
+def _record_bar(gallery_dir: Path) -> None:
+    for name, kw in RECORD_PAGES.items():
+        page = gallery_dir / name
+        if not page.exists():
+            continue
+        text = page.read_text(encoding="utf-8")
+        new = insert_topbar(text, name, **kw)
+        if new != text:
+            page.write_text(new, encoding="utf-8")
 
 
 if __name__ == "__main__":
