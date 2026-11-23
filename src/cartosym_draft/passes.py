@@ -290,6 +290,19 @@ other software (e.g. `qgis-render.png`), with a line here on what it can't expre
 """
 
 
+# The README ends with this; what contributors add after it (a line per renderer) is kept on a rebuild.
+OTHER_RENDERERS_END = "other software (e.g. `qgis-render.png`), with a line here on what it can't express.\n"
+
+
+def _contributed(readme: Path) -> str:
+    """What follows the "Other renderers" paragraph in *readme*, if it exists."""
+    if not readme.exists():
+        return ""
+    text = readme.read_text(encoding="utf-8")
+    i = text.find(OTHER_RENDERERS_END)
+    return text[i + len(OTHER_RENDERERS_END):] if i >= 0 else ""
+
+
 def build(out_dir: Path) -> list[str]:
     """Write the kits and passes.html into *out_dir* (the gallery folder); return the problems found."""
     from .doc_examples import to_json
@@ -344,7 +357,9 @@ def build(out_dir: Path) -> list[str]:
         for v in case.variants:
             if _same_pixels(pngs["draft-render"], pngs[f"draft-render-{_slug(v.label)}"]):
                 problems.append(f"{case.name}: the reading \"{v.label}\" draws the same image as the draft's")
-        (d / "README.md").write_text(_readme(case, sorted(fixed), images), encoding="utf-8")
+        readme = _readme(case, sorted(fixed), images)
+        assert readme.endswith(OTHER_RENDERERS_END)
+        (d / "README.md").write_text(readme + _contributed(d / "README.md"), encoding="utf-8")
         rendered.append((case, styles, svgs))
     (out_dir / "passes.html").write_text(_page(rendered), encoding="utf-8")
     return problems
