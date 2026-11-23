@@ -10,13 +10,14 @@ The pages are published with GitHub Pages, starting from the [home page](https:/
 
 | Page | What it is for |
 |---|---|
+| [Examples](https://henrik716.github.io/cartosym-draft-check/gallery/examples.html) | The example maps of the Part 1 document, each with its CartoSym-CSS beside it, a selection of the requirement figures, and the 20 gallery maps. The images come from the spec at `origin/main`. |
 | [Requirements](https://henrik716.github.io/cartosym-draft-check/gallery/requirements.html) | Every requirement, recommendation and permission of Part 1 and the Part 2 gradient fills, with its text and how it is checked. Under each tested requirement, its test cases with what the draft renderer, libCartoSym and pycartosym give. |
 | [Judgement calls](https://henrik716.github.io/cartosym-draft-check/gallery/index.html) | Where the text leaves a renderer a choice (or left one before it was tightened): the same map drawn each way, and a decision matrix with a proposed resolution for each question and where it stands on GitHub. |
 | [Rendering passes](https://henrik716.github.io/cartosym-draft-check/gallery/passes.html) | Test cases for how `viz.pass`, `feature.pass`, `zOrder`, casings and nested rules decide what is drawn on top ([#212](https://github.com/opengeospatial/cartographic-symbology/issues/212)), each with a render kit. |
 | [Playground](https://henrik716.github.io/cartosym-draft-check/gallery/playground.html) | Edit the style of any card or sample and see the draft renderer draw it again, in the browser. |
 | Records | The walkthroughs of [#133](https://henrik716.github.io/cartosym-draft-check/gallery/pr133-requirements-walkthrough.html) and [#192](https://henrik716.github.io/cartosym-draft-check/gallery/pr192-renders-walkthrough.html) as they were presented, the [wording decisions](reports/wording-decisions.md), the [independent renders](reports/independent/) and the [expression test report](reports/libcartosym-main/report.md). |
 
-The [gallery maps](https://henrik716.github.io/cartosym-draft-check/gallery/maps/) are the 20 maps of #192 kept outside the document. The walkthroughs used to be `walkthrough.html` and `renders-walkthrough.html`; those addresses redirect to the new ones, and every other address and anchor linked from GitHub still works.
+The [gallery maps](https://henrik716.github.io/cartosym-draft-check/gallery/maps/) are the 20 maps of #192 kept outside the document. The pages keep their images in files next to them (`gallery/img/`, `gallery/showcase/`, `gallery/pr192/`, named by content where a build makes them) and load them as you scroll; a build removes the files no page uses. The walkthroughs used to be `walkthrough.html` and `renders-walkthrough.html`; those addresses redirect to the new ones, and every other address and anchor linked from GitHub still works.
 
 ## Contents
 
@@ -72,13 +73,15 @@ cases/*.yaml ──┬──> libCartoSym     (cs-canif eval)          ──┐
                └──> draft renderer  (evaluate)               ──┘    reports/results.json
 
 [ 3. PAGES ]  python -m cartosym_draft.gallery
-draft renderer        ──┬──> index.html (root)          home page
-+ examples 5–9          ├──> gallery/index.html          judgement calls: decision matrix, 23 cards
-+ sample data           ├──> gallery/requirements.html   142 requirements, 18 samples, test cases per requirement
-+ requirements.json     ├──> gallery/passes.html         13 pass cases
-+ review.py             ├──> gallery/kit/, kit.zip       style, data and view per card, sample and pass case
-+ reports/libcartosym-  ├──> gallery/playground.html     the draft renderer in the browser (Pyodide)
-  main/results.json     └──> the navigation bar in the two walkthroughs
+draft renderer        ──┬──> index.html (root)          home page, with the overview map
++ examples 5–9          ├──> gallery/examples.html       the document's examples, figures and the gallery maps
++ sample data           ├──> gallery/index.html          judgement calls: decision matrix, 23 cards
++ requirements.json     ├──> gallery/requirements.html   142 requirements, 18 samples, test cases per requirement
++ review.py             ├──> gallery/passes.html         13 pass cases
++ reports/libcartosym-  ├──> gallery/kit/, kit.zip       style, data and view per card, sample and pass case
+  main/results.json     ├──> gallery/playground.html     the draft renderer in the browser (Pyodide)
++ spec's figures at     ├──> gallery/img/, showcase/     coverage figures as WebP; web copies of the spec's renders
+  origin/main           └──> the navigation bar in the two walkthroughs, and their images in gallery/pr192/
 
 [ 4. DOCUMENT FIGURES ]  python -m cartosym_draft.doc_examples
 spec's 1-core/examples/*.cscss ──> pycartosym + fix-ups ──> <name>.cs.json  ──┐
@@ -106,6 +109,8 @@ cartosym-draft-check/
 │   ├── options.py        #   the switchable judgement calls
 │   ├── nav.py            #   the navigation bar shared by every page
 │   ├── home.py           #   the home page
+│   ├── showcase.py       #   the examples page, from the spec's renders at origin/main
+│   ├── assets.py         #   images as files next to the pages (WebP figures, the walkthrough's images)
 │   ├── gallery.py        #   the judgement calls; also review.py (the decision matrix), samples.py, requirements_page.py, passes.py, playground.py, kit.py
 │   ├── doc_examples.py   #   figures, CartoSym-JSON and AsciiDoc for the Part 1 document
 │   ├── n50.py            #   loads the N50 layers in data/rondane/
@@ -146,7 +151,7 @@ uv sync
 uv run python tools/extract_requirements.py [spec checkout]  # requirement text and JSON schema from the spec checkout
 uv run python harness/run.py                                 # test report (reports/); REPORT_DIR=<absolute path> writes elsewhere
 uv run python harness/roundtrip.py                           # round trips through CQL2-JSON and CartoSym-JSON (reports/roundtrip.md)
-uv run python -m cartosym_draft.gallery gallery/index.html   # all pages, the home page and the render kits (about a minute)
+uv run python -m cartosym_draft.gallery gallery/index.html   # all pages, the home page and the render kits (about two minutes; the examples page reads the spec checkout's origin/main, so fetch it first)
 uv run python -m cartosym_draft.doc_examples                 # document figures, JSON and AsciiDoc, written into the spec checkout (about 12 minutes)
 uv run python tools/build_renders_walkthrough.py             # gallery/pr192-renders-walkthrough.html
 uv run --with antlr4-tools python tools/check_grammar.py     # the spec's CartoSym-CSS grammar (needs Java)
