@@ -71,8 +71,69 @@ figure { margin:12px 0 0; } figcaption { font-size:.8rem; color:var(--muted); ma
 ul.plain { padding-left:18px; } ul.plain li { margin:3px 0; }
 :focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
 </style>
+<!-- topbar-css --><style>
+:root { --card: var(--panel); --line: var(--rule); --fg: var(--ink); --bg: var(--paper);
+  --accent-bg: color-mix(in srgb, var(--accent) 14%, var(--panel)); }
+
+[id] { scroll-margin-top: 64px; }
+.topbar { position: sticky; top: 0; z-index: 10; background: var(--card); border-bottom: 1px solid var(--line);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; line-height: 1.4; }
+.topbar-in { max-width: 1600px; margin: 0 auto; padding: 8px 16px; display: flex; align-items: center; gap: 6px 14px; flex-wrap: wrap; }
+.topbar .brand { font-weight: 600; margin-right: 6px; color: var(--fg); text-decoration: none; font-size: 15px; }
+.topbar .brand:hover { color: var(--accent); }
+.topbar nav { position: static; max-height: none; overflow: visible; display: flex; gap: 4px; flex-wrap: wrap; align-items: center; font-size: 14px; }
+.topbar nav a, .topbar .records summary { padding: 4px 10px; border-radius: 6px; text-decoration: none; color: var(--fg); font-size: 14px; }
+.topbar nav a:hover, .topbar .records summary:hover { background: var(--bg); }
+.topbar nav a.active, .topbar .records.active summary { background: var(--accent-bg); color: var(--fg); font-weight: 600; box-shadow: inset 0 -2px 0 var(--accent); }
+.topbar .records { position: relative; display: flex; align-items: center; margin-left: 6px; padding-left: 10px; border-left: 1px solid var(--line); }
+.topbar .records summary { cursor: pointer; list-style: none; display: block; }
+.topbar .records summary::-webkit-details-marker { display: none; }
+.topbar .records summary::after { content: " ▾"; color: var(--muted); font-size: 12px; }
+.topbar .records .menu { position: absolute; top: calc(100% + 6px); left: 0; z-index: 11; width: min(360px, calc(100vw - 32px));
+  background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 6px; box-shadow: 0 6px 24px rgba(0,0,0,.14); }
+.topbar .records .menu a { display: block; padding: 6px 10px; }
+.topbar .records .menu a small { display: block; color: var(--muted); font-size: 12px; font-weight: 400; line-height: 1.35; }
+.topbar .records .menu a.active { box-shadow: inset 2px 0 0 var(--accent); }
+.topbar .tools { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+.topbar .theme { font: inherit; font-size: 13px; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--line);
+  background: var(--card); color: var(--fg); cursor: pointer; white-space: nowrap; }
+.topbar .jump { max-width: 320px; font: inherit; font-size: 13px; padding: 4px 6px; border-radius: 6px;
+  border: 1px solid var(--line); background: var(--card); color: var(--fg); }
+.record-note { max-width: 1600px; margin: 0 auto; padding: 6px 16px; font-size: 13px; color: var(--muted);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+@media (max-width: 640px) {
+  .topbar .tools { margin-left: 0; }
+  .topbar .records { margin-left: 0; padding-left: 0; border-left: 0; }
+  .topbar .jump { max-width: 100%; }
+}
+body > .topbar { margin: -8px -8px 0; }</style><!-- /topbar-css -->
 </head>
 <body>
+<!-- topbar --><header class="topbar"><div class="topbar-in"><a class="brand" href="../index.html">CartoSym draft check</a><nav aria-label="Pages"><a href="requirements.html">Requirements</a><a href="index.html">Judgement calls</a><a href="passes.html">Rendering passes</a><a href="playground.html">Playground</a><details class="records active"><summary>Records</summary><div class="menu"><a href="pr133-requirements-walkthrough.html">#133 walkthrough<small>The Part 1 requirements class by class, as prepared for the SWG meeting of 13 November 2026, where #133 was merged</small></a><a href="pr192-renders-walkthrough.html" class="active" aria-current="page">#192 walkthrough<small>The examples and figures in the Part 1 document, and the wording checked with independent renderers</small></a><a href="https://github.com/henrik716/cartosym-draft-check/blob/main/reports/wording-decisions.md">Wording decisions<small>For each requirement whose wording #192 tightened: the text before, how each reader rendered it, the reading proposed</small></a><a href="https://github.com/henrik716/cartosym-draft-check/tree/main/reports/independent">Independent renders<small>Renderers and expression evaluators written from the requirement text alone, with their notes and images</small></a><a href="https://github.com/henrik716/cartosym-draft-check/blob/main/reports/libcartosym-main/report.md">Expression test report<small>Every test case with each implementation&#x27;s full output, against the latest libCartoSym (CI)</small></a></div></details></nav><div class="tools"><button class="theme" type="button" aria-label="Switch between light and dark">◐ Auto</button></div></div></header><script>
+(() => {
+  const modes = ["auto", "light", "dark"], labels = { auto: "◐ Auto", light: "☀ Light", dark: "☾ Dark" };
+  const b = document.querySelector(".topbar .theme");
+  let mode = "auto";
+  try { mode = localStorage.getItem("theme") || "auto"; } catch (e) {}
+  const apply = () => {
+    if (mode === "auto") document.documentElement.removeAttribute("data-theme");
+    else document.documentElement.setAttribute("data-theme", mode);
+    b.textContent = labels[mode] || labels.auto;
+    b.title = "Theme: " + mode + (mode === "auto" ? " (follows your system)" : "") + ". Click to change.";
+  };
+  b.addEventListener("click", () => {
+    mode = modes[(modes.indexOf(mode) + 1) % modes.length];
+    try { localStorage.setItem("theme", mode); } catch (e) {}
+    apply();
+  });
+  apply();
+  const rec = document.querySelector(".topbar .records");
+  if (rec) {
+    document.addEventListener("click", (e) => { if (rec.open && !rec.contains(e.target)) rec.open = false; });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape" && rec.open) { rec.open = false; rec.querySelector("summary").focus(); } });
+  }
+})();
+</script><p class="record-note">A record: the walkthrough of #192 (renders in the Part 1 document), merged on 20 November 2026. The replies after that are on GitHub.</p><!-- /topbar -->
 <div class="wrap">
 <h1>Walkthrough of PR <a href="https://github.com/opengeospatial/cartographic-symbology/pull/192">#192</a>: renders in the Part 1 document</h1>
 <p class="lede">Part 1 of OGC Cartographic Symbology 2.0 gets rendered examples on Norwegian data, with CartoSym-CSS and CartoSym-JSON next to each render, and the requirements that independent readers rendered differently get tighter wording. Pull request <a href="https://github.com/opengeospatial/cartographic-symbology/pull/192">#192</a> (branch <code>example-renders</code>); nothing here is an SWG decision until the group makes it.

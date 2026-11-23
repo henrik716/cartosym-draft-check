@@ -1,0 +1,164 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1"><title>CartoSym Draft Check</title>
+<meta name="description" content="Checks of the requirement text of OGC Cartographic Symbology 2.0 Part 1: renders, judgement calls and test cases.">
+<style>
+:root { color-scheme: light; --bg:#fbfaf7; --fg:#1f2328; --muted:#5b6370; --card:#fff; --line:#e3e0d8; --accent:#b45309; --accent-bg:#fffbeb; --badge-bg:#fde68a; --badge-fg:#92400e;
+  --json-k:#7a3e9d; --json-s:#1a7f5a; --json-n:#b35900; --json-b:#2357b0; }
+:root[data-theme="dark"] { color-scheme: dark; --bg:#16181d; --fg:#e8e6e1; --muted:#a3a9b3; --card:#1f2229; --line:#30343c; --accent:#fbbf24; --accent-bg:#422006; --badge-bg:#78350f; --badge-fg:#fde68a; --json-k:#d7a6f2; --json-s:#7fd8a9; --json-n:#f0a868; --json-b:#8fb4ff; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { color-scheme: dark; --bg:#16181d; --fg:#e8e6e1; --muted:#a3a9b3; --card:#1f2229; --line:#30343c; --accent:#fbbf24; --accent-bg:#422006; --badge-bg:#78350f; --badge-fg:#fde68a; --json-k:#d7a6f2; --json-s:#7fd8a9; --json-n:#f0a868; --json-b:#8fb4ff; } }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
+main { max-width: 1320px; margin: 0 auto; padding: 32px 16px 64px; }
+h1 { font-size: 26px; margin: 0 0 6px; } h2 { font-size: 19px; margin: 0 0 4px; }
+.lead { color: var(--muted); max-width: 760px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 20px; margin: 22px 0; }
+.reqs code { font-size: 12.5px; color: var(--muted); margin-right: 8px; }
+.question { margin: 10px 0 14px; }
+.variants { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+figure { margin: 0; } figure svg { width: 100%; height: auto; border-radius: 6px; border: 1px solid var(--line); display:block; }
+figcaption { font-size: 13.5px; margin-top: 6px; }
+.badge { display:inline-block; font-size: 11.5px; font-weight: 600; padding: 1px 7px; border-radius: 99px; background: var(--badge-bg); color: var(--badge-fg); margin-left: 6px; }
+.evidence { font-size: 13.5px; color: var(--muted); border-top: 1px solid var(--line); margin-top: 14px; padding-top: 10px; }
+details { margin-top: 8px; font-size: 13px; } pre { overflow-x: auto; background: var(--bg); padding: 10px; border-radius: 6px; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; } th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); }
+.table-wrap { overflow-x: auto; }
+.req { font-size: 13.5px; margin: 6px 0; } .req ul { margin: 4px 0 8px; padding-left: 20px; }
+.draft-text { margin: 6px 0 0; } .draft-text summary { font-size: 13.5px; }
+.sources, .kit, .note, .legend { font-size: 13px; color: var(--muted); margin: 6px 0; }
+.badge.open { background: var(--bg); color: var(--muted); border: 1px solid var(--line); font-weight: 500; vertical-align: middle; }
+.vnote { display: block; font-size: 12.5px; color: var(--muted); }
+.matrix td, .matrix th { font-size: 13.5px; vertical-align: top; }
+a { color: inherit; text-decoration: underline; text-decoration-color: var(--accent); text-decoration-thickness: 1.5px; text-underline-offset: 2px; }
+a:hover { color: var(--accent); }
+h2.group { font-size: 21px; margin: 40px 0 0; }
+.card-body { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; align-items: start; }
+@media (min-width: 1100px) { .card-body { grid-template-columns: minmax(0, 1fr) 380px; } }
+.style-pane { min-width: 0; }
+.pane-head { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); margin-bottom: 4px; flex-wrap: wrap; }
+.pane-head strong { color: var(--fg); margin-right: auto; }
+.pane-head button { font: inherit; font-size: 12px; padding: 2px 8px; border-radius: 6px; border: 1px solid var(--line); background: var(--card); color: var(--fg); cursor: pointer; }
+.json { max-height: 460px; overflow: auto; font: 12px/1.45 ui-monospace, Consolas, monospace; margin: 0; }
+.json .k { color: var(--json-k); } .json .s { color: var(--json-s); } .json .n { color: var(--json-n); } .json .b { color: var(--json-b); }
+
+[id] { scroll-margin-top: 64px; }
+.topbar { position: sticky; top: 0; z-index: 10; background: var(--card); border-bottom: 1px solid var(--line);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; line-height: 1.4; }
+.topbar-in { max-width: 1600px; margin: 0 auto; padding: 8px 16px; display: flex; align-items: center; gap: 6px 14px; flex-wrap: wrap; }
+.topbar .brand { font-weight: 600; margin-right: 6px; color: var(--fg); text-decoration: none; font-size: 15px; }
+.topbar .brand:hover { color: var(--accent); }
+.topbar nav { position: static; max-height: none; overflow: visible; display: flex; gap: 4px; flex-wrap: wrap; align-items: center; font-size: 14px; }
+.topbar nav a, .topbar .records summary { padding: 4px 10px; border-radius: 6px; text-decoration: none; color: var(--fg); font-size: 14px; }
+.topbar nav a:hover, .topbar .records summary:hover { background: var(--bg); }
+.topbar nav a.active, .topbar .records.active summary { background: var(--accent-bg); color: var(--fg); font-weight: 600; box-shadow: inset 0 -2px 0 var(--accent); }
+.topbar .records { position: relative; display: flex; align-items: center; margin-left: 6px; padding-left: 10px; border-left: 1px solid var(--line); }
+.topbar .records summary { cursor: pointer; list-style: none; display: block; }
+.topbar .records summary::-webkit-details-marker { display: none; }
+.topbar .records summary::after { content: " ▾"; color: var(--muted); font-size: 12px; }
+.topbar .records .menu { position: absolute; top: calc(100% + 6px); left: 0; z-index: 11; width: min(360px, calc(100vw - 32px));
+  background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 6px; box-shadow: 0 6px 24px rgba(0,0,0,.14); }
+.topbar .records .menu a { display: block; padding: 6px 10px; }
+.topbar .records .menu a small { display: block; color: var(--muted); font-size: 12px; font-weight: 400; line-height: 1.35; }
+.topbar .records .menu a.active { box-shadow: inset 2px 0 0 var(--accent); }
+.topbar .tools { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+.topbar .theme { font: inherit; font-size: 13px; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--line);
+  background: var(--card); color: var(--fg); cursor: pointer; white-space: nowrap; }
+.topbar .jump { max-width: 320px; font: inherit; font-size: 13px; padding: 4px 6px; border-radius: 6px;
+  border: 1px solid var(--line); background: var(--card); color: var(--fg); }
+.record-note { max-width: 1600px; margin: 0 auto; padding: 6px 16px; font-size: 13px; color: var(--muted);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+@media (max-width: 640px) {
+  .topbar .tools { margin-left: 0; }
+  .topbar .records { margin-left: 0; padding-left: 0; border-left: 0; }
+  .topbar .jump { max-width: 100%; }
+}
+
+.layout { max-width: 1600px; margin: 0 auto; }
+.toc { display: none; }
+@media (min-width: 1500px) {
+  .layout.has-toc { display: grid; grid-template-columns: 250px minmax(0, 1fr); }
+  .layout.has-toc .toc { display: block; position: sticky; top: 50px; align-self: start; max-height: calc(100vh - 60px);
+    overflow: auto; padding: 28px 8px 24px 16px; font-size: 13px; }
+  body.has-toc .jump { display: none; }
+  .layout.has-toc main { margin: 0; width: 100%; }
+}
+.toc a { display: block; padding: 2px 8px; border-radius: 5px; color: var(--muted); text-decoration: none; line-height: 1.35; margin: 1px 0; }
+.toc a:hover { color: var(--fg); background: var(--bg); }
+.toc a.current { color: var(--fg); background: var(--accent-bg); box-shadow: inset 2px 0 0 var(--accent); }
+.toc .toc-group { font-weight: 600; color: var(--fg); margin-top: 12px; }
+.toc .open-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; border: 1px solid var(--muted); margin-left: 5px; vertical-align: middle; }
+.permalink { margin-left: 8px; font-size: 15px; color: var(--muted); text-decoration: none; opacity: .5; }
+.permalink:hover, .permalink.copied { opacity: 1; color: var(--accent); }
+.up { margin-left: 10px; font-size: 13px; white-space: nowrap; }
+
+main { max-width: 1100px; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin: 22px 0; }
+.tile { display: block; background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px;
+  color: var(--fg); text-decoration: none; }
+a.tile:hover { border-color: var(--accent); }
+.tile h2 { margin: 0 0 6px; font-size: 18px; }
+a.tile h2 { color: var(--accent); }
+.tile p { margin: 0 0 8px; font-size: 14px; color: var(--muted); }
+.tile ul { margin: 6px 0 0; padding-left: 18px; font-size: 14px; }
+.tile li { margin: 3px 0; }
+.standing { font-size: 14.5px; }
+footer.site { margin: 40px 0 24px; padding-top: 14px; border-top: 1px solid var(--line); font-size: 13px; color: var(--muted); }
+</style></head><body>
+<header class="topbar"><div class="topbar-in"><a class="brand" href="index.html" aria-current="page">CartoSym draft check</a><nav aria-label="Pages"><a href="gallery/requirements.html">Requirements</a><a href="gallery/index.html">Judgement calls</a><a href="gallery/passes.html">Rendering passes</a><a href="gallery/playground.html">Playground</a><details class="records"><summary>Records</summary><div class="menu"><a href="gallery/pr133-requirements-walkthrough.html">#133 walkthrough<small>The Part 1 requirements class by class, as prepared for the SWG meeting of 13 November 2026, where #133 was merged</small></a><a href="gallery/pr192-renders-walkthrough.html">#192 walkthrough<small>The examples and figures in the Part 1 document, and the wording checked with independent renderers</small></a><a href="https://github.com/henrik716/cartosym-draft-check/blob/main/reports/wording-decisions.md">Wording decisions<small>For each requirement whose wording #192 tightened: the text before, how each reader rendered it, the reading proposed</small></a><a href="https://github.com/henrik716/cartosym-draft-check/tree/main/reports/independent">Independent renders<small>Renderers and expression evaluators written from the requirement text alone, with their notes and images</small></a><a href="https://github.com/henrik716/cartosym-draft-check/blob/main/reports/libcartosym-main/report.md">Expression test report<small>Every test case with each implementation&#x27;s full output, against the latest libCartoSym (CI)</small></a></div></details></nav><div class="tools"><button class="theme" type="button" aria-label="Switch between light and dark">◐ Auto</button></div></div></header><script>
+(() => {
+  const modes = ["auto", "light", "dark"], labels = { auto: "◐ Auto", light: "☀ Light", dark: "☾ Dark" };
+  const b = document.querySelector(".topbar .theme");
+  let mode = "auto";
+  try { mode = localStorage.getItem("theme") || "auto"; } catch (e) {}
+  const apply = () => {
+    if (mode === "auto") document.documentElement.removeAttribute("data-theme");
+    else document.documentElement.setAttribute("data-theme", mode);
+    b.textContent = labels[mode] || labels.auto;
+    b.title = "Theme: " + mode + (mode === "auto" ? " (follows your system)" : "") + ". Click to change.";
+  };
+  b.addEventListener("click", () => {
+    mode = modes[(modes.indexOf(mode) + 1) % modes.length];
+    try { localStorage.setItem("theme", mode); } catch (e) {}
+    apply();
+  });
+  apply();
+  const rec = document.querySelector(".topbar .records");
+  if (rec) {
+    document.addEventListener("click", (e) => { if (rec.open && !rec.contains(e.target)) rec.open = false; });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape" && rec.open) { rec.open = false; rec.querySelector("summary").focus(); } });
+  }
+})();
+</script>
+<div class="layout"><main>
+<h1>Checking the CartoSym 2.0 requirements</h1>
+<p class="lead">A renderer, an expression evaluator and test cases that follow the requirement text of
+<a href="https://github.com/opengeospatial/cartographic-symbology">OGC Cartographic Symbology 2.0</a> Part 1 (and the Part 2 gradient fills), used to check the text while
+it is being written: where it leaves a choice open, where readers draw different maps from it, and where implementations
+differ from it. What they show are proposals for the Cartographic Symbology SWG, not decisions.</p>
+
+<div class="tiles">
+<a class="tile" href="gallery/requirements.html"><h2>Requirements</h2>
+<p>All 142 requirements, recommendations and permissions, each with its text and how it is checked: a render, test
+cases run through three implementations, or a note.</p></a>
+<a class="tile" href="gallery/index.html"><h2>Judgement calls</h2>
+<p>23 places where the text leaves (or left) a choice, each drawn every way, with a decision matrix of
+proposed resolutions and where each stands on GitHub. In 2 the text still makes no choice.</p></a>
+<a class="tile" href="gallery/passes.html"><h2>Rendering passes</h2>
+<p>Test cases for how passes, <code>zOrder</code>, casings and nested rules decide what is drawn on top, each with a
+render kit for other software.</p></a>
+<a class="tile" href="gallery/playground.html"><h2>Playground</h2>
+<p>Edit the style of any card or sample and see the draft renderer draw it again, in your browser.</p></a>
+</div>
+
+<section class="card standing"><h2>Where things stand</h2>
+<p>The requirement text is from <code>origin/main</code> at
+<code>fefe225</code>. On the 135 expression test cases, the draft renderer (132 cases), libCartoSym main at e9342b6 (119) and pycartosym 0.6.5 (119, converting rather than evaluating) all give what the text says (run on 2026-11-21). The draft renderer implements the text itself, so its
+results show that it matches the text, not that the text is right; the independent renders in the records are there
+for that.</p></section>
+
+<section class="card"><h2>Records</h2>
+<p>The walkthroughs of earlier pull requests, kept as they were presented, and the full records behind the pages:</p><ul><li><a href="gallery/pr133-requirements-walkthrough.html">#133 walkthrough</a>: The Part 1 requirements class by class, as prepared for the SWG meeting of 13 November 2026, where #133 was merged</li><li><a href="gallery/pr192-renders-walkthrough.html">#192 walkthrough</a>: The examples and figures in the Part 1 document, and the wording checked with independent renderers</li><li><a href="https://github.com/henrik716/cartosym-draft-check/blob/main/reports/wording-decisions.md">Wording decisions</a>: For each requirement whose wording #192 tightened: the text before, how each reader rendered it, the reading proposed</li><li><a href="https://github.com/henrik716/cartosym-draft-check/tree/main/reports/independent">Independent renders</a>: Renderers and expression evaluators written from the requirement text alone, with their notes and images</li><li><a href="https://github.com/henrik716/cartosym-draft-check/blob/main/reports/libcartosym-main/report.md">Expression test report</a>: Every test case with each implementation&#x27;s full output, against the latest libCartoSym (CI)</li></ul></section>
+
+<footer class="site">Made by Henrik Gulliksen Schüller, Part 1 editor, with Claude (Anthropic) as a coding assistant.
+Code under the MIT licence: <a href="https://github.com/henrik716/cartosym-draft-check">github.com/henrik716/cartosym-draft-check</a>. Map and elevation data © Kartverket,
+CC BY 4.0; contains modified Copernicus Sentinel data 2024.</footer>
+</main></div></body></html>

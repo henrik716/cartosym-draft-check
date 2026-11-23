@@ -57,19 +57,37 @@ main { max-width: 1320px; }
 button { font: inherit; font-size: 13px; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--line); background: var(--card); color: var(--fg); cursor: pointer; }
 
 [id] { scroll-margin-top: 64px; }
-.topbar { position: sticky; top: 0; z-index: 10; background: var(--card); border-bottom: 1px solid var(--line); }
-.topbar-in { max-width: 1600px; margin: 0 auto; padding: 8px 16px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
-.topbar .brand { font-weight: 600; margin-right: 6px; }
-.topbar nav { display: flex; gap: 4px; flex-wrap: wrap; align-items: center; }
-.topbar nav .navgroup { margin-left: 10px; padding-left: 12px; border-left: 1px solid var(--line); font-size: 13px; color: var(--muted); }
-.topbar nav a { padding: 4px 10px; border-radius: 6px; text-decoration: none; color: var(--fg); font-size: 14px; }
-.topbar nav a:hover { background: var(--bg); }
-.topbar nav a.active { background: var(--accent-bg); color: var(--fg); font-weight: 600; box-shadow: inset 0 -2px 0 var(--accent); }
+.topbar { position: sticky; top: 0; z-index: 10; background: var(--card); border-bottom: 1px solid var(--line);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; line-height: 1.4; }
+.topbar-in { max-width: 1600px; margin: 0 auto; padding: 8px 16px; display: flex; align-items: center; gap: 6px 14px; flex-wrap: wrap; }
+.topbar .brand { font-weight: 600; margin-right: 6px; color: var(--fg); text-decoration: none; font-size: 15px; }
+.topbar .brand:hover { color: var(--accent); }
+.topbar nav { position: static; max-height: none; overflow: visible; display: flex; gap: 4px; flex-wrap: wrap; align-items: center; font-size: 14px; }
+.topbar nav a, .topbar .records summary { padding: 4px 10px; border-radius: 6px; text-decoration: none; color: var(--fg); font-size: 14px; }
+.topbar nav a:hover, .topbar .records summary:hover { background: var(--bg); }
+.topbar nav a.active, .topbar .records.active summary { background: var(--accent-bg); color: var(--fg); font-weight: 600; box-shadow: inset 0 -2px 0 var(--accent); }
+.topbar .records { position: relative; display: flex; align-items: center; margin-left: 6px; padding-left: 10px; border-left: 1px solid var(--line); }
+.topbar .records summary { cursor: pointer; list-style: none; display: block; }
+.topbar .records summary::-webkit-details-marker { display: none; }
+.topbar .records summary::after { content: " ▾"; color: var(--muted); font-size: 12px; }
+.topbar .records .menu { position: absolute; top: calc(100% + 6px); left: 0; z-index: 11; width: min(360px, calc(100vw - 32px));
+  background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 6px; box-shadow: 0 6px 24px rgba(0,0,0,.14); }
+.topbar .records .menu a { display: block; padding: 6px 10px; }
+.topbar .records .menu a small { display: block; color: var(--muted); font-size: 12px; font-weight: 400; line-height: 1.35; }
+.topbar .records .menu a.active { box-shadow: inset 2px 0 0 var(--accent); }
 .topbar .tools { margin-left: auto; display: flex; gap: 8px; align-items: center; }
 .topbar .theme { font: inherit; font-size: 13px; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--line);
   background: var(--card); color: var(--fg); cursor: pointer; white-space: nowrap; }
 .topbar .jump { max-width: 320px; font: inherit; font-size: 13px; padding: 4px 6px; border-radius: 6px;
   border: 1px solid var(--line); background: var(--card); color: var(--fg); }
+.record-note { max-width: 1600px; margin: 0 auto; padding: 6px 16px; font-size: 13px; color: var(--muted);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+@media (max-width: 640px) {
+  .topbar .tools { margin-left: 0; }
+  .topbar .records { margin-left: 0; padding-left: 0; border-left: 0; }
+  .topbar .jump { max-width: 100%; }
+}
+
 .layout { max-width: 1600px; margin: 0 auto; }
 .toc { display: none; }
 @media (min-width: 1500px) {
@@ -88,7 +106,7 @@ button { font: inherit; font-size: 13px; padding: 4px 10px; border-radius: 6px; 
 .permalink:hover, .permalink.copied { opacity: 1; color: var(--accent); }
 .up { margin-left: 10px; font-size: 13px; white-space: nowrap; }
 </style></head><body>
-<header class="topbar"><div class="topbar-in"><span class="brand">CartoSym draft check</span><nav aria-label="Pages"><a href="index.html">Gallery</a><a href="requirements.html">Requirements</a><a href="playground.html" class="active">Playground</a><a href="passes.html">Passes</a><span class="navgroup">Walkthroughs:</span><a href="pr133-requirements-walkthrough.html" title="Walkthrough of PR #133, the Part 1 requirements, for the SWG meeting of 13 November 2026 (merged there)">#133 requirements</a><a href="pr192-renders-walkthrough.html" title="Walkthrough of PR #192: the examples and figures in the Part 1 document, and the wording checked with independent renderers">#192 renders</a></nav><div class="tools"><button class="theme" type="button" aria-label="Switch between light and dark">◐ Auto</button></div></div></header><script>
+<header class="topbar"><div class="topbar-in"><a class="brand" href="../index.html">CartoSym draft check</a><nav aria-label="Pages"><a href="requirements.html">Requirements</a><a href="index.html">Judgement calls</a><a href="passes.html">Rendering passes</a><a href="playground.html" class="active" aria-current="page">Playground</a><details class="records"><summary>Records</summary><div class="menu"><a href="pr133-requirements-walkthrough.html">#133 walkthrough<small>The Part 1 requirements class by class, as prepared for the SWG meeting of 13 November 2026, where #133 was merged</small></a><a href="pr192-renders-walkthrough.html">#192 walkthrough<small>The examples and figures in the Part 1 document, and the wording checked with independent renderers</small></a><a href="https://github.com/henrik716/cartosym-draft-check/blob/main/reports/wording-decisions.md">Wording decisions<small>For each requirement whose wording #192 tightened: the text before, how each reader rendered it, the reading proposed</small></a><a href="https://github.com/henrik716/cartosym-draft-check/tree/main/reports/independent">Independent renders<small>Renderers and expression evaluators written from the requirement text alone, with their notes and images</small></a><a href="https://github.com/henrik716/cartosym-draft-check/blob/main/reports/libcartosym-main/report.md">Expression test report<small>Every test case with each implementation&#x27;s full output, against the latest libCartoSym (CI)</small></a></div></details></nav><div class="tools"><button class="theme" type="button" aria-label="Switch between light and dark">◐ Auto</button></div></div></header><script>
 (() => {
   const modes = ["auto", "light", "dark"], labels = { auto: "◐ Auto", light: "☀ Light", dark: "☾ Dark" };
   const b = document.querySelector(".topbar .theme");
@@ -106,6 +124,11 @@ button { font: inherit; font-size: 13px; padding: 4px 10px; border-radius: 6px; 
     apply();
   });
   apply();
+  const rec = document.querySelector(".topbar .records");
+  if (rec) {
+    document.addEventListener("click", (e) => { if (rec.open && !rec.contains(e.target)) rec.open = false; });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape" && rec.open) { rec.open = false; rec.querySelector("summary").focus(); } });
+  }
 })();
 </script>
 <main>
