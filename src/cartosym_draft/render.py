@@ -500,13 +500,44 @@ class _Item:
 
 
 # Rendering passes (clause 7, Visualization Rendering Passes; clause 8, Feature Rendering Passes). The passes are
-# the values a style tests (Jérôme on #198); the draft renderer finds them by trying each value in PASSES, for
-# styles that refer to the pass at all. A rule that does not test the pass is evaluated in every pass, but a
+# the values a style tests (Jérôme on #198); the draft renderer finds them by trying each value in PASSES and
+# each value the style compares the pass with and its neighbours (for < and >, e.g. the bands 100, 200 of an
+# XPlanung style), for styles that refer to the pass at all. A rule that does not test the pass is evaluated in every pass, but a
 # feature is drawn in a pass other than 0 only if a selected rule testing that pass sets Symbolizer properties
 # (Jérôme on #207 and #211: "only a rule that checks viz.pass is automatically rendered").
 VIZ_PASS = frozenset({"viz.pass", "visualization.pass"})
 FEATURE_PASS = frozenset({"feature.pass"})
 PASSES = range(-8, 33)
+
+
+def _passes(style: dict, ids: frozenset[str]) -> list[int]:
+    """The passes to try for the System Identifiers *ids*: PASSES, and each integer the style compares them with,
+    with its neighbours; [0] if the style doesn't refer to them."""
+    if not references(style, ids):
+        return [0]
+    found = set(PASSES)
+
+    def numbers(v):
+        if isinstance(v, (int, float)) and not isinstance(v, bool) and float(v).is_integer():
+            yield int(v)
+        elif isinstance(v, list):
+            for x in v:
+                yield from numbers(x)
+
+    def walk(o):
+        if isinstance(o, dict):
+            args = o.get("args")
+            if isinstance(args, list) and any(isinstance(a, dict) and a.get("sysId") in ids for a in args):
+                for a in args:
+                    found.update(n + d for n in numbers(a) for d in (-1, 0, 1))
+            for v in o.values():
+                walk(v)
+        elif isinstance(o, list):
+            for v in o:
+                walk(v)
+
+    walk(style)
+    return sorted(found)
 
 
 # ----------------------------------------------------------------- labels
@@ -667,8 +698,8 @@ def render(style: dict, layers: list[Layer], view: View, opts: Options | None = 
     labels: list[_Label] = []
     seq = 0
     labelled: set[int] = set()  # id() of the features that have their label
-    viz_passes = PASSES if references(style, VIZ_PASS) else [0]
-    feature_passes = PASSES if references(style, FEATURE_PASS) else [0]
+    viz_passes = _passes(style, VIZ_PASS)
+    feature_passes = _passes(style, FEATURE_PASS)
     for layer in layers:
         system = {"viz.sd": view.scale_denominator, "visualization.scaleDenominator": view.scale_denominator,
                   "dataLayer.id": layer.id, "dataLayer.identifier": layer.id, "dataLayer.type": layer.type,
