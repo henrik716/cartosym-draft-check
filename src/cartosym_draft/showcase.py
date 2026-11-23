@@ -18,6 +18,7 @@ from pathlib import Path
 from PIL import Image
 
 from .doc_examples import EXAMPLES, GALLERY_EXAMPLES, REQUIREMENT_EXAMPLES, DocExample
+from .highlight import CSS as HIGHLIGHT_CSS, cscss
 from .nav import NAV_CSS, NAV_SCRIPT, permalink, toc, topbar
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -155,7 +156,7 @@ def build(found: dict) -> str:
             f'{img_tag(shown, ex.title, lazy=i > 0, sizes="(min-width: 1100px) 800px, 100vw")}</a><div class="body">'
             f'<h2>{f"<span class=num>Example {n}</span>" if n else ""}{html.escape(ex.title)}{permalink(ex.name)}</h2>'
             f'{notes}<p class="meta">{" · ".join(links)}</p>'
-            f'<details open><summary>The style, in CartoSym-CSS</summary><pre>{html.escape(css.rstrip())}</pre></details>'
+            f'<details open><summary>The style, in CartoSym-CSS</summary><pre class="cscss">{cscss(css.rstrip())}</pre></details>'
             f"</div></section>")
     vig = "".join(
         f'<a href="requirements.html#r{ex.requirements[0].replace("/", "-")}">'
@@ -171,7 +172,7 @@ def build(found: dict) -> str:
     return f"""<!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1"><title>CartoSym Examples</title>
 <meta name="description" content="The example maps of OGC CartoSym 2.0 Part 1, drawn on Norwegian data by the draft renderer.">
-<style>{_css()}{NAV_CSS}{EXTRA_CSS}</style></head><body class="has-toc">
+<style>{_css()}{NAV_CSS}{EXTRA_CSS}{HIGHLIGHT_CSS}</style></head><body class="has-toc">
 {topbar("examples.html", [(a, label) for a, label, _ in contents if a])}
 <div class="layout has-toc">{toc(contents)}<main>
 <h1>Examples</h1>

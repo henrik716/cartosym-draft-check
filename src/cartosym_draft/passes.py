@@ -374,6 +374,7 @@ def _md_inline(text: str) -> str:
 
 def _page(rendered) -> str:
     from .gallery import CSS
+    from .highlight import CSS as HIGHLIGHT_CSS, cscss
     from .nav import NAV_CSS, NAV_SCRIPT, permalink, toc, topbar
 
     contents = [(case.key, case.title.replace("`", ""), bool(case.question)) for case, _, _ in rendered]
@@ -391,12 +392,12 @@ def _page(rendered) -> str:
             f'<section class="card" id="{case.key}"><h2>{case.name}: {_md_inline(case.title)}{open_tag if case.question else ""}{permalink(case.key)}</h2>'
             + (f'<p class="question"><strong>Open question.</strong> {_md_inline(case.question)}</p>' if case.question else "")
             + f'<div class="card-body"><div class="variants">{figs}</div>'
-            f'<pre class="css">{html.escape(case.css.rstrip())}</pre></div>'
+            f'<pre class="css cscss">{cscss(case.css.rstrip())}</pre></div>'
             f'<p class="question"><strong>What should be drawn.</strong> {_md_inline(case.expected)}</p>'
             f'<p class="kit">Render it yourself: {links}</p></section>')
     return f"""<!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1"><title>CartoSym Rendering Passes</title>
-<style>{CSS}{NAV_CSS} pre.css {{ white-space: pre-wrap; font-size: 12px; margin: 0; flex: 1 1 320px; }}</style></head>
+<style>{CSS}{NAV_CSS}{HIGHLIGHT_CSS} pre.css {{ white-space: pre-wrap; font-size: 12px; margin: 0; flex: 1 1 320px; }}</style></head>
 <body class="has-toc">
 {topbar("passes.html", [(a, label) for a, label, _ in contents])}
 <div class="layout has-toc">{toc(contents)}<main>
