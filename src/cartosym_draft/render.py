@@ -677,7 +677,7 @@ _DIMENSIONS = {"Point": 0, "MultiPoint": 0, "LineString": 1, "MultiLineString": 
 
 
 def _geometry_dimensions(layer: Layer) -> int | None:
-    """dataLayer.featuresGeometryDimensions: the dimension of the layer's geometries, if they all have the same one."""
+    """dataLayer.featuresGeometryDimension: the dimension of the layer's geometries, if they all have the same one."""
     if layer.type != "vector" or not layer.features:
         return None
     dims = {_DIMENSIONS.get((f.get("geometry") or {}).get("type")) for f in layer.features}
@@ -706,7 +706,8 @@ def render(style: dict, layers: list[Layer], view: View, opts: Options | None = 
                   "viz.pass": 0, "visualization.pass": 0, "feature.pass": 0, **CAPABILITIES, **view.system}
         dims = _geometry_dimensions(layer)
         if dims is not None:
-            system["dataLayer.featuresGeometryDimensions"] = dims
+            # Singular since #242; the plural is what main had before, kept so older styles still work.
+            system["dataLayer.featuresGeometryDimension"] = system["dataLayer.featuresGeometryDimensions"] = dims
         if layer.type == "coverage" and layer.grid is not None:
             result = portray(style, layer.grid, system, opts)
             if result:
@@ -721,6 +722,9 @@ def render(style: dict, layers: list[Layer], view: View, opts: Options | None = 
         for feat, vp, fp in ((f, vp, fp) for f in layer.features for vp in viz_passes for fp in feature_passes):
             first = vp == 0 and fp == 0  # labels and NULL reports come from pass 0 only
             passes = {"viz.pass": vp, "visualization.pass": vp, "feature.pass": fp}
+            dim = _DIMENSIONS.get((feat.get("geometry") or {}).get("type"))
+            if dim is not None:
+                passes["feature.geometryDimension"] = passes["feature.geometryDimensions"] = dim
             ctx = Context(properties=feat.get("properties") or {}, system={**system, **passes}, options=opts,
                           variables=view.variables, null_reports=null_reports if first else None)
             tested: set[str] = set()
