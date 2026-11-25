@@ -44,3 +44,10 @@ Pull requests to [henrik716/cartosym-draft-check](https://github.com/henrik716/c
 other software (e.g. `qgis-render.png`), with a line here on what it can't express.
 
 - QGIS 4.2.3 (`qgis-render*.png`, set up and rendered by [`qgis/render_kits.py`](../../../qgis/render_kits.py)): Black and white are line layers at rendering pass 0, drawn one feature at a time; red is at pass 1.
+
+## SLD/SE and MapLibre
+
+Written by pycartosym (main, after 0.6.6) from the style, as `cartosym <style>.cscss --to-format sld|maplibre`. They show what the two formats do with the case; they are not renders.
+
+- `style.cscss`, SLD/SE: `style.sld`
+- `style.cscss`, MapLibre: not written, the writer refuses it: `feature.pass` in a selector is not a plain property, and a MapLibre filter needs one

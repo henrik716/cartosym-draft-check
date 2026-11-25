@@ -57,3 +57,12 @@ Pull requests to [henrik716/cartosym-draft-check](https://github.com/henrik716/c
 other software (e.g. `qgis-render.png`), with a line here on what it can't express.
 
 - QGIS 4.2.3 (`qgis-render*.png`, set up and rendered by [`qgis/render_kits.py`](../../../qgis/render_kits.py)): The two strokes are line layers of one symbol at the same rendering pass, which QGIS draws one feature at a time, as `feature.pass` does. `qgis-render-wide.png` is `style-wide`.
+
+## SLD/SE and MapLibre
+
+Written by pycartosym (main, after 0.6.6) from the style, as `cartosym <style>.cscss --to-format sld|maplibre`. They show what the two formats do with the case; they are not renders.
+
+- `style.cscss`, SLD/SE: `style.sld`
+- `style.cscss`, MapLibre: not written, the writer refuses it: a rule with no name or data layer has no MapLibre layer id, and `feature.pass` has no mapping (a layer draws all its features)
+- `style-wide.cscss`, SLD/SE: `style-wide.sld`
+- `style-wide.cscss`, MapLibre: not written, the writer refuses it: a rule with no name or data layer has no MapLibre layer id, and `feature.pass` has no mapping (a layer draws all its features)

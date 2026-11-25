@@ -50,3 +50,10 @@ Pull requests to [henrik716/cartosym-draft-check](https://github.com/henrik716/c
 other software (e.g. `qgis-render.png`), with a line here on what it can't express.
 
 - QGIS 4.2.3 (`qgis-render*.png`, set up and rendered by [`qgis/render_kits.py`](../../../qgis/render_kits.py)): `qgis-render.png` puts both data layers in one map layer (a memory layer with a rule per data layer), so the casings at rendering pass 0 go beneath all main strokes. `qgis-render-each-data-layer-complete-before-the-next.png` has a map layer per data layer, which is what QGIS draws without that merge.
+
+## SLD/SE and MapLibre
+
+Written by pycartosym (main, after 0.6.6) from the style, as `cartosym <style>.cscss --to-format sld|maplibre`. They show what the two formats do with the case; they are not renders.
+
+- `style.cscss`, SLD/SE: not written, the writer refuses it: `Stroke.casing` has no SLD/SE mapping
+- `style.cscss`, MapLibre: not written, the writer refuses it: `stroke.casing` has no MapLibre mapping

@@ -54,3 +54,10 @@ Pull requests to [henrik716/cartosym-draft-check](https://github.com/henrik716/c
 other software (e.g. `qgis-render.png`), with a line here on what it can't express.
 
 - QGIS 4.2.3 (`qgis-render*.png`, set up and rendered by [`qgis/render_kits.py`](../../../qgis/render_kits.py)): QGIS draws all labels after all map layers, so it can only draw the first reading, each label once. DejaVu Sans Bold stands in for Arial, which isn't installed; the size is read as 11 pt. The labels are anchored strictly at the middle of their line: otherwise QGIS moves Road 1's label along the line, away from the crossing, and draws Road 2's as well.
+
+## SLD/SE and MapLibre
+
+Written by pycartosym (main, after 0.6.6) from the style, as `cartosym <style>.cscss --to-format sld|maplibre`. They show what the two formats do with the case; they are not renders.
+
+- `style.cscss`, SLD/SE: `style.sld`
+- `style.cscss`, MapLibre: not written, the writer refuses it: `Font.bold` has no MapLibre mapping

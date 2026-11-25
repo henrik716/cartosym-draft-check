@@ -43,3 +43,10 @@ Pull requests to [henrik716/cartosym-draft-check](https://github.com/henrik716/c
 other software (e.g. `qgis-render.png`), with a line here on what it can't express.
 
 - QGIS 4.2.3 (`qgis-render*.png`, set up and rendered by [`qgis/render_kits.py`](../../../qgis/render_kits.py)): Zones and Roads are separate map layers, Zones beneath. QGIS's rendering passes order only within a map layer, which this case doesn't need.
+
+## SLD/SE and MapLibre
+
+Written by pycartosym (main, after 0.6.6) from the style, as `cartosym <style>.cscss --to-format sld|maplibre`. They show what the two formats do with the case; they are not renders.
+
+- `style.cscss`, SLD/SE: `style.sld`
+- `style.cscss`, MapLibre: `style.maplibre.json`
