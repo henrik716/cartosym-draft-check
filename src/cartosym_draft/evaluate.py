@@ -110,8 +110,18 @@ def _accenti(s: str) -> str:
     return "".join(kept).translate(_DIACRITIC_FOLDING)
 
 
+def _power(a, b):
+    """/req/arithmetic/pow, /req/math/pow: NULL for 0 to a negative power, or a negative number to a power that
+    is not an integer (#216)."""
+    if (a == 0 and b < 0) or (a < 0 and not float(b).is_integer()):
+        return None
+    return a ** b
+
+
 def _divide(a, b, opts: Options):
     a, b = _num(a), _num(b)
+    if b == 0:  # /req/arithmetic/div: NULL (#155)
+        return None
     if opts.division == "integer-if-both-integers" and isinstance(a, int) and isinstance(b, int):
         return int(a / b)  # truncates toward zero, as C does
     return a / b
@@ -185,6 +195,20 @@ def _operation(op: str, args: list, ctx: Context) -> Any:
     if op_l == "isnull":
         return v[0] is None
 
+    # /req/core/relational (#155): an empty list gives false, even for NULL; a NULL element makes a value not
+    # found among the others NULL, as in SQL.
+    if op_l == "in":
+        items = v[1]
+        if items is None:
+            return None
+        if not items:
+            return False
+        if v[0] is None:
+            return None
+        if any(x is not None and x == v[0] for x in items):
+            return True
+        return None if any(x is None for x in items) else False
+
     # A null operand gives null, as CQL2 (/req/core/operations).
     if any(x is None for x in v):
         return None
@@ -207,10 +231,8 @@ def _operation(op: str, args: list, ctx: Context) -> Any:
         return {"<": v[0] < v[1], ">": v[0] > v[1], "<=": v[0] <= v[1], ">=": v[0] >= v[1]}[op_l]
     if op_l == "between":
         return v[1] <= v[0] <= v[2]
-    if op_l == "in":
-        return v[0] in v[1]
 
-    # Arithmetic (/req/arithmetic/*)
+    # Arithmetic (/req/arithmetic/*); a division by zero gives NULL (#155, #216).
     if op_l == "+":
         return _num(v[0]) + _num(v[1])
     if op_l == "-":
@@ -220,12 +242,16 @@ def _operation(op: str, args: list, ctx: Context) -> Any:
     if op_l == "/":
         return _divide(v[0], v[1], ctx.options)
     if op_l in ("div", "//"):
+        if _num(v[1]) == 0:
+            return None
         return int(_num(v[0]) / _num(v[1]))  # truncation toward zero
     if op_l in ("%", "mod"):
+        if _num(v[1]) == 0:
+            return None
         return math.fmod(_num(v[0]), _num(v[1])) if isinstance(v[0], float) or isinstance(v[1], float) \
             else int(math.fmod(v[0], v[1]))  # sign of the first operand
     if op_l == "^":
-        return _num(v[0]) ** _num(v[1])
+        return _power(_num(v[0]), _num(v[1]))
 
     # Text relation (/req/text-relation/*)
     if op_l == "like":
@@ -280,11 +306,14 @@ def _call_function(op_l: str, v: list) -> Any:
         "round": lambda x: int(math.copysign(math.floor(abs(x) + 0.5), x)),
     }
     if op_l in unary:
-        return unary[op_l](_num(v[0]))
+        try:
+            return unary[op_l](_num(v[0]))
+        except ValueError:  # outside the domain: sqrt, log and log10, acos and asin (#216)
+            return None
     if op_l == "atan2":
         return math.atan2(_num(v[0]), _num(v[1]))
     if op_l == "pow":
-        return _num(v[0]) ** _num(v[1])
+        return _power(_num(v[0]), _num(v[1]))
     if op_l in ("max", "min"):
         # /req/math/max, /req/math/min: one or more arguments (#192); none is a wrong call, so NULL.
         if not v:

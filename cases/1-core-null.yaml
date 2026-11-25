@@ -23,7 +23,8 @@
 # schema, explicit or inferred from the data) but this feature has no value for is NULL, as a coverage
 # cell with NODATA is: the two `null-property-missing` cases below. A property the logical schema does not
 # have at all is unresolved; Part 1 does not yet say what an unresolved identifier evaluates to, and the
-# harness has no logical schema, so there is no case for it (to settle in the NULL text, #155).
+# harness has no logical schema, so there is no case for it (not discussed on #155, and left out of the
+# NULL PR).
 - {id: null-literal, requirement: /req/core/literals, kind: expression, input: "null", json: null, expect: "null"}
 - {id: null-literal-is-null, requirement: /req/core/literals, kind: expression, input: "null is null", json: {op: isNull, args: [null]}, expect: "true"}
 - {id: null-property-named-null, requirement: /req/core/expressions-field-identifiers, kind: expression, draft_only: true, input: "\"null\"", json: {property: "null"}, properties: {"null": 5}, expect: 5}
@@ -35,3 +36,29 @@
    note: "The data layer has a property named null; this feature has no value for it."}
 - {id: null-property-named-true,requirement: /req/core/expressions-field-identifiers, kind: expression, draft_only: true, input: "\"true\"", json: {property: "true"}, properties: {"true": false}, expect: "false"}
 - {id: null-property-named-false, requirement: /req/core/expressions-field-identifiers, kind: expression, draft_only: true, input: "\"false\"", json: {property: "false"}, properties: {"false": true}, expect: "true"}
+
+# `in` with NULL and with an empty list (#155, Jérôme 2026-11-17; as libCartoSym 32d4590): a NULL element
+# makes a value not found among the others NULL, as in SQL; an empty list gives false, even for NULL. CQL2
+# requires at least one element in the list, so the empty list extends it.
+- {id: null-in-null-element, requirement: /req/core/relational, kind: expression, input: "5 in (1, null)", json: {op: in, args: [5, [1, null]]}, expect: "null"}
+- {id: null-in-found-with-null-element, requirement: /req/core/relational, kind: expression, input: "1 in (1, null)", json: {op: in, args: [1, [1, null]]}, expect: "true"}
+- {id: null-in-empty-list, requirement: /req/core/relational, kind: expression, input: "5 in ()", json: {op: in, args: [5, []]}, expect: "false"}
+- {id: null-null-in-empty-list, requirement: /req/core/relational, kind: expression, input: "null in ()", json: {op: in, args: [null, []]}, expect: "false"}
+- {id: null-null-not-in-empty-list, requirement: /req/core/relational, kind: expression, input: "null not in ()", json: {op: not, args: [{op: in, args: [null, []]}]}, expect: "true"}
+
+# Results that are not defined give NULL (#155, #216): division by zero and operands outside a function's
+# domain.
+- {id: null-div-by-zero, requirement: /req/arithmetic/div, kind: expression, input: "1 / 0", expect: "null"}
+- {id: null-int-div-by-zero, requirement: /req/arithmetic/int-div, kind: expression, input: "7 div 0", expect: "null"}
+- {id: null-mod-by-zero, requirement: /req/arithmetic/mod, kind: expression, input: "7 % 0", expect: "null"}
+- {id: null-pow-zero-negative, requirement: /req/arithmetic/pow, kind: expression, input: "0 ^ (0 - 1)", expect: "null",
+   note: "Written 0 - 1, not -1, while unary minus is open (#199)."}
+- {id: null-pow-negative-fraction, requirement: /req/arithmetic/pow, kind: expression, input: "(0 - 8) ^ 0.5", expect: "null"}
+- {id: null-pow-negative-integer, requirement: /req/arithmetic/pow, kind: expression, input: "(0 - 2) ^ 3", expect: -8,
+   note: "A negative base with an integer exponent is defined."}
+- {id: null-sqrt-negative, requirement: /req/math/sqrt, kind: expression, input: "sqrt(-1)", json: {op: sqrt, args: [-1]}, expect: "null"}
+- {id: null-log-zero, requirement: /req/math/log, kind: expression, input: "log(0)", json: {op: log, args: [0]}, expect: "null"}
+- {id: null-log10-negative, requirement: /req/math/log10, kind: expression, input: "log10(-1)", json: {op: log10, args: [-1]}, expect: "null"}
+- {id: null-acos-out-of-domain, requirement: /req/math/acos, kind: expression, input: "acos(2)", json: {op: acos, args: [2]}, expect: "null"}
+- {id: null-asin-out-of-domain, requirement: /req/math/asin, kind: expression, input: "asin(-1.5)", json: {op: asin, args: [-1.5]}, expect: "null"}
+- {id: null-pow-function, requirement: /req/math/pow, kind: expression, input: "pow(-8, 0.5)", json: {op: pow, args: [-8, 0.5]}, expect: "null"}
