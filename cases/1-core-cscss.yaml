@@ -1,0 +1,14 @@
+# How CartoSym-CSS values are read, checked on the CartoSym-JSON each implementation writes for them
+# (`cs-canif convert`, pycartosym's Converter). The draft renderer reads CartoSym-CSS with pycartosym, so it has
+# no column of its own here.
+#
+# Issue #173, point 2 (agreed by Jérôme and Maxime, Nov 22-23): in `position: 10 -4` the `-` is attached to
+# the 4, so the value is the point (10, -4), not the subtraction 10 - 4. Jérôme was to check what libCartoSym
+# does; this case checks it in CI, on libCartoSym main. `10 4` is the control.
+- {id: cscss-tuple-negative, requirement: /req/cscss/expressions, kind: style, format: cscss,
+   input: "Huts { marker: { elements: [ Dot { position: 10 -4; size: 6 } ] }; }\n",
+   csjson: {at: /stylingRules/0/symbolizer/marker/elements/0/position, expect: {x: 10, y: -4}}, expect: "{x: 10, y: -4}",
+   note: "A `-` directly before a number starts a new value (#173)."}
+- {id: cscss-tuple, requirement: /req/cscss/expressions, kind: style, format: cscss,
+   input: "Huts { marker: { elements: [ Dot { position: 10 4; size: 6 } ] }; }\n",
+   csjson: {at: /stylingRules/0/symbolizer/marker/elements/0/position, expect: {x: 10, y: 4}}, expect: "{x: 10, y: 4}"}

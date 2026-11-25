@@ -6,6 +6,7 @@ could not produce anything (unsupported, error, crash).
 
 from __future__ import annotations
 
+import json
 import os
 import subprocess
 import sys
@@ -91,7 +92,39 @@ def libcartosym_parse_style(style: str, fmt: str) -> Outcome:
     return result
 
 
+def _json_at(doc, pointer: str) -> Outcome:
+    """The value at a JSON pointer such as `/stylingRules/0/symbolizer`, as JSON text."""
+    try:
+        for part in pointer.strip("/").split("/"):
+            doc = doc[int(part)] if isinstance(doc, list) else doc[part]
+    except (KeyError, IndexError, TypeError, ValueError):
+        return Outcome("ok", value=f"(nothing at {pointer})")
+    return Outcome("ok", value=json.dumps(doc))
+
+
+def libcartosym_csjson_at(style: str, pointer: str) -> Outcome:
+    """Convert a CartoSym-CSS style to CartoSym-JSON with `cs-canif convert`; the value at *pointer*."""
+    src = _write("style.cscss", style)
+    dst = WORK / "style-out.csjson"
+    dst.unlink(missing_ok=True)
+    result = _canif("convert", str(src), str(dst))
+    if result.status != "ok":
+        return result
+    if not dst.exists():
+        return Outcome("error", detail="no CartoSym-JSON written")
+    return _json_at(json.loads(dst.read_text(encoding="utf-8")), pointer)
+
+
 # ---------------------------------------------------------------- pycartosym
+
+def pycartosym_csjson_at(style: str, pointer: str) -> Outcome:
+    """Convert a CartoSym-CSS style to CartoSym-JSON with pycartosym; the value at *pointer*."""
+    try:
+        from pycartosym import Converter
+        doc = Converter().cscss_to_csjson(style)
+    except Exception as e:  # noqa: BLE001
+        return Outcome("error", detail=f"{type(e).__name__}: {e}")
+    return _json_at(doc, pointer)
 
 def _cartosym_cli(*args: str) -> subprocess.CompletedProcess:
     env = dict(os.environ, PYTHONIOENCODING="utf-8")

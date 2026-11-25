@@ -57,6 +57,21 @@ def _verdict(outcome: adapters.Outcome, expected, exact: bool = False) -> tuple[
     return FAIL, f"got `{outcome.value}`, draft expects `{expected}`"
 
 
+def _json_verdict(outcome: adapters.Outcome, expected) -> tuple[str, str]:
+    """For a style converted to CartoSym-JSON: the value found must equal *expected* (numbers compared as numbers)."""
+    if outcome.status == "crash":
+        return CRASH, outcome.detail
+    if outcome.status != "ok":
+        return ERROR, outcome.detail.splitlines()[0] if outcome.detail else ""
+    try:
+        got = json.loads(outcome.value)
+    except ValueError:
+        return FAIL, f"got {outcome.value}, draft expects `{json.dumps(expected)}`"
+    if got == expected:
+        return PASS, outcome.value
+    return FAIL, f"got `{outcome.value}`, draft expects `{json.dumps(expected)}`"
+
+
 def _expr_text(value) -> str:
     """A short CQL2-Text form of a value in a case's definitions (numbers, @references, binary operations)."""
     if isinstance(value, dict) and "$ref" in value:
@@ -104,6 +119,11 @@ def run_case(case: dict) -> dict[str, tuple[str, str]]:
             case["input"], case.get("json"), case.get("properties"), case.get("variables"), case.get("definitions"),
             case.get("system")),
             expected, exact)
+    elif kind == "style" and case.get("csjson"):
+        # Converted to CartoSym-JSON, the value at `csjson.at` must be `csjson.expect` (e.g. a point for #173).
+        at, want = case["csjson"]["at"], case["csjson"]["expect"]
+        results["libCartoSym"] = _json_verdict(adapters.libcartosym_csjson_at(case["input"], at), want)
+        results["pycartosym"] = _json_verdict(adapters.pycartosym_csjson_at(case["input"], at), want)
     elif kind == "style":
         fmt = case["format"]
         results["pycartosym"] = _verdict(adapters.pycartosym_validate_style(case["input"], fmt), expected)
@@ -174,7 +194,10 @@ def main(paths: list[str]) -> int:
     ]
     if n_style:
         lines.append(f"- **Styles** ({n_style} cases): libCartoSym converts them with `cs-canif convert style.cscss "
-                     "style-out.cscss` (valid if it converts); pycartosym checks them with `cartosym validate`.")
+                     "style-out.cscss` (valid if it converts); pycartosym checks them with `cartosym validate`. "
+                     "Style cases that name a value in the CartoSym-JSON (a point, for example) are converted to "
+                     "CartoSym-JSON instead, with `cs-canif convert style.cscss style-out.csjson` and pycartosym's "
+                     "`Converter().cscss_to_csjson`, and pass if that value is what the draft expects.")
     lines += [
         "",
         "The cases are in [`cases/`](../cases/), the calls in [`harness/adapters.py`](../harness/adapters.py), and "
