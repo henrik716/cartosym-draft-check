@@ -392,6 +392,58 @@ def _font_size(font: dict, view: View, opts: Options) -> float:
     return to_px({opts.font_size_unit: size} if isinstance(size, (int, float)) else size, view, 16)
 
 
+DEFAULT_FONT = {"size": {"px": 16.0}}  # /req/vector/font-inheritance: the default font
+
+
+def _font_in_effect(own: Any, parent: dict, view: View, opts: Options) -> dict:
+    """The font *parent* with the properties *own* sets (/req/vector/font-inheritance), its `size` in pixels:
+    a size in `em` is relative to the parent's size."""
+    font = dict(parent)
+    if isinstance(own, dict):
+        for k, v in own.items():
+            if k == "size":
+                em = parent["size"]["px"]
+                if isinstance(v, dict) and set(v) == {"em"} and isinstance(v["em"], (int, float)):
+                    font["size"] = {"px": float(v["em"]) * em}
+                else:
+                    font["size"] = {"px": _font_size({"size": v}, view, opts) if v is not None else em}
+            else:
+                font[k] = v
+    return font
+
+
+def _em_to_px(value: Any, em: float) -> Any:
+    """*value* with each length in `em` turned into pixels."""
+    if isinstance(value, dict):
+        if set(value) == {"em"} and isinstance(value["em"], (int, float)):
+            return {"px": float(value["em"]) * em}
+        return {k: _em_to_px(v, em) for k, v in value.items()}
+    if isinstance(value, list):
+        return [_em_to_px(v, em) for v in value]
+    return value
+
+
+def _with_fonts(graphic: Any, parent: dict, view: View, opts: Options) -> Any:
+    """A copy of a Graphic or MultiGraphic where each Text has its whole font and lengths in `em` are in pixels
+    (/req/vector/font-inheritance): a Text and a MultiGraphic take their own font, other Graphics the font of the
+    MultiGraphic they are in."""
+    if not isinstance(graphic, dict):
+        return graphic
+    has_font = "elements" in graphic or graphic.get("type", "Text" if "text" in graphic else None) == "Text"
+    font = _font_in_effect(graphic.get("font"), parent, view, opts) if has_font else parent
+    em = font["size"]["px"]
+    out = {k: _em_to_px(v, em) for k, v in graphic.items() if k not in ("elements", "font")}
+    if "elements" in graphic:
+        elements = graphic["elements"]
+        out["elements"] = [_with_fonts(el, font, view, opts) for el in elements] \
+            if isinstance(elements, list) else elements
+        if "font" in graphic:
+            out["font"] = font
+    elif has_font:
+        out["font"] = _em_to_px(font, em)  # a FontOutline `size` in em scales with the text
+    return out
+
+
 def _text_style(el: dict, view: View, opacity_mul: float, opts: Options) -> str:
     """The attributes of a Text graphic's <text>, other than its position."""
     font = el.get("font") or {}
@@ -884,6 +936,9 @@ def render(style: dict, layers: list[Layer], view: View, opts: Options | None = 
                 continue
             if sym.get("visibility") is False:
                 continue
+            # /req/vector/font-inheritance: the Symbolizer `font` under those of the marker's and label's graphics.
+            sym_font = _font_in_effect(sym.get("font"), DEFAULT_FONT, view, opts)
+            sym = {**sym, **{k: _with_fonts(sym[k], sym_font, view, opts) for k in ("marker", "label") if k in sym}}
             op = float(sym.get("opacity", 1))
             mul = op if opts.opacity == "per-element" else 1.0
             z = float(sym.get("zOrder", 1))
