@@ -9,8 +9,8 @@ Expected values are what the **draft requirement** says. `FAIL` means the implem
 | Implementation | pass | FAIL | unsupported | CRASH | error |
 |---|---|---|---|---|---|
 | draft renderer | 149 | 0 | 0 | 0 | 0 |
-| libCartoSym | 132 | 10 | 0 | 0 | 0 |
-| pycartosym | 137 | 4 | 0 | 0 | 1 |
+| libCartoSym | 133 | 12 | 0 | 0 | 0 |
+| pycartosym | 138 | 6 | 0 | 0 | 1 |
 
 ## How the cases are run
 
@@ -20,7 +20,7 @@ Expected values are what the **draft requirement** says. `FAIL` means the implem
 - **Comparing results:** quotes around text are ignored and numbers are compared as numbers, so `3.0` passes for `3`, except in cases marked `exact`, where the printed result must be the expected text (used to check that a result is an integer).
 - **Values:** feature properties, system identifiers, style variables (`@name`) and variables set by the application that a case is evaluated with are listed under its input (_with …_).
 - **Draft renderer only** (16 cases): cases that need such values. The harness does not pass them to `cs-canif` or pycartosym, so those columns show `-`.
-- **Styles** (9 cases): libCartoSym converts them with `cs-canif convert style.cscss style-out.cscss` (valid if it converts); pycartosym checks them with `cartosym validate`. Style cases that name a value in the CartoSym-JSON (a point, for example) are converted to CartoSym-JSON instead, with `cs-canif convert style.cscss style-out.csjson` and pycartosym's `Converter().cscss_to_csjson`, and pass if that value is what the draft expects.
+- **Styles** (12 cases): libCartoSym converts them with `cs-canif convert style.cscss style-out.cscss` (valid if it converts); pycartosym checks them with `cartosym validate`. Style cases that name a value in the CartoSym-JSON (a point, for example) are converted to CartoSym-JSON instead, with `cs-canif convert style.cscss style-out.csjson` and pycartosym's `Converter().cscss_to_csjson`, and pass if that value is what the draft expects.
 
 The cases are in [`cases/`](../cases/), the calls in [`harness/adapters.py`](../harness/adapters.py), and every result with the implementation's full output in [`results.json`](results.json).
 
@@ -542,3 +542,14 @@ The cases are in [`cases/`](../cases/), the calls in [`harness/adapters.py`](../
 | cscss-font-size-pt | `Huts { marker: { elements: [ Text { text: 'a', font: { si...` | `{pt: 12}` | pass: {"pt": 12} | pass: {"pt": 12} | - |
 | | _A font size with a unit keeps it (#100)._ | | | | |
 | cscss-font-size | `Huts { marker: { elements: [ Text { text: 'a', font: { si...` | `12` | pass: 12 | pass: 12 | - |
+
+### `/req/vector/image`
+
+| Case | Input | Expected | libCartoSym | pycartosym | draft renderer |
+|---|---|---|---|---|---|
+| cscss-image-size | `Huts { marker: { elements: [ Image { image: { uri: 'hut.p...` | `{mm: 6}` | pass: {"mm": 6} | pass: {"mm": 6} | - |
+| | _One value sets the width and the height (#100)._ | | | | |
+| cscss-image-size-tuple | `Huts { marker: { elements: [ Image { image: { uri: 'hut.p...` | `{x: {mm: 6}, y: {mm: 4}}` | FAIL: got `{}`, draft expects `{"x": {"mm": 6}, "y": {"mm": 4}}` | FAIL: got `"6 mm 4 mm"`, draft expects `{"x": {"mm": 6}, "y": {"mm": 4}}` | - |
+| | _Width and height (#100)._ | | | | |
+| cscss-image-size-x | `Huts { marker: { elements: [ Image { image: { uri: 'hut.p...` | `{x: {mm: 6}}` | FAIL: got (nothing at /stylingRules/0/symbolizer/marker/elements/0/size), draft expects `{"x": {"mm": 6}}` | FAIL: got (nothing at /stylingRules/0/symbolizer/marker/elements/0/size), draft expects `{"x": {"mm": 6}}` | - |
+| | _The width alone; the height follows the aspect ratio (#100)._ | | | | |

@@ -89,6 +89,51 @@
    }
   }
  },
+ "cscss-image-size": {
+  "requirement": "/req/vector/image",
+  "input": "Huts { marker: { elements: [ Image { image: { uri: 'hut.png' }, size: 6 mm } ] }; }\n",
+  "expect": "{mm: 6}",
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "{\"mm\": 6}"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "{\"mm\": 6}"
+   }
+  }
+ },
+ "cscss-image-size-tuple": {
+  "requirement": "/req/vector/image",
+  "input": "Huts { marker: { elements: [ Image { image: { uri: 'hut.png' }, size: 6 mm 4 mm } ] }; }\n",
+  "expect": "{x: {mm: 6}, y: {mm: 4}}",
+  "results": {
+   "libCartoSym": {
+    "verdict": "FAIL",
+    "detail": "got `{}`, draft expects `{\"x\": {\"mm\": 6}, \"y\": {\"mm\": 4}}`"
+   },
+   "pycartosym": {
+    "verdict": "FAIL",
+    "detail": "got `\"6 mm 4 mm\"`, draft expects `{\"x\": {\"mm\": 6}, \"y\": {\"mm\": 4}}`"
+   }
+  }
+ },
+ "cscss-image-size-x": {
+  "requirement": "/req/vector/image",
+  "input": "Huts { marker: { elements: [ Image { image: { uri: 'hut.png' }, size.x: 6 mm } ] }; }\n",
+  "expect": "{x: {mm: 6}}",
+  "results": {
+   "libCartoSym": {
+    "verdict": "FAIL",
+    "detail": "got (nothing at /stylingRules/0/symbolizer/marker/elements/0/size), draft expects `{\"x\": {\"mm\": 6}}`"
+   },
+   "pycartosym": {
+    "verdict": "FAIL",
+    "detail": "got (nothing at /stylingRules/0/symbolizer/marker/elements/0/size), draft expects `{\"x\": {\"mm\": 6}}`"
+   }
+  }
+ },
  "math-acos": {
   "requirement": "/req/math/acos",
   "input": "acos(1)",
