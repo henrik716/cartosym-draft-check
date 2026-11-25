@@ -48,7 +48,8 @@ def _merge(base: Any, update: Any) -> Any:
         return result
     if isinstance(update, dict):
         return {k: v for k, v in update.items() if k != "alter"}
-    return copy.deepcopy(update)
+    # Not copied: nothing here changes *base* in place, and resolve() copies the result (_evaluate_values).
+    return update
 
 
 def references(obj: Any, ids: set[str] | frozenset[str]) -> set[str]:
@@ -115,7 +116,10 @@ def _evaluate_values(v: Any, ctx: Context, key: str | None = None) -> Any:
         # A property set to `null` directly is not an expression, so it stays null.
         if result is None and ctx.null_reports is not None:
             ctx.null_reports.append((key, ctx.properties))  # /rec/parameter-values/report-null
-        return _null_value(key) if result is None else result
+        if result is None:
+            return _null_value(key)
+        # An object or array literal from the style: a copy, so the Symbolizer shares nothing with the style.
+        return copy.deepcopy(result) if isinstance(result, (dict, list)) else result
     if isinstance(v, dict):
         items = {k: _evaluate_values(x, ctx, k) for k, x in v.items()}
         return {k: x for k, x in items.items() if x is not _DROP}
@@ -159,7 +163,7 @@ def resolve(style: dict, ctx: Context, watch: frozenset[str] = frozenset(), test
         ctx = dataclasses.replace(ctx, definitions=style["$variables"])
     sym: dict[str, Any] = {}
     _apply_rules(style.get("stylingRules", []), ctx, sym, watch, tested)
-    resolved = copy.deepcopy(DEFAULTS)
+    resolved = dict(DEFAULTS)  # _evaluate_values copies the values below
     if ctx.options.default_marker == "dot":
         resolved["marker"] = {"elements": [{"type": "Dot", "stroke": {"width": {"px": 10}, "color": "white"}}]}
     for key, value in sym.items():

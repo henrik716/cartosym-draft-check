@@ -63,12 +63,18 @@ def parse_color(c: Any, scale: float = 255) -> RGB | None:
     return None
 
 
-def map_value(entries: list, value: float, opts: Options, convert) -> Any:
+def map_value(entries: list, value: float, opts: Options, convert, sorted_maps: dict | None = None) -> Any:
     """Look *value* up in a colorMap / opacityMap ([[value, output, name?], ...]).
 
-    Returns None for a value outside the map when values outside are transparent.
+    Returns None for a value outside the map when values outside are transparent. With *sorted_maps*, each map's
+    sorted entries are kept there by id(entries), so the caller must keep *entries* alive while it uses it.
     """
-    pts = sorted(((float(e[0]), convert(e[1])) for e in entries), key=lambda p: p[0])
+    key = (id(entries), convert)
+    pts = sorted_maps.get(key) if sorted_maps is not None else None
+    if pts is None:
+        pts = sorted(((float(e[0]), convert(e[1])) for e in entries), key=lambda p: p[0])
+        if sorted_maps is not None:
+            sorted_maps[key] = pts
     if value < pts[0][0] or value > pts[-1][0]:
         if opts.map_outside == "transparent":
             return None
@@ -126,15 +132,61 @@ def _num(v: Any) -> float | None:
     return float(v) if isinstance(v, (int, float)) and not isinstance(v, bool) else None
 
 
+def _cell_inputs(style: dict) -> tuple[str, ...] | None:
+    """The properties (bands) *style* refers to, or None where a cell's Symbolizer may depend on more than their
+    values: a call to random(), or a property named by something other than text."""
+    names: set[str] = set()
+    ok = True
+
+    def walk(o):
+        nonlocal ok
+        if isinstance(o, dict):
+            if "property" in o:
+                if isinstance(o["property"], str):
+                    names.add(o["property"])
+                else:
+                    ok = False
+            op = o.get("op")
+            if isinstance(op, str) and op.lower() == "random":
+                ok = False
+            for v in o.values():
+                walk(v)
+        elif isinstance(o, list):
+            for v in o:
+                walk(v)
+
+    walk(style)
+    return tuple(sorted(names)) if ok else None
+
+
+def _value_key(v: Any) -> tuple:
+    """*v* as part of a cache key: its type too, so 1 and 1.0 stay apart, and the sign of a float zero."""
+    return (type(v), v, math.copysign(1.0, v)) if type(v) is float else (type(v), v)
+
+
 def portray(style: dict, grid: Grid, system: dict, opts: Options) -> tuple[float, str] | None:
     """Return (zOrder, PNG data URI) for *grid*, or None if no cell is visible."""
     syms: list[list[dict]] = []
     single: list[list[float | None]] = []
+    # Cells with the same values of the bands the style refers to get the same Symbolizer: resolved once.
+    inputs = _cell_inputs(style)
+    resolved: dict[tuple, dict] = {}
+    shared: set[int] = set()  # id() of the Symbolizers of more than one cell
     for r in range(grid.rows):
         srow, vrow = [], []
         for c in range(grid.cols):
             props = {name: band[r][c] for name, band in grid.bands.items()}
-            sym = resolve(style, Context(properties=props, system=system, options=opts))
+            key = tuple(_value_key(props.get(n)) for n in inputs) if inputs is not None else None
+            try:
+                sym = resolved.get(key) if key is not None else None
+            except TypeError:  # a value that can't be a key
+                key = sym = None
+            if sym is None:
+                sym = resolve(style, Context(properties=props, system=system, options=opts))
+                if key is not None:
+                    resolved[key] = sym
+            else:
+                shared.add(id(sym))
             srow.append(sym)
             vrow.append(_num(sym.get("singleChannel")))
         syms.append(srow)
@@ -142,11 +194,13 @@ def portray(style: dict, grid: Grid, system: dict, opts: Options) -> tuple[float
 
     rgba = bytearray(grid.cols * grid.rows * 4)
     z_order, any_visible = 1.0, False
+    sorted_maps: dict = {}  # the sorted entries of the maps of shared Symbolizers
     for r in range(grid.rows):
         for c in range(grid.cols):
             sym, v = syms[r][c], single[r][c]
             if sym.get("visibility") is False:
                 continue
+            maps = sorted_maps if id(sym) in shared else None
             any_visible = True
             z_order = float(sym.get("zOrder", 1))
             color: RGB | None = None
@@ -155,22 +209,22 @@ def portray(style: dict, grid: Grid, system: dict, opts: Options) -> tuple[float
             if sym.get("colorChannels") is not None:
                 color = parse_color(sym["colorChannels"], scale=_CHANNEL_SCALE[opts.color_channels_scale])
             elif sym.get("colorMap") and v is not None:
-                color = map_value(sym["colorMap"], v, opts, parse_color)
+                color = map_value(sym["colorMap"], v, opts, parse_color, maps)
                 if color is None:
                     alpha = 0.0
             if sym.get("opacityMap") and v is not None:
-                o = map_value(sym["opacityMap"], v, opts, float)
+                o = map_value(sym["opacityMap"], v, opts, float, maps)
                 alpha *= 0.0 if o is None else o
             hs = sym.get("hillShading")
             # /req/hill-shading/factor: a factor of 0, the default, is no hill shading (#194).
             if isinstance(hs, dict) and v is not None and float(hs.get("factor", 0) or 0) != 0:
                 s = _shade(single, r, c, grid.cell_size, hs, opts)
                 if hs.get("colorMap"):
-                    color = map_value(hs["colorMap"], s, opts, parse_color)
+                    color = map_value(hs["colorMap"], s, opts, parse_color, maps)
                 elif color is not None:
                     color = tuple(x * s for x in color)  # type: ignore[assignment]
                 if hs.get("opacityMap"):
-                    o = map_value(hs["opacityMap"], s, opts, float)
+                    o = map_value(hs["opacityMap"], s, opts, float, maps)
                     alpha *= 0.0 if o is None else o
             if color is None:
                 continue
