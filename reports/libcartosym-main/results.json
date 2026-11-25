@@ -1,4 +1,34 @@
 {
+ "cscss-tuple-negative": {
+  "requirement": "/req/cscss/expressions",
+  "input": "Huts { marker: { elements: [ Dot { position: 10 -4; size: 6 } ] }; }\n",
+  "expect": "{x: 10, y: -4}",
+  "results": {
+   "libCartoSym": {
+    "verdict": "FAIL",
+    "detail": "got `{\"op\": \"-\", \"args\": [10, 4]}`, draft expects `{\"x\": 10, \"y\": -4}`"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "{\"x\": 10.0, \"y\": -4.0}"
+   }
+  }
+ },
+ "cscss-tuple": {
+  "requirement": "/req/cscss/expressions",
+  "input": "Huts { marker: { elements: [ Dot { position: 10 4; size: 6 } ] }; }\n",
+  "expect": "{x: 10, y: 4}",
+  "results": {
+   "libCartoSym": {
+    "verdict": "FAIL",
+    "detail": "got `[10, 4]`, draft expects `{\"x\": 10, \"y\": 4}`"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "{\"x\": 10.0, \"y\": 4.0}"
+   }
+  }
+ },
  "math-acos": {
   "requirement": "/req/math/acos",
   "input": "acos(1)",

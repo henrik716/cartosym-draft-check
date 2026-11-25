@@ -9,8 +9,8 @@ Expected values are what the **draft requirement** says. `FAIL` means the implem
 | Implementation | pass | FAIL | unsupported | CRASH | error |
 |---|---|---|---|---|---|
 | draft renderer | 149 | 0 | 0 | 0 | 0 |
-| libCartoSym | 128 | 8 | 0 | 0 | 0 |
-| pycartosym | 133 | 3 | 0 | 0 | 0 |
+| libCartoSym | 128 | 10 | 0 | 0 | 0 |
+| pycartosym | 135 | 3 | 0 | 0 | 0 |
 
 ## How the cases are run
 
@@ -20,7 +20,7 @@ Expected values are what the **draft requirement** says. `FAIL` means the implem
 - **Comparing results:** quotes around text are ignored and numbers are compared as numbers, so `3.0` passes for `3`, except in cases marked `exact`, where the printed result must be the expected text (used to check that a result is an integer).
 - **Values:** feature properties, system identifiers, style variables (`@name`) and variables set by the application that a case is evaluated with are listed under its input (_with …_).
 - **Draft renderer only** (16 cases): cases that need such values. The harness does not pass them to `cs-canif` or pycartosym, so those columns show `-`.
-- **Styles** (3 cases): libCartoSym converts them with `cs-canif convert style.cscss style-out.cscss` (valid if it converts); pycartosym checks them with `cartosym validate`.
+- **Styles** (5 cases): libCartoSym converts them with `cs-canif convert style.cscss style-out.cscss` (valid if it converts); pycartosym checks them with `cartosym validate`. Style cases that name a value in the CartoSym-JSON (a point, for example) are converted to CartoSym-JSON instead, with `cs-canif convert style.cscss style-out.csjson` and pycartosym's `Converter().cscss_to_csjson`, and pass if that value is what the draft expects.
 
 The cases are in [`cases/`](../cases/), the calls in [`harness/adapters.py`](../harness/adapters.py), and every result with the implementation's full output in [`results.json`](results.json).
 
@@ -230,6 +230,14 @@ The cases are in [`cases/`](../cases/), the calls in [`harness/adapters.py`](../
 | Case | Input | Expected | libCartoSym | pycartosym | draft renderer |
 |---|---|---|---|---|---|
 | core-scale | `visualization.scaleDenominator`<br>with `visualization.scaleDenominator = 25000` | `25000` | - | - | pass: 25000 _(CQL2-JSON)_ |
+
+### `/req/cscss/expressions`
+
+| Case | Input | Expected | libCartoSym | pycartosym | draft renderer |
+|---|---|---|---|---|---|
+| cscss-tuple-negative | `Huts { marker: { elements: [ Dot { position: 10 -4; size:...` | `{x: 10, y: -4}` | FAIL: got `{"op": "-", "args": [10, 4]}`, draft expects `{"x": 10, "y": -4}` | pass: {"x": 10.0, "y": -4.0} | - |
+| | _A `-` directly before a number starts a new value (#173)._ | | | | |
+| cscss-tuple | `Huts { marker: { elements: [ Dot { position: 10 4; size: ...` | `{x: 10, y: 4}` | FAIL: got `[10, 4]`, draft expects `{"x": 10, "y": 4}` | pass: {"x": 10.0, "y": 4.0} | - |
 
 ### `/req/functions/call-expressions`
 
