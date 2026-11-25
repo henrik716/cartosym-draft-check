@@ -1,6 +1,6 @@
 # CartoSym draft requirements vs implementations
 
-Generated 2026-11-23 with libCartoSym (cs-canif built from ecere/libCartoSym main @ e9342b6 and ecere/eC main @ bb2f036, on Ubuntu) and pycartosym 0.6.5.
+Generated 2026-11-25 with libCartoSym (cs-canif built from ecere/libCartoSym main @ e9342b6 and ecere/eC main @ bb2f036, on Ubuntu) and pycartosym 0.6.7.
 
 Expected values are what the **draft requirement** says. `FAIL` means the implementation disagrees with the draft, which may mean the draft or the implementation is wrong. pycartosym does not evaluate expressions, so for expression cases it is checked on converting them to CQL2-JSON (see below). The draft renderer is `cartosym_draft` in this repository, which implements the draft requirements; a FAIL there means it does not do what the draft says.
 
@@ -8,14 +8,14 @@ Expected values are what the **draft requirement** says. `FAIL` means the implem
 
 | Implementation | pass | FAIL | unsupported | CRASH | error |
 |---|---|---|---|---|---|
-| draft renderer | 132 | 0 | 0 | 0 | 0 |
-| libCartoSym | 119 | 0 | 0 | 0 | 0 |
-| pycartosym | 119 | 0 | 0 | 0 | 0 |
+| draft renderer | 149 | 0 | 0 | 0 | 0 |
+| libCartoSym | 128 | 8 | 0 | 0 | 0 |
+| pycartosym | 133 | 3 | 0 | 0 | 0 |
 
 ## How the cases are run
 
 - **libCartoSym:** the Input text is written to `expr.cql2` and evaluated with `cs-canif eval expr.cql2` (cs-canif built from ecere/libCartoSym main @ e9342b6 and ecere/eC main @ bb2f036, on Ubuntu). Where the spec gives no CartoSym-CSS syntax for an operation, a case can give libCartoSym's own (_as …_ in its column).
-- **pycartosym:** pycartosym does not evaluate expressions. Where a case gives its own CQL2-JSON (92 cases), the Input text is converted with `pycartosym.cql2.to_cql2_json(cql2.parse_text(input))` and passes if the result is that CQL2-JSON; otherwise it passes if `pycartosym.cql2.parse_text(input)` parses it.
+- **pycartosym:** pycartosym does not evaluate expressions. Where a case gives its own CQL2-JSON (103 cases), the Input text is converted with `pycartosym.cql2.to_cql2_json(cql2.parse_text(input))` and passes if the result is that CQL2-JSON; otherwise it passes if `pycartosym.cql2.parse_text(input)` parses it.
 - **draft renderer:** `cartosym_draft.evaluate.evaluate(expression, Context(...))`. Where a case gives its own CQL2-JSON, that is what it evaluates, and the result is marked _(CQL2-JSON)_, so it does not depend on pycartosym's parser; otherwise the Input text is converted with pycartosym as above.
 - **Comparing results:** quotes around text are ignored and numbers are compared as numbers, so `3.0` passes for `3`, except in cases marked `exact`, where the printed result must be the expected text (used to check that a result is an integer).
 - **Values:** feature properties, system identifiers, style variables (`@name`) and variables set by the application that a case is evaluated with are listed under its input (_with …_).
@@ -39,6 +39,7 @@ The cases are in [`cases/`](../cases/), the calls in [`harness/adapters.py`](../
 | arith-div-reals | `7.0 / 2` | `3.5` | pass: 3.5 | pass: parses | pass: 3.5 |
 | arith-div-integers | `7 / 2` | `3.5` | pass: 3.5 | pass: parses | pass: 3.5 |
 | | _Draft says `/` is always real-valued, even for two integers (`div` is integer division)._ | | | | |
+| null-div-by-zero | `1 / 0` | `null` | pass: null | pass: parses | pass: null |
 
 ### `/req/arithmetic/int-div`
 
@@ -47,6 +48,7 @@ The cases are in [`cases/`](../cases/), the calls in [`harness/adapters.py`](../
 | arith-int-div | `7 div 2` | `3` | pass: 3 | pass: parses | pass: 3 |
 | arith-int-div-negative | `-7 div 2` | `-3` | pass: -3 | pass: parses | pass: -3 |
 | | _Draft says truncation toward zero (floor division would give -4)._ | | | | |
+| null-int-div-by-zero | `7 div 0` | `null` | pass: null | pass: parses | pass: null |
 
 ### `/req/arithmetic/mod`
 
@@ -55,6 +57,7 @@ The cases are in [`cases/`](../cases/), the calls in [`harness/adapters.py`](../
 | arith-mod | `7 % 3` | `1` | pass: 1 | pass: parses | pass: 1 |
 | arith-mod-negative | `-7 % 3` | `-1` | pass: -1 | pass: parses | pass: -1 |
 | | _Draft says the result has the sign of the first operand._ | | | | |
+| null-mod-by-zero | `7 % 0` | `null` | pass: null | pass: parses | pass: null |
 
 ### `/req/arithmetic/mul`
 
@@ -67,6 +70,11 @@ The cases are in [`cases/`](../cases/), the calls in [`harness/adapters.py`](../
 | Case | Input | Expected | libCartoSym | pycartosym | draft renderer |
 |---|---|---|---|---|---|
 | arith-pow | `2 ^ 10` | `1024` | pass: 1024.0 | pass: converts to the case's CQL2-JSON | pass: 1024 _(CQL2-JSON)_ |
+| null-pow-zero-negative | `0 ^ (0 - 1)` | `null` | FAIL: got `inf.0`, draft expects `null` | pass: parses | pass: null |
+| | _Written 0 - 1, not -1, while unary minus is open (#199)._ | | | | |
+| null-pow-negative-fraction | `(0 - 8) ^ 0.5` | `null` | FAIL: got `nan.0`, draft expects `null` | pass: parses | pass: null |
+| null-pow-negative-integer | `(0 - 2) ^ 3` | `-8` | pass: -8.0 | pass: parses | pass: -8 |
+| | _A negative base with an integer exponent is defined._ | | | | |
 
 ### `/req/arithmetic/sub`
 
@@ -211,6 +219,11 @@ The cases are in [`cases/`](../cases/), the calls in [`harness/adapters.py`](../
 | neq-selector | `[a <> 1] { opacity: 0.5; }` | `valid` | pass: valid | pass: valid | - |
 | neq-selector-no-spaces | `[a<>1] { opacity: 0.5; }` | `valid` | pass: valid | pass: valid | - |
 | neq-selector-and | `[a <> 1 and b <> 2] { opacity: 0.5; }` | `valid` | pass: valid | pass: valid | - |
+| null-in-null-element | `5 in (1, null)` | `null` | pass: null | pass: converts to the case's CQL2-JSON | pass: null _(CQL2-JSON)_ |
+| null-in-found-with-null-element | `1 in (1, null)` | `true` | pass: true | pass: converts to the case's CQL2-JSON | pass: true _(CQL2-JSON)_ |
+| null-in-empty-list | `5 in ()` | `false` | pass: false | FAIL: converts to `{"op": "in", "args": [5, {}]}`, case has `{"op": "in", "args": [5, []]}` | pass: false _(CQL2-JSON)_ |
+| null-null-in-empty-list | `null in ()` | `false` | pass: false | FAIL: converts to `{"op": "in", "args": [null, {}]}`, case has `{"op": "in", "args": [null, []]}` | pass: false _(CQL2-JSON)_ |
+| null-null-not-in-empty-list | `null not in ()` | `true` | pass: true | FAIL: converts to `{"op": "not", "args": [{"op": "in", "args": [null, {}]}]}`, case has `{"op": "not", "args": [{"op": "in", "args": [null, []]}]}` | pass: true _(CQL2-JSON)_ |
 
 ### `/req/core/scale`
 
@@ -249,12 +262,14 @@ The cases are in [`cases/`](../cases/), the calls in [`harness/adapters.py`](../
 | Case | Input | Expected | libCartoSym | pycartosym | draft renderer |
 |---|---|---|---|---|---|
 | math-acos | `acos(1)` | `0` | pass: 0.0 | pass: converts to the case's CQL2-JSON | pass: 0.0 _(CQL2-JSON)_ |
+| null-acos-out-of-domain | `acos(2)` | `null` | FAIL: got `nan.0`, draft expects `null` | pass: converts to the case's CQL2-JSON | pass: null _(CQL2-JSON)_ |
 
 ### `/req/math/asin`
 
 | Case | Input | Expected | libCartoSym | pycartosym | draft renderer |
 |---|---|---|---|---|---|
 | math-asin | `asin(1)` | `1.5707963267948966` | pass: 1.5707963267949 | pass: converts to the case's CQL2-JSON | pass: 1.5707963267948966 _(CQL2-JSON)_ |
+| null-asin-out-of-domain | `asin(-1.5)` | `null` | FAIL: got `nan.0`, draft expects `null` | pass: converts to the case's CQL2-JSON | pass: null _(CQL2-JSON)_ |
 
 ### `/req/math/atan`
 
@@ -308,12 +323,14 @@ The cases are in [`cases/`](../cases/), the calls in [`harness/adapters.py`](../
 | Case | Input | Expected | libCartoSym | pycartosym | draft renderer |
 |---|---|---|---|---|---|
 | math-log | `log(1)` | `0` | pass: 0.0 | pass: parses | pass: 0.0 |
+| null-log-zero | `log(0)` | `null` | FAIL: got `-inf.0`, draft expects `null` | pass: converts to the case's CQL2-JSON | pass: null _(CQL2-JSON)_ |
 
 ### `/req/math/log10`
 
 | Case | Input | Expected | libCartoSym | pycartosym | draft renderer |
 |---|---|---|---|---|---|
 | math-log10 | `log10(1000)` | `3` | pass: 3.0 | pass: converts to the case's CQL2-JSON | pass: 3.0 _(CQL2-JSON)_ |
+| null-log10-negative | `log10(-1)` | `null` | FAIL: got `nan.0`, draft expects `null` | pass: converts to the case's CQL2-JSON | pass: null _(CQL2-JSON)_ |
 
 ### `/req/math/max`
 
@@ -336,6 +353,7 @@ The cases are in [`cases/`](../cases/), the calls in [`harness/adapters.py`](../
 | Case | Input | Expected | libCartoSym | pycartosym | draft renderer |
 |---|---|---|---|---|---|
 | math-pow | `pow(2, 3)` | `8` | pass: 8.0 | pass: parses | pass: 8 |
+| null-pow-function | `pow(-8, 0.5)` | `null` | FAIL: got `nan.0`, draft expects `null` | pass: converts to the case's CQL2-JSON | pass: null _(CQL2-JSON)_ |
 
 ### `/req/math/random`
 
@@ -371,6 +389,7 @@ The cases are in [`cases/`](../cases/), the calls in [`harness/adapters.py`](../
 | Case | Input | Expected | libCartoSym | pycartosym | draft renderer |
 |---|---|---|---|---|---|
 | math-sqrt | `sqrt(16)` | `4` | pass: 4.0 | pass: parses | pass: 4.0 |
+| null-sqrt-negative | `sqrt(-1)` | `null` | FAIL: got `nan.0`, draft expects `null` | pass: converts to the case's CQL2-JSON | pass: null _(CQL2-JSON)_ |
 
 ### `/req/math/tan`
 

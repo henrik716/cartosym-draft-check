@@ -1887,6 +1887,268 @@
       null
      ]
     }
+   },
+   "null-in-null-element": {
+    "to_json": "ok",
+    "vs_case": "same",
+    "text": "5 IN (1, null)",
+    "stable": "yes",
+    "escaped": "-",
+    "json": {
+     "op": "in",
+     "args": [
+      5,
+      [
+       1,
+       null
+      ]
+     ]
+    }
+   },
+   "null-in-found-with-null-element": {
+    "to_json": "ok",
+    "vs_case": "same",
+    "text": "1 IN (1, null)",
+    "stable": "yes",
+    "escaped": "-",
+    "json": {
+     "op": "in",
+     "args": [
+      1,
+      [
+       1,
+       null
+      ]
+     ]
+    }
+   },
+   "null-in-empty-list": {
+    "to_json": "ok",
+    "vs_case": "same",
+    "text": "5 IN ()",
+    "stable": "yes",
+    "escaped": "-",
+    "json": {
+     "op": "in",
+     "args": [
+      5,
+      []
+     ]
+    }
+   },
+   "null-null-in-empty-list": {
+    "to_json": "ok",
+    "vs_case": "same",
+    "text": "null IN ()",
+    "stable": "yes",
+    "escaped": "-",
+    "json": {
+     "op": "in",
+     "args": [
+      null,
+      []
+     ]
+    }
+   },
+   "null-null-not-in-empty-list": {
+    "to_json": "ok",
+    "vs_case": "same",
+    "text": "null NOT IN ()",
+    "stable": "yes",
+    "escaped": "-",
+    "json": {
+     "op": "not",
+     "args": [
+      {
+       "op": "in",
+       "args": [
+        null,
+        []
+       ]
+      }
+     ]
+    }
+   },
+   "null-div-by-zero": {
+    "to_json": "ok",
+    "vs_case": "-",
+    "text": "1 / 0",
+    "stable": "yes",
+    "escaped": "-",
+    "json": {
+     "op": "/",
+     "args": [
+      1,
+      0
+     ]
+    }
+   },
+   "null-int-div-by-zero": {
+    "to_json": "ok",
+    "vs_case": "-",
+    "text": "7 DIV 0",
+    "stable": "yes",
+    "escaped": "-",
+    "json": {
+     "op": "div",
+     "args": [
+      7,
+      0
+     ]
+    }
+   },
+   "null-mod-by-zero": {
+    "to_json": "ok",
+    "vs_case": "-",
+    "text": "7  0",
+    "stable": "/args: missing",
+    "escaped": "-",
+    "json": {
+     "op": "%",
+     "args": [
+      7,
+      0
+     ]
+    }
+   },
+   "null-pow-zero-negative": {
+    "to_json": "ok",
+    "vs_case": "-",
+    "text": "0 ^ 0 - 1",
+    "stable": "/args/0: `0` vs `{\"op\": \"^\", \"args\": [0, 0]}`",
+    "escaped": "-",
+    "json": {
+     "op": "^",
+     "args": [
+      0,
+      {
+       "op": "-",
+       "args": [
+        0,
+        1
+       ]
+      }
+     ]
+    }
+   },
+   "null-pow-negative-fraction": {
+    "to_json": "ok",
+    "vs_case": "-",
+    "text": "0 - 8 ^ 0.5",
+    "stable": "/args/0: `{\"op\": \"-\", \"args\": [0, 8]}` vs `0`",
+    "escaped": "-",
+    "json": {
+     "op": "^",
+     "args": [
+      {
+       "op": "-",
+       "args": [
+        0,
+        8
+       ]
+      },
+      0.5
+     ]
+    }
+   },
+   "null-pow-negative-integer": {
+    "to_json": "ok",
+    "vs_case": "-",
+    "text": "0 - 2 ^ 3",
+    "stable": "/args/0: `{\"op\": \"-\", \"args\": [0, 2]}` vs `0`",
+    "escaped": "-",
+    "json": {
+     "op": "^",
+     "args": [
+      {
+       "op": "-",
+       "args": [
+        0,
+        2
+       ]
+      },
+      3
+     ]
+    }
+   },
+   "null-sqrt-negative": {
+    "to_json": "ok",
+    "vs_case": "same",
+    "text": "SQRT(-1)",
+    "stable": "yes",
+    "escaped": "-",
+    "json": {
+     "op": "sqrt",
+     "args": [
+      -1
+     ]
+    }
+   },
+   "null-log-zero": {
+    "to_json": "ok",
+    "vs_case": "same",
+    "text": "LOG(0)",
+    "stable": "yes",
+    "escaped": "-",
+    "json": {
+     "op": "log",
+     "args": [
+      0
+     ]
+    }
+   },
+   "null-log10-negative": {
+    "to_json": "ok",
+    "vs_case": "same",
+    "text": "LOG10(-1)",
+    "stable": "yes",
+    "escaped": "-",
+    "json": {
+     "op": "log10",
+     "args": [
+      -1
+     ]
+    }
+   },
+   "null-acos-out-of-domain": {
+    "to_json": "ok",
+    "vs_case": "same",
+    "text": "ACOS(2)",
+    "stable": "yes",
+    "escaped": "-",
+    "json": {
+     "op": "acos",
+     "args": [
+      2
+     ]
+    }
+   },
+   "null-asin-out-of-domain": {
+    "to_json": "ok",
+    "vs_case": "same",
+    "text": "ASIN(-1.5)",
+    "stable": "yes",
+    "escaped": "-",
+    "json": {
+     "op": "asin",
+     "args": [
+      -1.5
+     ]
+    }
+   },
+   "null-pow-function": {
+    "to_json": "ok",
+    "vs_case": "/op: `\"pow\"` vs `\"^\"`",
+    "text": "-8 ^ 0.5",
+    "stable": "yes",
+    "escaped": "-",
+    "json": {
+     "op": "^",
+     "args": [
+      -8,
+      0.5
+     ]
+    }
    }
   },
   "pycartosym": {
@@ -2521,7 +2783,7 @@
    "arith-mod": {
     "to_json": "ok",
     "vs_case": "-",
-    "text": "%(7, 3)",
+    "text": "7 % 3",
     "stable": "yes",
     "escaped": "-",
     "json": {
@@ -2535,7 +2797,7 @@
    "arith-mod-negative": {
     "to_json": "ok",
     "vs_case": "-",
-    "text": "%(-7, 3)",
+    "text": "-7 % 3",
     "stable": "yes",
     "escaped": "-",
     "json": {
@@ -2783,8 +3045,8 @@
    "core-is-null": {
     "to_json": "ok",
     "vs_case": "-",
-    "text": "'None' is null",
-    "stable": "/args/0: `null` vs `\"None\"`",
+    "text": "null is null",
+    "stable": "yes",
     "escaped": "-",
     "json": {
      "op": "isNull",
@@ -3561,8 +3823,8 @@
    "null-arithmetic": {
     "to_json": "ok",
     "vs_case": "same",
-    "text": "'None' + 1",
-    "stable": "/args/0: `null` vs `\"None\"`",
+    "text": "null + 1",
+    "stable": "yes",
     "escaped": "-",
     "json": {
      "op": "+",
@@ -3575,8 +3837,8 @@
    "null-equal": {
     "to_json": "ok",
     "vs_case": "same",
-    "text": "'None' = 1",
-    "stable": "/args/0: `null` vs `\"None\"`",
+    "text": "null = 1",
+    "stable": "yes",
     "escaped": "-",
     "json": {
      "op": "=",
@@ -3589,8 +3851,8 @@
    "null-not-equal": {
     "to_json": "ok",
     "vs_case": "same",
-    "text": "'None' <> 1",
-    "stable": "/args/0: `null` vs `\"None\"`",
+    "text": "null <> 1",
+    "stable": "yes",
     "escaped": "-",
     "json": {
      "op": "<>",
@@ -3603,8 +3865,8 @@
    "null-compare": {
     "to_json": "ok",
     "vs_case": "same",
-    "text": "'None' > 1",
-    "stable": "/args/0: `null` vs `\"None\"`",
+    "text": "null > 1",
+    "stable": "yes",
     "escaped": "-",
     "json": {
      "op": ">",
@@ -3617,8 +3879,8 @@
    "null-like": {
     "to_json": "ok",
     "vs_case": "same",
-    "text": "'None' like 'a%'",
-    "stable": "/args/0: `null` vs `\"None\"`",
+    "text": "null like 'a%'",
+    "stable": "yes",
     "escaped": "-",
     "json": {
      "op": "like",
@@ -3631,8 +3893,8 @@
    "null-not": {
     "to_json": "ok",
     "vs_case": "same",
-    "text": "not 'None' > 1",
-    "stable": "/args/0/args/0: `null` vs `\"None\"`",
+    "text": "not null > 1",
+    "stable": "yes",
     "escaped": "-",
     "json": {
      "op": "not",
@@ -3650,8 +3912,8 @@
    "null-and-true": {
     "to_json": "ok",
     "vs_case": "same",
-    "text": "'None' > 1 and true",
-    "stable": "/args/0/args/0: `null` vs `\"None\"`",
+    "text": "null > 1 and true",
+    "stable": "yes",
     "escaped": "-",
     "json": {
      "op": "and",
@@ -3670,8 +3932,8 @@
    "null-and-false": {
     "to_json": "ok",
     "vs_case": "same",
-    "text": "'None' > 1 and false",
-    "stable": "/args/0/args/0: `null` vs `\"None\"`",
+    "text": "null > 1 and false",
+    "stable": "yes",
     "escaped": "-",
     "json": {
      "op": "and",
@@ -3690,8 +3952,8 @@
    "null-or-true": {
     "to_json": "ok",
     "vs_case": "same",
-    "text": "'None' > 1 or true",
-    "stable": "/args/0/args/0: `null` vs `\"None\"`",
+    "text": "null > 1 or true",
+    "stable": "yes",
     "escaped": "-",
     "json": {
      "op": "or",
@@ -3710,8 +3972,8 @@
    "null-or-false": {
     "to_json": "ok",
     "vs_case": "same",
-    "text": "'None' > 1 or false",
-    "stable": "/args/0/args/0: `null` vs `\"None\"`",
+    "text": "null > 1 or false",
+    "stable": "yes",
     "escaped": "-",
     "json": {
      "op": "or",
@@ -3730,8 +3992,8 @@
    "null-is-null": {
     "to_json": "ok",
     "vs_case": "same",
-    "text": "'None' + 1 is null",
-    "stable": "/args/0/args/0: `null` vs `\"None\"`",
+    "text": "null + 1 is null",
+    "stable": "yes",
     "escaped": "-",
     "json": {
      "op": "isNull",
@@ -3749,21 +4011,283 @@
    "null-literal": {
     "to_json": "ok",
     "vs_case": "same",
-    "text": "'None'",
-    "stable": "/: `null` vs `\"None\"`",
+    "text": "null",
+    "stable": "yes",
     "escaped": "-",
     "json": null
    },
    "null-literal-is-null": {
     "to_json": "ok",
     "vs_case": "same",
-    "text": "'None' is null",
-    "stable": "/args/0: `null` vs `\"None\"`",
+    "text": "null is null",
+    "stable": "yes",
     "escaped": "-",
     "json": {
      "op": "isNull",
      "args": [
       null
+     ]
+    }
+   },
+   "null-in-null-element": {
+    "to_json": "ok",
+    "vs_case": "same",
+    "text": "5 in (1, null)",
+    "stable": "yes",
+    "escaped": "-",
+    "json": {
+     "op": "in",
+     "args": [
+      5,
+      [
+       1,
+       null
+      ]
+     ]
+    }
+   },
+   "null-in-found-with-null-element": {
+    "to_json": "ok",
+    "vs_case": "same",
+    "text": "1 in (1, null)",
+    "stable": "yes",
+    "escaped": "-",
+    "json": {
+     "op": "in",
+     "args": [
+      1,
+      [
+       1,
+       null
+      ]
+     ]
+    }
+   },
+   "null-in-empty-list": {
+    "to_json": "ok",
+    "vs_case": "/args/1: `[]` vs `{}`",
+    "text": "5 in ({})",
+    "stable": "/args/1: `{}` vs `[\"type=<ExpressionType.INSTANCE: 'instance'> cl...`",
+    "escaped": "-",
+    "json": {
+     "op": "in",
+     "args": [
+      5,
+      {}
+     ]
+    }
+   },
+   "null-null-in-empty-list": {
+    "to_json": "ok",
+    "vs_case": "/args/1: `[]` vs `{}`",
+    "text": "null in ({})",
+    "stable": "/args/1: `{}` vs `[\"type=<ExpressionType.INSTANCE: 'instance'> cl...`",
+    "escaped": "-",
+    "json": {
+     "op": "in",
+     "args": [
+      null,
+      {}
+     ]
+    }
+   },
+   "null-null-not-in-empty-list": {
+    "to_json": "ok",
+    "vs_case": "/args/0/args/1: `[]` vs `{}`",
+    "text": "null not in ({})",
+    "stable": "/args/0/args/1: `{}` vs `[\"type=<ExpressionType.INSTANCE: 'instance'> cl...`",
+    "escaped": "-",
+    "json": {
+     "op": "not",
+     "args": [
+      {
+       "op": "in",
+       "args": [
+        null,
+        {}
+       ]
+      }
+     ]
+    }
+   },
+   "null-div-by-zero": {
+    "to_json": "ok",
+    "vs_case": "-",
+    "text": "1 / 0",
+    "stable": "yes",
+    "escaped": "-",
+    "json": {
+     "op": "/",
+     "args": [
+      1,
+      0
+     ]
+    }
+   },
+   "null-int-div-by-zero": {
+    "to_json": "ok",
+    "vs_case": "-",
+    "text": "//(7, 0)",
+    "stable": "yes",
+    "escaped": "-",
+    "json": {
+     "op": "//",
+     "args": [
+      7,
+      0
+     ]
+    }
+   },
+   "null-mod-by-zero": {
+    "to_json": "ok",
+    "vs_case": "-",
+    "text": "7 % 0",
+    "stable": "yes",
+    "escaped": "-",
+    "json": {
+     "op": "%",
+     "args": [
+      7,
+      0
+     ]
+    }
+   },
+   "null-pow-zero-negative": {
+    "to_json": "ok",
+    "vs_case": "-",
+    "text": "0 ^ (0 - 1)",
+    "stable": "yes",
+    "escaped": "-",
+    "json": {
+     "op": "^",
+     "args": [
+      0,
+      {
+       "op": "-",
+       "args": [
+        0,
+        1
+       ]
+      }
+     ]
+    }
+   },
+   "null-pow-negative-fraction": {
+    "to_json": "ok",
+    "vs_case": "-",
+    "text": "(0 - 8) ^ 0.5",
+    "stable": "yes",
+    "escaped": "-",
+    "json": {
+     "op": "^",
+     "args": [
+      {
+       "op": "-",
+       "args": [
+        0,
+        8
+       ]
+      },
+      0.5
+     ]
+    }
+   },
+   "null-pow-negative-integer": {
+    "to_json": "ok",
+    "vs_case": "-",
+    "text": "(0 - 2) ^ 3",
+    "stable": "yes",
+    "escaped": "-",
+    "json": {
+     "op": "^",
+     "args": [
+      {
+       "op": "-",
+       "args": [
+        0,
+        2
+       ]
+      },
+      3
+     ]
+    }
+   },
+   "null-sqrt-negative": {
+    "to_json": "ok",
+    "vs_case": "same",
+    "text": "sqrt(-1)",
+    "stable": "yes",
+    "escaped": "-",
+    "json": {
+     "op": "sqrt",
+     "args": [
+      -1
+     ]
+    }
+   },
+   "null-log-zero": {
+    "to_json": "ok",
+    "vs_case": "same",
+    "text": "log(0)",
+    "stable": "yes",
+    "escaped": "-",
+    "json": {
+     "op": "log",
+     "args": [
+      0
+     ]
+    }
+   },
+   "null-log10-negative": {
+    "to_json": "ok",
+    "vs_case": "same",
+    "text": "log10(-1)",
+    "stable": "yes",
+    "escaped": "-",
+    "json": {
+     "op": "log10",
+     "args": [
+      -1
+     ]
+    }
+   },
+   "null-acos-out-of-domain": {
+    "to_json": "ok",
+    "vs_case": "same",
+    "text": "acos(2)",
+    "stable": "yes",
+    "escaped": "-",
+    "json": {
+     "op": "acos",
+     "args": [
+      2
+     ]
+    }
+   },
+   "null-asin-out-of-domain": {
+    "to_json": "ok",
+    "vs_case": "same",
+    "text": "asin(-1.5)",
+    "stable": "yes",
+    "escaped": "-",
+    "json": {
+     "op": "asin",
+     "args": [
+      -1.5
+     ]
+    }
+   },
+   "null-pow-function": {
+    "to_json": "ok",
+    "vs_case": "same",
+    "text": "pow(-8, 0.5)",
+    "stable": "yes",
+    "escaped": "-",
+    "json": {
+     "op": "pow",
+     "args": [
+      -8,
+      0.5
      ]
     }
    }
@@ -7562,8 +8086,8 @@
    "2-vector-polygon": {
     "css_to_json": "ok",
     "vs_spec": "same",
-    "stable": "/stylingRules/0/nestedRules/0/nestedRules/3/nestedRules/0/symbolizer/marker/elements/value/blackTint: `[107, 95, 42]` vs `\"[107, 95, 42]\"`",
-    "json_trip": "/stylingRules/0/nestedRules/0/nestedRules/3/nestedRules/0/symbolizer/marker/elements/value/blackTint: `[107, 95, 42]` vs `\"[107, 95, 42]\"`",
+    "stable": "yes",
+    "json_trip": "yes",
     "json": {
      "metadata": {
       "title": "Styling polygon vector features",
@@ -9297,7 +9821,7 @@
     "css_to_json": "ok",
     "vs_spec": "/stylingRules/0/nestedRules/0/symbolizer/stroke/center: missing",
     "stable": "yes",
-    "json_trip": "to CartoSym-CSS: error: error: conversion failed: 3 validation errors for Style",
+    "json_trip": "/stylingRules/0/nestedRules/0/symbolizer/stroke/center: missing",
     "json": {
      "metadata": {
       "title": "Protected areas by class",

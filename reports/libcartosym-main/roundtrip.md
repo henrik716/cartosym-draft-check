@@ -1,6 +1,6 @@
 # Round trips through CQL2-JSON and CartoSym-JSON
 
-Generated 2026-11-23 by [`harness/roundtrip.py`](../harness/roundtrip.py) with libCartoSym (cs-canif built from ecere/libCartoSym main @ e9342b6 and ecere/eC main @ bb2f036, on Ubuntu) and pycartosym 0.6.5; the style examples are those of opengeospatial/cartographic-symbology at `fefe225` (branch `main`).
+Generated 2026-11-25 by [`harness/roundtrip.py`](../harness/roundtrip.py) with libCartoSym (cs-canif built from ecere/libCartoSym main @ e9342b6 and ecere/eC main @ bb2f036, on Ubuntu) and pycartosym 0.6.7; the style examples are those of opengeospatial/cartographic-symbology at `fefe225` (branch `main`).
 
 This checks conversion only: whether each implementation writes the same JSON as the case or the example, and whether converting back and forth gives the same JSON again. It does not evaluate anything; [`report.md`](report.md) has the evaluation results. A difference from a case or an example may be in the case, the example or the implementation.
 
@@ -8,14 +8,14 @@ This checks conversion only: whether each implementation writes the same JSON as
 
 | | libCartoSym | pycartosym |
 |---|---|---|
-| Expressions converted to CQL2-JSON (of 116) | 116 | 116 |
-| Same CQL2-JSON as the case (of the 76 cases that give one) | 75 | 76 |
-| Text → JSON → text → JSON gives the same JSON (of 116) | 114 | 102 |
+| Expressions converted to CQL2-JSON (of 133) | 133 | 133 |
+| Same CQL2-JSON as the case (of the 87 cases that give one) | 85 | 84 |
+| Text → JSON → text → JSON gives the same JSON (of 133) | 127 | 130 |
 | CQL2-JSON with `\u` escapes gives the same CQL2-Text (of the 4 cases with non-ASCII text) | 4 | 4 |
 | Examples converted from CartoSym-CSS to CartoSym-JSON (of 13) | 13 | 13 |
 | Same CartoSym-JSON as the example (of 13) | 6 | 12 |
-| CSS → JSON → CSS → JSON gives the same JSON (of 13) | 12 | 12 |
-| The example's JSON → CSS → JSON gives it back (of 13) | 6 | 11 |
+| CSS → JSON → CSS → JSON gives the same JSON (of 13) | 12 | 13 |
+| The example's JSON → CSS → JSON gives it back (of 13) | 6 | 12 |
 
 ## How they are run
 
@@ -145,6 +145,23 @@ This checks conversion only: whether each implementation writes the same JSON as
 | null-is-null | `(null + 1) is null` | ok | same | `null + 1 IS null` | - | yes |
 | null-literal | `null` | ok | same | `null` | - | yes |
 | null-literal-is-null | `null is null` | ok | same | `null IS null` | - | yes |
+| null-in-null-element | `5 in (1, null)` | ok | same | `5 IN (1, null)` | - | yes |
+| null-in-found-with-null-element | `1 in (1, null)` | ok | same | `1 IN (1, null)` | - | yes |
+| null-in-empty-list | `5 in ()` | ok | same | `5 IN ()` | - | yes |
+| null-null-in-empty-list | `null in ()` | ok | same | `null IN ()` | - | yes |
+| null-null-not-in-empty-list | `null not in ()` | ok | same | `null NOT IN ()` | - | yes |
+| null-div-by-zero | `1 / 0` | ok | - | `1 / 0` | - | yes |
+| null-int-div-by-zero | `7 div 0` | ok | - | `7 DIV 0` | - | yes |
+| null-mod-by-zero | `7 % 0` | ok | - | `7  0` | - | /args: missing |
+| null-pow-zero-negative | `0 ^ (0 - 1)` | ok | - | `0 ^ 0 - 1` | - | /args/0: `0` vs `{"op": "^", "args": [0, 0]}` |
+| null-pow-negative-fraction | `(0 - 8) ^ 0.5` | ok | - | `0 - 8 ^ 0.5` | - | /args/0: `{"op": "-", "args": [0, 8]}` vs `0` |
+| null-pow-negative-integer | `(0 - 2) ^ 3` | ok | - | `0 - 2 ^ 3` | - | /args/0: `{"op": "-", "args": [0, 2]}` vs `0` |
+| null-sqrt-negative | `sqrt(-1)` | ok | same | `SQRT(-1)` | - | yes |
+| null-log-zero | `log(0)` | ok | same | `LOG(0)` | - | yes |
+| null-log10-negative | `log10(-1)` | ok | same | `LOG10(-1)` | - | yes |
+| null-acos-out-of-domain | `acos(2)` | ok | same | `ACOS(2)` | - | yes |
+| null-asin-out-of-domain | `asin(-1.5)` | ok | same | `ASIN(-1.5)` | - | yes |
+| null-pow-function | `pow(-8, 0.5)` | ok | /op: `"pow"` vs `"^"` | `-8 ^ 0.5` | - | yes |
 
 ### pycartosym
 
@@ -193,8 +210,8 @@ This checks conversion only: whether each implementation writes the same JSON as
 | arith-div-integers | `7 / 2` | ok | - | `7 / 2` | - | yes |
 | arith-int-div | `7 div 2` | ok | - | `//(7, 2)` | - | yes |
 | arith-int-div-negative | `-7 div 2` | ok | - | `//(-7, 2)` | - | yes |
-| arith-mod | `7 % 3` | ok | - | `%(7, 3)` | - | yes |
-| arith-mod-negative | `-7 % 3` | ok | - | `%(-7, 3)` | - | yes |
+| arith-mod | `7 % 3` | ok | - | `7 % 3` | - | yes |
+| arith-mod-negative | `-7 % 3` | ok | - | `-7 % 3` | - | yes |
 | arith-pow | `2 ^ 10` | ok | same | `2 ^ 10` | - | yes |
 | core-and | `1 < 2 and 3 < 4` | ok | - | `1 < 2 and 3 < 4` | - | yes |
 | core-or | `1 > 2 or 3 < 4` | ok | - | `1 > 2 or 3 < 4` | - | yes |
@@ -207,7 +224,7 @@ This checks conversion only: whether each implementation writes the same JSON as
 | core-not-between | `5 not between 6 and 10` | ok | - | `5 not between 6 and 10` | - | yes |
 | core-in | `2 in (1, 2, 3)` | ok | - | `2 in (1, 2, 3)` | - | yes |
 | core-not-in | `4 not in (1, 2, 3)` | ok | - | `4 not in (1, 2, 3)` | - | yes |
-| core-is-null | `null is null` | ok | - | `'None' is null` | - | /args/0: `null` vs `"None"` |
+| core-is-null | `null is null` | ok | - | `null is null` | - | yes |
 | core-priority | `(1 + 2) * 3` | ok | - | `(1 + 2) * 3` | - | yes |
 | text-like-percent | `'Oslo' like 'O%'` | ok | same | `'Oslo' like 'O%'` | - | yes |
 | text-like-underscore | `'Oslo' like 'O_lo'` | ok | same | `'Oslo' like 'O_lo'` | - | yes |
@@ -253,19 +270,36 @@ This checks conversion only: whether each implementation writes the same JSON as
 | neq-and | `1 <> 2 and 3 <> 4` | ok | same | `1 <> 2 and 3 <> 4` | - | yes |
 | neq-compared-to-true | `(2 <> 3) = true` | ok | same | `2 <> 3 = true` | - | yes |
 | neq-not | `not (2 <> 2)` | ok | same | `not 2 <> 2` | - | yes |
-| null-arithmetic | `null + 1` | ok | same | `'None' + 1` | - | /args/0: `null` vs `"None"` |
-| null-equal | `null = 1` | ok | same | `'None' = 1` | - | /args/0: `null` vs `"None"` |
-| null-not-equal | `null <> 1` | ok | same | `'None' <> 1` | - | /args/0: `null` vs `"None"` |
-| null-compare | `null > 1` | ok | same | `'None' > 1` | - | /args/0: `null` vs `"None"` |
-| null-like | `null like 'a%'` | ok | same | `'None' like 'a%'` | - | /args/0: `null` vs `"None"` |
-| null-not | `not (null > 1)` | ok | same | `not 'None' > 1` | - | /args/0/args/0: `null` vs `"None"` |
-| null-and-true | `(null > 1) and true` | ok | same | `'None' > 1 and true` | - | /args/0/args/0: `null` vs `"None"` |
-| null-and-false | `(null > 1) and false` | ok | same | `'None' > 1 and false` | - | /args/0/args/0: `null` vs `"None"` |
-| null-or-true | `(null > 1) or true` | ok | same | `'None' > 1 or true` | - | /args/0/args/0: `null` vs `"None"` |
-| null-or-false | `(null > 1) or false` | ok | same | `'None' > 1 or false` | - | /args/0/args/0: `null` vs `"None"` |
-| null-is-null | `(null + 1) is null` | ok | same | `'None' + 1 is null` | - | /args/0/args/0: `null` vs `"None"` |
-| null-literal | `null` | ok | same | `'None'` | - | /: `null` vs `"None"` |
-| null-literal-is-null | `null is null` | ok | same | `'None' is null` | - | /args/0: `null` vs `"None"` |
+| null-arithmetic | `null + 1` | ok | same | `null + 1` | - | yes |
+| null-equal | `null = 1` | ok | same | `null = 1` | - | yes |
+| null-not-equal | `null <> 1` | ok | same | `null <> 1` | - | yes |
+| null-compare | `null > 1` | ok | same | `null > 1` | - | yes |
+| null-like | `null like 'a%'` | ok | same | `null like 'a%'` | - | yes |
+| null-not | `not (null > 1)` | ok | same | `not null > 1` | - | yes |
+| null-and-true | `(null > 1) and true` | ok | same | `null > 1 and true` | - | yes |
+| null-and-false | `(null > 1) and false` | ok | same | `null > 1 and false` | - | yes |
+| null-or-true | `(null > 1) or true` | ok | same | `null > 1 or true` | - | yes |
+| null-or-false | `(null > 1) or false` | ok | same | `null > 1 or false` | - | yes |
+| null-is-null | `(null + 1) is null` | ok | same | `null + 1 is null` | - | yes |
+| null-literal | `null` | ok | same | `null` | - | yes |
+| null-literal-is-null | `null is null` | ok | same | `null is null` | - | yes |
+| null-in-null-element | `5 in (1, null)` | ok | same | `5 in (1, null)` | - | yes |
+| null-in-found-with-null-element | `1 in (1, null)` | ok | same | `1 in (1, null)` | - | yes |
+| null-in-empty-list | `5 in ()` | ok | /args/1: `[]` vs `{}` | `5 in ({})` | - | /args/1: `{}` vs `["type=<ExpressionType.INSTANCE: 'instance'> cl...` |
+| null-null-in-empty-list | `null in ()` | ok | /args/1: `[]` vs `{}` | `null in ({})` | - | /args/1: `{}` vs `["type=<ExpressionType.INSTANCE: 'instance'> cl...` |
+| null-null-not-in-empty-list | `null not in ()` | ok | /args/0/args/1: `[]` vs `{}` | `null not in ({})` | - | /args/0/args/1: `{}` vs `["type=<ExpressionType.INSTANCE: 'instance'> cl...` |
+| null-div-by-zero | `1 / 0` | ok | - | `1 / 0` | - | yes |
+| null-int-div-by-zero | `7 div 0` | ok | - | `//(7, 0)` | - | yes |
+| null-mod-by-zero | `7 % 0` | ok | - | `7 % 0` | - | yes |
+| null-pow-zero-negative | `0 ^ (0 - 1)` | ok | - | `0 ^ (0 - 1)` | - | yes |
+| null-pow-negative-fraction | `(0 - 8) ^ 0.5` | ok | - | `(0 - 8) ^ 0.5` | - | yes |
+| null-pow-negative-integer | `(0 - 2) ^ 3` | ok | - | `(0 - 2) ^ 3` | - | yes |
+| null-sqrt-negative | `sqrt(-1)` | ok | same | `sqrt(-1)` | - | yes |
+| null-log-zero | `log(0)` | ok | same | `log(0)` | - | yes |
+| null-log10-negative | `log10(-1)` | ok | same | `log10(-1)` | - | yes |
+| null-acos-out-of-domain | `acos(2)` | ok | same | `acos(2)` | - | yes |
+| null-asin-out-of-domain | `asin(-1.5)` | ok | same | `asin(-1.5)` | - | yes |
+| null-pow-function | `pow(-8, 0.5)` | ok | same | `pow(-8, 0.5)` | - | yes |
 
 ## Styles
 
@@ -292,7 +326,7 @@ This checks conversion only: whether each implementation writes the same JSON as
 | Example | CSS to JSON | Same as the example's JSON | CSS → JSON → CSS → JSON stable | Example's JSON → CSS → JSON |
 |---|---|---|---|---|
 | 1-core | ok | same | yes | yes |
-| 2-vector-polygon | ok | same | /stylingRules/0/nestedRules/0/nestedRules/3/nestedRules/0/symbolizer/marker/elements/value/blackTint: `[107, 95, 42]` vs `"[107, 95, 42]"` | /stylingRules/0/nestedRules/0/nestedRules/3/nestedRules/0/symbolizer/marker/elements/value/blackTint: `[107, 95, 42]` vs `"[107, 95, 42]"` |
+| 2-vector-polygon | ok | same | yes | yes |
 | 3-vector-line | ok | same | yes | yes |
 | 4-vector-point | ok | same | yes | yes |
 | 5-coverage-dem | ok | same | yes | yes |
@@ -301,6 +335,6 @@ This checks conversion only: whether each implementation writes the same JSON as
 | 8-coverage-hillshading | ok | same | yes | yes |
 | 9-coverage-hillshading-opacity | ok | same | yes | yes |
 | 10-natural_earth_economies | ok | same | yes | yes |
-| 10-protected-areas | ok | /stylingRules/0/nestedRules/0/symbolizer/stroke/center: missing | yes | to CartoSym-CSS: error: error: conversion failed: 3 validation errors for Style |
+| 10-protected-areas | ok | /stylingRules/0/nestedRules/0/symbolizer/stroke/center: missing | yes | /stylingRules/0/nestedRules/0/symbolizer/stroke/center: missing |
 | 11-natural_earth_continents | ok | same | yes | yes |
 | 11-rondane-overview | ok | same | yes | yes |

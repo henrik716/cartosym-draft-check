@@ -24,6 +24,31 @@
    }
   }
  },
+ "null-acos-out-of-domain": {
+  "requirement": "/req/math/acos",
+  "input": "acos(2)",
+  "expect": "null",
+  "json": {
+   "op": "acos",
+   "args": [
+    2
+   ]
+  },
+  "results": {
+   "libCartoSym": {
+    "verdict": "FAIL",
+    "detail": "got `nan.0`, draft expects `null`"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "converts to the case's CQL2-JSON"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "null"
+   }
+  }
+ },
  "math-asin": {
   "requirement": "/req/math/asin",
   "input": "asin(1)",
@@ -46,6 +71,31 @@
    "draft renderer": {
     "verdict": "pass",
     "detail": "1.5707963267948966"
+   }
+  }
+ },
+ "null-asin-out-of-domain": {
+  "requirement": "/req/math/asin",
+  "input": "asin(-1.5)",
+  "expect": "null",
+  "json": {
+   "op": "asin",
+   "args": [
+    -1.5
+   ]
+  },
+  "results": {
+   "libCartoSym": {
+    "verdict": "FAIL",
+    "detail": "got `nan.0`, draft expects `null`"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "converts to the case's CQL2-JSON"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "null"
    }
   }
  },
@@ -354,6 +404,31 @@
    "draft renderer": {
     "verdict": "pass",
     "detail": "3.0"
+   }
+  }
+ },
+ "null-log10-negative": {
+  "requirement": "/req/math/log10",
+  "input": "log10(-1)",
+  "expect": "null",
+  "json": {
+   "op": "log10",
+   "args": [
+    -1
+   ]
+  },
+  "results": {
+   "libCartoSym": {
+    "verdict": "FAIL",
+    "detail": "got `nan.0`, draft expects `null`"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "converts to the case's CQL2-JSON"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "null"
    }
   }
  },
@@ -1466,6 +1541,25 @@
    }
   }
  },
+ "null-div-by-zero": {
+  "requirement": "/req/arithmetic/div",
+  "input": "1 / 0",
+  "expect": "null",
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "null"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "null"
+   }
+  }
+ },
  "arith-int-div": {
   "requirement": "/req/arithmetic/int-div",
   "input": "7 div 2",
@@ -1501,6 +1595,25 @@
    "draft renderer": {
     "verdict": "pass",
     "detail": "-3"
+   }
+  }
+ },
+ "null-int-div-by-zero": {
+  "requirement": "/req/arithmetic/int-div",
+  "input": "7 div 0",
+  "expect": "null",
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "null"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "null"
    }
   }
  },
@@ -1542,6 +1655,25 @@
    }
   }
  },
+ "null-mod-by-zero": {
+  "requirement": "/req/arithmetic/mod",
+  "input": "7 % 0",
+  "expect": "null",
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "null"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "null"
+   }
+  }
+ },
  "arith-pow": {
   "requirement": "/req/arithmetic/pow",
   "input": "2 ^ 10",
@@ -1565,6 +1697,63 @@
    "draft renderer": {
     "verdict": "pass",
     "detail": "1024"
+   }
+  }
+ },
+ "null-pow-zero-negative": {
+  "requirement": "/req/arithmetic/pow",
+  "input": "0 ^ (0 - 1)",
+  "expect": "null",
+  "results": {
+   "libCartoSym": {
+    "verdict": "FAIL",
+    "detail": "got `inf.0`, draft expects `null`"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "null"
+   }
+  }
+ },
+ "null-pow-negative-fraction": {
+  "requirement": "/req/arithmetic/pow",
+  "input": "(0 - 8) ^ 0.5",
+  "expect": "null",
+  "results": {
+   "libCartoSym": {
+    "verdict": "FAIL",
+    "detail": "got `nan.0`, draft expects `null`"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "null"
+   }
+  }
+ },
+ "null-pow-negative-integer": {
+  "requirement": "/req/arithmetic/pow",
+  "input": "(0 - 2) ^ 3",
+  "expect": -8,
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "-8.0"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "parses"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "-8"
    }
   }
  },
@@ -2151,6 +2340,147 @@
    "libCartoSym": {
     "verdict": "pass",
     "detail": "valid"
+   }
+  }
+ },
+ "null-in-null-element": {
+  "requirement": "/req/core/relational",
+  "input": "5 in (1, null)",
+  "expect": "null",
+  "json": {
+   "op": "in",
+   "args": [
+    5,
+    [
+     1,
+     null
+    ]
+   ]
+  },
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "null"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "converts to the case's CQL2-JSON"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "null"
+   }
+  }
+ },
+ "null-in-found-with-null-element": {
+  "requirement": "/req/core/relational",
+  "input": "1 in (1, null)",
+  "expect": "true",
+  "json": {
+   "op": "in",
+   "args": [
+    1,
+    [
+     1,
+     null
+    ]
+   ]
+  },
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "true"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "converts to the case's CQL2-JSON"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "true"
+   }
+  }
+ },
+ "null-in-empty-list": {
+  "requirement": "/req/core/relational",
+  "input": "5 in ()",
+  "expect": "false",
+  "json": {
+   "op": "in",
+   "args": [
+    5,
+    []
+   ]
+  },
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "false"
+   },
+   "pycartosym": {
+    "verdict": "FAIL",
+    "detail": "converts to `{\"op\": \"in\", \"args\": [5, {}]}`, case has `{\"op\": \"in\", \"args\": [5, []]}`"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "false"
+   }
+  }
+ },
+ "null-null-in-empty-list": {
+  "requirement": "/req/core/relational",
+  "input": "null in ()",
+  "expect": "false",
+  "json": {
+   "op": "in",
+   "args": [
+    null,
+    []
+   ]
+  },
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "false"
+   },
+   "pycartosym": {
+    "verdict": "FAIL",
+    "detail": "converts to `{\"op\": \"in\", \"args\": [null, {}]}`, case has `{\"op\": \"in\", \"args\": [null, []]}`"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "false"
+   }
+  }
+ },
+ "null-null-not-in-empty-list": {
+  "requirement": "/req/core/relational",
+  "input": "null not in ()",
+  "expect": "true",
+  "json": {
+   "op": "not",
+   "args": [
+    {
+     "op": "in",
+     "args": [
+      null,
+      []
+     ]
+    }
+   ]
+  },
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "true"
+   },
+   "pycartosym": {
+    "verdict": "FAIL",
+    "detail": "converts to `{\"op\": \"not\", \"args\": [{\"op\": \"in\", \"args\": [null, {}]}]}`, case has `{\"op\": \"not\", \"args\": [{\"op\": \"in\", \"args\": [null, []]}]}`"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "true"
    }
   }
  },
@@ -3192,6 +3522,32 @@
    }
   }
  },
+ "null-pow-function": {
+  "requirement": "/req/math/pow",
+  "input": "pow(-8, 0.5)",
+  "expect": "null",
+  "json": {
+   "op": "pow",
+   "args": [
+    -8,
+    0.5
+   ]
+  },
+  "results": {
+   "libCartoSym": {
+    "verdict": "FAIL",
+    "detail": "got `nan.0`, draft expects `null`"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "converts to the case's CQL2-JSON"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "null"
+   }
+  }
+ },
  "math-min": {
   "requirement": "/req/math/min",
   "input": "min(2, 3)",
@@ -3287,6 +3643,31 @@
    }
   }
  },
+ "null-log-zero": {
+  "requirement": "/req/math/log",
+  "input": "log(0)",
+  "expect": "null",
+  "json": {
+   "op": "log",
+   "args": [
+    0
+   ]
+  },
+  "results": {
+   "libCartoSym": {
+    "verdict": "FAIL",
+    "detail": "got `-inf.0`, draft expects `null`"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "converts to the case's CQL2-JSON"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "null"
+   }
+  }
+ },
  "math-sqrt": {
   "requirement": "/req/math/sqrt",
   "input": "sqrt(16)",
@@ -3303,6 +3684,31 @@
    "draft renderer": {
     "verdict": "pass",
     "detail": "4.0"
+   }
+  }
+ },
+ "null-sqrt-negative": {
+  "requirement": "/req/math/sqrt",
+  "input": "sqrt(-1)",
+  "expect": "null",
+  "json": {
+   "op": "sqrt",
+   "args": [
+    -1
+   ]
+  },
+  "results": {
+   "libCartoSym": {
+    "verdict": "FAIL",
+    "detail": "got `nan.0`, draft expects `null`"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "converts to the case's CQL2-JSON"
+   },
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "null"
    }
   }
  }
