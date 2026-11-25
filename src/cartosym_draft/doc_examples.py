@@ -1074,6 +1074,9 @@ def build(spec: Path, names: list[str] | None = None, extra_schema: Path | None 
             figures = core / "figures" / "examples" / ex.subdir if ex.subdir else core / "figures" / "examples"
         figures.mkdir(parents=True, exist_ok=True)
         css_path = ex_dir / f"{ex.name}.cscss"
+        if not css_path.exists():  # e.g. Annex C examples 12 and 13 on a branch made before #233 is merged
+            print(f"{ex.subdir + '/' if ex.subdir else ''}{ex.name}: skipped, no {css_path.name} in this checkout")
+            continue
         css = css_path.read_text(encoding="utf-8")
         style, fixups = to_json(css)
         json_path = ex_dir / f"{ex.name}.cs.json"

@@ -492,8 +492,9 @@ class _Item:
     opacity: float  # the resolved Symbolizer opacity
     fills: list[str] = field(default_factory=list)
     casings: list[str] = field(default_factory=list)
-    strokes: list[str] = field(default_factory=list)  # main strokes and markers
+    strokes: list[str] = field(default_factory=list)  # main strokes
     centers: list[str] = field(default_factory=list)
+    markers: list[str] = field(default_factory=list)  # with each graphic's own fill and stroke (a Dot's outline)
     labels: list[str] = field(default_factory=list)  # with label_pass == "with-feature"
     viz_pass: int = 0  # visualization.pass
     feature_pass: int = 0  # feature.pass
@@ -738,7 +739,8 @@ def render(style: dict, layers: list[Layer], view: View, opts: Options | None = 
             z = float(sym.get("zOrder", 1))
             svg.casings, svg.centers = [], []
             fills: list[str] = []
-            frags: list[str] = []  # main strokes and markers
+            frags: list[str] = []  # main strokes
+            marks: list[str] = []  # markers
             pts, lines, polys = _parts(feat["geometry"])
             for poly in polys:
                 path = _rings_path(poly, view)
@@ -752,12 +754,12 @@ def render(style: dict, layers: list[Layer], view: View, opts: Options | None = 
                 at += [view.xy(*p[:2]) for line in lines for p in line]  # vertices of lines
                 at += [view.xy(*_centroid(poly)) for poly in polys]  # centroid of polygons
                 for x, y in at:
-                    frags += _marker_paint(marker, x, y, view, mul, opts)
+                    marks += _marker_paint(marker, x, y, view, mul, opts)
             if anchors:
                 for p in pts:
                     x, y = view.xy(*p[:2])
                     cross = f"M{x - 7:.1f},{y:.1f} H{x + 7:.1f} M{x:.1f},{y - 7:.1f} V{y + 7:.1f}"
-                    frags.append(f'<path d="{cross}" stroke="white" stroke-width="4"/>'
+                    marks.append(f'<path d="{cross}" stroke="white" stroke-width="4"/>'
                                  f'<path d="{cross}" stroke="black" stroke-width="1.5"/>')
             # A feature's label comes from the first pass that draws the feature with one: in later passes the
             # same label would only be dropped as overlapping itself (/rec/labels/overlap).
@@ -774,7 +776,7 @@ def render(style: dict, layers: list[Layer], view: View, opts: Options | None = 
                 for text, box in _label_candidates(label, pts, lines, polys, view, 1.0, opts):
                     labels.append(_Label(prio, seq, len(items), text, box, (layer.id, content), spacing, vp))
             items.append(_Item(z if opts.z_order == "higher-on-top" else -z, seq, layer.id, op,
-                               fills, svg.casings, frags, svg.centers, viz_pass=vp, feature_pass=fp))
+                               fills, svg.casings, frags, svg.centers, marks, viz_pass=vp, feature_pass=fp))
             seq += 1
 
     # /req/labels/*: place in priority order, dropping labels that would overlap.
@@ -793,9 +795,10 @@ def render(style: dict, layers: list[Layer], view: View, opts: Options | None = 
         if opts.label_pass == "with-feature":
             items[lb.item].labels.append(lb.svg)
 
-    # Within a zOrder: the fills of all features, then their casings, main strokes (with markers)
-    # and center lines (/req/casing/casing, /req/casing/center; the order is Jérôme's on #198). So a
-    # bridge's casing covers the roads below it, and the casings of joining lines merge.
+    # Within a zOrder: the fills of all features, then their casings, main strokes, center lines and
+    # markers (/req/casing/casing, /req/casing/center; the order is Jérôme's on #198, marker last since
+    # Nov 20, a Dot's own outline with it). So a bridge's casing covers the roads below it, the casings of
+    # joining lines merge, and no line is drawn over a marker of the same zOrder.
     # /rec/core/opacity-together: with "whole", translucent features are made transparent as one
     # group per data layer, zOrder and opacity, drawn in the same order inside the group; labels
     # stay outside it (NOTE in /req/core/opacity).
@@ -808,8 +811,9 @@ def render(style: dict, layers: list[Layer], view: View, opts: Options | None = 
     def steps(group: list[_Item], with_labels: bool) -> str:
         return ("".join(f for it in group for f in it.fills)
                 + "".join(c for it in group for c in it.casings)
-                + "".join("".join(it.strokes) + ("".join(it.labels) if with_labels else "") for it in group)
-                + "".join(c for it in group for c in it.centers))
+                + "".join(s for it in group for s in it.strokes)
+                + "".join(c for it in group for c in it.centers)
+                + "".join("".join(it.markers) + ("".join(it.labels) if with_labels else "") for it in group))
 
     by_step = lambda it: (it.seq, it.feature_pass)  # noqa: E731
     grouped_across_passes: set[tuple] = set()
