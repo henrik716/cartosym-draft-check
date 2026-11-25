@@ -59,7 +59,8 @@ def _verdict(outcome: adapters.Outcome, expected, exact: bool = False) -> tuple[
 
 def _as_point(value):
     """The schema's unitPoint is `[x, y(, z)]` or `{x, y(, z)}`: write both as the object, to compare them."""
-    if isinstance(value, list) and 2 <= len(value) <= 3 and all(isinstance(v, (int, float)) for v in value):
+    if isinstance(value, list) and 2 <= len(value) <= 3 and all(
+            isinstance(v, (int, float)) or (isinstance(v, dict) and len(v) == 1) for v in value):  # 6 or {mm: 6}
         return dict(zip("xyz", value))
     return value
 

@@ -214,7 +214,7 @@ def samples() -> list[Sample]:
                "between blackTint and tint.",
                [Panel(_by_layer({
                    name: {"marker": {"elements": [{"type": "Image", "image": {"uri": ICON},
-                                                   "width": {"px": 48}, "height": {"px": 48}, **tints}]}}
+                                                   "size": {"px": 48}, **tints}]}}
                    for name, tints in [("A", {}), ("B", {"tint": "gold"}), ("C", {"blackTint": "darkRed"}),
                                        ("D", {"tint": "lightSkyBlue", "blackTint": "navy"})]}),
                    [Layer(name, [_feature("Point", [x, 105])]) for name, x in [("A", 45), ("B", 115), ("C", 185), ("D", 255)]],

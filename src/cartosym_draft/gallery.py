@@ -245,7 +245,7 @@ def _vector_decisions() -> list[Decision]:
             requirements=["/req/vector/image"],
             question="A pin icon on a point (black cross = the point's location). Without an explicit `hotSpot`, which part of the image sits on the point?",
             style={"stylingRules": [{"symbolizer": {"marker": {"elements": [
-                {"type": "Image", "image": {"uri": PIN}, "width": {"px": 36}, "height": {"px": 36}}]}}}]},
+                {"type": "Image", "image": {"uri": PIN}, "size": {"px": 36}}]}}}]},
             layers=[Layer("POI", [_feature("Point", [90, 100]), _feature("Point", [210, 100])])],
             variants=[
                 Variant("Centre (0.5, 0.5)", DRAFT, is_draft=True),

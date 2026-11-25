@@ -9,11 +9,15 @@ fills, and Symbolizer visibility, opacity and zOrder.
 
 from __future__ import annotations
 
+import base64
 import functools
 import html
+import io
 import itertools
 import math
 import random
+import re
+import urllib.parse
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -478,21 +482,84 @@ def _offset(el: dict, view: View) -> tuple[float, float]:
     return 0.0, 0.0
 
 
-def _hotspot(value: Any, w: float, h: float, view: View) -> tuple[float, float] | None:
+@functools.lru_cache(maxsize=256)
+def _own_size(href: str) -> tuple[float, float] | None:
+    """The image's own size in pixels (/req/vector/image): its pixels, or for an SVG image its `width` and
+    `height` (else its viewBox); None where the file can't be read."""
+    try:
+        if href.startswith("data:"):
+            head, _, body = href.partition(",")
+            data = base64.b64decode(body) if head.endswith(";base64") else urllib.parse.unquote(body).encode()
+        else:
+            with open(href, "rb") as f:
+                data = f.read()
+    except (OSError, ValueError):
+        return None
+    if data.lstrip()[:1] == b"<":
+        root = re.search(rb"<svg\b[^>]*>", data)
+        if not root:
+            return None
+        w = re.search(rb'\swidth="\s*([\d.]+)\s*(px)?\s*"', root.group(0))
+        h = re.search(rb'\sheight="\s*([\d.]+)\s*(px)?\s*"', root.group(0))
+        if w and h:
+            return float(w.group(1)), float(h.group(1))
+        box = re.search(rb'viewBox="\s*[-\d.]+[\s,]+[-\d.]+[\s,]+([\d.]+)[\s,]+([\d.]+)', root.group(0))
+        return (float(box.group(1)), float(box.group(2))) if box else None
+    try:
+        from PIL import Image as PILImage
+        width, height = PILImage.open(io.BytesIO(data)).size
+        return float(width), float(height)
+    except Exception:  # noqa: BLE001 - no Pillow, or not an image it reads
+        return None
+
+
+def _image_href(el: dict) -> Any:
+    img = el.get("image")
+    return img.get("uri") if isinstance(img, dict) else img
+
+
+def _image_size(el: dict, view: View) -> tuple[float, float, float, float]:
+    """(width, height) of an Image as drawn and (width, height) of the image file, in pixels (/req/vector/image):
+    a single `size` value sets both, a point sets the width (x) and the height (y), and if only one of them is
+    set, the other follows the aspect ratio; without a `size`, the image's own size (24 px where unknown)."""
+    href = _image_href(el)
+    ow, oh = (_own_size(href) if isinstance(href, str) else None) or (24.0, 24.0)
+    if ow <= 0 or oh <= 0:
+        ow = oh = 24.0
+    size = el.get("size")
+    if isinstance(size, list) and len(size) >= 2:
+        x, y = size[0], size[1]
+    elif isinstance(size, dict) and set(size) & {"x", "y"}:
+        x, y = size.get("x"), size.get("y")
+    else:
+        x = y = size
+    w = to_px(x, view) if x is not None else None
+    h = to_px(y, view) if y is not None else None
+    if w is None and h is None:
+        return ow, oh, ow, oh
+    if w is None:
+        w = h * ow / oh
+    if h is None:
+        h = w * oh / ow
+    return w, h, ow, oh
+
+
+def _hotspot(value: Any, w: float, h: float, view: View, own: tuple[float, float] | None = None) \
+        -> tuple[float, float] | None:
     """An Image hotSpot as fractions of the image size: `pc` is a percentage, other units are lengths
-    from the top left corner, and plain numbers are pixels of the image (/req/vector/image, #192)."""
+    from the top left corner, and plain numbers are pixels of the image file, *own* (/req/vector/image, #192)."""
     if value is None:
         return None
     if isinstance(value, dict):
         value = [value.get("x", 0), value.get("y", 0)]
     out = []
-    for v, size in zip(value, (w, h)):
+    for v, size, file_size in zip(value, (w, h), own or (w, h)):
         if isinstance(v, dict) and set(v) == {"pc"}:
             out.append(float(v["pc"]) / 100)
         elif isinstance(v, dict):
             out.append(to_px(v, view) / size if size else 0.0)
         else:
-            out.append(float(v) / size if size else 0.0)
+            out.append(float(v) / file_size if file_size else 0.0)
     return out[0], out[1]
 
 
@@ -515,10 +582,9 @@ def _marker_paint(marker: dict, x: float, y: float, view: View, opacity_mul: flo
         elif kind == "Text":  # /req/vector/text, /req/font-outlines/*
             out.append(_text(el, px, py, view, mo * opacity_mul, opts))
         elif kind == "Image":  # /req/vector/image
-            w = to_px(el.get("width", {"px": 24}), view, 24)
-            h = to_px(el.get("height", {"px": 24}), view, 24)
-            hx, hy = _hotspot(el.get("hotSpot"), w, h, view) or opts.image_hotspot
-            href = (el.get("image") or {}).get("uri") if isinstance(el.get("image"), dict) else el.get("image")
+            w, h, ow, oh = _image_size(el, view)
+            hx, hy = _hotspot(el.get("hotSpot"), w, h, view, (ow, oh)) or opts.image_hotspot
+            href = _image_href(el)
             # tint × v + blackTint × (1 − v) per channel; the defaults (white, black) leave the image unchanged.
             tint = parse_color(el.get("tint")) or (1.0, 1.0, 1.0)
             black = parse_color(el.get("blackTint")) or (0.0, 0.0, 0.0)
@@ -745,7 +811,7 @@ def _curved_candidates(elements: list[dict], lines, spacing: float | None, view:
             left = {"start": ox, "end": ox - w}.get(_text_anchor(el), ox - w / 2)
         else:
             w = h = to_px(el.get("size", (el.get("stroke") or {}).get("width")), view, 10) \
-                if el.get("type", "Dot") == "Dot" else to_px(el.get("width", {"px": 24}), view, 24)
+                if el.get("type", "Dot") == "Dot" else max(_image_size(el, view)[:2])
             left = ox - w / 2
         parts.append((el, ox, oy, left, w, h))
     x_min = min(p[3] for p in parts)
@@ -837,7 +903,7 @@ def _label_candidates(label: dict, pts, lines, polys, view: View, mul: float, op
             else:
                 frags += _marker_paint({"elements": [el]}, x, y, view, mul, opts)
                 size = to_px(el.get("size", (el.get("stroke") or {}).get("width")), view, 10) \
-                    if el.get("type", "Dot") == "Dot" else to_px(el.get("width", {"px": 24}), view, 24)
+                    if el.get("type", "Dot") == "Dot" else max(_image_size(el, view)[:2])
                 boxes.append((lx - size / 2, ly - size / 2, lx + size / 2, ly + size / 2))
         if not frags:
             continue

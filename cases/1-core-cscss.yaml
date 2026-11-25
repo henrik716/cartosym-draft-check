@@ -35,3 +35,19 @@
    input: "Huts { marker: { font: { size: 14 pt }, elements: [ Text { text: 'a' } ] }; }\n",
    csjson: {at: /stylingRules/0/symbolizer/marker/font/size, expect: {pt: 14}}, expect: "{pt: 14}",
    note: "A `font` on a MultiGraphic (#100)."}
+#
+# Issue #100 (agreed Nov 17-19), Image size PR: an Image `size` is a uom-qualified point, the width (x) and the
+# height (y); a single value sets both, and `size.x` alone leaves the height to the aspect ratio
+# (/req/vector/image).
+- {id: cscss-image-size, requirement: /req/vector/image, kind: style, format: cscss,
+   input: "Huts { marker: { elements: [ Image { image: { uri: 'hut.png' }, size: 6 mm } ] }; }\n",
+   csjson: {at: /stylingRules/0/symbolizer/marker/elements/0/size, expect: {mm: 6}}, expect: "{mm: 6}",
+   note: "One value sets the width and the height (#100)."}
+- {id: cscss-image-size-tuple, requirement: /req/vector/image, kind: style, format: cscss,
+   input: "Huts { marker: { elements: [ Image { image: { uri: 'hut.png' }, size: 6 mm 4 mm } ] }; }\n",
+   csjson: {at: /stylingRules/0/symbolizer/marker/elements/0/size, expect: {x: {mm: 6}, y: {mm: 4}}},
+   expect: "{x: {mm: 6}, y: {mm: 4}}", note: "Width and height (#100)."}
+- {id: cscss-image-size-x, requirement: /req/vector/image, kind: style, format: cscss,
+   input: "Huts { marker: { elements: [ Image { image: { uri: 'hut.png' }, size.x: 6 mm } ] }; }\n",
+   csjson: {at: /stylingRules/0/symbolizer/marker/elements/0/size, expect: {x: {mm: 6}}}, expect: "{x: {mm: 6}}",
+   note: "The width alone; the height follows the aspect ratio (#100)."}
