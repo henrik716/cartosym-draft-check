@@ -29,6 +29,36 @@
    }
   }
  },
+ "cscss-font-size-pt": {
+  "requirement": "/req/vector/fonts",
+  "input": "Huts { marker: { elements: [ Text { text: 'a', font: { size: 12 pt } } ] }; }\n",
+  "expect": "{pt: 12}",
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "{\"pt\": 12}"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "{\"pt\": 12}"
+   }
+  }
+ },
+ "cscss-font-size": {
+  "requirement": "/req/vector/fonts",
+  "input": "Huts { marker: { elements: [ Text { text: 'a', font: { size: 12 } } ] }; }\n",
+  "expect": "12",
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "12"
+   },
+   "pycartosym": {
+    "verdict": "pass",
+    "detail": "12"
+   }
+  }
+ },
  "math-acos": {
   "requirement": "/req/math/acos",
   "input": "acos(1)",
