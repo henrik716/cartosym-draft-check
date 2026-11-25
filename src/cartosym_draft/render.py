@@ -386,10 +386,16 @@ def _text(el: dict, x: float, y: float, view: View, opacity_mul: float, opts: Op
            f'{html.escape(str(el.get("text", "")))}</text>'
 
 
+def _font_size(font: dict, view: View, opts: Options) -> float:
+    """A font `size` in pixels: a number without a unit is in points or pixels (Options.font_size_unit)."""
+    size = font.get("size")
+    return to_px({opts.font_size_unit: size} if isinstance(size, (int, float)) else size, view, 16)
+
+
 def _text_style(el: dict, view: View, opacity_mul: float, opts: Options) -> str:
     """The attributes of a Text graphic's <text>, other than its position."""
     font = el.get("font") or {}
-    size = to_px({"pt": font["size"]} if isinstance(font.get("size"), (int, float)) else font.get("size"), view, 16)
+    size = _font_size(font, view, opts)
     anchor = _text_anchor(el)
     align = el.get("alignment") or {}
     v = (align[1] if len(align) > 1 else "top") if isinstance(align, list) else align.get("vertical", "top")
@@ -585,11 +591,11 @@ def _font(face: str, size: float, bold: bool, italic: bool):
     return None
 
 
-def _label_size(el: dict, view: View) -> tuple[float, float]:
+def _label_size(el: dict, view: View, opts: Options) -> tuple[float, float]:
     """Text extent: the advance width and the font's ascent plus descent, measured with the font where
     Pillow and the font are available (as a browser would draw it), else 0.6 em per character."""
     font = el.get("font") or {}
-    size = to_px({"pt": font["size"]} if isinstance(font.get("size"), (int, float)) else font.get("size"), view, 16)
+    size = _font_size(font, view, opts)
     text = str(el.get("text", ""))
     f = _font(str(font.get("face", "Arial")), size, bool(font.get("bold")), bool(font.get("italic")))
     if f is None:
@@ -683,7 +689,7 @@ def _curved_candidates(elements: list[dict], lines, spacing: float | None, view:
     for el in elements:
         ox, oy = _offset(el, view)
         if el.get("type", "Text") == "Text":
-            w, h = _label_size(el, view)
+            w, h = _label_size(el, view, opts)
             left = {"start": ox, "end": ox - w}.get(_text_anchor(el), ox - w / 2)
         else:
             w = h = to_px(el.get("size", (el.get("stroke") or {}).get("width")), view, 10) \
@@ -770,7 +776,7 @@ def _label_candidates(label: dict, pts, lines, polys, view: View, mul: float, op
             ox, oy = _offset(el, view)
             lx, ly = x + ox, y + oy
             if el.get("type", "Text") == "Text":
-                w, h = _label_size(el, view)
+                w, h = _label_size(el, view, opts)
                 frags.append(_text(el, lx, ly, view, mul, opts))
                 left = {"start": lx, "end": lx - w}.get(_text_anchor(el), lx - w / 2)
                 c, s_ = abs(math.cos(math.radians(ang))), abs(math.sin(math.radians(ang)))

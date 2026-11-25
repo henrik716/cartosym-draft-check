@@ -442,12 +442,12 @@ REQUIREMENT_EXAMPLES = [
                  [("left top (default)", ""), ("center middle", ", alignment: center middle"),
                   ("right bottom", ", alignment: right bottom"), ("center bottom", ", alignment: center bottom")])),
     _vig("vector-fonts", "The font of the peak names around Ljosåbelgen", ["/req/vector/fonts"], ["Places"],
-         Panel(38000, (16265, 12780), VW, VH), "the `font`",  # room for the names at size 12
-         _values("font: { face: 'Arial', size: 9, color: #2b2b2b }",
-                 [("size: 9", "font: { face: 'Arial', size: 9, color: #2b2b2b }"),
-                  ("size: 12", "font: { face: 'Arial', size: 12, color: #2b2b2b }"),
-                  ("bold: true", "font: { face: 'Arial', size: 9, bold: true, color: #2b2b2b }"),
-                  ("italic: true", "font: { face: 'Arial', size: 9, italic: true, color: #2b2b2b }")])),
+         Panel(38000, (16265, 12780), VW, VH), "the `font`",  # room for the names at size 12 pt
+         _values("font: { face: 'Arial', size: 9 pt, color: #2b2b2b }",
+                 [("size: 9 pt", "font: { face: 'Arial', size: 9 pt, color: #2b2b2b }"),
+                  ("size: 12 pt", "font: { face: 'Arial', size: 12 pt, color: #2b2b2b }"),
+                  ("bold: true", "font: { face: 'Arial', size: 9 pt, bold: true, color: #2b2b2b }"),
+                  ("italic: true", "font: { face: 'Arial', size: 9 pt, italic: true, color: #2b2b2b }")])),
     # --- Basic Coverage Styling and Hill Shading (clause 9)
     _vig("coverage-color-channels", "Color channels from the bands of a Sentinel-2 scene (1 September 2024) around "
          "Myrtjørna", ["/req/coverage/color-channels"], ["sentinel2-l2a"], Panel(150000, MYRTJORNA, VW, VH),

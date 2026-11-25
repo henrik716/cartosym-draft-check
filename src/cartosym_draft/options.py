@@ -42,6 +42,11 @@ class Options:
     # and center lines before the next layer's, as separate QGIS or MapLibre layers do.
     casing_layers: str = "all"
 
+    # /req/vector/fonts: the unit of a font `size` given without one: "pt" (main: "a `size` specified in
+    # points") or "px", like every other length (agreed on #100; the font-size PR writes `pt` in the
+    # examples, so their figures are the same either way).
+    font_size_unit: str = "pt"
+
     # /req/font-outlines/outline: "below" draws the outline beneath the glyphs.
     font_outline: str = "below"
 

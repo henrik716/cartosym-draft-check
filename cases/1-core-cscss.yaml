@@ -13,3 +13,14 @@
 - {id: cscss-tuple, requirement: /req/cscss/expressions, kind: style, format: cscss,
    input: "Huts { marker: { elements: [ Dot { position: 10 4; size: 6 } ] }; }\n",
    csjson: {at: /stylingRules/0/symbolizer/marker/elements/0/position, expect: {x: 10, y: 4}}, expect: "{x: 10, y: 4}"}
+#
+# Issue #100 (agreed Nov 18-19): a Font `size` without a unit is in pixels, like every other length, and the
+# examples write `pt`. The font-size PR makes the schema's Font `size` a unitValue, so `12 pt` is `{"pt": 12}` in
+# CartoSym-JSON. The plain number is the control.
+- {id: cscss-font-size-pt, requirement: /req/vector/fonts, kind: style, format: cscss,
+   input: "Huts { marker: { elements: [ Text { text: 'a', font: { size: 12 pt } } ] }; }\n",
+   csjson: {at: /stylingRules/0/symbolizer/marker/elements/0/font/size, expect: {pt: 12}}, expect: "{pt: 12}",
+   note: "A font size with a unit keeps it (#100)."}
+- {id: cscss-font-size, requirement: /req/vector/fonts, kind: style, format: cscss,
+   input: "Huts { marker: { elements: [ Text { text: 'a', font: { size: 12 } } ] }; }\n",
+   csjson: {at: /stylingRules/0/symbolizer/marker/elements/0/font/size, expect: 12}, expect: "12"}
