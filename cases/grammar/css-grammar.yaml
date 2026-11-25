@@ -61,3 +61,16 @@
 - {selector: "abs(x) = 1", expect: "((abs ( x )) = 1)", rule: "expCall abs"}
 - {style: "{ opacity: INTERVAL(start: '2021-01-01T00:00:00Z'; end: '2021-12-31T23:59:59Z') = x ? 1 : 0; }\n", expect: accepted, rule: "expInstance INTERVAL"}
 - {style: "{ marker: { elements: [ Dot { size: 5 } ] }; }\n", expect: accepted, rule: "expInstance Dot"}
+
+# --- A '-' directly before a number (issue #173, point 2) ---------------------
+# After whitespace, `-4` is a negative number, so `10 -4` is the tuple (10, -4); with a space after the '-',
+# or none before it, it is a subtraction. The token includes the whitespace before the '-', hence the two
+# spaces in the expected parse. On main all of these are subtractions.
+- {selector: "a = 10 -4", expect: "(a = (10  -4))", rule: "tuple"}
+- {style: "{ marker: { elements: [ Dot { position: 10 -4 } ] }; }\n", expect: accepted, rule: "tuple"}
+- {style: "{ marker: { elements: [ Dot { position: 10 px -4 px } ] }; }\n", expect: accepted, rule: "tuple"}
+- {selector: "a = 10 - 4", expect: "(a = (10 - 4))"}
+- {selector: "a = 10-4", expect: "(a = (10 - 4))"}
+- {selector: "a = 10 -x", expect: "(a = (10 - x))", note: "Only a number after the '-' makes it a sign."}
+- {selector: "a = (-4)", expect: "(a = (( (- 4) )))", note: "No whitespace before the '-': a unary minus."}
+- {selector: "a = -4", expect: "(a =  -4)"}

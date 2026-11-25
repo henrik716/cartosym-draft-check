@@ -41,7 +41,7 @@ def read(spec: Path, ref: str | None, path: str) -> str:
 
 def examples(spec: Path, ref: str | None) -> list[str]:
     if ref is None:
-        return sorted(p.relative_to(spec).as_posix() for p in (spec / EXAMPLES).glob("*.cscss"))
+        return sorted(p.relative_to(spec).as_posix() for p in (spec / EXAMPLES).rglob("*.cscss"))
     tree = subprocess.run(["git", "-C", str(spec), "ls-tree", "-r", "--name-only", ref, EXAMPLES],
                           capture_output=True, check=True, text=True).stdout
     return sorted(line for line in tree.splitlines() if line.endswith(".cscss"))
