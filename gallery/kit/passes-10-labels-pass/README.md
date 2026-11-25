@@ -52,3 +52,5 @@ Render each data layer with the style at the extent and size of `view.json`, on 
 Pull requests to [henrik716/cartosym-draft-check](https://github.com/henrik716/cartosym-draft-check) are welcome:
 `style.sld` (SLD/SE), `style.maplibre.json` or a note on why MapLibre can't express the case, and renders from
 other software (e.g. `qgis-render.png`), with a line here on what it can't express.
+
+- QGIS 4.2.3 (`qgis-render*.png`, set up and rendered by [`qgis/render_kits.py`](../../../qgis/render_kits.py)): QGIS draws all labels after all map layers, so it can only draw the first reading, each label once. DejaVu Sans Bold stands in for Arial, which isn't installed; the size is read as 11 pt. The labels are anchored strictly at the middle of their line: otherwise QGIS moves Road 1's label along the line, away from the crossing, and draws Road 2's as well.
