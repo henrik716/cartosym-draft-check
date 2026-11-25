@@ -57,6 +57,13 @@ def _verdict(outcome: adapters.Outcome, expected, exact: bool = False) -> tuple[
     return FAIL, f"got `{outcome.value}`, draft expects `{expected}`"
 
 
+def _as_point(value):
+    """The schema's unitPoint is `[x, y(, z)]` or `{x, y(, z)}`: write both as the object, to compare them."""
+    if isinstance(value, list) and 2 <= len(value) <= 3 and all(isinstance(v, (int, float)) for v in value):
+        return dict(zip("xyz", value))
+    return value
+
+
 def _json_verdict(outcome: adapters.Outcome, expected) -> tuple[str, str]:
     """For a style converted to CartoSym-JSON: the value found must equal *expected* (numbers compared as numbers)."""
     if outcome.status == "crash":
@@ -67,7 +74,7 @@ def _json_verdict(outcome: adapters.Outcome, expected) -> tuple[str, str]:
         got = json.loads(outcome.value)
     except ValueError:
         return FAIL, f"got {outcome.value}, draft expects `{json.dumps(expected)}`"
-    if got == expected:
+    if _as_point(got) == _as_point(expected):
         return PASS, outcome.value
     return FAIL, f"got `{outcome.value}`, draft expects `{json.dumps(expected)}`"
 

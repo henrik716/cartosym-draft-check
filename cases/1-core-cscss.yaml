@@ -4,7 +4,8 @@
 #
 # Issue #173, point 2 (agreed by Jérôme and Maxime, Nov 22-23): in `position: 10 -4` the `-` is attached to
 # the 4, so the value is the point (10, -4), not the subtraction 10 - 4. Jérôme was to check what libCartoSym
-# does; this case checks it in CI, on libCartoSym main. `10 4` is the control.
+# does; this case checks it in CI, on libCartoSym main. `10 4` is the control. The schema allows a point as
+# `[x, y]` or `{x, y}`; the harness treats both as the same point.
 - {id: cscss-tuple-negative, requirement: /req/cscss/expressions, kind: style, format: cscss,
    input: "Huts { marker: { elements: [ Dot { position: 10 -4; size: 6 } ] }; }\n",
    csjson: {at: /stylingRules/0/symbolizer/marker/elements/0/position, expect: {x: 10, y: -4}}, expect: "{x: 10, y: -4}",
