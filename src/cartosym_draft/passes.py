@@ -361,7 +361,7 @@ def build(out_dir: Path) -> list[str]:
         assert readme.endswith(OTHER_RENDERERS_END)
         (d / "README.md").write_text(readme + _contributed(d / "README.md"), encoding="utf-8")
         rendered.append((case, styles, svgs))
-    (out_dir / "passes.html").write_text(_page(rendered), encoding="utf-8")
+    (out_dir / "passes.html").write_text(_page(rendered, out_dir), encoding="utf-8")
     return problems
 
 
@@ -372,21 +372,134 @@ def _md_inline(text: str) -> str:
     return re.sub(r"`([^`]+)`", r"<code>\1</code>", out)
 
 
-def _page(rendered) -> str:
+def _md_block(text: str, kit_dir: Path) -> str:
+    """Markdown from a kit's README as HTML: headings, bullets, tables and paragraphs. Links relative to the README
+    are made relative to passes.html, and file names of the kit in code spans link to the file."""
+    kit = kit_dir.name
+
+    def inline(t: str) -> str:
+        out = _md_inline(t.replace("](../../../", "](../"))
+        out = re.sub(r'<a href="(?!https?:|\.\./|#)([^"]+)"', rf'<a href="kit/{kit}/\1"', out)
+        out = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", out)
+        return re.sub(r"<code>([\w.-]+)</code>",
+                      lambda m: f'<a href="kit/{kit}/{m.group(1)}"><code>{m.group(1)}</code></a>'
+                      if (kit_dir / m.group(1)).is_file() else m.group(0), out)
+
+    parts = []
+    for block in re.split(r"\n\s*\n", text.strip()):
+        lines = [ln.strip() for ln in block.splitlines() if ln.strip()]
+        if not lines:
+            continue
+        if lines[0].startswith("#"):
+            level = min(len(lines[0]) - len(lines[0].lstrip("#")) + 1, 4)
+            parts.append(f"<h{level}>{inline(lines[0].lstrip('#').strip())}</h{level}>")
+            lines = lines[1:]
+            if not lines:
+                continue
+        if lines[0].startswith("|"):
+            rows = [[c.strip() for c in ln.strip("|").split("|")] for ln in lines
+                    if not re.fullmatch(r"\|[\s|:-]+\|", ln)]
+            head, body = rows[0], rows[1:]
+            parts.append("<table><tr>" + "".join(f"<th>{inline(c)}</th>" for c in head) + "</tr>"
+                         + "".join("<tr>" + "".join(f"<td>{inline(c)}</td>" for c in r) + "</tr>" for r in body)
+                         + "</table>")
+        elif lines[0].startswith("- "):
+            items: list[str] = []
+            for ln in lines:
+                if ln.startswith("- "):
+                    items.append(ln[2:])
+                else:
+                    items[-1] += " " + ln
+            parts.append("<ul>" + "".join(f"<li>{inline(i)}</li>" for i in items) + "</ul>")
+        else:
+            parts.append(f"<p>{inline(' '.join(lines))}</p>")
+    return "".join(parts)
+
+
+def _other_software(case: Case, kit_dir: Path) -> str:
+    """The renders from other software and the SLD/MapLibre files contributed to a kit, with their notes."""
+    notes = _contributed(kit_dir / "README.md")
+    version = (re.search(r"QGIS [\d.]+", notes) or re.search("QGIS", "QGIS")).group(0)
+    readings = {_slug(v.label): v.label for v in case.variants}
+    styles = dict(case.extra_styles)
+    figs = []
+    for png in sorted(kit_dir.glob("qgis-render*.png"), key=lambda p: (p.stem != "qgis-render", p.stem)):
+        s = png.stem[len("qgis-render"):].lstrip("-")
+        label = (version if not s else f"{version}, `style-{s}.cscss`" if s in styles
+                 else f"{version}, reading: {readings[s]}" if s in readings else f"{version}, {s.replace('-', ' ')}")
+        figs.append(f'<figure><img class="other" src="kit/{kit_dir.name}/{png.name}" width="300" height="200" '
+                    f'loading="lazy" alt="{html.escape(label.replace("`", ""))}"><figcaption>{_md_inline(label)}'
+                    "</figcaption></figure>")
+    if not figs and not notes.strip():
+        return ""
+    return (f'<div class="others"><h3>Other software</h3>'
+            + (f'<div class="variants">{"".join(figs)}</div>' if figs else "")
+            + _md_block(notes, kit_dir) + "</div>")
+
+
+def _contributed_kits(out_dir: Path) -> list[Path]:
+    """Pass kits added by contributors rather than built from CASES (such as 14, from XPlanung)."""
+    built = {case.key for case in CASES}
+    return sorted(d for d in (out_dir / "kit").glob("passes-*") if d.is_dir() and d.name not in built)
+
+
+def _contributed_card(kit_dir: Path) -> tuple[str, str, str]:
+    """(anchor, title, card HTML) for a contributed kit: its README's opening and expected drawing, its renders
+    from other software and links to its files. The draft renderer doesn't draw these kits (yet)."""
+    from .nav import permalink
+
+    text = (kit_dir / "README.md").read_text(encoding="utf-8")
+    heading, _, rest = text.partition("\n")
+    name, _, title = heading.lstrip("# ").partition(": ")
+    sections = {s.partition("\n")[0].lstrip("# ").strip(): s.partition("\n")[2]
+                for s in re.split(r"\n(?=## )", "\n" + rest) if s.startswith("## ")}
+    intro = re.split(r"\n(?=## )", rest)[0]
+    expected = sections.get("What should be drawn", "")
+    # The renders' notes: the bullets of "Other renderers", without the paragraph asking for pull requests.
+    notes = "\n".join(ln for ln in sections.get("Other renderers", "").splitlines() if ln.startswith("- "))
+    version = (re.search(r"QGIS [\d.]+", notes) or re.search("QGIS", "QGIS")).group(0)
+    figs = "".join(
+        f'<figure><img class="other" src="kit/{kit_dir.name}/{png.name}" width="300" height="200" loading="lazy" '
+        f'alt="{version} render"><figcaption>{version}</figcaption></figure>'
+        for png in sorted(kit_dir.glob("qgis-render*.png")))
+    first = ["README.md", "style.cs.json", "view.json"]
+    files = [n for n in first if (kit_dir / n).is_file()] + sorted(
+        p.name for p in kit_dir.iterdir() if p.is_file() and p.name not in first and not p.name.endswith(".png")) \
+        + sorted(f"{p.name}/" for p in kit_dir.iterdir() if p.is_dir())
+    links = " · ".join(f'<a href="kit/{kit_dir.name}/{n}">{n}</a>' for n in files)
+    card = (f'<section class="card" id="{kit_dir.name}"><h2>{html.escape(name)}: {_md_inline(title)}'
+            f'{permalink(kit_dir.name)}</h2>{_md_block(intro, kit_dir)}'
+            f'<p class="note">Contributed kit. No draft render yet: the draft renderer doesn\'t draw Part 2\'s '
+            f'pattern strokes and graphic patterns, which this style uses. How the style was made is in the '
+            f'<a href="kit/{kit_dir.name}/README.md">README</a>.</p>'
+            f'<div class="others"><div class="variants">{figs}</div>{_md_block(notes, kit_dir)}</div>'
+            f'<div class="question"><strong>What should be drawn.</strong>{_md_block(expected, kit_dir)}</div>'
+            + (f'<h3>Data</h3>{_md_block(sections["Data"], kit_dir)}' if "Data" in sections else "")
+            + f'<p class="kit">Render it yourself: {links}</p></section>')
+    return kit_dir.name, title.replace("`", ""), card
+
+
+def _page(rendered, out_dir: Path) -> str:
     from .gallery import CSS
     from .highlight import CSS as HIGHLIGHT_CSS, cscss
     from .nav import NAV_CSS, NAV_SCRIPT, permalink, toc, topbar
 
+    extra = [_contributed_card(d) for d in _contributed_kits(out_dir)]
     contents = [(case.key, case.title.replace("`", ""), bool(case.question)) for case, _, _ in rendered]
+    contents += [(anchor, title, False) for anchor, title, _ in extra]
     cards = []
     open_tag = ' <span class="badge open">open in the text</span>'
     for case, _, svgs in rendered:
         figs = "".join(f"<figure>{svg}<figcaption>{html.escape(label)}"
                        + (f'<span class="vnote">{html.escape(note)}</span>' if note else "") + "</figcaption></figure>"
                        for label, svg, note in svgs)
+        kit_dir = out_dir / "kit" / case.key
+        converted = sorted(p.name for p in kit_dir.glob("style*.*")
+                           if p.name.endswith((".sld", ".maplibre.json")))  # written by pycartosym (draft-check #5)
         links = " · ".join(f'<a href="kit/{case.key}/{n}">{n}</a>'
                            for n in ["README.md", "style.cscss", "style.cs.json",
                                      *(f"style-{s}.{ext}" for s, _ in case.extra_styles for ext in ("cscss", "cs.json")),
+                                     *converted,
                                      *(f"{layer.id}.geojson" for layer in case.layers), "view.json"])
         cards.append(
             f'<section class="card" id="{case.key}"><h2>{case.name}: {_md_inline(case.title)}{open_tag if case.question else ""}{permalink(case.key)}</h2>'
@@ -394,10 +507,17 @@ def _page(rendered) -> str:
             + f'<div class="card-body"><div class="variants">{figs}</div>'
             f'<pre class="css cscss">{cscss(case.css.rstrip())}</pre></div>'
             f'<p class="question"><strong>What should be drawn.</strong> {_md_inline(case.expected)}</p>'
-            f'<p class="kit">Render it yourself: {links}</p></section>')
+            + _other_software(case, kit_dir)
+            + f'<p class="kit">Render it yourself: {links}</p></section>')
+    cards += [card for _, _, card in extra]
     return f"""<!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1"><title>CartoSym Rendering Passes</title>
-<style>{CSS}{NAV_CSS}{HIGHLIGHT_CSS} pre.css {{ white-space: pre-wrap; font-size: 12px; margin: 0; flex: 1 1 320px; }}</style></head>
+<style>{CSS}{NAV_CSS}{HIGHLIGHT_CSS} pre.css {{ white-space: pre-wrap; font-size: 12px; margin: 0; flex: 1 1 320px; }}
+.others {{ margin-top: 14px; border-top: 1px solid var(--line); padding-top: 10px; }}
+.others .variants {{ grid-template-columns: repeat(auto-fill, minmax(260px, 380px)); }}
+.others h3 {{ font-size: 15px; margin: 0 0 10px; }} .others h4 {{ font-size: 14px; margin: 12px 0 6px; }}
+figure img.other {{ width: 100%; height: auto; border-radius: 6px; border: 1px solid var(--line); display: block; }}
+.card table {{ border-collapse: collapse; margin: 8px 0; }} .card td, .card th {{ border: 1px solid var(--line); padding: 3px 8px; text-align: left; }}</style></head>
 <body class="has-toc">
 {topbar("passes.html", [(a, label) for a, label, _ in contents])}
 <div class="layout has-toc">{toc(contents)}<main>
@@ -411,8 +531,11 @@ that other software can redraw them exactly; Annex C examples 12 and 13 in <a hr
 same mechanisms on a real map (roads and the railway at Otta). Each card links
 a render kit: the style in both encodings, one GeoJSON file per data layer, the view, the draft renderer's image and a
 README with what should be drawn (all in <a href="kit.zip">kit.zip</a>). The draft renderer implements the text, so
-its image shows what the text says, not that the text is right. SLD/SE, MapLibre and QGIS versions are welcome as pull
-requests.</p>
+its image shows what the text says, not that the text is right. Under "Other software", each case shows its renders in
+QGIS (set up by <a href="https://github.com/kraftto">kraftto</a> with <a href="../qgis/render_kits.py"><code>qgis/render_kits.py</code></a>) with a note on
+what QGIS can't express, and the SLD/SE and MapLibre files that pycartosym writes from the style (added by Maxime
+Collombin), or why it refuses. Case 14 is kraftto's: a section of an XPlanung plan, with its QGIS render. Renders
+from other software are welcome as pull requests.</p>
 {''.join(cards)}
 </main></div>{NAV_SCRIPT}</body></html>"""
 
