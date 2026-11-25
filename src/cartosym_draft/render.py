@@ -382,6 +382,12 @@ def _text_anchor(el: dict) -> str:
 
 
 def _text(el: dict, x: float, y: float, view: View, opacity_mul: float, opts: Options) -> str:
+    return f'<text x="{x:.2f}" y="{y:.2f}" {_text_style(el, view, opacity_mul, opts)}>' \
+           f'{html.escape(str(el.get("text", "")))}</text>'
+
+
+def _text_style(el: dict, view: View, opacity_mul: float, opts: Options) -> str:
+    """The attributes of a Text graphic's <text>, other than its position."""
     font = el.get("font") or {}
     size = to_px({"pt": font["size"]} if isinstance(font.get("size"), (int, float)) else font.get("size"), view, 16)
     anchor = _text_anchor(el)
@@ -401,8 +407,7 @@ def _text(el: dict, x: float, y: float, view: View, opacity_mul: float, opts: Op
         order = "stroke" if opts.font_outline == "below" else "fill"
         paint = (f' stroke="{color(outline.get("color", "white"))}" stroke-width="{2 * ow:g}" '
                  f'stroke-opacity="{oo:g}" stroke-linejoin="round" paint-order="{order}"')
-    return (f'<text x="{x:.2f}" y="{y:.2f}" {style} fill="{color(font.get("color", "black"))}" '
-            f'fill-opacity="{fo:g}"{paint}>{html.escape(str(el.get("text", "")))}</text>')
+    return f'{style} fill="{color(font.get("color", "black"))}" fill-opacity="{fo:g}"{paint}'
 
 
 def _offset(el: dict, view: View) -> tuple[float, float]:
@@ -553,6 +558,7 @@ class _Label:
     key: tuple = ()  # (layer, content): labels with the same key are repetitions of one label
     spacing: float = 0.0  # minSpacing in pixels
     viz_pass: int = 0  # the visualization pass the label comes from
+    boxes: tuple = ()  # for a label along a curving line: boxes along it, tighter than `box`
 
 
 _FONT_FILES = {"arial": "arial", "tahoma": "tahoma", "times new roman": "times", "verdana": "verdana"}
@@ -608,8 +614,133 @@ def _along(points: list[tuple[float, float]], first: float, step: float) -> list
     return out
 
 
+_LABEL_PATHS = itertools.count()  # ids of the <path>s that curved labels follow, unique in a document
+_MAX_BEND = 30.0  # degrees between steps of half the label height: where the line bends more, no label
+
+
+def _cut(points: list[tuple[float, float]], start: float, end: float) -> list[tuple[float, float]]:
+    """The part of a polyline between two distances along it."""
+    out: list[tuple[float, float]] = []
+    travelled = 0.0
+    for (x0, y0), (x1, y1) in zip(points, points[1:]):
+        seg = math.hypot(x1 - x0, y1 - y0)
+        if seg > 0 and travelled + seg >= start and travelled <= end:
+            for d in (max(start, travelled), min(end, travelled + seg)):
+                t = (d - travelled) / seg
+                p = (x0 + (x1 - x0) * t, y0 + (y1 - y0) * t)
+                if not out or math.dist(out[-1], p) > 1e-6:
+                    out.append(p)
+        travelled += seg
+    return out
+
+
+def _point_at(points: list[tuple[float, float]], d: float) -> tuple[float, float, float]:
+    """(x, y, direction in degrees) at a distance along a polyline."""
+    travelled = 0.0
+    for (x0, y0), (x1, y1) in zip(points, points[1:]):
+        seg = math.hypot(x1 - x0, y1 - y0)
+        if seg > 0 and d <= travelled + seg:
+            t = max(0.0, (d - travelled) / seg)
+            return x0 + (x1 - x0) * t, y0 + (y1 - y0) * t, math.degrees(math.atan2(y1 - y0, x1 - x0))
+        travelled += seg
+    (x0, y0), (x1, y1) = points[-2], points[-1]
+    return x1, y1, math.degrees(math.atan2(y1 - y0, x1 - x0))
+
+
+def _join_lines(lines: list) -> list:
+    """Lines joined end to end where one ends where another starts or ends (turned round as needed)."""
+    pending = [[tuple(p[:2]) for p in line] for line in lines if len(line) >= 2]
+    out = []
+    while pending:
+        cur = pending.pop(0)
+        grown = True
+        while grown:
+            grown = False
+            for i, other in enumerate(pending):
+                if math.dist(cur[-1], other[0]) < 0.01:
+                    cur = cur + other[1:]
+                elif math.dist(cur[-1], other[-1]) < 0.01:
+                    cur = cur + other[-2::-1]
+                elif math.dist(cur[0], other[-1]) < 0.01:
+                    cur = other[:-1] + cur
+                elif math.dist(cur[0], other[0]) < 0.01:
+                    cur = other[:0:-1] + cur
+                else:
+                    continue
+                pending.pop(i)
+                grown = True
+                break
+        out.append(cur)
+    return out
+
+
+def _curved_candidates(elements: list[dict], lines, spacing: float | None, view: View, mul: float,
+                       opts: Options) -> list[tuple]:
+    """(svg, box, boxes) for each place along the lines where a label is laid along the line: the graphics
+    as a whole along their x axis, Text bent glyph by glyph, other graphics turned to the line where they
+    are. Kept upright; left out where the line is shorter than the label or bends too sharply."""
+    parts = []  # (element, x offset, y offset, left edge along x, width, height)
+    for el in elements:
+        ox, oy = _offset(el, view)
+        if el.get("type", "Text") == "Text":
+            w, h = _label_size(el, view)
+            left = {"start": ox, "end": ox - w}.get(_text_anchor(el), ox - w / 2)
+        else:
+            w = h = to_px(el.get("size", (el.get("stroke") or {}).get("width")), view, 10) \
+                if el.get("type", "Dot") == "Dot" else to_px(el.get("width", {"px": 24}), view, 24)
+            left = ox - w / 2
+        parts.append((el, ox, oy, left, w, h))
+    x_min = min(p[3] for p in parts)
+    x_max = max(p[3] + p[4] for p in parts)
+    height = max(p[5] for p in parts)
+    pad = 2.0
+    out = []
+    for line in lines:
+        screen = [view.xy(*p[:2]) for p in line]
+        length = sum(math.hypot(b[0] - a[0], b[1] - a[1]) for a, b in zip(screen, screen[1:]))
+        # Repetitions every `spacing`, centred on the line, so a line shorter than that gets one in its middle.
+        n = max(1, int(length // spacing)) if spacing else 1
+        centres = [length / 2 + (i - (n - 1) / 2) * spacing for i in range(n)] if spacing else [length / 2]
+        for d in centres:
+            a, b = d + x_min - pad, d + x_max + pad
+            if a < 0 or b > length:
+                continue  # the line is shorter than the label there
+            path = _cut(screen, a, b)
+            if len(path) < 2:
+                continue
+            if path[-1][0] < path[0][0]:
+                path = path[::-1]  # upright: the label reads from left to right
+            span = b - a
+            step = max(height / 2, 2.0)
+            samples = [_point_at(path, i * step) for i in range(int(span // step) + 1)] + [_point_at(path, span)]
+            dirs = [math.degrees(math.atan2(q[1] - p[1], q[0] - p[0])) for p, q in zip(samples, samples[1:])
+                    if math.dist(p[:2], q[:2]) > 0.5]
+            if any(abs((d2 - d1 + 180) % 360 - 180) > _MAX_BEND for d1, d2 in zip(dirs, dirs[1:])):
+                continue  # bends too sharply for the label
+            pid = f"lp{next(_LABEL_PATHS)}"
+            d_attr = "M" + " L".join(f"{x:.2f},{y:.2f}" for x, y in path)
+            frags = [f'<path id="{pid}" d="{d_attr}" fill="none" stroke="none"/>']
+            for el, ox, oy, left, w, h in parts:
+                at = ox - x_min + pad  # the element's anchor, as a distance along the path
+                if el.get("type", "Text") == "Text":
+                    frags.append(f'<text dy="{oy:.2f}" {_text_style(el, view, mul, opts)}>'
+                                 f'<textPath href="#{pid}" startOffset="{at:.2f}">'
+                                 f'{html.escape(str(el.get("text", "")))}</textPath></text>')
+                else:
+                    px, py, ang = _point_at(path, at)
+                    flat = {**el, "position": [{"px": 0}, {"px": oy}]}
+                    frags.append(f'<g transform="rotate({ang:.1f} {px:.1f} {py:.1f})">'
+                                 + "".join(_marker_paint({"elements": [flat]}, px, py, view, mul, opts)) + "</g>")
+            r = height / 2
+            boxes = tuple((x - r, y - r, x + r, y + r) for x, y, _ in samples)
+            box = (min(bx[0] for bx in boxes), min(bx[1] for bx in boxes),
+                   max(bx[2] for bx in boxes), max(bx[3] for bx in boxes))
+            out.append(("".join(frags), box, boxes))
+    return out
+
+
 def _label_candidates(label: dict, pts, lines, polys, view: View, mul: float, opts: Options) -> list[tuple]:
-    """(svg, box) for each place a label would go; repeated along lines."""
+    """(svg, box, boxes) for each place a label would go; repeated along lines."""
     placement = label.get("placement") or {}
     unit = "m" if opts.label_spacing_units == "m" else "px"
     min_sp = placement.get("minSpacing")
@@ -618,6 +749,11 @@ def _label_candidates(label: dict, pts, lines, polys, view: View, mul: float, op
     spacing = to_px({unit: min_sp}, view) if isinstance(min_sp, (int, float)) else None
     anchors: list[tuple[float, float, float]] = [(*view.xy(*p[:2]), 0.0) for p in pts]
     anchors += [(*view.xy(*_centroid(poly)), 0.0) for poly in polys]
+    curved: list[tuple] = []
+    if opts.label_lines == "curved" and lines:
+        elements = [el for el in label.get("elements") or [] if isinstance(el, dict)]
+        curved = _curved_candidates(elements, lines, spacing, view, mul, opts) if elements else []
+        lines = []
     for line in lines:
         screen = [view.xy(*p[:2]) for p in line]
         length = sum(math.hypot(b[0] - a[0], b[1] - a[1]) for a, b in zip(screen, screen[1:]))
@@ -651,8 +787,8 @@ def _label_candidates(label: dict, pts, lines, polys, view: View, mul: float, op
         if ang:
             svg = f'<g transform="rotate({ang:.1f} {x:.1f} {y:.1f})">{svg}</g>'
         out.append((svg, (min(b[0] for b in boxes), min(b[1] for b in boxes),
-                          max(b[2] for b in boxes), max(b[3] for b in boxes))))
-    return out
+                          max(b[2] for b in boxes), max(b[3] for b in boxes)), ()))
+    return out + curved
 
 
 def _center(box) -> tuple[float, float]:
@@ -661,6 +797,13 @@ def _center(box) -> tuple[float, float]:
 
 def _overlaps(a, b) -> bool:
     return a[0] < b[2] and b[0] < a[2] and a[1] < b[3] and b[1] < a[3]
+
+
+def _label_overlap(a: _Label, b: _Label) -> bool:
+    """Whether two labels overlap; a label along a curving line is tested with its boxes along the line."""
+    if not _overlaps(a.box, b.box):
+        return False
+    return any(_overlaps(x, y) for x in (a.boxes or (a.box,)) for y in (b.boxes or (b.box,)))
 
 
 # ------------------------------------------------------------------ main
@@ -699,6 +842,7 @@ def render(style: dict, layers: list[Layer], view: View, opts: Options | None = 
     labels: list[_Label] = []
     seq = 0
     labelled: set[int] = set()  # id() of the features that have their label
+    line_labels: dict[tuple, dict] = {}  # with curved labels: the lines of each (layer, content, pass)
     viz_passes = _passes(style, VIZ_PASS)
     feature_passes = _passes(style, FEATURE_PASS)
     for layer in layers:
@@ -772,12 +916,26 @@ def render(style: dict, layers: list[Layer], view: View, opts: Options | None = 
                 spacing = to_px({"m" if opts.label_spacing_units == "m" else "px": min_sp}, view) \
                     if isinstance(min_sp, (int, float)) else 0.0
                 content = tuple(str(el.get("text")) for el in label["elements"] if isinstance(el, dict))
+                if opts.label_lines == "curved" and lines:
+                    # Along lines, a road split into several features is labelled as one (/req/labels/placement):
+                    # the lines with the same label are joined where they meet, and placed after all features.
+                    group = line_labels.setdefault((layer.id, content, vp), {
+                        "label": label, "priority": prio, "seq": seq, "item": len(items), "spacing": spacing,
+                        "lines": []})
+                    group["lines"] += lines
+                    lines = []
                 # The Symbolizer opacity does not apply to labels (NOTE in /req/core/opacity).
-                for text, box in _label_candidates(label, pts, lines, polys, view, 1.0, opts):
-                    labels.append(_Label(prio, seq, len(items), text, box, (layer.id, content), spacing, vp))
+                for text, box, boxes in _label_candidates(label, pts, lines, polys, view, 1.0, opts):
+                    labels.append(_Label(prio, seq, len(items), text, box, (layer.id, content), spacing, vp, boxes))
             items.append(_Item(z if opts.z_order == "higher-on-top" else -z, seq, layer.id, op,
                                fills, svg.casings, frags, svg.centers, marks, viz_pass=vp, feature_pass=fp))
             seq += 1
+
+    for (layer_id, content, vp), group in line_labels.items():
+        for text, box, boxes in _label_candidates(group["label"], [], _join_lines(group["lines"]), [], view, 1.0,
+                                                  opts):
+            labels.append(_Label(group["priority"], group["seq"], group["item"], text, box, (layer_id, content),
+                                 group["spacing"], vp, boxes))
 
     # /req/labels/*: place in priority order, dropping labels that would overlap.
     sign = -1 if opts.label_priority == "higher-wins" else 1
@@ -786,7 +944,7 @@ def render(style: dict, layers: list[Layer], view: View, opts: Options | None = 
         x0, y0, x1, y1 = lb.box
         if x0 < 0 or y0 < 0 or x1 > view.width or y1 > view.height:
             continue  # would be cut off at the edge of the map
-        if any(_overlaps(lb.box, p.box) for p in placed):
+        if any(_label_overlap(lb, p) for p in placed):
             continue
         if lb.spacing and any(p.key == lb.key and math.dist(_center(p.box), _center(lb.box)) < lb.spacing
                               for p in placed):

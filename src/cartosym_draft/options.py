@@ -93,6 +93,11 @@ class Options:
     # that sets the label ("own-pass"), under later passes. A feature's label comes from the first pass
     # in which it is drawn with one.
     label_viz_pass: str = "after-all"
+    # Labels on lines: "straight" places each one as a whole, turned to the line's direction at its
+    # position (draft); "curved" lays it along the line, Text bent glyph by glyph, other graphics turned to
+    # the line where they are, kept upright, and left out where the line is shorter than the label or bends
+    # too sharply (the proposal for #142: Jérôme on #142 and #241, "labels curving along the road").
+    label_lines: str = "straight"
 
     # /req/coverage/color-map, /req/coverage/opacity-map: "interpolate"
     # between entries, or "step" (each entry applies up to the next one).
