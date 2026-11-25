@@ -172,7 +172,7 @@ uv run --no-project --with rasterio --with tifffile --with numpy python tools/fe
 
 `extract_requirements.py` reads whatever is checked out in the spec checkout it is given. The current snapshot is `main` at fefe225, taken from a detached worktree of `origin/main` (`git worktree add --detach ../cartographic-symbology-main origin/main`). Run it again after the requirements change.
 
-- **pycartosym** 0.6.5 is installed from PyPI. It converts the CartoSym-CSS examples and the CQL2-Text test inputs.
+- **pycartosym** 0.6.7 is installed from PyPI. It converts the CartoSym-CSS examples and the CQL2-Text test inputs.
 - **libCartoSym** comes from the `cartosym` 0.0.1 and `ecrt` 0.0.6 packages (built in November 2025) by default. To test a build from source instead, set `CS_CANIF` to the `cs-canif` executable and `CS_CANIF_LIBDIRS` to the folders with its libraries; `REPORT_DIR` and `LIBCARTOSYM_LABEL` set where the report goes and how libCartoSym is described in it.
 - **Latest libCartoSym:** the [`libcartosym-main`](.github/workflows/libcartosym-main.yml) workflow builds the latest eC and libCartoSym from GitHub on Ubuntu (as their `fetchAndBuild.sh` does), runs the harness against that `cs-canif`, and commits the report to [`reports/libcartosym-main/`](reports/libcartosym-main/). It runs weekly, when the harness or cases change, and on demand. The requirements page reads its results.
 - **pycartosym's test suite** can run the expression cases too: `tools/export_pycartosym_cases.py` writes them to `tests/data/cartosym_draft_cases.json` in a pycartosym checkout next to this one, with the CQL2-Text, the expected CQL2-JSON and the `disputed` note of each case, but not the `expect` values.

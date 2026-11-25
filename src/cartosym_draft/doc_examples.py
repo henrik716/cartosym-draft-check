@@ -3,7 +3,7 @@
 Usage: python -m cartosym_draft.doc_examples [--spec ../cartographic-symbology] [name ...]
 
 For each example below, reads ``1-core/examples/<name>.cscss`` from the spec
-repository, converts it to CartoSym-JSON with pycartosym 0.6.5 (with the one
+repository, converts it to CartoSym-JSON with pycartosym 0.6.7 (with the one
 fix-up in PYCARTOSYM_GAPS), validates the JSON against the spec's schema, renders
 it with the draft renderer on the Rondane data (Kartverket N50, the elevation
 model and a Sentinel-2 scene) and writes:
@@ -635,61 +635,13 @@ REQUIREMENT_EXAMPLES = [
          notes=["`sqrt` and `max` are functions of the \"Math Functions\" requirements class."]),
 ]
 
-# What pycartosym 0.6.5 writes differently in CSS → JSON; to_json fixes it and reports the fix-up.
-# (0.6.5 fixed the other gaps the figures found: pycartosym #174, #182 to #185.)
+# What pycartosym 0.6.7 writes differently in CSS → JSON; to_json fixes it and reports the fix-up.
+# (0.6.7 fixed `capabilities.*`/`feature.*` as `sysId` and `zOrder`/`opacity` expressions: pycartosym #224, #228;
+# 0.6.5 fixed #174, #182 to #185.)
 PYCARTOSYM_GAPS = [
-    "`center` is written as `centerLine`, the name before the SWG's decision on #120 (the schema follows in #188)",
-    "the `capabilities.*` (clause 7) and `feature.*` (clause 8) System Identifiers are written as properties, not "
-    "as `sysId` (pycartosym#224)",
-    "an expression for `zOrder` (or `opacity`) is written as its CQL2 text, not as CQL2-JSON",
+    "`center` is written as `centerLine`, the name before the SWG's decision on #120 (pycartosym#227; fixed on "
+    "pycartosym `main`, not released yet)",
 ]
-
-
-def _scalar_expressions(style) -> bool:
-    """Parse a `zOrder` or `opacity` that pycartosym left as CQL2 text (PYCARTOSYM_GAPS); whether any was."""
-    from pycartosym import cql2
-    changed = False
-
-    def walk(obj):
-        nonlocal changed
-        if isinstance(obj, dict):
-            sym = obj.get("symbolizer")
-            if isinstance(sym, dict):
-                for key in ("zOrder", "opacity"):
-                    if isinstance(sym.get(key), str):
-                        sym[key] = cql2.to_cql2_json(cql2.parse_text(sym[key]))
-                        changed = True
-            for v in obj.values():
-                walk(v)
-        elif isinstance(obj, list):
-            for v in obj:
-                walk(v)
-
-    walk(style)
-    return changed
-
-
-_SYSID_PREFIXES = ("capabilities.", "feature.")
-
-
-def _capabilities_sysids(style) -> bool:
-    """Turn `{"property": "capabilities.x"}` (or `feature.x`) into a `sysId` (PYCARTOSYM_GAPS); whether any was."""
-    changed = False
-
-    def walk(obj):
-        nonlocal changed
-        if isinstance(obj, dict):
-            if isinstance(obj.get("property"), str) and obj["property"].startswith(_SYSID_PREFIXES) and len(obj) == 1:
-                obj["sysId"] = obj.pop("property")
-                changed = True
-            for v in obj.values():
-                walk(v)
-        elif isinstance(obj, list):
-            for v in obj:
-                walk(v)
-
-    walk(style)
-    return changed
 
 
 def _center_from_center_line(style) -> bool:
@@ -786,8 +738,8 @@ def _context_styles(own: list[str]) -> tuple[dict, dict, dict | None]:
 def to_json(css: str) -> tuple[dict, list[str]]:
     """Convert CartoSym-CSS to CartoSym-JSON with pycartosym; the second value lists warnings and fix-ups.
 
-    pycartosym 0.6.4 needed more fix-ups here (`marker: null` and hex colors of Dots); 0.6.5 needs only the
-    `center` name (PYCARTOSYM_GAPS).
+    pycartosym 0.6.4 needed more fix-ups here (`marker: null` and hex colors of Dots), 0.6.5 two more; 0.6.7
+    needs only the `center` name (PYCARTOSYM_GAPS).
     """
     fixups = []
     warnings: list[str] = []
@@ -806,10 +758,6 @@ def to_json(css: str) -> tuple[dict, list[str]]:
     fixups += [f"pycartosym warning: {w}" for w in warnings]
     if _center_from_center_line(style):
         fixups.append("centerLine renamed center (#120)")
-    if _capabilities_sysids(style):
-        fixups.append("capabilities.*/feature.* written as sysId")
-    if _scalar_expressions(style):
-        fixups.append("zOrder/opacity expression parsed")
     return style, fixups
 
 
