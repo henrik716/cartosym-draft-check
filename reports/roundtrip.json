@@ -1115,30 +1115,6 @@
      "op": "a_overlaps"
     }
    },
-   "textfn-case-insensitize": {
-    "to_json": "ok",
-    "vs_case": "same",
-    "text": "CASEINSENSITIZE('ABC') = CASEINSENSITIZE('abc')",
-    "stable": "/args/0/op: `\"caseInsensitize\"` vs `\"CASEINSENSITIZE\"`",
-    "escaped": "-",
-    "json": {
-     "args": [
-      {
-       "args": [
-        "ABC"
-       ],
-       "op": "caseInsensitize"
-      },
-      {
-       "args": [
-        "abc"
-       ],
-       "op": "caseInsensitize"
-      }
-     ],
-     "op": "="
-    }
-   },
    "textfn-casei": {
     "to_json": "ok",
     "vs_case": "same",
@@ -1158,30 +1134,6 @@
         "abc"
        ],
        "op": "casei"
-      }
-     ],
-     "op": "="
-    }
-   },
-   "textfn-accent-insensitize": {
-    "to_json": "ok",
-    "vs_case": "same",
-    "text": "ACCENTINSENSITIZE('café') = ACCENTINSENSITIZE('cafe')",
-    "stable": "/args/0/op: `\"accentInsensitize\"` vs `\"ACCENTINSENSITIZE\"`",
-    "escaped": "`ACCENTINSENSITIZE('cafu00e9') = ACCENTINSENSITIZE('cafe')`",
-    "json": {
-     "args": [
-      {
-       "args": [
-        "café"
-       ],
-       "op": "accentInsensitize"
-      },
-      {
-       "args": [
-        "cafe"
-       ],
-       "op": "accentInsensitize"
       }
      ],
      "op": "="
@@ -2547,7 +2499,7 @@
    "arith-mod": {
     "to_json": "ok",
     "vs_case": "-",
-    "text": "%(7, 3)",
+    "text": "7 % 3",
     "stable": "yes",
     "escaped": "-",
     "json": {
@@ -2561,7 +2513,7 @@
    "arith-mod-negative": {
     "to_json": "ok",
     "vs_case": "-",
-    "text": "%(-7, 3)",
+    "text": "-7 % 3",
     "stable": "yes",
     "escaped": "-",
     "json": {
@@ -2809,8 +2761,8 @@
    "core-is-null": {
     "to_json": "ok",
     "vs_case": "-",
-    "text": "'None' is null",
-    "stable": "/args/0: `null` vs `\"None\"`",
+    "text": "null is null",
+    "stable": "yes",
     "escaped": "-",
     "json": {
      "op": "isNull",
@@ -3078,30 +3030,6 @@
      ]
     }
    },
-   "textfn-case-insensitize": {
-    "to_json": "ok",
-    "vs_case": "same",
-    "text": "caseInsensitize('ABC') = caseInsensitize('abc')",
-    "stable": "yes",
-    "escaped": "-",
-    "json": {
-     "op": "=",
-     "args": [
-      {
-       "op": "caseInsensitize",
-       "args": [
-        "ABC"
-       ]
-      },
-      {
-       "op": "caseInsensitize",
-       "args": [
-        "abc"
-       ]
-      }
-     ]
-    }
-   },
    "textfn-casei": {
     "to_json": "ok",
     "vs_case": "same",
@@ -3121,30 +3049,6 @@
        "op": "casei",
        "args": [
         "abc"
-       ]
-      }
-     ]
-    }
-   },
-   "textfn-accent-insensitize": {
-    "to_json": "ok",
-    "vs_case": "same",
-    "text": "accentInsensitize('café') = accentInsensitize('cafe')",
-    "stable": "yes",
-    "escaped": "same",
-    "json": {
-     "op": "=",
-     "args": [
-      {
-       "op": "accentInsensitize",
-       "args": [
-        "café"
-       ]
-      },
-      {
-       "op": "accentInsensitize",
-       "args": [
-        "cafe"
        ]
       }
      ]
@@ -3635,8 +3539,8 @@
    "null-arithmetic": {
     "to_json": "ok",
     "vs_case": "same",
-    "text": "'None' + 1",
-    "stable": "/args/0: `null` vs `\"None\"`",
+    "text": "null + 1",
+    "stable": "yes",
     "escaped": "-",
     "json": {
      "op": "+",
@@ -3649,8 +3553,8 @@
    "null-equal": {
     "to_json": "ok",
     "vs_case": "same",
-    "text": "'None' = 1",
-    "stable": "/args/0: `null` vs `\"None\"`",
+    "text": "null = 1",
+    "stable": "yes",
     "escaped": "-",
     "json": {
      "op": "=",
@@ -3663,8 +3567,8 @@
    "null-not-equal": {
     "to_json": "ok",
     "vs_case": "same",
-    "text": "'None' <> 1",
-    "stable": "/args/0: `null` vs `\"None\"`",
+    "text": "null <> 1",
+    "stable": "yes",
     "escaped": "-",
     "json": {
      "op": "<>",
@@ -3677,8 +3581,8 @@
    "null-compare": {
     "to_json": "ok",
     "vs_case": "same",
-    "text": "'None' > 1",
-    "stable": "/args/0: `null` vs `\"None\"`",
+    "text": "null > 1",
+    "stable": "yes",
     "escaped": "-",
     "json": {
      "op": ">",
@@ -3691,8 +3595,8 @@
    "null-like": {
     "to_json": "ok",
     "vs_case": "same",
-    "text": "'None' like 'a%'",
-    "stable": "/args/0: `null` vs `\"None\"`",
+    "text": "null like 'a%'",
+    "stable": "yes",
     "escaped": "-",
     "json": {
      "op": "like",
@@ -3705,8 +3609,8 @@
    "null-not": {
     "to_json": "ok",
     "vs_case": "same",
-    "text": "not 'None' > 1",
-    "stable": "/args/0/args/0: `null` vs `\"None\"`",
+    "text": "not null > 1",
+    "stable": "yes",
     "escaped": "-",
     "json": {
      "op": "not",
@@ -3724,8 +3628,8 @@
    "null-and-true": {
     "to_json": "ok",
     "vs_case": "same",
-    "text": "'None' > 1 and true",
-    "stable": "/args/0/args/0: `null` vs `\"None\"`",
+    "text": "null > 1 and true",
+    "stable": "yes",
     "escaped": "-",
     "json": {
      "op": "and",
@@ -3744,8 +3648,8 @@
    "null-and-false": {
     "to_json": "ok",
     "vs_case": "same",
-    "text": "'None' > 1 and false",
-    "stable": "/args/0/args/0: `null` vs `\"None\"`",
+    "text": "null > 1 and false",
+    "stable": "yes",
     "escaped": "-",
     "json": {
      "op": "and",
@@ -3764,8 +3668,8 @@
    "null-or-true": {
     "to_json": "ok",
     "vs_case": "same",
-    "text": "'None' > 1 or true",
-    "stable": "/args/0/args/0: `null` vs `\"None\"`",
+    "text": "null > 1 or true",
+    "stable": "yes",
     "escaped": "-",
     "json": {
      "op": "or",
@@ -3784,8 +3688,8 @@
    "null-or-false": {
     "to_json": "ok",
     "vs_case": "same",
-    "text": "'None' > 1 or false",
-    "stable": "/args/0/args/0: `null` vs `\"None\"`",
+    "text": "null > 1 or false",
+    "stable": "yes",
     "escaped": "-",
     "json": {
      "op": "or",
@@ -3804,8 +3708,8 @@
    "null-is-null": {
     "to_json": "ok",
     "vs_case": "same",
-    "text": "'None' + 1 is null",
-    "stable": "/args/0/args/0: `null` vs `\"None\"`",
+    "text": "null + 1 is null",
+    "stable": "yes",
     "escaped": "-",
     "json": {
      "op": "isNull",
@@ -3823,16 +3727,16 @@
    "null-literal": {
     "to_json": "ok",
     "vs_case": "same",
-    "text": "'None'",
-    "stable": "/: `null` vs `\"None\"`",
+    "text": "null",
+    "stable": "yes",
     "escaped": "-",
     "json": null
    },
    "null-literal-is-null": {
     "to_json": "ok",
     "vs_case": "same",
-    "text": "'None' is null",
-    "stable": "/args/0: `null` vs `\"None\"`",
+    "text": "null is null",
+    "stable": "yes",
     "escaped": "-",
     "json": {
      "op": "isNull",
@@ -4005,8 +3909,8 @@
    "2-vector-polygon": {
     "css_to_json": "ok",
     "vs_spec": "same",
-    "stable": "/stylingRules/0/nestedRules/0/nestedRules/3/nestedRules/0/symbolizer/marker/elements/value/blackTint: `[107, 95, 42]` vs `\"[107, 95, 42]\"`",
-    "json_trip": "/stylingRules/0/nestedRules/0/nestedRules/3/nestedRules/0/symbolizer/marker/elements/value/blackTint: `[107, 95, 42]` vs `\"[107, 95, 42]\"`",
+    "stable": "yes",
+    "json_trip": "yes",
     "json": {
      "metadata": {
       "title": "Styling polygon vector features",
@@ -5738,13 +5642,13 @@
    },
    "10-protected-areas": {
     "css_to_json": "ok",
-    "vs_spec": "same",
+    "vs_spec": "/stylingRules/0/nestedRules/0/symbolizer/stroke/center: missing",
     "stable": "yes",
-    "json_trip": "yes",
+    "json_trip": "/stylingRules/0/nestedRules/0/symbolizer/stroke/center: missing",
     "json": {
      "metadata": {
       "title": "Protected areas by class",
-      "abstract": "This style is used to draw the protected areas around Rondane, Norway, colored by the kind of protection.\n This style uses the protected areas of N50 Kartdata from the Norwegian Mapping Authority (Kartverket), available at https://kartkatalog.geonorge.no/metadata/n50-kartdata/ea192681-d039-42ec-b1bc-f3ce04c189ac",
+      "abstract": "This style is used to draw the protected areas around Rondane, Norway, by the kind of protection.\n This style uses the protected areas of N50 Kartdata from the Norwegian Mapping Authority (Kartverket), available at https://kartkatalog.geonorge.no/metadata/n50-kartdata/ea192681-d039-42ec-b1bc-f3ce04c189ac",
       "keywords": [
        "Protected area",
        "National park",
@@ -5753,6 +5657,7 @@
      },
      "stylingRules": [
       {
+       "$comment": "A light tint over the context, a soft band along each boundary with a crisp line in its center,\nand a texture for the kinds of protection other than the national park",
        "selector": {
         "op": "and",
         "args": [
@@ -5779,41 +5684,7 @@
        "symbolizer": {
         "visibility": true,
         "zOrder": 1,
-        "stroke": {
-         "color": [
-          93,
-          107,
-          85
-         ],
-         "opacity": 1.0,
-         "width": {
-          "px": 1.0
-         }
-        },
-        "marker": null,
-        "label": {
-         "elements": [
-          {
-           "type": "Text",
-           "text": {
-            "property": "name"
-           },
-           "alignment": [
-            "center",
-            "middle"
-           ],
-           "font": {
-            "face": "Arial",
-            "size": 8,
-            "color": [
-             43,
-             43,
-             43
-            ]
-           }
-          }
-         ]
-        }
+        "marker": null
        },
        "nestedRules": [
         {
@@ -5828,12 +5699,67 @@
          },
          "symbolizer": {
           "fill": {
-           "alter": true,
            "color": [
-            169,
-            207,
-            152
-           ]
+            79,
+            138,
+            60
+           ],
+           "opacity": 0.12
+          },
+          "stroke": {
+           "color": [
+            79,
+            138,
+            60
+           ],
+           "opacity": 0.45,
+           "width": {
+            "px": 7.0
+           },
+           "centerLine": {
+            "color": [
+             47,
+             93,
+             42
+            ],
+            "width": {
+             "px": 1.2
+            }
+           }
+          },
+          "label": {
+           "elements": [
+            {
+             "type": "Text",
+             "text": {
+              "property": "name"
+             },
+             "alignment": [
+              "center",
+              "middle"
+             ],
+             "font": {
+              "face": "Arial",
+              "size": 13,
+              "bold": true,
+              "italic": true,
+              "color": [
+               47,
+               93,
+               42
+              ],
+              "outline": {
+               "size": 2.5,
+               "opacity": 0.85,
+               "color": "white"
+              }
+             }
+            }
+           ],
+           "placement": {
+            "priority": 3.0,
+            "minSpacing": 500.0
+           }
           }
          }
         },
@@ -5849,11 +5775,71 @@
          },
          "symbolizer": {
           "fill": {
-           "alter": true,
            "color": [
-            227,
-            212,
-            142
+            168,
+            116,
+            26
+           ],
+           "opacity": 0.55,
+           "dotpattern": {
+            "distance": {
+             "horizontal": {
+              "px": 7.0
+             },
+             "vertical": {
+              "px": 7.0
+             }
+            }
+           }
+          },
+          "stroke": {
+           "color": [
+            201,
+            154,
+            58
+           ],
+           "opacity": 0.4,
+           "width": {
+            "px": 5.0
+           },
+           "centerLine": {
+            "color": [
+             138,
+             94,
+             20
+            ],
+            "width": {
+             "px": 1.0
+            }
+           }
+          },
+          "label": {
+           "elements": [
+            {
+             "type": "Text",
+             "text": {
+              "property": "name"
+             },
+             "alignment": [
+              "center",
+              "middle"
+             ],
+             "font": {
+              "face": "Arial",
+              "size": 8.5,
+              "italic": true,
+              "color": [
+               110,
+               74,
+               14
+              ],
+              "outline": {
+               "size": 2,
+               "opacity": 0.85,
+               "color": "white"
+              }
+             }
+            }
            ]
           }
          }
@@ -5870,11 +5856,70 @@
          },
          "symbolizer": {
           "fill": {
-           "alter": true,
            "color": [
-            235,
-            165,
-            127
+            184,
+            68,
+            47
+           ],
+           "opacity": 0.6,
+           "hatch": {
+            "width": {
+             "px": 1.0
+            },
+            "angle": 45.0,
+            "distance": {
+             "px": 5.0
+            }
+           }
+          },
+          "stroke": {
+           "color": [
+            208,
+            112,
+            90
+           ],
+           "opacity": 0.4,
+           "width": {
+            "px": 5.0
+           },
+           "centerLine": {
+            "color": [
+             154,
+             51,
+             34
+            ],
+            "width": {
+             "px": 1.0
+            }
+           }
+          },
+          "label": {
+           "elements": [
+            {
+             "type": "Text",
+             "text": {
+              "property": "name"
+             },
+             "alignment": [
+              "center",
+              "middle"
+             ],
+             "font": {
+              "face": "Arial",
+              "size": 8.5,
+              "italic": true,
+              "color": [
+               126,
+               42,
+               28
+              ],
+              "outline": {
+               "size": 2,
+               "opacity": 0.85,
+               "color": "white"
+              }
+             }
+            }
            ]
           }
          }
@@ -7149,7 +7194,6 @@
         ]
        },
        "symbolizer": {
-        "visibility": true,
         "stroke": {
          "width": 0.0
         },
@@ -7181,6 +7225,7 @@
           ]
          },
          "symbolizer": {
+          "visibility": true,
           "zOrder": 67,
           "fill": {
            "color": [
@@ -7202,53 +7247,12 @@
           ]
          },
          "symbolizer": {
+          "visibility": true,
           "opacity": 0.4235294,
           "zOrder": 65,
           "fill": {
            "color": "burlyWood"
           }
-         }
-        },
-        {
-         "selector": {
-          "op": "and",
-          "args": [
-           {
-            "op": "and",
-            "args": [
-             {
-              "op": "<>",
-              "args": [
-               {
-                "property": "class"
-               },
-               "lake"
-              ]
-             },
-             {
-              "op": "<>",
-              "args": [
-               {
-                "property": "class"
-               },
-               "river"
-              ]
-             }
-            ]
-           },
-           {
-            "op": "<>",
-            "args": [
-             {
-              "property": "class"
-             },
-             "bog"
-            ]
-           }
-          ]
-         },
-         "symbolizer": {
-          "visibility": false
          }
         }
        ]
@@ -7288,7 +7292,6 @@
         ]
        },
        "symbolizer": {
-        "visibility": true,
         "zOrder": 86,
         "marker": null
        },
@@ -7332,6 +7335,7 @@
           ]
          },
          "symbolizer": {
+          "visibility": true,
           "stroke": {
            "color": [
             196,
@@ -7367,6 +7371,7 @@
           ]
          },
          "symbolizer": {
+          "visibility": true,
           "stroke": {
            "color": "gray",
            "width": 0.5
@@ -7398,6 +7403,7 @@
           ]
          },
          "symbolizer": {
+          "visibility": true,
           "stroke": {
            "color": [
             196,
@@ -7410,62 +7416,6 @@
             2
            ]
           }
-         }
-        },
-        {
-         "selector": {
-          "op": "or",
-          "args": [
-           {
-            "op": "=",
-            "args": [
-             {
-              "property": "class"
-             },
-             "tractor"
-            ]
-           },
-           {
-            "op": "=",
-            "args": [
-             {
-              "property": "class"
-             },
-             "cycleway"
-            ]
-           }
-          ]
-         },
-         "symbolizer": {
-          "visibility": false
-         }
-        },
-        {
-         "selector": {
-          "op": "and",
-          "args": [
-           {
-            "op": "=",
-            "args": [
-             {
-              "property": "class"
-             },
-             "path"
-            ]
-           },
-           {
-            "op": "=",
-            "args": [
-             {
-              "property": "marked"
-             },
-             false
-            ]
-           }
-          ]
-         },
-         "symbolizer": {
-          "visibility": false
          }
         }
        ]

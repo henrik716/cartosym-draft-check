@@ -37,7 +37,7 @@ The draft renderer draws each reading:
 ## Files
 
 - `style.cscss`: the style in CartoSym-CSS
-- `style.cs.json`: the same in CartoSym-JSON, converted from `style.cscss` with pycartosym 0.6.5
+- `style.cs.json`: the same in CartoSym-JSON, converted from `style.cscss` with pycartosym 0.6.7
 - `Roads.geojson`: the data layer `Roads` (3 features, EPSG:25833)
 - `view.json`: extent (EPSG:25833), size in pixels, scale denominator and map background
 - `draft-render.png`: the draft renderer, at 2 × the size of `view.json`

@@ -2493,6 +2493,49 @@
    }
   }
  },
+ "null-property-missing-is-null": {
+  "requirement": "/req/core/operations",
+  "input": "\"null\" is null",
+  "expect": "true",
+  "json": {
+   "op": "isNull",
+   "args": [
+    {
+     "property": "null"
+    }
+   ]
+  },
+  "properties": {},
+  "draft_only": true,
+  "results": {
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "true"
+   }
+  }
+ },
+ "null-property-missing-compare": {
+  "requirement": "/req/core/operations",
+  "input": "\"null\" > 1",
+  "expect": "null",
+  "json": {
+   "op": ">",
+   "args": [
+    {
+     "property": "null"
+    },
+    1
+   ]
+  },
+  "properties": {},
+  "draft_only": true,
+  "results": {
+   "draft renderer": {
+    "verdict": "pass",
+    "detail": "null"
+   }
+  }
+ },
  "text-like-percent": {
   "requirement": "/req/text-relation/like",
   "input": "'Oslo' like 'O%'",
@@ -2809,42 +2852,6 @@
    }
   }
  },
- "textfn-case-insensitize": {
-  "requirement": "/req/text-manipulation/case-insensitize",
-  "input": "caseInsensitize('ABC') = caseInsensitize('abc')",
-  "expect": "true",
-  "json": {
-   "op": "=",
-   "args": [
-    {
-     "op": "caseInsensitize",
-     "args": [
-      "ABC"
-     ]
-    },
-    {
-     "op": "caseInsensitize",
-     "args": [
-      "abc"
-     ]
-    }
-   ]
-  },
-  "results": {
-   "libCartoSym": {
-    "verdict": "FAIL",
-    "detail": "got `false`, draft expects `true`"
-   },
-   "pycartosym": {
-    "verdict": "pass",
-    "detail": "converts to the case's CQL2-JSON"
-   },
-   "draft renderer": {
-    "verdict": "pass",
-    "detail": "true"
-   }
-  }
- },
  "textfn-casei": {
   "requirement": "/req/text-manipulation/case-insensitize",
   "input": "casei('ABC') = casei('abc')",
@@ -2870,42 +2877,6 @@
    "libCartoSym": {
     "verdict": "pass",
     "detail": "true"
-   },
-   "pycartosym": {
-    "verdict": "pass",
-    "detail": "converts to the case's CQL2-JSON"
-   },
-   "draft renderer": {
-    "verdict": "pass",
-    "detail": "true"
-   }
-  }
- },
- "textfn-accent-insensitize": {
-  "requirement": "/req/text-manipulation/accent-insensitize",
-  "input": "accentInsensitize('café') = accentInsensitize('cafe')",
-  "expect": "true",
-  "json": {
-   "op": "=",
-   "args": [
-    {
-     "op": "accentInsensitize",
-     "args": [
-      "café"
-     ]
-    },
-    {
-     "op": "accentInsensitize",
-     "args": [
-      "cafe"
-     ]
-    }
-   ]
-  },
-  "results": {
-   "libCartoSym": {
-    "verdict": "FAIL",
-    "detail": "got `false`, draft expects `true`"
    },
    "pycartosym": {
     "verdict": "pass",

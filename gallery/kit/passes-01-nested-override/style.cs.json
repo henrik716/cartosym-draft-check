@@ -16,15 +16,6 @@
       },
       "nestedRules": [
         {
-          "selector": {
-            "op": "=",
-            "args": [
-              {
-                "property": "kind"
-              },
-              "road"
-            ]
-          },
           "symbolizer": {
             "stroke": {
               "color": "black",
@@ -35,15 +26,6 @@
           }
         },
         {
-          "selector": {
-            "op": "=",
-            "args": [
-              {
-                "property": "kind"
-              },
-              "road"
-            ]
-          },
           "symbolizer": {
             "stroke": {
               "color": "white",

@@ -1,6 +1,6 @@
 # Round trips through CQL2-JSON and CartoSym-JSON
 
-Generated 2026-11-20 by [`harness/roundtrip.py`](../harness/roundtrip.py) with libCartoSym (cs-canif from `cartosym` 0.0.1, `ecrt` 0.0.6) and pycartosym 0.6.5; the style examples are those of opengeospatial/cartographic-symbology at `be2b350` (branch `example-renders`).
+Generated 2026-11-25 by [`harness/roundtrip.py`](../harness/roundtrip.py) with libCartoSym (cs-canif from `cartosym` 0.0.1, `ecrt` 0.0.6) and pycartosym 0.6.7; the style examples are those of opengeospatial/cartographic-symbology at `fefe225`.
 
 This checks conversion only: whether each implementation writes the same JSON as the case or the example, and whether converting back and forth gives the same JSON again. It does not evaluate anything; [`report.md`](report.md) has the evaluation results. A difference from a case or an example may be in the case, the example or the implementation.
 
@@ -8,13 +8,13 @@ This checks conversion only: whether each implementation writes the same JSON as
 
 | | libCartoSym | pycartosym |
 |---|---|---|
-| Expressions converted to CQL2-JSON (of 118) | 113 | 118 |
-| Same CQL2-JSON as the case (of the 78 cases that give one) | 57 | 78 |
-| Text → JSON → text → JSON gives the same JSON (of 118) | 63 | 104 |
-| CQL2-JSON with `\u` escapes gives the same CQL2-Text (of the 5 cases with non-ASCII text) | 0 | 5 |
+| Expressions converted to CQL2-JSON (of 116) | 111 | 116 |
+| Same CQL2-JSON as the case (of the 76 cases that give one) | 55 | 76 |
+| Text → JSON → text → JSON gives the same JSON (of 116) | 63 | 116 |
+| CQL2-JSON with `\u` escapes gives the same CQL2-Text (of the 4 cases with non-ASCII text) | 0 | 4 |
 | Examples converted from CartoSym-CSS to CartoSym-JSON (of 13) | 0 | 13 |
-| Same CartoSym-JSON as the example (of 13) | 0 | 13 |
-| CSS → JSON → CSS → JSON gives the same JSON (of 13) | 0 | 12 |
+| Same CartoSym-JSON as the example (of 13) | 0 | 12 |
+| CSS → JSON → CSS → JSON gives the same JSON (of 13) | 0 | 13 |
 | The example's JSON → CSS → JSON gives it back (of 13) | 0 | 12 |
 
 ## How they are run
@@ -101,9 +101,7 @@ This checks conversion only: whether each implementation writes the same JSON as
 | array-equals-order | `a_equals((1, 2), (2, 1))` | ok | - | `A_EQUALS((1, 2), (2, 1))` | - | yes |
 | array-overlaps | `a_overlaps((1, 2), (2, 3))` | ok | - | `A_OVERLAPS((1, 2), (2, 3))` | - | yes |
 | array-overlaps-none | `a_overlaps((1, 2), (3, 4))` | ok | same | `A_OVERLAPS((1, 2), (3, 4))` | - | yes |
-| textfn-case-insensitize | `caseInsensitize('ABC') = caseInsensitize('abc')` | ok | same | `CASEINSENSITIZE('ABC') = CASEINSENSITIZE('abc')` | - | /args/0/op: `"caseInsensitize"` vs `"CASEINSENSITIZE"` |
 | textfn-casei | `casei('ABC') = casei('abc')` | ok | same | `CASEI('ABC') = CASEI('abc')` | - | yes |
-| textfn-accent-insensitize | `accentInsensitize('café') = accentInsensitize('cafe')` | ok | same | `ACCENTINSENSITIZE('café') = ACCENTINSENSITIZE('cafe')` | `ACCENTINSENSITIZE('cafu00e9') = ACCENTINSENSITIZE('cafe')` | /args/0/op: `"accentInsensitize"` vs `"ACCENTINSENSITIZE"` |
 | textfn-accenti-o-stroke | `accenti('Øre') = accenti('Ore')` | ok | same | `ACCENTI('Øre') = ACCENTI('Ore')` | `ACCENTI('u00d8re') = ACCENTI('Ore')` | yes |
 | textfn-accenti | `accenti('café') = accenti('cafe')` | ok | same | `ACCENTI('café') = ACCENTI('cafe')` | `ACCENTI('cafu00e9') = ACCENTI('cafe')` | yes |
 | textfn-accenti-tajik | `accenti('Тоҷикистон') = accenti('Точикистон')` | ok | same | `ACCENTI('Тоҷикистон') = ACCENTI('Точикистон')` | `ACCENTI('u0422u043eu04b7u0438u043au0438u0441u0442u043eu043d') = ACCENTI('u0422u043eu0447u0438u043au0438u0441u0442u043eu043d')` | yes |
@@ -195,8 +193,8 @@ This checks conversion only: whether each implementation writes the same JSON as
 | arith-div-integers | `7 / 2` | ok | - | `7 / 2` | - | yes |
 | arith-int-div | `7 div 2` | ok | - | `//(7, 2)` | - | yes |
 | arith-int-div-negative | `-7 div 2` | ok | - | `//(-7, 2)` | - | yes |
-| arith-mod | `7 % 3` | ok | - | `%(7, 3)` | - | yes |
-| arith-mod-negative | `-7 % 3` | ok | - | `%(-7, 3)` | - | yes |
+| arith-mod | `7 % 3` | ok | - | `7 % 3` | - | yes |
+| arith-mod-negative | `-7 % 3` | ok | - | `-7 % 3` | - | yes |
 | arith-pow | `2 ^ 10` | ok | same | `2 ^ 10` | - | yes |
 | core-and | `1 < 2 and 3 < 4` | ok | - | `1 < 2 and 3 < 4` | - | yes |
 | core-or | `1 > 2 or 3 < 4` | ok | - | `1 > 2 or 3 < 4` | - | yes |
@@ -209,7 +207,7 @@ This checks conversion only: whether each implementation writes the same JSON as
 | core-not-between | `5 not between 6 and 10` | ok | - | `5 not between 6 and 10` | - | yes |
 | core-in | `2 in (1, 2, 3)` | ok | - | `2 in (1, 2, 3)` | - | yes |
 | core-not-in | `4 not in (1, 2, 3)` | ok | - | `4 not in (1, 2, 3)` | - | yes |
-| core-is-null | `null is null` | ok | - | `'None' is null` | - | /args/0: `null` vs `"None"` |
+| core-is-null | `null is null` | ok | - | `null is null` | - | yes |
 | core-priority | `(1 + 2) * 3` | ok | - | `(1 + 2) * 3` | - | yes |
 | text-like-percent | `'Oslo' like 'O%'` | ok | same | `'Oslo' like 'O%'` | - | yes |
 | text-like-underscore | `'Oslo' like 'O_lo'` | ok | same | `'Oslo' like 'O_lo'` | - | yes |
@@ -224,9 +222,7 @@ This checks conversion only: whether each implementation writes the same JSON as
 | array-equals-order | `a_equals((1, 2), (2, 1))` | ok | - | `A_EQUALS([1, 2], [2, 1])` | - | yes |
 | array-overlaps | `a_overlaps((1, 2), (2, 3))` | ok | - | `A_OVERLAPS([1, 2], [2, 3])` | - | yes |
 | array-overlaps-none | `a_overlaps((1, 2), (3, 4))` | ok | same | `A_OVERLAPS([1, 2], [3, 4])` | - | yes |
-| textfn-case-insensitize | `caseInsensitize('ABC') = caseInsensitize('abc')` | ok | same | `caseInsensitize('ABC') = caseInsensitize('abc')` | - | yes |
 | textfn-casei | `casei('ABC') = casei('abc')` | ok | same | `CASEI('ABC') = CASEI('abc')` | - | yes |
-| textfn-accent-insensitize | `accentInsensitize('café') = accentInsensitize('cafe')` | ok | same | `accentInsensitize('café') = accentInsensitize('cafe')` | same | yes |
 | textfn-accenti-o-stroke | `accenti('Øre') = accenti('Ore')` | ok | same | `ACCENTI('Øre') = ACCENTI('Ore')` | same | yes |
 | textfn-accenti | `accenti('café') = accenti('cafe')` | ok | same | `ACCENTI('café') = ACCENTI('cafe')` | same | yes |
 | textfn-accenti-tajik | `accenti('Тоҷикистон') = accenti('Точикистон')` | ok | same | `ACCENTI('Тоҷикистон') = ACCENTI('Точикистон')` | same | yes |
@@ -257,19 +253,19 @@ This checks conversion only: whether each implementation writes the same JSON as
 | neq-and | `1 <> 2 and 3 <> 4` | ok | same | `1 <> 2 and 3 <> 4` | - | yes |
 | neq-compared-to-true | `(2 <> 3) = true` | ok | same | `2 <> 3 = true` | - | yes |
 | neq-not | `not (2 <> 2)` | ok | same | `not 2 <> 2` | - | yes |
-| null-arithmetic | `null + 1` | ok | same | `'None' + 1` | - | /args/0: `null` vs `"None"` |
-| null-equal | `null = 1` | ok | same | `'None' = 1` | - | /args/0: `null` vs `"None"` |
-| null-not-equal | `null <> 1` | ok | same | `'None' <> 1` | - | /args/0: `null` vs `"None"` |
-| null-compare | `null > 1` | ok | same | `'None' > 1` | - | /args/0: `null` vs `"None"` |
-| null-like | `null like 'a%'` | ok | same | `'None' like 'a%'` | - | /args/0: `null` vs `"None"` |
-| null-not | `not (null > 1)` | ok | same | `not 'None' > 1` | - | /args/0/args/0: `null` vs `"None"` |
-| null-and-true | `(null > 1) and true` | ok | same | `'None' > 1 and true` | - | /args/0/args/0: `null` vs `"None"` |
-| null-and-false | `(null > 1) and false` | ok | same | `'None' > 1 and false` | - | /args/0/args/0: `null` vs `"None"` |
-| null-or-true | `(null > 1) or true` | ok | same | `'None' > 1 or true` | - | /args/0/args/0: `null` vs `"None"` |
-| null-or-false | `(null > 1) or false` | ok | same | `'None' > 1 or false` | - | /args/0/args/0: `null` vs `"None"` |
-| null-is-null | `(null + 1) is null` | ok | same | `'None' + 1 is null` | - | /args/0/args/0: `null` vs `"None"` |
-| null-literal | `null` | ok | same | `'None'` | - | /: `null` vs `"None"` |
-| null-literal-is-null | `null is null` | ok | same | `'None' is null` | - | /args/0: `null` vs `"None"` |
+| null-arithmetic | `null + 1` | ok | same | `null + 1` | - | yes |
+| null-equal | `null = 1` | ok | same | `null = 1` | - | yes |
+| null-not-equal | `null <> 1` | ok | same | `null <> 1` | - | yes |
+| null-compare | `null > 1` | ok | same | `null > 1` | - | yes |
+| null-like | `null like 'a%'` | ok | same | `null like 'a%'` | - | yes |
+| null-not | `not (null > 1)` | ok | same | `not null > 1` | - | yes |
+| null-and-true | `(null > 1) and true` | ok | same | `null > 1 and true` | - | yes |
+| null-and-false | `(null > 1) and false` | ok | same | `null > 1 and false` | - | yes |
+| null-or-true | `(null > 1) or true` | ok | same | `null > 1 or true` | - | yes |
+| null-or-false | `(null > 1) or false` | ok | same | `null > 1 or false` | - | yes |
+| null-is-null | `(null + 1) is null` | ok | same | `null + 1 is null` | - | yes |
+| null-literal | `null` | ok | same | `null` | - | yes |
+| null-literal-is-null | `null is null` | ok | same | `null is null` | - | yes |
 
 ## Styles
 
@@ -296,7 +292,7 @@ This checks conversion only: whether each implementation writes the same JSON as
 | Example | CSS to JSON | Same as the example's JSON | CSS → JSON → CSS → JSON stable | Example's JSON → CSS → JSON |
 |---|---|---|---|---|
 | 1-core | ok | same | yes | yes |
-| 2-vector-polygon | ok | same | /stylingRules/0/nestedRules/0/nestedRules/3/nestedRules/0/symbolizer/marker/elements/value/blackTint: `[107, 95, 42]` vs `"[107, 95, 42]"` | /stylingRules/0/nestedRules/0/nestedRules/3/nestedRules/0/symbolizer/marker/elements/value/blackTint: `[107, 95, 42]` vs `"[107, 95, 42]"` |
+| 2-vector-polygon | ok | same | yes | yes |
 | 3-vector-line | ok | same | yes | yes |
 | 4-vector-point | ok | same | yes | yes |
 | 5-coverage-dem | ok | same | yes | yes |
@@ -305,6 +301,6 @@ This checks conversion only: whether each implementation writes the same JSON as
 | 8-coverage-hillshading | ok | same | yes | yes |
 | 9-coverage-hillshading-opacity | ok | same | yes | yes |
 | 10-natural_earth_economies | ok | same | yes | yes |
-| 10-protected-areas | ok | same | yes | yes |
+| 10-protected-areas | ok | /stylingRules/0/nestedRules/0/symbolizer/stroke/center: missing | yes | /stylingRules/0/nestedRules/0/symbolizer/stroke/center: missing |
 | 11-natural_earth_continents | ok | same | yes | yes |
 | 11-rondane-overview | ok | same | yes | yes |

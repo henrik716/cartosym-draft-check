@@ -29,7 +29,7 @@ Pass 0, one road at a time: its black 7 px stroke, then its white 5 px stroke (f
 ## Files
 
 - `style.cscss`: the style in CartoSym-CSS
-- `style.cs.json`: the same in CartoSym-JSON, converted from `style.cscss` with pycartosym 0.6.5 (corrected by cartosym-draft-check: capabilities.*/feature.* written as sysId)
+- `style.cs.json`: the same in CartoSym-JSON, converted from `style.cscss` with pycartosym 0.6.7
 - `Roads.geojson`: the data layer `Roads` (3 features, EPSG:25833)
 - `view.json`: extent (EPSG:25833), size in pixels, scale denominator and map background
 - `draft-render.png`: the draft renderer, at 2 × the size of `view.json`

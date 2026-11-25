@@ -39,7 +39,7 @@ Pass 0 draws the black 5 px strokes of all roads, pass 1 their white 3 px stroke
 ## Files
 
 - `style.cscss`: the style in CartoSym-CSS
-- `style.cs.json`: the same in CartoSym-JSON, converted from `style.cscss` with pycartosym 0.6.5
+- `style.cs.json`: the same in CartoSym-JSON, converted from `style.cscss` with pycartosym 0.6.7
 - `style-wide.cscss`, `style-wide.cs.json`: the same with wider strokes (12 px and 8 px)
 - `Roads.geojson`: the data layer `Roads` (3 features, EPSG:25833)
 - `view.json`: extent (EPSG:25833), size in pixels, scale denominator and map background

@@ -39,7 +39,7 @@ Each road has a yellow 10 px stroke, a brown casing 1.5 px beyond each side and 
 ## Files
 
 - `style.cscss`: the style in CartoSym-CSS
-- `style.cs.json`: the same in CartoSym-JSON, converted from `style.cscss` with pycartosym 0.6.5 (corrected by cartosym-draft-check: centerLine renamed center (#120))
+- `style.cs.json`: the same in CartoSym-JSON, converted from `style.cscss` with pycartosym 0.6.7 (corrected by cartosym-draft-check: centerLine renamed center (#120))
 - `style-passes.cscss`, `style-passes.cs.json`: the same with three visualization passes
 - `Roads.geojson`: the data layer `Roads` (3 features, EPSG:25833)
 - `view.json`: extent (EPSG:25833), size in pixels, scale denominator and map background
