@@ -9,7 +9,7 @@ Expected values are what the **draft requirement** says. `FAIL` means the implem
 | Implementation | pass | FAIL | unsupported | CRASH | error |
 |---|---|---|---|---|---|
 | draft renderer | 149 | 0 | 0 | 0 | 0 |
-| libCartoSym | 128 | 10 | 0 | 0 | 0 |
+| libCartoSym | 129 | 9 | 0 | 0 | 0 |
 | pycartosym | 135 | 3 | 0 | 0 | 0 |
 
 ## How the cases are run
@@ -237,7 +237,7 @@ The cases are in [`cases/`](../cases/), the calls in [`harness/adapters.py`](../
 |---|---|---|---|---|---|
 | cscss-tuple-negative | `Huts { marker: { elements: [ Dot { position: 10 -4; size:...` | `{x: 10, y: -4}` | FAIL: got `{"op": "-", "args": [10, 4]}`, draft expects `{"x": 10, "y": -4}` | pass: {"x": 10.0, "y": -4.0} | - |
 | | _A `-` directly before a number starts a new value (#173)._ | | | | |
-| cscss-tuple | `Huts { marker: { elements: [ Dot { position: 10 4; size: ...` | `{x: 10, y: 4}` | FAIL: got `[10, 4]`, draft expects `{"x": 10, "y": 4}` | pass: {"x": 10.0, "y": 4.0} | - |
+| cscss-tuple | `Huts { marker: { elements: [ Dot { position: 10 4; size: ...` | `{x: 10, y: 4}` | pass: [10, 4] | pass: {"x": 10.0, "y": 4.0} | - |
 
 ### `/req/functions/call-expressions`
 

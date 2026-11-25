@@ -20,8 +20,8 @@
   "expect": "{x: 10, y: 4}",
   "results": {
    "libCartoSym": {
-    "verdict": "FAIL",
-    "detail": "got `[10, 4]`, draft expects `{\"x\": 10, \"y\": 4}`"
+    "verdict": "pass",
+    "detail": "[10, 4]"
    },
    "pycartosym": {
     "verdict": "pass",
