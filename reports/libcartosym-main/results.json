@@ -59,6 +59,36 @@
    }
   }
  },
+ "cscss-font-symbolizer": {
+  "requirement": "/req/vector/font-inheritance",
+  "input": "Huts { font: { face: 'Arial', size: 10 pt }; marker: { elements: [ Text { text: 'a' } ] }; }\n",
+  "expect": "{pt: 10}",
+  "results": {
+   "libCartoSym": {
+    "verdict": "FAIL",
+    "detail": "got (nothing at /stylingRules/0/symbolizer/font/size), draft expects `{\"pt\": 10}`"
+   },
+   "pycartosym": {
+    "verdict": "error",
+    "detail": "ValidationError: 1 validation error for Symbolizer"
+   }
+  }
+ },
+ "cscss-font-multigraphic": {
+  "requirement": "/req/vector/font-inheritance",
+  "input": "Huts { marker: { font: { size: 14 pt }, elements: [ Text { text: 'a' } ] }; }\n",
+  "expect": "{pt: 14}",
+  "results": {
+   "libCartoSym": {
+    "verdict": "pass",
+    "detail": "{\"pt\": 14}"
+   },
+   "pycartosym": {
+    "verdict": "FAIL",
+    "detail": "got (nothing at /stylingRules/0/symbolizer/marker/font/size), draft expects `{\"pt\": 14}`"
+   }
+  }
+ },
  "math-acos": {
   "requirement": "/req/math/acos",
   "input": "acos(1)",
