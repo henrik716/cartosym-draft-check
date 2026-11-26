@@ -1,0 +1,871 @@
+{
+ "cscss-tuple-negative": {
+  "file": "1-core-cscss.yaml",
+  "expect": "{x: 10, y: -4}",
+  "draft_only": false
+ },
+ "cscss-tuple": {
+  "file": "1-core-cscss.yaml",
+  "expect": "{x: 10, y: 4}",
+  "draft_only": false
+ },
+ "cscss-font-size-pt": {
+  "file": "1-core-cscss.yaml",
+  "expect": "{pt: 12}",
+  "draft_only": false
+ },
+ "cscss-font-size": {
+  "file": "1-core-cscss.yaml",
+  "expect": "12",
+  "draft_only": false
+ },
+ "cscss-font-symbolizer": {
+  "file": "1-core-cscss.yaml",
+  "expect": "{pt: 10}",
+  "draft_only": false
+ },
+ "cscss-font-multigraphic": {
+  "file": "1-core-cscss.yaml",
+  "expect": "{pt: 14}",
+  "draft_only": false
+ },
+ "cscss-image-size": {
+  "file": "1-core-cscss.yaml",
+  "expect": "{mm: 6}",
+  "draft_only": false
+ },
+ "cscss-image-size-tuple": {
+  "file": "1-core-cscss.yaml",
+  "expect": "{x: {mm: 6}, y: {mm: 4}}",
+  "draft_only": false
+ },
+ "cscss-image-size-x": {
+  "file": "1-core-cscss.yaml",
+  "expect": "{x: {mm: 6}}",
+  "draft_only": false
+ },
+ "math-acos": {
+  "file": "1-core-expressions-more.yaml",
+  "expect": 0,
+  "draft_only": false
+ },
+ "math-asin": {
+  "file": "1-core-expressions-more.yaml",
+  "expect": 1.5707963267948966,
+  "draft_only": false
+ },
+ "math-atan": {
+  "file": "1-core-expressions-more.yaml",
+  "expect": 0.7853981633974483,
+  "draft_only": false
+ },
+ "math-atan2": {
+  "file": "1-core-expressions-more.yaml",
+  "expect": 2.356194490192345,
+  "draft_only": false
+ },
+ "math-ceil": {
+  "file": "1-core-expressions-more.yaml",
+  "expect": -2,
+  "draft_only": false
+ },
+ "math-ceil-integer": {
+  "file": "1-core-expressions-more.yaml",
+  "expect": "3",
+  "draft_only": false
+ },
+ "math-floor-integer": {
+  "file": "1-core-expressions-more.yaml",
+  "expect": "2",
+  "draft_only": false
+ },
+ "math-round-integer": {
+  "file": "1-core-expressions-more.yaml",
+  "expect": "3",
+  "draft_only": false
+ },
+ "math-cos": {
+  "file": "1-core-expressions-more.yaml",
+  "expect": 1,
+  "draft_only": false
+ },
+ "math-cosh": {
+  "file": "1-core-expressions-more.yaml",
+  "expect": 1,
+  "draft_only": false
+ },
+ "math-exp": {
+  "file": "1-core-expressions-more.yaml",
+  "expect": 2.718281828459045,
+  "draft_only": false
+ },
+ "math-log10": {
+  "file": "1-core-expressions-more.yaml",
+  "expect": 3,
+  "draft_only": false
+ },
+ "math-sin": {
+  "file": "1-core-expressions-more.yaml",
+  "expect": 0,
+  "draft_only": false
+ },
+ "math-sinh": {
+  "file": "1-core-expressions-more.yaml",
+  "expect": 0,
+  "draft_only": false
+ },
+ "math-tan": {
+  "file": "1-core-expressions-more.yaml",
+  "expect": 0,
+  "draft_only": false
+ },
+ "math-tanh": {
+  "file": "1-core-expressions-more.yaml",
+  "expect": 0,
+  "draft_only": false
+ },
+ "math-random": {
+  "file": "1-core-expressions-more.yaml",
+  "expect": true,
+  "draft_only": false
+ },
+ "text-contains": {
+  "file": "1-core-expressions-more.yaml",
+  "expect": true,
+  "draft_only": false
+ },
+ "text-starts-with": {
+  "file": "1-core-expressions-more.yaml",
+  "expect": true,
+  "draft_only": false
+ },
+ "text-ends-with": {
+  "file": "1-core-expressions-more.yaml",
+  "expect": true,
+  "draft_only": false
+ },
+ "text-not-contains": {
+  "file": "1-core-expressions-more.yaml",
+  "expect": false,
+  "draft_only": false
+ },
+ "text-not-starts-with": {
+  "file": "1-core-expressions-more.yaml",
+  "expect": true,
+  "draft_only": false
+ },
+ "text-not-ends-with": {
+  "file": "1-core-expressions-more.yaml",
+  "expect": false,
+  "draft_only": false
+ },
+ "cond-string-then": {
+  "file": "1-core-expressions-more.yaml",
+  "expect": "yes",
+  "draft_only": false
+ },
+ "cond-string-else": {
+  "file": "1-core-expressions-more.yaml",
+  "expect": "no",
+  "draft_only": false
+ },
+ "rhs-function": {
+  "file": "1-core-expressions-more.yaml",
+  "expect": true,
+  "draft_only": false
+ },
+ "rhs-identifier": {
+  "file": "1-core-expressions-more.yaml",
+  "expect": true,
+  "draft_only": true
+ },
+ "fn-call": {
+  "file": "1-core-expressions-more.yaml",
+  "expect": 2,
+  "draft_only": false
+ },
+ "fn-wrong-arity": {
+  "file": "1-core-expressions-more.yaml",
+  "expect": "null",
+  "draft_only": false
+ },
+ "fn-wrong-type": {
+  "file": "1-core-expressions-more.yaml",
+  "expect": "null",
+  "draft_only": false
+ },
+ "fn-int-to-real": {
+  "file": "1-core-expressions-more.yaml",
+  "expect": 0.7853981633974483,
+  "draft_only": false
+ },
+ "fn-standard": {
+  "file": "1-core-expressions-more.yaml",
+  "expect": 5,
+  "draft_only": false
+ },
+ "fn-standard-wrong-arity": {
+  "file": "1-core-expressions-more.yaml",
+  "expect": "null",
+  "draft_only": false
+ },
+ "var-reference": {
+  "file": "1-core-expressions-more.yaml",
+  "expect": 6,
+  "draft_only": true
+ },
+ "var-override": {
+  "file": "1-core-expressions-more.yaml",
+  "expect": 10,
+  "draft_only": true
+ },
+ "var-defined-by-expression": {
+  "file": "1-core-expressions-more.yaml",
+  "expect": 8,
+  "draft_only": true
+ },
+ "core-literal-string": {
+  "file": "1-core-expressions-more.yaml",
+  "expect": "abc",
+  "draft_only": false
+ },
+ "core-literal-real": {
+  "file": "1-core-expressions-more.yaml",
+  "expect": 3.25,
+  "draft_only": false
+ },
+ "core-literal-boolean": {
+  "file": "1-core-expressions-more.yaml",
+  "expect": true,
+  "draft_only": false
+ },
+ "core-array": {
+  "file": "1-core-expressions-more.yaml",
+  "expect": true,
+  "draft_only": false
+ },
+ "core-field-identifier": {
+  "file": "1-core-expressions-more.yaml",
+  "expect": 3000,
+  "draft_only": true
+ },
+ "core-system-identifier": {
+  "file": "1-core-expressions-more.yaml",
+  "expect": true,
+  "draft_only": true
+ },
+ "core-scale": {
+  "file": "1-core-expressions-more.yaml",
+  "expect": 25000,
+  "draft_only": true
+ },
+ "param-expression": {
+  "file": "1-core-expressions-more.yaml",
+  "expect": 7,
+  "draft_only": true
+ },
+ "arith-add": {
+  "file": "1-core-expressions.yaml",
+  "expect": 3,
+  "draft_only": false
+ },
+ "arith-sub": {
+  "file": "1-core-expressions.yaml",
+  "expect": -2,
+  "draft_only": false
+ },
+ "arith-mul": {
+  "file": "1-core-expressions.yaml",
+  "expect": 12,
+  "draft_only": false
+ },
+ "arith-div-reals": {
+  "file": "1-core-expressions.yaml",
+  "expect": 3.5,
+  "draft_only": false
+ },
+ "arith-div-integers": {
+  "file": "1-core-expressions.yaml",
+  "expect": 3.5,
+  "draft_only": false
+ },
+ "arith-int-div": {
+  "file": "1-core-expressions.yaml",
+  "expect": 3,
+  "draft_only": false
+ },
+ "arith-int-div-negative": {
+  "file": "1-core-expressions.yaml",
+  "expect": -3,
+  "draft_only": false
+ },
+ "arith-mod": {
+  "file": "1-core-expressions.yaml",
+  "expect": 1,
+  "draft_only": false
+ },
+ "arith-mod-negative": {
+  "file": "1-core-expressions.yaml",
+  "expect": -1,
+  "draft_only": false
+ },
+ "arith-pow": {
+  "file": "1-core-expressions.yaml",
+  "expect": 1024,
+  "draft_only": false
+ },
+ "core-and": {
+  "file": "1-core-expressions.yaml",
+  "expect": "true",
+  "draft_only": false
+ },
+ "core-or": {
+  "file": "1-core-expressions.yaml",
+  "expect": "true",
+  "draft_only": false
+ },
+ "core-not": {
+  "file": "1-core-expressions.yaml",
+  "expect": "true",
+  "draft_only": false
+ },
+ "core-not-in-and": {
+  "file": "1-core-expressions.yaml",
+  "expect": "true",
+  "draft_only": false
+ },
+ "core-equal": {
+  "file": "1-core-expressions.yaml",
+  "expect": "true",
+  "draft_only": false
+ },
+ "core-not-equal": {
+  "file": "1-core-expressions.yaml",
+  "expect": "true",
+  "draft_only": false
+ },
+ "core-lesser-equal": {
+  "file": "1-core-expressions.yaml",
+  "expect": "true",
+  "draft_only": false
+ },
+ "core-between": {
+  "file": "1-core-expressions.yaml",
+  "expect": "true",
+  "draft_only": false
+ },
+ "core-not-between": {
+  "file": "1-core-expressions.yaml",
+  "expect": "true",
+  "draft_only": false
+ },
+ "core-in": {
+  "file": "1-core-expressions.yaml",
+  "expect": "true",
+  "draft_only": false
+ },
+ "core-not-in": {
+  "file": "1-core-expressions.yaml",
+  "expect": "true",
+  "draft_only": false
+ },
+ "core-is-null": {
+  "file": "1-core-expressions.yaml",
+  "expect": "true",
+  "draft_only": false
+ },
+ "core-priority": {
+  "file": "1-core-expressions.yaml",
+  "expect": 9,
+  "draft_only": false
+ },
+ "text-like-percent": {
+  "file": "1-core-expressions.yaml",
+  "expect": "true",
+  "draft_only": false
+ },
+ "text-like-underscore": {
+  "file": "1-core-expressions.yaml",
+  "expect": "true",
+  "draft_only": false
+ },
+ "text-like-no-match": {
+  "file": "1-core-expressions.yaml",
+  "expect": "false",
+  "draft_only": false
+ },
+ "text-not-like": {
+  "file": "1-core-expressions.yaml",
+  "expect": "true",
+  "draft_only": false
+ },
+ "text-like-escape": {
+  "file": "1-core-expressions.yaml",
+  "expect": "true",
+  "draft_only": false
+ },
+ "cond-true": {
+  "file": "1-core-expressions.yaml",
+  "expect": 10,
+  "draft_only": false
+ },
+ "cond-false": {
+  "file": "1-core-expressions.yaml",
+  "expect": 20,
+  "draft_only": false
+ },
+ "array-contains": {
+  "file": "1-core-expressions.yaml",
+  "expect": "true",
+  "draft_only": false
+ },
+ "array-contained-by": {
+  "file": "1-core-expressions.yaml",
+  "expect": "true",
+  "draft_only": false
+ },
+ "array-equals": {
+  "file": "1-core-expressions.yaml",
+  "expect": "true",
+  "draft_only": false
+ },
+ "array-equals-order": {
+  "file": "1-core-expressions.yaml",
+  "expect": "false",
+  "draft_only": false
+ },
+ "array-overlaps": {
+  "file": "1-core-expressions.yaml",
+  "expect": "true",
+  "draft_only": false
+ },
+ "array-overlaps-none": {
+  "file": "1-core-expressions.yaml",
+  "expect": "false",
+  "draft_only": false
+ },
+ "textfn-casei": {
+  "file": "1-core-expressions.yaml",
+  "expect": "true",
+  "draft_only": false
+ },
+ "textfn-accenti-o-stroke": {
+  "file": "1-core-expressions.yaml",
+  "expect": "true",
+  "draft_only": false
+ },
+ "textfn-accenti": {
+  "file": "1-core-expressions.yaml",
+  "expect": "true",
+  "draft_only": false
+ },
+ "textfn-accenti-tajik": {
+  "file": "1-core-expressions.yaml",
+  "expect": "true",
+  "draft_only": false
+ },
+ "textfn-accenti-cyrillic-seven": {
+  "file": "1-core-expressions.yaml",
+  "expect": "true",
+  "draft_only": false
+ },
+ "textfn-upper-case": {
+  "file": "1-core-expressions.yaml",
+  "expect": "'ABC'",
+  "draft_only": false
+ },
+ "textfn-lower-case": {
+  "file": "1-core-expressions.yaml",
+  "expect": "'abc'",
+  "draft_only": false
+ },
+ "textfn-concatenate": {
+  "file": "1-core-expressions.yaml",
+  "expect": "'abcd'",
+  "draft_only": false
+ },
+ "textfn-substitute": {
+  "file": "1-core-expressions.yaml",
+  "expect": "'a+b+c'",
+  "draft_only": false
+ },
+ "textfn-format": {
+  "file": "1-core-expressions.yaml",
+  "expect": "'3 items'",
+  "draft_only": false
+ },
+ "math-abs": {
+  "file": "1-core-expressions.yaml",
+  "expect": 2,
+  "draft_only": false
+ },
+ "math-pow": {
+  "file": "1-core-expressions.yaml",
+  "expect": 8,
+  "draft_only": false
+ },
+ "math-min": {
+  "file": "1-core-expressions.yaml",
+  "expect": 2,
+  "draft_only": false
+ },
+ "math-max": {
+  "file": "1-core-expressions.yaml",
+  "expect": 3,
+  "draft_only": false
+ },
+ "math-max-several": {
+  "file": "1-core-expressions.yaml",
+  "expect": 5,
+  "draft_only": false
+ },
+ "math-min-one": {
+  "file": "1-core-expressions.yaml",
+  "expect": 7,
+  "draft_only": false
+ },
+ "math-log": {
+  "file": "1-core-expressions.yaml",
+  "expect": 0,
+  "draft_only": false
+ },
+ "math-round-half": {
+  "file": "1-core-expressions.yaml",
+  "expect": 3,
+  "draft_only": false
+ },
+ "math-round-negative-half": {
+  "file": "1-core-expressions.yaml",
+  "expect": -3,
+  "draft_only": false
+ },
+ "math-sqrt": {
+  "file": "1-core-expressions.yaml",
+  "expect": 4,
+  "draft_only": false
+ },
+ "math-floor": {
+  "file": "1-core-expressions.yaml",
+  "expect": -2,
+  "draft_only": false
+ },
+ "neq-equal-operands": {
+  "file": "1-core-not-equal.yaml",
+  "expect": "false",
+  "draft_only": false
+ },
+ "neq-reversed": {
+  "file": "1-core-not-equal.yaml",
+  "expect": "true",
+  "draft_only": false
+ },
+ "neq-larger-first": {
+  "file": "1-core-not-equal.yaml",
+  "expect": "true",
+  "draft_only": false
+ },
+ "neq-text": {
+  "file": "1-core-not-equal.yaml",
+  "expect": "true",
+  "draft_only": false
+ },
+ "neq-text-equal": {
+  "file": "1-core-not-equal.yaml",
+  "expect": "false",
+  "draft_only": false
+ },
+ "neq-no-spaces": {
+  "file": "1-core-not-equal.yaml",
+  "expect": "true",
+  "draft_only": false
+ },
+ "neq-arithmetic": {
+  "file": "1-core-not-equal.yaml",
+  "expect": "true",
+  "draft_only": false
+ },
+ "neq-and": {
+  "file": "1-core-not-equal.yaml",
+  "expect": "true",
+  "draft_only": false
+ },
+ "neq-compared-to-true": {
+  "file": "1-core-not-equal.yaml",
+  "expect": "true",
+  "draft_only": false
+ },
+ "neq-not": {
+  "file": "1-core-not-equal.yaml",
+  "expect": "true",
+  "draft_only": false
+ },
+ "neq-property": {
+  "file": "1-core-not-equal.yaml",
+  "expect": "true",
+  "draft_only": true
+ },
+ "neq-selector": {
+  "file": "1-core-not-equal.yaml",
+  "expect": "valid",
+  "draft_only": false
+ },
+ "neq-selector-no-spaces": {
+  "file": "1-core-not-equal.yaml",
+  "expect": "valid",
+  "draft_only": false
+ },
+ "neq-selector-and": {
+  "file": "1-core-not-equal.yaml",
+  "expect": "valid",
+  "draft_only": false
+ },
+ "null-arithmetic": {
+  "file": "1-core-null.yaml",
+  "expect": "null",
+  "draft_only": false
+ },
+ "null-equal": {
+  "file": "1-core-null.yaml",
+  "expect": "null",
+  "draft_only": false
+ },
+ "null-not-equal": {
+  "file": "1-core-null.yaml",
+  "expect": "null",
+  "draft_only": false
+ },
+ "null-compare": {
+  "file": "1-core-null.yaml",
+  "expect": "null",
+  "draft_only": false
+ },
+ "null-like": {
+  "file": "1-core-null.yaml",
+  "expect": "null",
+  "draft_only": false
+ },
+ "null-not": {
+  "file": "1-core-null.yaml",
+  "expect": "null",
+  "draft_only": false
+ },
+ "null-and-true": {
+  "file": "1-core-null.yaml",
+  "expect": "null",
+  "draft_only": false
+ },
+ "null-and-false": {
+  "file": "1-core-null.yaml",
+  "expect": "false",
+  "draft_only": false
+ },
+ "null-or-true": {
+  "file": "1-core-null.yaml",
+  "expect": "true",
+  "draft_only": false
+ },
+ "null-or-false": {
+  "file": "1-core-null.yaml",
+  "expect": "null",
+  "draft_only": false
+ },
+ "null-is-null": {
+  "file": "1-core-null.yaml",
+  "expect": "true",
+  "draft_only": false
+ },
+ "null-literal": {
+  "file": "1-core-null.yaml",
+  "expect": "null",
+  "draft_only": false
+ },
+ "null-literal-is-null": {
+  "file": "1-core-null.yaml",
+  "expect": "true",
+  "draft_only": false
+ },
+ "null-property-named-null": {
+  "file": "1-core-null.yaml",
+  "expect": 5,
+  "draft_only": true
+ },
+ "null-property-named-null-is-null": {
+  "file": "1-core-null.yaml",
+  "expect": "false",
+  "draft_only": true
+ },
+ "null-property-named-null-compare": {
+  "file": "1-core-null.yaml",
+  "expect": "true",
+  "draft_only": true
+ },
+ "null-property-missing-is-null": {
+  "file": "1-core-null.yaml",
+  "expect": "true",
+  "draft_only": true
+ },
+ "null-property-missing-compare": {
+  "file": "1-core-null.yaml",
+  "expect": "null",
+  "draft_only": true
+ },
+ "null-property-named-true": {
+  "file": "1-core-null.yaml",
+  "expect": "false",
+  "draft_only": true
+ },
+ "null-property-named-false": {
+  "file": "1-core-null.yaml",
+  "expect": "true",
+  "draft_only": true
+ },
+ "null-in-null-element": {
+  "file": "1-core-null.yaml",
+  "expect": "null",
+  "draft_only": false
+ },
+ "null-in-found-with-null-element": {
+  "file": "1-core-null.yaml",
+  "expect": "true",
+  "draft_only": false
+ },
+ "null-in-empty-list": {
+  "file": "1-core-null.yaml",
+  "expect": "false",
+  "draft_only": false
+ },
+ "null-null-in-empty-list": {
+  "file": "1-core-null.yaml",
+  "expect": "false",
+  "draft_only": false
+ },
+ "null-null-not-in-empty-list": {
+  "file": "1-core-null.yaml",
+  "expect": "true",
+  "draft_only": false
+ },
+ "null-div-by-zero": {
+  "file": "1-core-null.yaml",
+  "expect": "null",
+  "draft_only": false
+ },
+ "null-int-div-by-zero": {
+  "file": "1-core-null.yaml",
+  "expect": "null",
+  "draft_only": false
+ },
+ "null-mod-by-zero": {
+  "file": "1-core-null.yaml",
+  "expect": "null",
+  "draft_only": false
+ },
+ "null-pow-zero-negative": {
+  "file": "1-core-null.yaml",
+  "expect": "null",
+  "draft_only": false
+ },
+ "null-pow-negative-fraction": {
+  "file": "1-core-null.yaml",
+  "expect": "null",
+  "draft_only": false
+ },
+ "null-pow-negative-integer": {
+  "file": "1-core-null.yaml",
+  "expect": -8,
+  "draft_only": false
+ },
+ "null-sqrt-negative": {
+  "file": "1-core-null.yaml",
+  "expect": "null",
+  "draft_only": false
+ },
+ "null-log-zero": {
+  "file": "1-core-null.yaml",
+  "expect": "null",
+  "draft_only": false
+ },
+ "null-log10-negative": {
+  "file": "1-core-null.yaml",
+  "expect": "null",
+  "draft_only": false
+ },
+ "null-acos-out-of-domain": {
+  "file": "1-core-null.yaml",
+  "expect": "null",
+  "draft_only": false
+ },
+ "null-asin-out-of-domain": {
+  "file": "1-core-null.yaml",
+  "expect": "null",
+  "draft_only": false
+ },
+ "null-pow-function": {
+  "file": "1-core-null.yaml",
+  "expect": "null",
+  "draft_only": false
+ },
+ "minus-01": {
+  "file": "probe",
+  "expect": null
+ },
+ "minus-02": {
+  "file": "probe",
+  "expect": null
+ },
+ "minus-03": {
+  "file": "probe",
+  "expect": null
+ },
+ "minus-04": {
+  "file": "probe",
+  "expect": null
+ },
+ "minus-05": {
+  "file": "probe",
+  "expect": null
+ },
+ "minus-06": {
+  "file": "probe",
+  "expect": null
+ },
+ "minus-07": {
+  "file": "probe",
+  "expect": null
+ },
+ "minus-08": {
+  "file": "probe",
+  "expect": null
+ },
+ "minus-09": {
+  "file": "probe",
+  "expect": null
+ },
+ "minus-10": {
+  "file": "probe",
+  "expect": null
+ },
+ "css-01": {
+  "file": "probe",
+  "expect": null
+ },
+ "css-02": {
+  "file": "probe",
+  "expect": null
+ },
+ "css-03": {
+  "file": "probe",
+  "expect": null
+ },
+ "css-04": {
+  "file": "probe",
+  "expect": null
+ },
+ "css-05": {
+  "file": "probe",
+  "expect": null
+ },
+ "css-06": {
+  "file": "probe",
+  "expect": null
+ }
+}

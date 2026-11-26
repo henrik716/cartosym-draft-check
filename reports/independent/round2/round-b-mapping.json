@@ -1,0 +1,182 @@
+{
+  "case-01": {
+    "example": "2-vector-polygon",
+    "panel": 1,
+    "label": ""
+  },
+  "case-02": {
+    "example": "3-vector-line",
+    "panel": 1,
+    "label": ""
+  },
+  "case-03": {
+    "example": "4-vector-point",
+    "panel": 1,
+    "label": ""
+  },
+  "case-04": {
+    "example": "requirements/font-outlines-color",
+    "panel": 1,
+    "label": "color: white"
+  },
+  "case-05": {
+    "example": "requirements/font-outlines-color",
+    "panel": 2,
+    "label": "color: #f3e7b8"
+  },
+  "case-06": {
+    "example": "requirements/font-outlines-color",
+    "panel": 3,
+    "label": "color: #e8a090"
+  },
+  "case-07": {
+    "example": "requirements/font-outlines-opacity",
+    "panel": 1,
+    "label": "opacity: 0.3"
+  },
+  "case-08": {
+    "example": "requirements/font-outlines-opacity",
+    "panel": 2,
+    "label": "opacity: 0.6"
+  },
+  "case-09": {
+    "example": "requirements/font-outlines-opacity",
+    "panel": 3,
+    "label": "opacity: 1"
+  },
+  "case-10": {
+    "example": "requirements/font-outlines-outline",
+    "panel": 1,
+    "label": "no outline"
+  },
+  "case-11": {
+    "example": "requirements/font-outlines-outline",
+    "panel": 2,
+    "label": "outline"
+  },
+  "case-12": {
+    "example": "requirements/font-outlines-size",
+    "panel": 1,
+    "label": "size: 1"
+  },
+  "case-13": {
+    "example": "requirements/font-outlines-size",
+    "panel": 2,
+    "label": "size: 2"
+  },
+  "case-14": {
+    "example": "requirements/font-outlines-size",
+    "panel": 3,
+    "label": "size: 3.5"
+  },
+  "case-15": {
+    "example": "requirements/labels-label",
+    "panel": 1,
+    "label": "in the marker"
+  },
+  "case-16": {
+    "example": "requirements/labels-label",
+    "panel": 2,
+    "label": "in the label"
+  },
+  "case-17": {
+    "example": "requirements/labels-line",
+    "panel": 1,
+    "label": "a Text"
+  },
+  "case-18": {
+    "example": "requirements/labels-line",
+    "panel": 2,
+    "label": "a Dot and a Text"
+  },
+  "case-19": {
+    "example": "requirements/labels-placement-priority",
+    "panel": 1,
+    "label": "no priority"
+  },
+  "case-20": {
+    "example": "requirements/labels-placement-priority",
+    "panel": 2,
+    "label": "priority: elevation"
+  },
+  "case-21": {
+    "example": "requirements/labels-placement-priority",
+    "panel": 3,
+    "label": "priority: 0 - elevation"
+  },
+  "case-22": {
+    "example": "requirements/labels-placement-spacing",
+    "panel": 1,
+    "label": "minSpacing: 80"
+  },
+  "case-23": {
+    "example": "requirements/labels-placement-spacing",
+    "panel": 2,
+    "label": "minSpacing: 150"
+  },
+  "case-24": {
+    "example": "requirements/labels-placement-spacing",
+    "panel": 3,
+    "label": "minSpacing: 300"
+  },
+  "case-25": {
+    "example": "requirements/vector-fonts",
+    "panel": 1,
+    "label": "size: 9 pt"
+  },
+  "case-26": {
+    "example": "requirements/vector-fonts",
+    "panel": 2,
+    "label": "size: 12 pt"
+  },
+  "case-27": {
+    "example": "requirements/vector-fonts",
+    "panel": 3,
+    "label": "bold: true"
+  },
+  "case-28": {
+    "example": "requirements/vector-fonts",
+    "panel": 4,
+    "label": "italic: true"
+  },
+  "case-29": {
+    "example": "requirements/vector-image",
+    "panel": 1,
+    "label": "no size (own size, 24 px)"
+  },
+  "case-30": {
+    "example": "requirements/vector-image",
+    "panel": 2,
+    "label": "size: 10 mm"
+  },
+  "case-31": {
+    "example": "requirements/vector-image",
+    "panel": 3,
+    "label": "hotSpot: 0 0"
+  },
+  "case-32": {
+    "example": "requirements/vector-image",
+    "panel": 4,
+    "label": "blackTint: #3a7d44"
+  },
+  "case-33": {
+    "example": "requirements/vector-text",
+    "panel": 1,
+    "label": "left top (default)"
+  },
+  "case-34": {
+    "example": "requirements/vector-text",
+    "panel": 2,
+    "label": "center middle"
+  },
+  "case-35": {
+    "example": "requirements/vector-text",
+    "panel": 3,
+    "label": "right bottom"
+  },
+  "case-36": {
+    "example": "requirements/vector-text",
+    "panel": 4,
+    "label": "center bottom"
+  }
+}

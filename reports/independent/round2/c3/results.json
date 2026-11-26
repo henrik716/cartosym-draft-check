@@ -1,0 +1,293 @@
+{
+  "cscss-tuple-negative": [
+    10,
+    -4
+  ],
+  "cscss-tuple": [
+    10,
+    4
+  ],
+  "cscss-font-size-pt": {
+    "pt": 12
+  },
+  "cscss-font-size": 12,
+  "cscss-font-symbolizer": {
+    "pt": 10
+  },
+  "cscss-font-multigraphic": {
+    "pt": 14
+  },
+  "cscss-image-size": {
+    "mm": 6
+  },
+  "cscss-image-size-tuple": [
+    {
+      "mm": 6
+    },
+    {
+      "mm": 4
+    }
+  ],
+  "cscss-image-size-x": {
+    "x": {
+      "mm": 6
+    }
+  },
+  "math-acos": 0.0,
+  "math-asin": 1.5707963267948966,
+  "math-atan": 0.7853981633974483,
+  "math-atan2": 2.356194490192345,
+  "math-ceil": -2,
+  "math-ceil-integer": 3,
+  "math-floor-integer": 2,
+  "math-round-integer": 3,
+  "math-cos": 1.0,
+  "math-cosh": 1.0,
+  "math-exp": 2.718281828459045,
+  "math-log10": 3.0,
+  "math-sin": 0.0,
+  "math-sinh": 0.0,
+  "math-tan": 0.0,
+  "math-tanh": 0.0,
+  "math-random": true,
+  "text-contains": true,
+  "text-starts-with": true,
+  "text-ends-with": true,
+  "text-not-contains": false,
+  "text-not-starts-with": true,
+  "text-not-ends-with": false,
+  "cond-string-then": "yes",
+  "cond-string-else": "no",
+  "rhs-function": true,
+  "rhs-identifier": true,
+  "fn-call": 2,
+  "fn-wrong-arity": null,
+  "fn-wrong-type": null,
+  "fn-int-to-real": 0.7853981633974483,
+  "fn-standard": 5,
+  "fn-standard-wrong-arity": null,
+  "var-reference": 6,
+  "var-override": 10,
+  "var-defined-by-expression": 8,
+  "core-literal-string": "abc",
+  "core-literal-real": 3.25,
+  "core-literal-boolean": true,
+  "core-array": true,
+  "core-field-identifier": 3000,
+  "core-system-identifier": true,
+  "core-scale": 25000,
+  "param-expression": 7,
+  "arith-add": 3,
+  "arith-sub": -2,
+  "arith-mul": 12,
+  "arith-div-reals": 3.5,
+  "arith-div-integers": 3.5,
+  "arith-int-div": 3,
+  "arith-int-div-negative": -3,
+  "arith-mod": 1.0,
+  "arith-mod-negative": -1.0,
+  "arith-pow": 1024.0,
+  "core-and": true,
+  "core-or": true,
+  "core-not": true,
+  "core-not-in-and": true,
+  "core-equal": true,
+  "core-not-equal": true,
+  "core-lesser-equal": true,
+  "core-between": true,
+  "core-not-between": true,
+  "core-in": true,
+  "core-not-in": true,
+  "core-is-null": true,
+  "core-priority": 9,
+  "text-like-percent": true,
+  "text-like-underscore": true,
+  "text-like-no-match": false,
+  "text-not-like": true,
+  "text-like-escape": true,
+  "cond-true": 10,
+  "cond-false": 20,
+  "array-contains": true,
+  "array-contained-by": true,
+  "array-equals": true,
+  "array-equals-order": false,
+  "array-overlaps": true,
+  "array-overlaps-none": false,
+  "textfn-casei": true,
+  "textfn-accenti-o-stroke": true,
+  "textfn-accenti": true,
+  "textfn-accenti-tajik": false,
+  "textfn-accenti-cyrillic-seven": false,
+  "textfn-upper-case": "ABC",
+  "textfn-lower-case": "abc",
+  "textfn-concatenate": "abcd",
+  "textfn-substitute": "a+b+c",
+  "textfn-format": "3 items",
+  "math-abs": 2,
+  "math-pow": 8.0,
+  "math-min": 2,
+  "math-max": 3,
+  "math-max-several": 5,
+  "math-min-one": 7,
+  "math-log": 0.0,
+  "math-round-half": 3,
+  "math-round-negative-half": -3,
+  "math-sqrt": 4.0,
+  "math-floor": -2,
+  "neq-equal-operands": false,
+  "neq-reversed": true,
+  "neq-larger-first": true,
+  "neq-text": true,
+  "neq-text-equal": false,
+  "neq-no-spaces": true,
+  "neq-arithmetic": true,
+  "neq-and": true,
+  "neq-compared-to-true": true,
+  "neq-not": true,
+  "neq-property": true,
+  "neq-selector": {
+    "stylingRules": [
+      {
+        "selector": {
+          "op": "<>",
+          "args": [
+            {
+              "property": "a"
+            },
+            1
+          ]
+        },
+        "symbolizer": {
+          "opacity": 0.5
+        }
+      }
+    ]
+  },
+  "neq-selector-no-spaces": {
+    "stylingRules": [
+      {
+        "selector": {
+          "op": "<>",
+          "args": [
+            {
+              "property": "a"
+            },
+            1
+          ]
+        },
+        "symbolizer": {
+          "opacity": 0.5
+        }
+      }
+    ]
+  },
+  "neq-selector-and": {
+    "stylingRules": [
+      {
+        "selector": {
+          "op": "and",
+          "args": [
+            {
+              "op": "<>",
+              "args": [
+                {
+                  "property": "a"
+                },
+                1
+              ]
+            },
+            {
+              "op": "<>",
+              "args": [
+                {
+                  "property": "b"
+                },
+                2
+              ]
+            }
+          ]
+        },
+        "symbolizer": {
+          "opacity": 0.5
+        }
+      }
+    ]
+  },
+  "null-arithmetic": null,
+  "null-equal": null,
+  "null-not-equal": null,
+  "null-compare": null,
+  "null-like": null,
+  "null-not": null,
+  "null-and-true": null,
+  "null-and-false": false,
+  "null-or-true": true,
+  "null-or-false": null,
+  "null-is-null": true,
+  "null-literal": null,
+  "null-literal-is-null": true,
+  "null-property-named-null": 5,
+  "null-property-named-null-is-null": false,
+  "null-property-named-null-compare": true,
+  "null-property-missing-is-null": true,
+  "null-property-missing-compare": null,
+  "null-property-named-true": false,
+  "null-property-named-false": true,
+  "null-in-null-element": null,
+  "null-in-found-with-null-element": true,
+  "null-in-empty-list": false,
+  "null-null-in-empty-list": false,
+  "null-null-not-in-empty-list": true,
+  "null-div-by-zero": null,
+  "null-int-div-by-zero": null,
+  "null-mod-by-zero": null,
+  "null-pow-zero-negative": null,
+  "null-pow-negative-fraction": null,
+  "null-pow-negative-integer": -8.0,
+  "null-sqrt-negative": null,
+  "null-log-zero": null,
+  "null-log10-negative": null,
+  "null-acos-out-of-domain": null,
+  "null-asin-out-of-domain": null,
+  "null-pow-function": null,
+  "minus-01": 4.0,
+  "minus-02": 4.0,
+  "minus-03": 9.0,
+  "minus-04": 0.5,
+  "minus-05": -4.0,
+  "minus-06": 5,
+  "minus-07": -6,
+  "minus-08": -6,
+  "minus-09": null,
+  "minus-10": {
+    "error": "\"10 -4\" is a tuple (a space, a minus sign and a number start a new tuple element); a tuple is not a value of a basic data type, so it is not a subtraction"
+  },
+  "css-01": {
+    "op": "-",
+    "args": [
+      10,
+      4
+    ]
+  },
+  "css-02": {
+    "op": "-",
+    "args": [
+      10,
+      4
+    ]
+  },
+  "css-03": [
+    10,
+    -4
+  ],
+  "css-04": {
+    "error": "a Dot size is one unitValue, not a tuple"
+  },
+  "css-05": [
+    -10,
+    -4
+  ],
+  "css-06": {
+    "error": "unexpected OP '('"
+  }
+}

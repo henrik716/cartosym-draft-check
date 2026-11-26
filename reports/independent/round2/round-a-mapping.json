@@ -1,0 +1,74 @@
+{
+  "case-01": {
+    "kit": "passes-01-nested-override",
+    "style": "style"
+  },
+  "case-02": {
+    "kit": "passes-02-toplevel-override",
+    "style": "style"
+  },
+  "case-03": {
+    "kit": "passes-03-feature-pass",
+    "style": "style"
+  },
+  "case-04": {
+    "kit": "passes-03-feature-pass",
+    "style": "style-wide"
+  },
+  "case-05": {
+    "kit": "passes-04-viz-pass",
+    "style": "style"
+  },
+  "case-06": {
+    "kit": "passes-04-viz-pass",
+    "style": "style-wide"
+  },
+  "case-07": {
+    "kit": "passes-05-casing",
+    "style": "style"
+  },
+  "case-08": {
+    "kit": "passes-06-rule-without-pass",
+    "style": "style"
+  },
+  "case-09": {
+    "kit": "passes-07-feature-and-viz-pass",
+    "style": "style"
+  },
+  "case-10": {
+    "kit": "passes-08-zorder",
+    "style": "style"
+  },
+  "case-11": {
+    "kit": "passes-09-center-line",
+    "style": "style"
+  },
+  "case-12": {
+    "kit": "passes-09-center-line",
+    "style": "style-passes"
+  },
+  "case-13": {
+    "kit": "passes-10-labels-pass",
+    "style": "style"
+  },
+  "case-14": {
+    "kit": "passes-11-feature-pass-minus-one",
+    "style": "style"
+  },
+  "case-15": {
+    "kit": "passes-12-shared-zorder",
+    "style": "style"
+  },
+  "case-16": {
+    "kit": "passes-13-translucent-passes",
+    "style": "style"
+  },
+  "case-17": {
+    "kit": "passes-14-xplanung",
+    "style": "style"
+  },
+  "case-18": {
+    "kit": "label-pass",
+    "style": "style"
+  }
+}

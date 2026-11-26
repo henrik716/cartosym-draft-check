@@ -1,0 +1,2031 @@
+[
+ {
+  "id": "cscss-tuple-negative",
+  "requirement": "/req/cscss/expressions",
+  "kind": "style",
+  "style": "Huts { marker: { elements: [ Dot { position: 10 -4; size: 6 } ] }; }\n",
+  "at": "/stylingRules/0/symbolizer/marker/elements/0/position"
+ },
+ {
+  "id": "cscss-tuple",
+  "requirement": "/req/cscss/expressions",
+  "kind": "style",
+  "style": "Huts { marker: { elements: [ Dot { position: 10 4; size: 6 } ] }; }\n",
+  "at": "/stylingRules/0/symbolizer/marker/elements/0/position"
+ },
+ {
+  "id": "cscss-font-size-pt",
+  "requirement": "/req/vector/fonts",
+  "kind": "style",
+  "style": "Huts { marker: { elements: [ Text { text: 'a', font: { size: 12 pt } } ] }; }\n",
+  "at": "/stylingRules/0/symbolizer/marker/elements/0/font/size"
+ },
+ {
+  "id": "cscss-font-size",
+  "requirement": "/req/vector/fonts",
+  "kind": "style",
+  "style": "Huts { marker: { elements: [ Text { text: 'a', font: { size: 12 } } ] }; }\n",
+  "at": "/stylingRules/0/symbolizer/marker/elements/0/font/size"
+ },
+ {
+  "id": "cscss-font-symbolizer",
+  "requirement": "/req/vector/font-inheritance",
+  "kind": "style",
+  "style": "Huts { font: { face: 'Arial', size: 10 pt }; marker: { elements: [ Text { text: 'a' } ] }; }\n",
+  "at": "/stylingRules/0/symbolizer/font/size"
+ },
+ {
+  "id": "cscss-font-multigraphic",
+  "requirement": "/req/vector/font-inheritance",
+  "kind": "style",
+  "style": "Huts { marker: { font: { size: 14 pt }, elements: [ Text { text: 'a' } ] }; }\n",
+  "at": "/stylingRules/0/symbolizer/marker/font/size"
+ },
+ {
+  "id": "cscss-image-size",
+  "requirement": "/req/vector/image",
+  "kind": "style",
+  "style": "Huts { marker: { elements: [ Image { image: { uri: 'hut.png' }, size: 6 mm } ] }; }\n",
+  "at": "/stylingRules/0/symbolizer/marker/elements/0/size"
+ },
+ {
+  "id": "cscss-image-size-tuple",
+  "requirement": "/req/vector/image",
+  "kind": "style",
+  "style": "Huts { marker: { elements: [ Image { image: { uri: 'hut.png' }, size: 6 mm 4 mm } ] }; }\n",
+  "at": "/stylingRules/0/symbolizer/marker/elements/0/size"
+ },
+ {
+  "id": "cscss-image-size-x",
+  "requirement": "/req/vector/image",
+  "kind": "style",
+  "style": "Huts { marker: { elements: [ Image { image: { uri: 'hut.png' }, size.x: 6 mm } ] }; }\n",
+  "at": "/stylingRules/0/symbolizer/marker/elements/0/size"
+ },
+ {
+  "id": "math-acos",
+  "requirement": "/req/math/acos",
+  "kind": "expression",
+  "cql2_text": "acos(1)",
+  "cql2_json": {
+   "op": "acos",
+   "args": [
+    1
+   ]
+  }
+ },
+ {
+  "id": "math-asin",
+  "requirement": "/req/math/asin",
+  "kind": "expression",
+  "cql2_text": "asin(1)",
+  "cql2_json": {
+   "op": "asin",
+   "args": [
+    1
+   ]
+  }
+ },
+ {
+  "id": "math-atan",
+  "requirement": "/req/math/atan",
+  "kind": "expression",
+  "cql2_text": "atan(1)",
+  "cql2_json": {
+   "op": "atan",
+   "args": [
+    1
+   ]
+  }
+ },
+ {
+  "id": "math-atan2",
+  "requirement": "/req/math/atan2",
+  "kind": "expression",
+  "cql2_text": "atan2(1, -1)",
+  "cql2_json": {
+   "op": "atan2",
+   "args": [
+    1,
+    -1
+   ]
+  }
+ },
+ {
+  "id": "math-ceil",
+  "requirement": "/req/math/ceil",
+  "kind": "expression",
+  "cql2_text": "ceil(-2.5)",
+  "cql2_json": {
+   "op": "ceil",
+   "args": [
+    -2.5
+   ]
+  }
+ },
+ {
+  "id": "math-ceil-integer",
+  "requirement": "/req/math/ceil",
+  "kind": "expression",
+  "cql2_text": "ceil(2.5)",
+  "cql2_json": {
+   "op": "ceil",
+   "args": [
+    2.5
+   ]
+  }
+ },
+ {
+  "id": "math-floor-integer",
+  "requirement": "/req/math/floor",
+  "kind": "expression",
+  "cql2_text": "floor(2.5)",
+  "cql2_json": {
+   "op": "floor",
+   "args": [
+    2.5
+   ]
+  }
+ },
+ {
+  "id": "math-round-integer",
+  "requirement": "/req/math/round",
+  "kind": "expression",
+  "cql2_text": "round(2.5)",
+  "cql2_json": {
+   "op": "round",
+   "args": [
+    2.5
+   ]
+  }
+ },
+ {
+  "id": "math-cos",
+  "requirement": "/req/math/cos",
+  "kind": "expression",
+  "cql2_text": "cos(0)",
+  "cql2_json": {
+   "op": "cos",
+   "args": [
+    0
+   ]
+  }
+ },
+ {
+  "id": "math-cosh",
+  "requirement": "/req/math/cosh",
+  "kind": "expression",
+  "cql2_text": "cosh(0)",
+  "cql2_json": {
+   "op": "cosh",
+   "args": [
+    0
+   ]
+  }
+ },
+ {
+  "id": "math-exp",
+  "requirement": "/req/math/exp",
+  "kind": "expression",
+  "cql2_text": "exp(1)",
+  "cql2_json": {
+   "op": "exp",
+   "args": [
+    1
+   ]
+  }
+ },
+ {
+  "id": "math-log10",
+  "requirement": "/req/math/log10",
+  "kind": "expression",
+  "cql2_text": "log10(1000)",
+  "cql2_json": {
+   "op": "log10",
+   "args": [
+    1000
+   ]
+  }
+ },
+ {
+  "id": "math-sin",
+  "requirement": "/req/math/sin",
+  "kind": "expression",
+  "cql2_text": "sin(0)",
+  "cql2_json": {
+   "op": "sin",
+   "args": [
+    0
+   ]
+  }
+ },
+ {
+  "id": "math-sinh",
+  "requirement": "/req/math/sinh",
+  "kind": "expression",
+  "cql2_text": "sinh(0)",
+  "cql2_json": {
+   "op": "sinh",
+   "args": [
+    0
+   ]
+  }
+ },
+ {
+  "id": "math-tan",
+  "requirement": "/req/math/tan",
+  "kind": "expression",
+  "cql2_text": "tan(0)",
+  "cql2_json": {
+   "op": "tan",
+   "args": [
+    0
+   ]
+  }
+ },
+ {
+  "id": "math-tanh",
+  "requirement": "/req/math/tanh",
+  "kind": "expression",
+  "cql2_text": "tanh(0)",
+  "cql2_json": {
+   "op": "tanh",
+   "args": [
+    0
+   ]
+  }
+ },
+ {
+  "id": "math-random",
+  "requirement": "/req/math/random",
+  "kind": "expression",
+  "cql2_text": "random() >= 0 AND random() < 1",
+  "cql2_json": {
+   "op": "and",
+   "args": [
+    {
+     "op": ">=",
+     "args": [
+      {
+       "op": "random",
+       "args": []
+      },
+      0
+     ]
+    },
+    {
+     "op": "<",
+     "args": [
+      {
+       "op": "random",
+       "args": []
+      },
+      1
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "text-contains",
+  "requirement": "/req/text-relation/contains",
+  "kind": "expression",
+  "cql2_text": "contains('Oslo', 'sl')",
+  "cql2_json": {
+   "op": "contains",
+   "args": [
+    "Oslo",
+    "sl"
+   ]
+  }
+ },
+ {
+  "id": "text-starts-with",
+  "requirement": "/req/text-relation/starts-with",
+  "kind": "expression",
+  "cql2_text": "startsWith('Oslo', 'Os')",
+  "cql2_json": {
+   "op": "startsWith",
+   "args": [
+    "Oslo",
+    "Os"
+   ]
+  }
+ },
+ {
+  "id": "text-ends-with",
+  "requirement": "/req/text-relation/ends-with",
+  "kind": "expression",
+  "cql2_text": "endsWith('Oslo', 'lo')",
+  "cql2_json": {
+   "op": "endsWith",
+   "args": [
+    "Oslo",
+    "lo"
+   ]
+  }
+ },
+ {
+  "id": "text-not-contains",
+  "requirement": "/req/text-relation/contains",
+  "kind": "expression",
+  "cql2_text": "not contains('Oslo', 'sl')",
+  "cql2_json": {
+   "op": "not",
+   "args": [
+    {
+     "op": "contains",
+     "args": [
+      "Oslo",
+      "sl"
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "text-not-starts-with",
+  "requirement": "/req/text-relation/starts-with",
+  "kind": "expression",
+  "cql2_text": "not startsWith('Oslo', 'sl')",
+  "cql2_json": {
+   "op": "not",
+   "args": [
+    {
+     "op": "startsWith",
+     "args": [
+      "Oslo",
+      "sl"
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "text-not-ends-with",
+  "requirement": "/req/text-relation/ends-with",
+  "kind": "expression",
+  "cql2_text": "not endsWith('Oslo', 'lo')",
+  "cql2_json": {
+   "op": "not",
+   "args": [
+    {
+     "op": "endsWith",
+     "args": [
+      "Oslo",
+      "lo"
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "cond-string-then",
+  "requirement": "/req/conditional/condition",
+  "kind": "expression",
+  "cql2_text": "2 > 1 ? 'yes' : 'no'",
+  "cql2_json": {
+   "op": "?:",
+   "args": [
+    {
+     "op": ">",
+     "args": [
+      2,
+      1
+     ]
+    },
+    "yes",
+    "no"
+   ]
+  }
+ },
+ {
+  "id": "cond-string-else",
+  "requirement": "/req/conditional/condition",
+  "kind": "expression",
+  "cql2_text": "2 < 1 ? 'yes' : 'no'",
+  "cql2_json": {
+   "op": "?:",
+   "args": [
+    {
+     "op": "<",
+     "args": [
+      2,
+      1
+     ]
+    },
+    "yes",
+    "no"
+   ]
+  }
+ },
+ {
+  "id": "rhs-function",
+  "requirement": "/req/right-hand/operands",
+  "kind": "expression",
+  "cql2_text": "3 < abs(-5)",
+  "cql2_json": {
+   "op": "<",
+   "args": [
+    3,
+    {
+     "op": "abs",
+     "args": [
+      -5
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "rhs-identifier",
+  "requirement": "/req/right-hand/operands",
+  "kind": "expression",
+  "cql2_text": "width < height",
+  "cql2_json": {
+   "op": "<",
+   "args": [
+    {
+     "property": "width"
+    },
+    {
+     "property": "height"
+    }
+   ]
+  },
+  "properties": {
+   "width": 2,
+   "height": 5
+  }
+ },
+ {
+  "id": "fn-call",
+  "requirement": "/req/functions/call-expressions",
+  "kind": "expression",
+  "cql2_text": "abs(-2)",
+  "cql2_json": {
+   "op": "abs",
+   "args": [
+    -2
+   ]
+  }
+ },
+ {
+  "id": "fn-wrong-arity",
+  "requirement": "/req/functions/call-expressions",
+  "kind": "expression",
+  "cql2_text": "pow(2)",
+  "cql2_json": {
+   "op": "pow",
+   "args": [
+    2
+   ]
+  }
+ },
+ {
+  "id": "fn-wrong-type",
+  "requirement": "/req/functions/call-expressions",
+  "kind": "expression",
+  "cql2_text": "pow('a', 2)",
+  "cql2_json": {
+   "op": "pow",
+   "args": [
+    "a",
+    2
+   ]
+  }
+ },
+ {
+  "id": "fn-int-to-real",
+  "requirement": "/req/functions/call-expressions",
+  "kind": "expression",
+  "cql2_text": "atan2(1, 1)",
+  "cql2_json": {
+   "op": "atan2",
+   "args": [
+    1,
+    1
+   ]
+  }
+ },
+ {
+  "id": "fn-standard",
+  "requirement": "/req/functions/standard-functions",
+  "kind": "expression",
+  "cql2_text": "max(1, 5)",
+  "cql2_json": {
+   "op": "max",
+   "args": [
+    1,
+    5
+   ]
+  }
+ },
+ {
+  "id": "fn-standard-wrong-arity",
+  "requirement": "/req/functions/call-expressions",
+  "kind": "expression",
+  "cql2_text": "atan2(1, 1, 1)",
+  "cql2_json": {
+   "op": "atan2",
+   "args": [
+    1,
+    1,
+    1
+   ]
+  }
+ },
+ {
+  "id": "var-reference",
+  "requirement": "/req/variables/expression",
+  "kind": "expression",
+  "cql2_text": "@roadWidth * 2",
+  "cql2_json": {
+   "op": "*",
+   "args": [
+    {
+     "$ref": "#/$variables/roadWidth"
+    },
+    2
+   ]
+  },
+  "definitions": {
+   "roadWidth": 3
+  }
+ },
+ {
+  "id": "var-override",
+  "requirement": "/req/variables/definition",
+  "kind": "expression",
+  "cql2_text": "@roadWidth * 2",
+  "cql2_json": {
+   "op": "*",
+   "args": [
+    {
+     "$ref": "#/$variables/roadWidth"
+    },
+    2
+   ]
+  },
+  "definitions": {
+   "roadWidth": 3
+  },
+  "variables": {
+   "roadWidth": 5
+  }
+ },
+ {
+  "id": "var-defined-by-expression",
+  "requirement": "/req/variables/definition",
+  "kind": "expression",
+  "cql2_text": "@double",
+  "cql2_json": {
+   "$ref": "#/$variables/double"
+  },
+  "definitions": {
+   "base": 4,
+   "double": {
+    "op": "*",
+    "args": [
+     {
+      "$ref": "#/$variables/base"
+     },
+     2
+    ]
+   }
+  }
+ },
+ {
+  "id": "core-literal-string",
+  "requirement": "/req/core/literals",
+  "kind": "expression",
+  "cql2_text": "'abc'",
+  "cql2_json": "abc"
+ },
+ {
+  "id": "core-literal-real",
+  "requirement": "/req/core/literals",
+  "kind": "expression",
+  "cql2_text": "3.25",
+  "cql2_json": 3.25
+ },
+ {
+  "id": "core-literal-boolean",
+  "requirement": "/req/core/literals",
+  "kind": "expression",
+  "cql2_text": "true",
+  "cql2_json": true
+ },
+ {
+  "id": "core-array",
+  "requirement": "/req/core/arrays",
+  "kind": "expression",
+  "cql2_text": "a_equals((1, 2, 3), (1, 2, 3))",
+  "cql2_json": {
+   "op": "a_equals",
+   "args": [
+    [
+     1,
+     2,
+     3
+    ],
+    [
+     1,
+     2,
+     3
+    ]
+   ]
+  }
+ },
+ {
+  "id": "core-field-identifier",
+  "requirement": "/req/core/expressions-field-identifiers",
+  "kind": "expression",
+  "cql2_text": "population * 2",
+  "cql2_json": {
+   "op": "*",
+   "args": [
+    {
+     "property": "population"
+    },
+    2
+   ]
+  },
+  "properties": {
+   "population": 1500
+  }
+ },
+ {
+  "id": "core-system-identifier",
+  "requirement": "/req/core/expressions-system-identifiers",
+  "kind": "expression",
+  "cql2_text": "viz.sd < 50000",
+  "cql2_json": {
+   "op": "<",
+   "args": [
+    {
+     "sysId": "viz.sd"
+    },
+    50000
+   ]
+  },
+  "system": {
+   "viz.sd": 25000
+  }
+ },
+ {
+  "id": "core-scale",
+  "requirement": "/req/core/scale",
+  "kind": "expression",
+  "cql2_text": "visualization.scaleDenominator",
+  "cql2_json": {
+   "sysId": "visualization.scaleDenominator"
+  },
+  "system": {
+   "visualization.scaleDenominator": 25000
+  }
+ },
+ {
+  "id": "param-expression",
+  "requirement": "/req/parameter-values/expressions",
+  "kind": "expression",
+  "cql2_text": "lanes * 2 + 1",
+  "cql2_json": {
+   "op": "+",
+   "args": [
+    {
+     "op": "*",
+     "args": [
+      {
+       "property": "lanes"
+      },
+      2
+     ]
+    },
+    1
+   ]
+  },
+  "properties": {
+   "lanes": 3
+  }
+ },
+ {
+  "id": "arith-add",
+  "requirement": "/req/arithmetic/add",
+  "kind": "expression",
+  "cql2_text": "1 + 2"
+ },
+ {
+  "id": "arith-sub",
+  "requirement": "/req/arithmetic/sub",
+  "kind": "expression",
+  "cql2_text": "5 - 7"
+ },
+ {
+  "id": "arith-mul",
+  "requirement": "/req/arithmetic/mul",
+  "kind": "expression",
+  "cql2_text": "3 * 4"
+ },
+ {
+  "id": "arith-div-reals",
+  "requirement": "/req/arithmetic/div",
+  "kind": "expression",
+  "cql2_text": "7.0 / 2"
+ },
+ {
+  "id": "arith-div-integers",
+  "requirement": "/req/arithmetic/div",
+  "kind": "expression",
+  "cql2_text": "7 / 2"
+ },
+ {
+  "id": "arith-int-div",
+  "requirement": "/req/arithmetic/int-div",
+  "kind": "expression",
+  "cql2_text": "7 div 2"
+ },
+ {
+  "id": "arith-int-div-negative",
+  "requirement": "/req/arithmetic/int-div",
+  "kind": "expression",
+  "cql2_text": "-7 div 2"
+ },
+ {
+  "id": "arith-mod",
+  "requirement": "/req/arithmetic/mod",
+  "kind": "expression",
+  "cql2_text": "7 % 3"
+ },
+ {
+  "id": "arith-mod-negative",
+  "requirement": "/req/arithmetic/mod",
+  "kind": "expression",
+  "cql2_text": "-7 % 3"
+ },
+ {
+  "id": "arith-pow",
+  "requirement": "/req/arithmetic/pow",
+  "kind": "expression",
+  "cql2_text": "2 ^ 10",
+  "cql2_json": {
+   "op": "^",
+   "args": [
+    2,
+    10
+   ]
+  }
+ },
+ {
+  "id": "core-and",
+  "requirement": "/req/core/logical",
+  "kind": "expression",
+  "cql2_text": "1 < 2 and 3 < 4"
+ },
+ {
+  "id": "core-or",
+  "requirement": "/req/core/logical",
+  "kind": "expression",
+  "cql2_text": "1 > 2 or 3 < 4"
+ },
+ {
+  "id": "core-not",
+  "requirement": "/req/core/logical",
+  "kind": "expression",
+  "cql2_text": "not (1 = 2)"
+ },
+ {
+  "id": "core-not-in-and",
+  "requirement": "/req/core/logical",
+  "kind": "expression",
+  "cql2_text": "(1 < 2) and not (3 = 4)"
+ },
+ {
+  "id": "core-equal",
+  "requirement": "/req/core/relational",
+  "kind": "expression",
+  "cql2_text": "2 = 2"
+ },
+ {
+  "id": "core-not-equal",
+  "requirement": "/req/core/relational",
+  "kind": "expression",
+  "cql2_text": "2 <> 3"
+ },
+ {
+  "id": "core-lesser-equal",
+  "requirement": "/req/core/relational",
+  "kind": "expression",
+  "cql2_text": "2 <= 2"
+ },
+ {
+  "id": "core-between",
+  "requirement": "/req/core/relational",
+  "kind": "expression",
+  "cql2_text": "5 between 1 and 10"
+ },
+ {
+  "id": "core-not-between",
+  "requirement": "/req/core/relational",
+  "kind": "expression",
+  "cql2_text": "5 not between 6 and 10"
+ },
+ {
+  "id": "core-in",
+  "requirement": "/req/core/relational",
+  "kind": "expression",
+  "cql2_text": "2 in (1, 2, 3)"
+ },
+ {
+  "id": "core-not-in",
+  "requirement": "/req/core/relational",
+  "kind": "expression",
+  "cql2_text": "4 not in (1, 2, 3)"
+ },
+ {
+  "id": "core-is-null",
+  "requirement": "/req/core/relational",
+  "kind": "expression",
+  "cql2_text": "null is null"
+ },
+ {
+  "id": "core-priority",
+  "requirement": "/req/core/operations",
+  "kind": "expression",
+  "cql2_text": "(1 + 2) * 3"
+ },
+ {
+  "id": "text-like-percent",
+  "requirement": "/req/text-relation/like",
+  "kind": "expression",
+  "cql2_text": "'Oslo' like 'O%'",
+  "cql2_json": {
+   "op": "like",
+   "args": [
+    "Oslo",
+    "O%"
+   ]
+  }
+ },
+ {
+  "id": "text-like-underscore",
+  "requirement": "/req/text-relation/like",
+  "kind": "expression",
+  "cql2_text": "'Oslo' like 'O_lo'",
+  "cql2_json": {
+   "op": "like",
+   "args": [
+    "Oslo",
+    "O_lo"
+   ]
+  }
+ },
+ {
+  "id": "text-like-no-match",
+  "requirement": "/req/text-relation/like",
+  "kind": "expression",
+  "cql2_text": "'Oslo' like 'B%'",
+  "cql2_json": {
+   "op": "like",
+   "args": [
+    "Oslo",
+    "B%"
+   ]
+  }
+ },
+ {
+  "id": "text-not-like",
+  "requirement": "/req/text-relation/not-like",
+  "kind": "expression",
+  "cql2_text": "'Oslo' not like 'B%'"
+ },
+ {
+  "id": "text-like-escape",
+  "requirement": "/req/text-relation/like",
+  "kind": "expression",
+  "cql2_text": "'50%' like '50\\%'",
+  "cql2_json": {
+   "op": "like",
+   "args": [
+    "50%",
+    "50\\%"
+   ]
+  }
+ },
+ {
+  "id": "cond-true",
+  "requirement": "/req/conditional/then-exp",
+  "kind": "expression",
+  "cql2_text": "1 < 2 ? 10 : 20",
+  "cql2_json": {
+   "op": "?:",
+   "args": [
+    {
+     "op": "<",
+     "args": [
+      1,
+      2
+     ]
+    },
+    10,
+    20
+   ]
+  }
+ },
+ {
+  "id": "cond-false",
+  "requirement": "/req/conditional/else-exp",
+  "kind": "expression",
+  "cql2_text": "1 > 2 ? 10 : 20",
+  "cql2_json": {
+   "op": "?:",
+   "args": [
+    {
+     "op": ">",
+     "args": [
+      1,
+      2
+     ]
+    },
+    10,
+    20
+   ]
+  }
+ },
+ {
+  "id": "array-contains",
+  "requirement": "/req/array-relations/a-contains",
+  "kind": "expression",
+  "cql2_text": "a_contains((1, 2, 3), (1, 2))"
+ },
+ {
+  "id": "array-contained-by",
+  "requirement": "/req/array-relations/a-contained-by",
+  "kind": "expression",
+  "cql2_text": "a_containedBy((1, 2), (1, 2, 3))"
+ },
+ {
+  "id": "array-equals",
+  "requirement": "/req/array-relations/a-equals",
+  "kind": "expression",
+  "cql2_text": "a_equals((1, 2), (1, 2))"
+ },
+ {
+  "id": "array-equals-order",
+  "requirement": "/req/array-relations/a-equals",
+  "kind": "expression",
+  "cql2_text": "a_equals((1, 2), (2, 1))"
+ },
+ {
+  "id": "array-overlaps",
+  "requirement": "/req/array-relations/a-overlaps",
+  "kind": "expression",
+  "cql2_text": "a_overlaps((1, 2), (2, 3))"
+ },
+ {
+  "id": "array-overlaps-none",
+  "requirement": "/req/array-relations/a-overlaps",
+  "kind": "expression",
+  "cql2_text": "a_overlaps((1, 2), (3, 4))",
+  "cql2_json": {
+   "op": "a_overlaps",
+   "args": [
+    [
+     1,
+     2
+    ],
+    [
+     3,
+     4
+    ]
+   ]
+  }
+ },
+ {
+  "id": "textfn-casei",
+  "requirement": "/req/text-manipulation/case-insensitize",
+  "kind": "expression",
+  "cql2_text": "casei('ABC') = casei('abc')",
+  "cql2_json": {
+   "op": "=",
+   "args": [
+    {
+     "op": "casei",
+     "args": [
+      "ABC"
+     ]
+    },
+    {
+     "op": "casei",
+     "args": [
+      "abc"
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "textfn-accenti-o-stroke",
+  "requirement": "/req/text-manipulation/accent-insensitize",
+  "kind": "expression",
+  "cql2_text": "accenti('Øre') = accenti('Ore')",
+  "cql2_json": {
+   "op": "=",
+   "args": [
+    {
+     "op": "accenti",
+     "args": [
+      "Øre"
+     ]
+    },
+    {
+     "op": "accenti",
+     "args": [
+      "Ore"
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "textfn-accenti",
+  "requirement": "/req/text-manipulation/accent-insensitize",
+  "kind": "expression",
+  "cql2_text": "accenti('café') = accenti('cafe')",
+  "cql2_json": {
+   "op": "=",
+   "args": [
+    {
+     "op": "accenti",
+     "args": [
+      "café"
+     ]
+    },
+    {
+     "op": "accenti",
+     "args": [
+      "cafe"
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "textfn-accenti-tajik",
+  "requirement": "/req/text-manipulation/accent-insensitize",
+  "kind": "expression",
+  "cql2_text": "accenti('Тоҷикистон') = accenti('Точикистон')",
+  "cql2_json": {
+   "op": "=",
+   "args": [
+    {
+     "op": "accenti",
+     "args": [
+      "Тоҷикистон"
+     ]
+    },
+    {
+     "op": "accenti",
+     "args": [
+      "Точикистон"
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "textfn-accenti-cyrillic-seven",
+  "requirement": "/req/text-manipulation/accent-insensitize",
+  "kind": "expression",
+  "cql2_text": "accenti('ҳҶҷҸҿӋӌ') = accenti('хЧчЧҽЧч')",
+  "cql2_json": {
+   "op": "=",
+   "args": [
+    {
+     "op": "accenti",
+     "args": [
+      "ҳҶҷҸҿӋӌ"
+     ]
+    },
+    {
+     "op": "accenti",
+     "args": [
+      "хЧчЧҽЧч"
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "textfn-upper-case",
+  "requirement": "/req/text-manipulation/upper-case",
+  "kind": "expression",
+  "cql2_text": "upperCase('abc')",
+  "cql2_json": {
+   "op": "upperCase",
+   "args": [
+    "abc"
+   ]
+  }
+ },
+ {
+  "id": "textfn-lower-case",
+  "requirement": "/req/text-manipulation/lower-case",
+  "kind": "expression",
+  "cql2_text": "lowerCase('ABC')",
+  "cql2_json": {
+   "op": "lowerCase",
+   "args": [
+    "ABC"
+   ]
+  }
+ },
+ {
+  "id": "textfn-concatenate",
+  "requirement": "/req/text-manipulation/concatenate",
+  "kind": "expression",
+  "cql2_text": "concatenate('ab', 'cd')",
+  "cql2_json": {
+   "op": "concatenate",
+   "args": [
+    "ab",
+    "cd"
+   ]
+  }
+ },
+ {
+  "id": "textfn-substitute",
+  "requirement": "/req/text-manipulation/substitute",
+  "kind": "expression",
+  "cql2_text": "substitute('a-b-c', '-', '+')",
+  "cql2_json": {
+   "op": "substitute",
+   "args": [
+    "a-b-c",
+    "-",
+    "+"
+   ]
+  }
+ },
+ {
+  "id": "textfn-format",
+  "requirement": "/req/text-manipulation/format",
+  "kind": "expression",
+  "cql2_text": "format('%d items', 3)"
+ },
+ {
+  "id": "math-abs",
+  "requirement": "/req/math/abs",
+  "kind": "expression",
+  "cql2_text": "abs(-2)"
+ },
+ {
+  "id": "math-pow",
+  "requirement": "/req/math/pow",
+  "kind": "expression",
+  "cql2_text": "pow(2, 3)"
+ },
+ {
+  "id": "math-min",
+  "requirement": "/req/math/min",
+  "kind": "expression",
+  "cql2_text": "min(2, 3)"
+ },
+ {
+  "id": "math-max",
+  "requirement": "/req/math/max",
+  "kind": "expression",
+  "cql2_text": "max(2, 3)"
+ },
+ {
+  "id": "math-max-several",
+  "requirement": "/req/math/max",
+  "kind": "expression",
+  "cql2_text": "max(1, 5, 3)"
+ },
+ {
+  "id": "math-min-one",
+  "requirement": "/req/math/min",
+  "kind": "expression",
+  "cql2_text": "min(7)"
+ },
+ {
+  "id": "math-log",
+  "requirement": "/req/math/log",
+  "kind": "expression",
+  "cql2_text": "log(1)"
+ },
+ {
+  "id": "math-round-half",
+  "requirement": "/req/math/round",
+  "kind": "expression",
+  "cql2_text": "round(2.5)"
+ },
+ {
+  "id": "math-round-negative-half",
+  "requirement": "/req/math/round",
+  "kind": "expression",
+  "cql2_text": "round(-2.5)"
+ },
+ {
+  "id": "math-sqrt",
+  "requirement": "/req/math/sqrt",
+  "kind": "expression",
+  "cql2_text": "sqrt(16)"
+ },
+ {
+  "id": "math-floor",
+  "requirement": "/req/math/floor",
+  "kind": "expression",
+  "cql2_text": "floor(-1.5)"
+ },
+ {
+  "id": "neq-equal-operands",
+  "requirement": "/req/core/relational",
+  "kind": "expression",
+  "cql2_text": "2 <> 2",
+  "cql2_json": {
+   "op": "<>",
+   "args": [
+    2,
+    2
+   ]
+  }
+ },
+ {
+  "id": "neq-reversed",
+  "requirement": "/req/core/relational",
+  "kind": "expression",
+  "cql2_text": "3 <> 2",
+  "cql2_json": {
+   "op": "<>",
+   "args": [
+    3,
+    2
+   ]
+  }
+ },
+ {
+  "id": "neq-larger-first",
+  "requirement": "/req/core/relational",
+  "kind": "expression",
+  "cql2_text": "10 <> 2",
+  "cql2_json": {
+   "op": "<>",
+   "args": [
+    10,
+    2
+   ]
+  }
+ },
+ {
+  "id": "neq-text",
+  "requirement": "/req/core/relational",
+  "kind": "expression",
+  "cql2_text": "'a' <> 'b'",
+  "cql2_json": {
+   "op": "<>",
+   "args": [
+    "a",
+    "b"
+   ]
+  }
+ },
+ {
+  "id": "neq-text-equal",
+  "requirement": "/req/core/relational",
+  "kind": "expression",
+  "cql2_text": "'a' <> 'a'",
+  "cql2_json": {
+   "op": "<>",
+   "args": [
+    "a",
+    "a"
+   ]
+  }
+ },
+ {
+  "id": "neq-no-spaces",
+  "requirement": "/req/core/relational",
+  "kind": "expression",
+  "cql2_text": "2<>3",
+  "cql2_json": {
+   "op": "<>",
+   "args": [
+    2,
+    3
+   ]
+  }
+ },
+ {
+  "id": "neq-arithmetic",
+  "requirement": "/req/core/relational",
+  "kind": "expression",
+  "cql2_text": "1 + 1 <> 3",
+  "cql2_json": {
+   "op": "<>",
+   "args": [
+    {
+     "op": "+",
+     "args": [
+      1,
+      1
+     ]
+    },
+    3
+   ]
+  }
+ },
+ {
+  "id": "neq-and",
+  "requirement": "/req/core/relational",
+  "kind": "expression",
+  "cql2_text": "1 <> 2 and 3 <> 4",
+  "cql2_json": {
+   "op": "and",
+   "args": [
+    {
+     "op": "<>",
+     "args": [
+      1,
+      2
+     ]
+    },
+    {
+     "op": "<>",
+     "args": [
+      3,
+      4
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "neq-compared-to-true",
+  "requirement": "/req/core/relational",
+  "kind": "expression",
+  "cql2_text": "(2 <> 3) = true",
+  "cql2_json": {
+   "op": "=",
+   "args": [
+    {
+     "op": "<>",
+     "args": [
+      2,
+      3
+     ]
+    },
+    true
+   ]
+  }
+ },
+ {
+  "id": "neq-not",
+  "requirement": "/req/core/relational",
+  "kind": "expression",
+  "cql2_text": "not (2 <> 2)",
+  "cql2_json": {
+   "op": "not",
+   "args": [
+    {
+     "op": "<>",
+     "args": [
+      2,
+      2
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "neq-property",
+  "requirement": "/req/core/relational",
+  "kind": "expression",
+  "cql2_text": "a <> 1",
+  "cql2_json": {
+   "op": "<>",
+   "args": [
+    {
+     "property": "a"
+    },
+    1
+   ]
+  },
+  "properties": {
+   "a": 2
+  }
+ },
+ {
+  "id": "neq-selector",
+  "requirement": "/req/core/relational",
+  "kind": "style",
+  "style": "[a <> 1] { opacity: 0.5; }\n"
+ },
+ {
+  "id": "neq-selector-no-spaces",
+  "requirement": "/req/core/relational",
+  "kind": "style",
+  "style": "[a<>1] { opacity: 0.5; }\n"
+ },
+ {
+  "id": "neq-selector-and",
+  "requirement": "/req/core/relational",
+  "kind": "style",
+  "style": "[a <> 1 and b <> 2] { opacity: 0.5; }\n"
+ },
+ {
+  "id": "null-arithmetic",
+  "requirement": "/req/core/operations",
+  "kind": "expression",
+  "cql2_text": "null + 1",
+  "cql2_json": {
+   "op": "+",
+   "args": [
+    null,
+    1
+   ]
+  }
+ },
+ {
+  "id": "null-equal",
+  "requirement": "/req/core/operations",
+  "kind": "expression",
+  "cql2_text": "null = 1",
+  "cql2_json": {
+   "op": "=",
+   "args": [
+    null,
+    1
+   ]
+  }
+ },
+ {
+  "id": "null-not-equal",
+  "requirement": "/req/core/operations",
+  "kind": "expression",
+  "cql2_text": "null <> 1",
+  "cql2_json": {
+   "op": "<>",
+   "args": [
+    null,
+    1
+   ]
+  }
+ },
+ {
+  "id": "null-compare",
+  "requirement": "/req/core/operations",
+  "kind": "expression",
+  "cql2_text": "null > 1",
+  "cql2_json": {
+   "op": ">",
+   "args": [
+    null,
+    1
+   ]
+  }
+ },
+ {
+  "id": "null-like",
+  "requirement": "/req/core/operations",
+  "kind": "expression",
+  "cql2_text": "null like 'a%'",
+  "cql2_json": {
+   "op": "like",
+   "args": [
+    null,
+    "a%"
+   ]
+  }
+ },
+ {
+  "id": "null-not",
+  "requirement": "/req/core/operations",
+  "kind": "expression",
+  "cql2_text": "not (null > 1)",
+  "cql2_json": {
+   "op": "not",
+   "args": [
+    {
+     "op": ">",
+     "args": [
+      null,
+      1
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "null-and-true",
+  "requirement": "/req/core/operations",
+  "kind": "expression",
+  "cql2_text": "(null > 1) and true",
+  "cql2_json": {
+   "op": "and",
+   "args": [
+    {
+     "op": ">",
+     "args": [
+      null,
+      1
+     ]
+    },
+    true
+   ]
+  }
+ },
+ {
+  "id": "null-and-false",
+  "requirement": "/req/core/operations",
+  "kind": "expression",
+  "cql2_text": "(null > 1) and false",
+  "cql2_json": {
+   "op": "and",
+   "args": [
+    {
+     "op": ">",
+     "args": [
+      null,
+      1
+     ]
+    },
+    false
+   ]
+  }
+ },
+ {
+  "id": "null-or-true",
+  "requirement": "/req/core/operations",
+  "kind": "expression",
+  "cql2_text": "(null > 1) or true",
+  "cql2_json": {
+   "op": "or",
+   "args": [
+    {
+     "op": ">",
+     "args": [
+      null,
+      1
+     ]
+    },
+    true
+   ]
+  }
+ },
+ {
+  "id": "null-or-false",
+  "requirement": "/req/core/operations",
+  "kind": "expression",
+  "cql2_text": "(null > 1) or false",
+  "cql2_json": {
+   "op": "or",
+   "args": [
+    {
+     "op": ">",
+     "args": [
+      null,
+      1
+     ]
+    },
+    false
+   ]
+  }
+ },
+ {
+  "id": "null-is-null",
+  "requirement": "/req/core/operations",
+  "kind": "expression",
+  "cql2_text": "(null + 1) is null",
+  "cql2_json": {
+   "op": "isNull",
+   "args": [
+    {
+     "op": "+",
+     "args": [
+      null,
+      1
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "null-literal",
+  "requirement": "/req/core/literals",
+  "kind": "expression",
+  "cql2_text": "null",
+  "cql2_json": null
+ },
+ {
+  "id": "null-literal-is-null",
+  "requirement": "/req/core/literals",
+  "kind": "expression",
+  "cql2_text": "null is null",
+  "cql2_json": {
+   "op": "isNull",
+   "args": [
+    null
+   ]
+  }
+ },
+ {
+  "id": "null-property-named-null",
+  "requirement": "/req/core/expressions-field-identifiers",
+  "kind": "expression",
+  "cql2_text": "\"null\"",
+  "cql2_json": {
+   "property": "null"
+  },
+  "properties": {
+   "null": 5
+  }
+ },
+ {
+  "id": "null-property-named-null-is-null",
+  "requirement": "/req/core/expressions-field-identifiers",
+  "kind": "expression",
+  "cql2_text": "\"null\" is null",
+  "cql2_json": {
+   "op": "isNull",
+   "args": [
+    {
+     "property": "null"
+    }
+   ]
+  },
+  "properties": {
+   "null": 5
+  }
+ },
+ {
+  "id": "null-property-named-null-compare",
+  "requirement": "/req/core/expressions-field-identifiers",
+  "kind": "expression",
+  "cql2_text": "\"null\" > 1",
+  "cql2_json": {
+   "op": ">",
+   "args": [
+    {
+     "property": "null"
+    },
+    1
+   ]
+  },
+  "properties": {
+   "null": 5
+  }
+ },
+ {
+  "id": "null-property-missing-is-null",
+  "requirement": "/req/core/operations",
+  "kind": "expression",
+  "cql2_text": "\"null\" is null",
+  "cql2_json": {
+   "op": "isNull",
+   "args": [
+    {
+     "property": "null"
+    }
+   ]
+  },
+  "properties": {}
+ },
+ {
+  "id": "null-property-missing-compare",
+  "requirement": "/req/core/operations",
+  "kind": "expression",
+  "cql2_text": "\"null\" > 1",
+  "cql2_json": {
+   "op": ">",
+   "args": [
+    {
+     "property": "null"
+    },
+    1
+   ]
+  },
+  "properties": {}
+ },
+ {
+  "id": "null-property-named-true",
+  "requirement": "/req/core/expressions-field-identifiers",
+  "kind": "expression",
+  "cql2_text": "\"true\"",
+  "cql2_json": {
+   "property": "true"
+  },
+  "properties": {
+   "true": false
+  }
+ },
+ {
+  "id": "null-property-named-false",
+  "requirement": "/req/core/expressions-field-identifiers",
+  "kind": "expression",
+  "cql2_text": "\"false\"",
+  "cql2_json": {
+   "property": "false"
+  },
+  "properties": {
+   "false": true
+  }
+ },
+ {
+  "id": "null-in-null-element",
+  "requirement": "/req/core/relational",
+  "kind": "expression",
+  "cql2_text": "5 in (1, null)",
+  "cql2_json": {
+   "op": "in",
+   "args": [
+    5,
+    [
+     1,
+     null
+    ]
+   ]
+  }
+ },
+ {
+  "id": "null-in-found-with-null-element",
+  "requirement": "/req/core/relational",
+  "kind": "expression",
+  "cql2_text": "1 in (1, null)",
+  "cql2_json": {
+   "op": "in",
+   "args": [
+    1,
+    [
+     1,
+     null
+    ]
+   ]
+  }
+ },
+ {
+  "id": "null-in-empty-list",
+  "requirement": "/req/core/relational",
+  "kind": "expression",
+  "cql2_text": "5 in ()",
+  "cql2_json": {
+   "op": "in",
+   "args": [
+    5,
+    []
+   ]
+  }
+ },
+ {
+  "id": "null-null-in-empty-list",
+  "requirement": "/req/core/relational",
+  "kind": "expression",
+  "cql2_text": "null in ()",
+  "cql2_json": {
+   "op": "in",
+   "args": [
+    null,
+    []
+   ]
+  }
+ },
+ {
+  "id": "null-null-not-in-empty-list",
+  "requirement": "/req/core/relational",
+  "kind": "expression",
+  "cql2_text": "null not in ()",
+  "cql2_json": {
+   "op": "not",
+   "args": [
+    {
+     "op": "in",
+     "args": [
+      null,
+      []
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "null-div-by-zero",
+  "requirement": "/req/arithmetic/div",
+  "kind": "expression",
+  "cql2_text": "1 / 0"
+ },
+ {
+  "id": "null-int-div-by-zero",
+  "requirement": "/req/arithmetic/int-div",
+  "kind": "expression",
+  "cql2_text": "7 div 0"
+ },
+ {
+  "id": "null-mod-by-zero",
+  "requirement": "/req/arithmetic/mod",
+  "kind": "expression",
+  "cql2_text": "7 % 0"
+ },
+ {
+  "id": "null-pow-zero-negative",
+  "requirement": "/req/arithmetic/pow",
+  "kind": "expression",
+  "cql2_text": "0 ^ (0 - 1)"
+ },
+ {
+  "id": "null-pow-negative-fraction",
+  "requirement": "/req/arithmetic/pow",
+  "kind": "expression",
+  "cql2_text": "(0 - 8) ^ 0.5"
+ },
+ {
+  "id": "null-pow-negative-integer",
+  "requirement": "/req/arithmetic/pow",
+  "kind": "expression",
+  "cql2_text": "(0 - 2) ^ 3"
+ },
+ {
+  "id": "null-sqrt-negative",
+  "requirement": "/req/math/sqrt",
+  "kind": "expression",
+  "cql2_text": "sqrt(-1)",
+  "cql2_json": {
+   "op": "sqrt",
+   "args": [
+    -1
+   ]
+  }
+ },
+ {
+  "id": "null-log-zero",
+  "requirement": "/req/math/log",
+  "kind": "expression",
+  "cql2_text": "log(0)",
+  "cql2_json": {
+   "op": "log",
+   "args": [
+    0
+   ]
+  }
+ },
+ {
+  "id": "null-log10-negative",
+  "requirement": "/req/math/log10",
+  "kind": "expression",
+  "cql2_text": "log10(-1)",
+  "cql2_json": {
+   "op": "log10",
+   "args": [
+    -1
+   ]
+  }
+ },
+ {
+  "id": "null-acos-out-of-domain",
+  "requirement": "/req/math/acos",
+  "kind": "expression",
+  "cql2_text": "acos(2)",
+  "cql2_json": {
+   "op": "acos",
+   "args": [
+    2
+   ]
+  }
+ },
+ {
+  "id": "null-asin-out-of-domain",
+  "requirement": "/req/math/asin",
+  "kind": "expression",
+  "cql2_text": "asin(-1.5)",
+  "cql2_json": {
+   "op": "asin",
+   "args": [
+    -1.5
+   ]
+  }
+ },
+ {
+  "id": "null-pow-function",
+  "requirement": "/req/math/pow",
+  "kind": "expression",
+  "cql2_text": "pow(-8, 0.5)",
+  "cql2_json": {
+   "op": "pow",
+   "args": [
+    -8,
+    0.5
+   ]
+  }
+ },
+ {
+  "id": "minus-01",
+  "requirement": "/req/arithmetic/pow",
+  "kind": "expression",
+  "cql2_text": "-2 ^ 2"
+ },
+ {
+  "id": "minus-02",
+  "requirement": "/req/arithmetic/pow",
+  "kind": "expression",
+  "cql2_text": "- 2 ^ 2"
+ },
+ {
+  "id": "minus-03",
+  "requirement": "/req/arithmetic/pow",
+  "kind": "expression",
+  "cql2_text": "-a ^ 2",
+  "properties": {
+   "a": 3
+  }
+ },
+ {
+  "id": "minus-04",
+  "requirement": "/req/arithmetic/pow",
+  "kind": "expression",
+  "cql2_text": "2 ^ -1"
+ },
+ {
+  "id": "minus-05",
+  "requirement": "/req/arithmetic/pow",
+  "kind": "expression",
+  "cql2_text": "-(2 ^ 2)"
+ },
+ {
+  "id": "minus-06",
+  "requirement": "/req/arithmetic/sub",
+  "kind": "expression",
+  "cql2_text": "3 - -2"
+ },
+ {
+  "id": "minus-07",
+  "requirement": "/req/arithmetic/mul",
+  "kind": "expression",
+  "cql2_text": "-a * 2",
+  "properties": {
+   "a": 3
+  }
+ },
+ {
+  "id": "minus-08",
+  "requirement": "/req/arithmetic/mul",
+  "kind": "expression",
+  "cql2_text": "2 * -a",
+  "properties": {
+   "a": 3
+  }
+ },
+ {
+  "id": "minus-09",
+  "requirement": "/req/arithmetic/pow",
+  "kind": "expression",
+  "cql2_text": "-2 ^ 0.5"
+ },
+ {
+  "id": "minus-10",
+  "requirement": "/req/arithmetic/sub",
+  "kind": "expression",
+  "cql2_text": "10 -4"
+ },
+ {
+  "id": "css-01",
+  "requirement": "/req/cscss/expressions",
+  "kind": "style",
+  "style": "Huts { marker: { elements: [ Dot { position: 10 - 4; size: 6 } ] }; }\n",
+  "at": "/stylingRules/0/symbolizer/marker/elements/0/position"
+ },
+ {
+  "id": "css-02",
+  "requirement": "/req/cscss/expressions",
+  "kind": "style",
+  "style": "Huts { marker: { elements: [ Dot { position: 10-4; size: 6 } ] }; }\n",
+  "at": "/stylingRules/0/symbolizer/marker/elements/0/position"
+ },
+ {
+  "id": "css-03",
+  "requirement": "/req/cscss/expressions",
+  "kind": "style",
+  "style": "Huts { marker: { elements: [ Dot { position: 10 -4; size: 6 } ] }; }\n",
+  "at": "/stylingRules/0/symbolizer/marker/elements/0/position"
+ },
+ {
+  "id": "css-04",
+  "requirement": "/req/cscss/expressions",
+  "kind": "style",
+  "style": "Huts { marker: { elements: [ Dot { size: 10 -4 } ] }; }\n",
+  "at": "/stylingRules/0/symbolizer/marker/elements/0/size"
+ },
+ {
+  "id": "css-05",
+  "requirement": "/req/cscss/expressions",
+  "kind": "style",
+  "style": "Huts { marker: { elements: [ Dot { position: -10 -4; size: 6 } ] }; }\n",
+  "at": "/stylingRules/0/symbolizer/marker/elements/0/position"
+ },
+ {
+  "id": "css-06",
+  "requirement": "/req/cscss/expressions",
+  "kind": "style",
+  "style": "Huts { marker: { elements: [ Dot { position: 10 (-4); size: 6 } ] }; }\n",
+  "at": "/stylingRules/0/symbolizer/marker/elements/0/position"
+ }
+]
