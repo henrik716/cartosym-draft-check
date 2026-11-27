@@ -1,0 +1,47 @@
+# Same standard, same map? Stress-testing OGC standards with AI
+
+Talk at OGC iDays, Munich, 24 November 2026, Henrik Gulliksen Schüller (Kartverket).
+
+Slides: [2026-11-ogc-idays-munich.pdf](2026-11-ogc-idays-munich.pdf)
+
+The text under each slide title is the speaker notes.
+
+## 1. Same standard, same map?
+
+Hi, I am Henrik from Kartverket. Since October I have been working with Claude on the OGC Cartographic Symbology standard, CartoSym. The map you see is rendered from a CartoSym style, on Norwegian data. This talk is about one question: if two people, or two programs, implement the same standard and draw the same style on the same data, do they get the same map?
+
+## 2. If readers draw different maps, the text is unclear
+
+First, the context. CartoSym, OGC Cartographic Symbology 2.0, is the standard for describing how map data is drawn: colours, lines, labels, hill shading. You write a style once, in a CSS-like or a JSON encoding, and any software that implements the standard should draw the same map. It replaces SLD and Symbology Encoding. Here is the problem in one picture. Same style, same data, same text, and two renderers that two AI models wrote from that text alone; more about them in a moment. One puts the elevation under the peak name, the other to the left, on top of the point. Neither is wrong according to the text. That is an ambiguity, and today we usually find these after publication, when implementers already disagree.
+
+## 3. How Claude and I work, and who decides
+
+The split of work matters. Claude writes the code, the tests, draft text and the review pages. I choose what to work on, check every result and decide what goes to the working group. The SWG reviews and decides. Nothing reaches the group that has not been checked. And it works: since 14 October, 11 of our pull requests have been merged into the standard, the test harness has 132 test cases, and we drew 75 maps for Part 1: 11 examples on Norwegian data and 64 small pictures under the requirements. That is far more than I could have done alone in that time, and Claude could not have done it without someone who knows the standard and the people around it.
+
+## 4. Every change to the text goes round the loop
+
+This is the heart of how we worked, and Claude built all of it in the open repository cartosym-draft-check. Every time we change the wording, it goes round this loop. One: a proposed fix to the wording. Two: every requirement is read back out of the standard exactly as written, so we always test the real text. Three: 132 test cases with expected values from the text run on our draft renderer, and 119 of them on libCartoSym and pycartosym, two independent implementations. Four: every map in the standard is drawn again and compared pixel by pixel with the last version; the same input always gives the same pixels, so any difference is a real change. Five: for wording changes, fresh AI sessions implement the new text, and we check that they now agree. Six: the working group gets maps and evidence on a review page, and decides. Then round again. CI also reruns the cases every week against the latest libCartoSym.
+
+## 5. Six AIs write map renderers from the standard alone
+
+This is the reading test, step five of the loop. Six fresh AI sessions, using three Claude models, each got only the requirement text and twenty small styles on real Norwegian data, and each wrote its own renderer: ordinary code that draws the map from the data and the style, deterministically. No image generator is involved, so any difference between the maps comes from how the AI read the text. No existing code, no web, no contact with each other. Every one of them wrote a working renderer and drew all 21 maps: these six are the same hill-shaded Sentinel-2 map, and they look alike. So the standard is largely understandable from its text alone. Where their maps did differ, the text had left a choice open: 15 places. We fixed the wording, and three brand-new sessions, one per model, read the fixed text. The new Opus and Sonnet drew the same pixels, apart from stipples, which the text now deliberately leaves to the renderer. The new Haiku drew its text slightly larger on the three maps with text: a font-size conversion in its own code, not a different reading.
+
+## 6. After tightening the text, they agree
+
+The cards give the requirements in plain words; the real text is longer and more formal. Top row: the original text, and the requirement it came from. It says the graphic is offset by a position, but not which way y points, and the text alignments are listed without saying what they mean. Bottom row: the tightened text, read by brand-new sessions that never saw the old answers. Two parts were added: which way x and y point, and what each alignment means, with a default. Now they agree. One honest detail: those new readers had a first version that said y points up; the working group then chose screen coordinates, y down, and we flipped the examples to match, so the maps are the same. The same thing happened for centre lines at road junctions, label spacing on split roads, hatch angles and hill shading.
+
+## 7. Reviewers decide by looking at maps
+
+AI makes it easy to produce a lot of text, and that can drown reviewers. So each change goes as one focused pull request with its evidence, and every open question gets a card like this one: the alternatives rendered side by side, with the draft’s choice marked. Here: where two roads cross, are all casings drawn first so the crossing merges, or does each road bring its own casing? The group decides by looking, and AI never makes the call. This is how the placeholder requirements in Part 1 went from empty to merged in one month, 14 October to 13 November.
+
+## 8. Since 14 October, in numbers
+
+What changed since 14 October, counted from the git histories and our test reports. The QR codes take you to each project on GitHub. In the standard: on 14 October, 85 of the 113 requirements in Part 1 were placeholders that literally said "SHALL support ...". Today there are 142 requirements, recommendations and permissions, none of them placeholders, and every one has a check: a test case, a map or a schema test. The AI readers found 15 places where the text could be read two ways, and all 15 are fixed. Then two implementations, built by others. libCartoSym, from Ecere, is a software library that reads and writes CartoSym styles and works out their expressions, for programs that draw maps. pycartosym, by Maxime Collombin, is a Python tool that checks CartoSym styles and translates them to and from other style formats, such as SLD or MapLibre. Our 119 test cases come straight from the requirements. The libCartoSym release from before October passes 52 of them and crashes on three; today its main branch passes all 119 and never crashes. Jérôme fixed the seven issues from our test cases; three newer ones, from round-trip tests, are still open. pycartosym 0.4.1, from 14 October, passes 85 of the same 119 cases, and the current release, 0.6.6, passes all of them. Maxime has fixed 23 of the 28 issues we reported, most of them already released, in eight releases; the other five are from the last few days. So the method did not only improve the text; it improved the software that implements it. And the working group kept pace: since 14 October, 33 pull requests were merged and 32 issues closed in the repository, and this work raised 31 questions for the group to decide.
+
+## 9. A bonus: the standard now shows real maps
+
+A side effect: the examples in Part 1 are now real maps of Rondane in Norway, drawn from CartoSym styles, with the style next to each one: hill shading from a terrain model, a Sentinel-2 satellite image, and the overview map from the title slide, one style for everything. And every requirement a map can show, 63 of them, now has a small figure that changes one value at a time. Here it is the direction of the sun in hill shading: the same mountains, lit from four sides. The reader sees what the requirement means instead of imagining it. All of it is merged into the standard.
+
+## 10. What this can do for OGC standards
+
+What can this do for OGC? Five things. It clarifies requirements early: independent AI implementations show where a requirement can be read two ways, before publication instead of after. It avoids review fatigue: focused pull requests with rendered evidence. The working group still decides every change; speed alone is not the point. In our case it was also fast: Part 1 went from placeholders to merged text in a month, but that is what happened this time, not a promise. It also has a lesson for the Compliance Program, as Jérôme St-Louis pointed out to me: the test harness is already close to an Executable Test Suite. ETSs have usually come years after a standard, or never, because they take so long to build; here the tests were built together with the text, by the people writing it. And we should be honest about the limits: so far all readers were Claude models, and agreement shows the text is unambiguous, not that it says what the group intended. So, to answer the question from the title: same standard, same map, once the requirements are tight enough. Next we want to repeat the reading test with AI models from other companies, such as GPT, Gemini or open models, and apply it to the other parts of CartoSym. Everything is open on GitHub. Thank you.

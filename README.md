@@ -227,6 +227,10 @@ The repository started on 15 October 2026 as a check of the draft requirements i
 
 **Implementations.** libCartoSym `main` went from 50 of 117 cases (the `cartosym` pip package of November 2025) to every case it runs, after Jérôme's fixes to the issues opened from the harness (ecere/libCartoSym#5 to #9, #11 and #12, and NULL handling). The document figures also found pycartosym conversion gaps (`dashOffset`, dash units, identifiers in `placement`, hex Dot colors), fixed in 0.6.5, which this repository pins; the ones still open are worked around in `PYCARTOSYM_GAPS` in `doc_examples.py`.
 
+## Talks
+
+- [Same standard, same map? Stress-testing OGC standards with AI](docs/talks/2026-11-ogc-idays-munich.md): OGC iDays, Munich, 24 November 2026 (slides and speaker notes)
+
 ## About
 
 Made by Henrik Gulliksen Schüller, Part 1 editor, to support the review of #133 and the pull requests after it. Developed with Claude (Anthropic) as a coding assistant; the approach, the choices and the review of the results are the author's. The findings are proposals for the Cartographic Symbology SWG, not decisions.
